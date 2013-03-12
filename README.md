@@ -29,7 +29,6 @@ The stack of busy(0.0%) thread(29230/0x722e) of java process(29213) of user(foo)
 	...
 ```
 
-
 find-in-jars.sh
 ==========================
 
@@ -54,3 +53,8 @@ $ ./find-in-jars '*Service.class'
 ```
 
 说明详见：[在多个Jar(Zip)文件查找Log4J配置文件的Shell命令行](http://oldratlee.com/458/tech/shell/find-file-in-jar-zip-files.html)
+
+PS
+================
+
+有好的脚本 或是 平时常用但没有写成脚本的操作 欢迎大家提供~ 可以放到一起来分享！

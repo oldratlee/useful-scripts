@@ -3,8 +3,8 @@ useful-shells
 
 把平时有用的手动操作做成脚本，这样可以便捷的使用。
 
-busy-java-threads.sh
-=======================
+show-busy-java-threads.sh
+==========================
 
 在排查`Java`的`CPU`性能问题时，需要找到消耗`CPU`的线程，查看它的线程栈。
 
@@ -13,7 +13,7 @@ busy-java-threads.sh
 示例：
 
 ```bash
-$ ./busy-java-threads.sh 
+$ ./show-busy-java-threads.sh 
 The stack of busy(0.0%) thread(30509/0x772d) of java process(29213) of user(foo):
 "Attach Listener" daemon prio=10 tid=0x0000000042171800 nid=0x772d waiting on condition [0x0000000000000000]
    java.lang.Thread.State: RUNNABLE
@@ -31,7 +31,7 @@ The stack of busy(0.0%) thread(29230/0x722e) of java process(29213) of user(foo)
 
 
 find-in-jars.sh
-===================
+==========================
 
 在当前目录下所有`Jar`文件里，查找文件名。
 

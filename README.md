@@ -14,17 +14,46 @@ show-busy-java-threads.sh
 
 ```bash
 $ ./show-busy-java-threads.sh 
-The stack of busy(0.0%) thread(30509/0x772d) of java process(29213) of user(foo):
-"Attach Listener" daemon prio=10 tid=0x0000000042171800 nid=0x772d waiting on condition [0x0000000000000000]
+The stack of busy(57.0%) thread(23355/0x5b3b) of java process(23269) of user(admin):
+"pool-1-thread-1" prio=10 tid=0x000000005b5c5000 nid=0x5b3b runnable [0x000000004062c000]
    java.lang.Thread.State: RUNNABLE
+	at java.text.DateFormat.format(DateFormat.java:316)
+	at com.xxx.foo.services.common.DateFormatUtil.format(DateFormatUtil.java:41)
+	at com.xxx.foo.shared.monitor.schedule.AppMonitorDataAvgScheduler.run(AppMonitorDataAvgScheduler.java:127)
+	at com.xxx.foo.services.common.utils.AliTimer$2.run(AliTimer.java:128)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:662)
 
-The stack of busy(0.0%) thread(29230/0x722e) of java process(29213) of user(foo):
-"GC Daemon" daemon prio=10 tid=0x00007f21340ec800 nid=0x722e in Object.wait() [0x00007f2133ae3000]
-   java.lang.Thread.State: TIMED_WAITING (on object monitor)
-	at java.lang.Object.wait(Native Method)
-	- waiting on <0x00000000a0000120> (a sun.misc.GC$LatencyLock)
-	at sun.misc.GC$Daemon.run(GC.java:100)
-	- locked <0x00000000a0000120> (a sun.misc.GC$LatencyLock)
+The stack of busy(26.1%) thread(24018/0x5dd2) of java process(23269) of user(admin):
+"pool-1-thread-2" prio=10 tid=0x000000005a968800 nid=0x5dd2 runnable [0x00000000420e9000]
+   java.lang.Thread.State: RUNNABLE
+	at java.util.Arrays.copyOf(Arrays.java:2882)
+	at java.lang.AbstractStringBuilder.expandCapacity(AbstractStringBuilder.java:100)
+	at java.lang.AbstractStringBuilder.append(AbstractStringBuilder.java:572)
+	at java.lang.StringBuffer.append(StringBuffer.java:320)
+	- locked <0x00000007908d0030> (a java.lang.StringBuffer)
+	at java.text.SimpleDateFormat.format(SimpleDateFormat.java:890)
+	at java.text.SimpleDateFormat.format(SimpleDateFormat.java:869)
+	at java.text.DateFormat.format(DateFormat.java:316)
+	at com.xxx.foo.services.common.DateFormatUtil.format(DateFormatUtil.java:41)
+	at com.xxx.foo.shared.monitor.schedule.AppMonitorDataAvgScheduler.run(AppMonitorDataAvgScheduler.java:126)
+	at com.xxx.foo.services.common.utils.AliTimer$2.run(AliTimer.java:128)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:662)
+
+The stack of busy(0.4%) thread(24021/0x5dd5) of java process(23269) of user(admin):
+"pool-1-thread-5" prio=10 tid=0x000000005bc1c000 nid=0x5dd5 waiting on condition [0x000000004149e000]
+   java.lang.Thread.State: WAITING (parking)
+	at sun.misc.Unsafe.park(Native Method)
+	- parking to wait for  <0x0000000793e77408> (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject)
+	at java.util.concurrent.locks.LockSupport.park(LockSupport.java:158)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1987)
+	at java.util.concurrent.LinkedBlockingQueue.take(LinkedBlockingQueue.java:399)
+	at java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:947)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:907)
+	at java.lang.Thread.run(Thread.java:662)
 	
 	...
 ```

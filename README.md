@@ -6,17 +6,15 @@ useful-shells
 下载
 ========================
 
-下载单个文档
----------------
+### 下载单个文件
 
-以`show-busy-java-threads.sh`为例：
+以[`show-busy-java-threads.sh`](https://raw.github.com/oldratlee/useful-shells/release/show-busy-java-threads.sh)为例：
 
 ```bash
 wget --no-check-certificate https://raw.github.com/oldratlee/useful-shells/release/show-busy-java-threads.sh
 ```
 
-打包下载
---------------
+### 打包下载
 
 下载文件[release.zip](https://github.com/oldratlee/useful-shells/archive/release.zip)：
 ```bash

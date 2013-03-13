@@ -3,6 +3,23 @@ useful-shells
 
 把平时有用的手动操作做成脚本，这样可以便捷的使用。
 
+下载
+========================
+
+下载单个文档
+---------------
+
+以`show-busy-java-threads.sh`为例：
+
+```bash
+wget  --no-check-certificate  https://raw.github.com/oldratlee/useful-shells/release/show-busy-java-threads.sh
+```
+
+打包下载
+--------------
+
+[release.zip](https://github.com/oldratlee/useful-shells/archive/release.zip)
+
 show-busy-java-threads.sh
 ==========================
 

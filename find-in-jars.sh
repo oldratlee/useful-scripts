@@ -3,9 +3,9 @@
 # Find file in the jar files under current directory
 #
 # @Usage
-# 	$ find-in-jars.sh log4j\\.xml
-# 	$ find-in-jars.sh 'log4j\.properties'
-# 	$ find-in-jars.sh 'log4j\.properties|log4j\.xml'
+#   $ find-in-jars.sh log4j\\.xml
+#   $ find-in-jars.sh 'log4j\.properties'
+#   $ find-in-jars.sh 'log4j\.properties|log4j\.xml'
 #
 # @author Jerry Lee
 

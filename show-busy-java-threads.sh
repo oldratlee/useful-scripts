@@ -3,7 +3,7 @@
 # Find the High cpu consume thread of java, and print the stack of these threads.
 #
 # @Usage
-# 	$ ./show-busy-java-threads.sh
+#   $ ./show-busy-java-threads.sh
 #
 # @author Jerry Lee
 

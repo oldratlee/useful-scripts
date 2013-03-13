@@ -79,7 +79,7 @@ find-in-jars.sh 'log4j\.properties|log4j\.xml'
 示例：
 
 ```bash
-$ ./find-in-jars '*Service.class'
+$ ./find-in-jars 'Service.class$'
 ./spring-2.5.6.SEC03.jar!org/springframework/stereotype/Service.class
 ./rpc-benchmark-0.0.1-SNAPSHOT.jar!com/taobao/rpc/benchmark/service/HelloService.class
 ```

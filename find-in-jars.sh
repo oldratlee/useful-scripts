@@ -13,7 +13,7 @@
 
 find -iname '*.jar' | while read jarFile
 do
-        jar tf ${jarFile} | egrep $1 | while read file
+        jar tf ${jarFile} | egrep "$1" | while read file
         do
                 echo "${jarFile}"\!"${file}"
         done

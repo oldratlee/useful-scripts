@@ -61,21 +61,7 @@ The stack of busy(26.1%) thread(24018/0x5dd2) of java process(23269) of user(adm
 	at com.xxx.foo.services.common.utils.AliTimer$2.run(AliTimer.java:128)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
-	at java.lang.Thread.run(Thread.java:662)
-
-The stack of busy(0.4%) thread(24021/0x5dd5) of java process(23269) of user(admin):
-"pool-1-thread-5" prio=10 tid=0x000000005bc1c000 nid=0x5dd5 waiting on condition [0x000000004149e000]
-   java.lang.Thread.State: WAITING (parking)
-	at sun.misc.Unsafe.park(Native Method)
-	- parking to wait for  <0x0000000793e77408> (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject)
-	at java.util.concurrent.locks.LockSupport.park(LockSupport.java:158)
-	at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1987)
-	at java.util.concurrent.LinkedBlockingQueue.take(LinkedBlockingQueue.java:399)
-	at java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:947)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:907)
-	at java.lang.Thread.run(Thread.java:662)
-	
-	...
+...
 ```
 
 find-in-jars.sh
@@ -86,7 +72,7 @@ find-in-jars.sh
 用法：
 
 ```bash
-find-in-jars.sh 'sofa\.properties'
+find-in-jars.sh 'log4j\.properties'
 find-in-jars.sh log4j\\.xml
 find-in-jars.sh 'log4j\.xml$'
 find-in-jars.sh 'log4j\.properties|log4j\.xml'
@@ -98,7 +84,7 @@ find-in-jars.sh 'log4j\.properties|log4j\.xml'
 
 ```bash
 $ ./find-in-jars 'Service.class$'
-./spring-2.5.6.SEC03.jar!org/springframework/stereotype/Service.class
+./WEB-INF/libs/spring-2.5.6.SEC03.jar!org/springframework/stereotype/Service.class
 ./rpc-benchmark-0.0.1-SNAPSHOT.jar!com/taobao/rpc/benchmark/service/HelloService.class
 ```
 

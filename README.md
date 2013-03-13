@@ -12,13 +12,16 @@ useful-shells
 以`show-busy-java-threads.sh`为例：
 
 ```bash
-wget  --no-check-certificate  https://raw.github.com/oldratlee/useful-shells/release/show-busy-java-threads.sh
+wget --no-check-certificate https://raw.github.com/oldratlee/useful-shells/release/show-busy-java-threads.sh
 ```
 
 打包下载
 --------------
 
-[release.zip](https://github.com/oldratlee/useful-shells/archive/release.zip)
+下载文件[release.zip](https://github.com/oldratlee/useful-shells/archive/release.zip)：
+```bash
+wget --no-check-certificate https://github.com/oldratlee/useful-shells/archive/release.zip
+```
 
 show-busy-java-threads.sh
 ==========================

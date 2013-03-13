@@ -6,11 +6,11 @@ useful-shells
 show-busy-java-threads.sh
 ==========================
 
-在排查`Java`的`CPU`性能问题时，找出Java进程中消耗CPU多(top us值过高)的线程，查看它的线程栈，从而找出有性能问题的方法调用。
+在排查`Java`的`CPU`性能问题时(`top us`值过高)，找出`Java`进程中消耗`CPU`多的线程，查看它的线程栈，从而找出有性能问题的方法调用。
 
 PS：如何操作可以参见[@bluedavy](http://weibo.com/bluedavy)的《分布式Java应用》的【5.1.1 cpu消耗分析】一节，说得很详细：用`top`开启线程显示、找到`CPU`高的线程号；手动转成十六进制（可以用`printf %x 1234`）；jstack，grep十六进制的线程id，找到线程栈。查问题时，会要多次这样操作，太繁琐。
 
-这个脚本的功能是，打印出在运行的`Java`进程中，消耗`CPU`最多的那5个线程的线程栈。  
+这个脚本的功能是，打印出在运行的`Java`进程中，消耗`CPU`最多的那5个线程的线程栈。
 
 示例：
 
@@ -70,6 +70,7 @@ find-in-jars.sh
 ```bash
 find-in-jars.sh 'sofa\.properties'
 find-in-jars.sh log4j\\.xml
+find-in-jars.sh 'log4j\.xml$'
 find-in-jars.sh 'log4j\.properties|log4j\.xml'
 ```
 

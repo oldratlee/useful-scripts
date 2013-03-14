@@ -13,10 +13,15 @@ if [ -z "${url}" ]; then
     exit 1
 fi
 
-if [ $(uname)="Darwin" ]; then
-  echo -n ${url} | pbcopy
-else
-  echo -n ${url} | xsel -b 
-fi
+name=$(uname | tr A-Z a-z)
 
-echo ${url} copied!
+case "${name}" in 
+darwin*)
+    echo -n ${url} | pbcopy ;;
+cygwin*)
+    echo -n ${url} | clip ;;
+*)
+    echo -n ${url} | xsel -b ;;
+esac 
+
+[ $? == 0 ] && echo ${url} copied!

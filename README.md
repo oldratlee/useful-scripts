@@ -78,6 +78,8 @@ http://www.foo.com/project1/branches/feature1 copied!
 
 此脚本由[ivanzhangwb](https://github.com/ivanzhangwb)提供。
 
+参考资料：[拷贝复制命令行输出放在系统剪贴板上](http://oldratlee.com/post/2012-12-23/command-output-to-clip)
+
 find-in-jars.sh
 ==========================
 
@@ -102,7 +104,7 @@ $ ./find-in-jars 'Service.class$'
 ./rpc-benchmark-0.0.1-SNAPSHOT.jar!com/taobao/rpc/benchmark/service/HelloService.class
 ```
 
-说明详见：[在多个Jar(Zip)文件查找Log4J配置文件的Shell命令行](http://oldratlee.com/458/tech/shell/find-file-in-jar-zip-files.html)
+参考资料：[在多个Jar(Zip)文件查找Log4J配置文件的Shell命令行](http://oldratlee.com/458/tech/shell/find-file-in-jar-zip-files.html)
 
 PS
 ================

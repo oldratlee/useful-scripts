@@ -1,11 +1,22 @@
 #!/bin/bash
-url=$(svn info | grep "^URL" | awk '{print $2}') 
-if [ $url="svn: '.' is not a working copy" ]; then
-  exit
+# @Function
+# copy the svn remote url of current svn directory.
+#
+# @Usage
+#   $ ./svn-url.sh
+#
+# @author ivanzhangwb
+
+url=$(svn info | grep "^URL: " | awk '{print $2}') 
+if [ -z "${url}" ]; then
+    echo "Fail to get svn url!"  1>&2
+    exit 1
 fi
-echo $url
+
 if [ $(uname)="Darwin" ]; then
-  echo -n $url | pbcopy
+  echo -n ${url} | pbcopy
 else
-  echo -n $url | xsel -b 
+  echo -n ${url} | xsel -b 
 fi
+
+echo ${url} copied!

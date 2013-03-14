@@ -78,7 +78,7 @@ http://www.foo.com/project1/branches/feature1 copied!
 
 此脚本由[ivanzhangwb](https://github.com/ivanzhangwb)提供。
 
-参考资料：[拷贝复制命令行输出放在系统剪贴板上](http://oldratlee.com/post/2012-12-23/command-output-to-clip)
+参考资料：[拷贝复制命令行输出放在系统剪贴板上](http://oldratlee.com/post/2012-12-23/command-output-to-clip)，给出了不同系统可用命令。
 
 find-in-jars.sh
 ==========================

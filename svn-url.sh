@@ -17,11 +17,11 @@ name=$(uname | tr A-Z a-z)
 
 case "${name}" in 
 darwin*)
-    echo -n ${url} | pbcopy ;;
+    echo -n "${url}" | pbcopy ;;
 cygwin*)
-    echo -n ${url} | clip ;;
+    echo -n "${url}" | clip ;;
 *)
-    echo -n ${url} | xsel -b ;;
+    echo -n "${url}" | xsel -b ;;
 esac 
 
 [ $? == 0 ] && echo "${url} copied!"

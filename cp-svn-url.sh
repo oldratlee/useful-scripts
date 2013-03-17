@@ -24,4 +24,4 @@ cygwin*)
     echo -n "${url}" | xsel -b ;;
 esac 
 
-[ $? == 0 ] && echo "${url} copied!"
+[ $? == 0 ] && echo "${url} copied!" || exit 2

@@ -16,10 +16,45 @@ redEcho() {
     fi
 }
 
+usage() {
+    cat <<EOF
+Usage: $0 [OPTION]...
+Find the High cpu consume thread of java, and print the stack of these threads.
+Example: $0 -c 10
+
+Options:
+    -c, --count     set the thread count to show, default is 5
+    -h, --help      display this help and exit
+EOF
+    exit $1
+}
+
+ARGS=`getopt -a -o c:h -l count:,help -- "$@"`
+[ $? -ne 0 ] && usage 1
+eval set -- "${ARGS}"
+
+while true; do
+    case "$1" in
+    -c|--count)
+        count="$2"
+        shift
+        ;;
+    -h|--help)
+        usage
+        ;;
+    --)
+        shift
+        break
+        ;;
+    esac
+    shift
+done
+[ -z "${count}" ] && count=5
+
 uuid=`date +%s`_${RANDOM}_$$
 
 ps -Leo pid,lwp,user,comm,pcpu --no-headers | awk '$4=="java"{print $0}' |
-sort -k5 -r -n | head -5 | while read threadLine ; do
+sort -k5 -r -n | head --lines "${count}" | while read threadLine ; do
         pid=`echo ${threadLine} | awk '{print $1}'`
         threadId=`echo ${threadLine} | awk '{print $2}'`
         threadId0x=`printf %x ${threadId}`

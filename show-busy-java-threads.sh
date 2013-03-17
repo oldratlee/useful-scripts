@@ -9,7 +9,12 @@
 
 redEcho()
 {
-    echo -e "\033[1;31m$@\033[0m"
+    if [ -p /dev/stdout ] ; then
+        # if stdout is pipeline, shutdown color output.
+        echo "$@"
+    else
+        echo -e "\033[1;31m$@\033[0m"
+    fi
 }
 
 uuid=`date +%s`_${RANDOM}_$$

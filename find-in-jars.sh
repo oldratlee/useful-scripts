@@ -42,8 +42,7 @@ while true; do
     esac
     shift
 done
-
-
+[ -z "$1" ] && { echo No find file pattern! ; usage 1; }
 [ -z ${dir} ] && dir=.
 
 find ${dir} -iname '*.jar' | while read jarFile

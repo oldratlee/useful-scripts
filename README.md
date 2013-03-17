@@ -30,6 +30,12 @@ PS：如何操作可以参见[@bluedavy](http://weibo.com/bluedavy)的《分布�
 
 这个脚本的功能是，打印出在运行的`Java`进程中，消耗`CPU`最多的那5个线程的线程栈。
 
+用法：
+
+```bash
+show-busy-java-threads.sh -c <要显示的线程线程数>
+```
+
 示例：
 
 ```bash
@@ -89,8 +95,8 @@ find-in-jars.sh
 
 ```bash
 find-in-jars.sh 'log4j\.properties'
+find-in-jars.sh 'log4j\.xml$' -d /path/to/find/directory
 find-in-jars.sh log4j\\.xml
-find-in-jars.sh 'log4j\.xml$'
 find-in-jars.sh 'log4j\.properties|log4j\.xml'
 ```
 

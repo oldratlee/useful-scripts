@@ -7,8 +7,7 @@
 #
 # @author Jerry Lee
 
-redEcho()
-{
+redEcho() {
     if [ -p /dev/stdout ] ; then
         # if stdout is pipeline, shutdown color output.
         echo "$@"
@@ -29,10 +28,12 @@ sort -k5 -r -n | head -5 | while read threadLine ; do
         
         jstackFile=/tmp/${uuid}_${pid}
         
-        [ ! -f "${jstackFile}" ] &&
-        {
-            jstack ${pid} > ${jstackFile} ||
-            { redEcho "Fail to jstack java process ${pid}"; rm ${jstackFile} ; continue; }
+        [ ! -f "${jstackFile}" ] && {
+            jstack ${pid} > ${jstackFile} || {
+                redEcho "Fail to jstack java process ${pid}"
+                rm ${jstackFile}
+                continue
+            }
         }
         
         redEcho "The stack of busy(${pcpu}%) thread(${threadId}/0x${threadId0x}) of java process(${pid}) of user(${user}):"

@@ -37,7 +37,7 @@ while true; do
     case "$1" in
     -c|--count)
         count="$2"
-        shift
+        shift 2
         ;;
     -h|--help)
         usage

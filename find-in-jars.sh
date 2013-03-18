@@ -30,7 +30,7 @@ while true; do
     case "$1" in
     -d|--dir)
         dir="$2"
-        shift
+        shift 2
         ;;
     -h|--help)
         usage

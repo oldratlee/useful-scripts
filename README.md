@@ -33,7 +33,7 @@ PS：如何操作可以参见[@bluedavy](http://weibo.com/bluedavy)的《分布�
 用法：
 
 ```bash
-show-busy-java-threads.sh -c <要显示的线程线程数>
+show-busy-java-threads.sh -c <要显示的线程栈数>
 ```
 
 示例：

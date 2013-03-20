@@ -3,7 +3,7 @@ useful-shells
 
 把平时有用的手动操作做成脚本，这样可以便捷的使用。
 
-下载
+下载使用
 ========================
 
 ### 下载单个文件
@@ -12,6 +12,7 @@ useful-shells
 
 ```bash
 wget --no-check-certificate https://raw.github.com/oldratlee/useful-shells/release/show-busy-java-threads.sh
+chmod +x show-busy-java-threads.sh
 ```
 
 ### 打包下载
@@ -19,6 +20,17 @@ wget --no-check-certificate https://raw.github.com/oldratlee/useful-shells/relea
 下载文件[release.zip](https://github.com/oldratlee/useful-shells/archive/release.zip)：
 ```bash
 wget --no-check-certificate https://github.com/oldratlee/useful-shells/archive/release.zip
+```
+
+### Git Clone工程代码
+
+```
+git clone git://github.com/oldratlee/useful-shells.git
+# 使用Release分支的内容
+git checkout release
+
+# 更新
+git pull
 ```
 
 show-busy-java-threads.sh

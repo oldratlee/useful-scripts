@@ -1,6 +1,6 @@
 #!/bin/bash
 # @Function
-# Find the High cpu consume thread of java, and print the stack of these threads.
+# Find out the highest cpu consumed threads of java, and print the stack of these threads.
 #
 # @Usage
 #   $ ./show-busy-java-threads.sh
@@ -10,18 +10,18 @@
 PROG=`basename $0`
 
 redEcho() {
-    if [ -p /dev/stdout ] ; then
-        # if stdout is pipeline, shutdown color output.
-        echo "$@"
-    else
+    if [ -c /dev/stdout ] ; then
+        # if stdout is console, turn on color output.
         echo -e "\033[1;31m$@\033[0m"
+    else
+        echo "$@"
     fi
 }
 
 usage() {
     cat <<EOF
 Usage: ${PROG} [OPTION]...
-Find the High cpu consume thread of java, and print the stack of these threads.
+Find out the highest cpu consumed threads of java, and print the stack of these threads.
 Example: ${PROG} -c 10
 
 Options:

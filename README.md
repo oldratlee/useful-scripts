@@ -3,6 +3,8 @@ useful-shells
 
 把平时有用的手动操作做成脚本，这样可以便捷的使用。
 
+有好的脚本 或是 平时常用但没有写成脚本的操作，欢迎[提供](https://github.com/oldratlee/useful-shells/issues)和分享！
+
 下载使用
 ========================
 
@@ -130,8 +132,3 @@ $ ./find-in-jars 'Service.class$'
 ```
 
 参考资料：[在多个Jar(Zip)文件查找Log4J配置文件的Shell命令行](http://oldratlee.com/458/tech/shell/find-file-in-jar-zip-files.html)
-
-PS
-================
-
-有好的脚本 或是 平时常用但没有写成脚本的操作 欢迎大家提供~ 可以放到一起来分享！

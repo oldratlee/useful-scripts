@@ -7,7 +7,47 @@
 #
 # @author ivanzhangwb
 
-url=$(svn info | grep "^URL: " | awk '{print $2}') 
+PROG=`basename $0`
+
+usage() {
+    cat <<EOF
+Usage: ${PROG} [DIR]
+Copy the svn remote url of local svn directory
+DIR is local svn directory, default is current directory.
+
+Example:
+    ${PROG}
+    ${PROG} /path/to/svn/work/dir
+
+Options:
+    -h, --help      display this help and exit
+EOF
+    exit $1
+}
+
+ARGS=`getopt -a -o h -l help -- "$@"`
+[ $? -ne 0 ] && usage 1
+eval set -- "${ARGS}"
+
+while true; do
+    case "$1" in
+    -h|--help)
+        usage
+        ;;
+    --)
+        shift
+        break
+        ;;
+    esac
+    shift
+done
+
+[ $# gt 1 ]  && { echo At most 1 local directory is need! ; usage 1; }
+
+dir="${1}"
+[ -z dir ] && dir=.
+
+url=$(svn info "${dir}" | grep "^URL: " | awk '{print $2}') 
 if [ -z "${url}" ]; then
     echo "Fail to get svn url!"  1>&2
     exit 1

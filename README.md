@@ -87,6 +87,13 @@ svn-url.sh
 
 拷贝当前`svn`目录对应的远程分支。
 
+用法：
+
+```bash
+svn-url.sh
+svn-url.sh /path/to/svn/work/directory
+```
+
 示例：
 
 ```bash

@@ -82,7 +82,7 @@ The stack of busy(26.1%) thread(24018/0x5dd2) of java process(23269) of user(adm
 ...
 ```
 
-svn-url.sh
+cp-svn-url.sh
 ==========================
 
 拷贝当前`svn`目录对应的远程分支。
@@ -90,14 +90,14 @@ svn-url.sh
 用法：
 
 ```bash
-svn-url.sh
-svn-url.sh /path/to/svn/work/directory
+cp-svn-url.sh
+cp-svn-url.sh /path/to/svn/work/directory
 ```
 
 示例：
 
 ```bash
-$ svn-url.sh
+$ cp-svn-url.sh
 http://www.foo.com/project1/branches/feature1 copied!
 ```
 

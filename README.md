@@ -26,7 +26,7 @@ wget --no-check-certificate https://github.com/oldratlee/useful-shells/archive/r
 
 ### Git Clone工程代码
 
-```
+```bash
 git clone git://github.com/oldratlee/useful-shells.git
 # 使用Release分支的内容
 git checkout release

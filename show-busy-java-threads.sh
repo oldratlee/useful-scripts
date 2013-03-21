@@ -7,6 +7,8 @@
 #
 # @author Jerry Lee
 
+PROG=`basename $0`
+
 redEcho() {
     if [ -p /dev/stdout ] ; then
         # if stdout is pipeline, shutdown color output.
@@ -18,9 +20,9 @@ redEcho() {
 
 usage() {
     cat <<EOF
-Usage: $0 [OPTION]...
+Usage: ${PROG} [OPTION]...
 Find the High cpu consume thread of java, and print the stack of these threads.
-Example: $0 -c 10
+Example: ${PROG} -c 10
 
 Options:
     -c, --count     set the thread count to show, default is 5

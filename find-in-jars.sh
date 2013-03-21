@@ -9,11 +9,13 @@
 #
 # @author Jerry Lee
 
+PROG=`basename $0`
+
 usage() {
     cat <<EOF
-Usage: $0 [OPTION]... PATTERN
+Usage: ${PROG} [OPTION]... PATTERN
 Find file in the jar files under specified directory(recursive, include subdirectory)
-Example: $0 -d libs 'log4j\.properties$'
+Example: ${PROG} -d libs 'log4j\.properties$'
 
 Options:
     -d, --dir       the directory that find jar files

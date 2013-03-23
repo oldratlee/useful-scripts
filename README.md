@@ -132,3 +132,19 @@ $ ./find-in-jars 'Service.class$'
 ```
 
 参考资料：[在多个Jar(Zip)文件查找Log4J配置文件的Shell命令行](http://oldratlee.com/458/tech/shell/find-file-in-jar-zip-files.html)
+
+xpl and xpf
+==============================
+
+* xpl：在文件浏览器中打开指定的文件或文件夹。
+* xpf: 在文件浏览器中打开指定的文件或文件夹，并选中。
+
+用法：
+
+```bash
+xpl /path/to/dir
+xpl /path/to/foo.txt
+xpl /path/to/dir1 /path/to/foo1.txt
+xpf /path/to/foo1.txt
+xpf /path/to/dir1 /path/to/foo1.txt
+```

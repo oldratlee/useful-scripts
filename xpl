@@ -67,5 +67,6 @@ for file in "${files[@]}" ; do
                 nautilus "${file}"
             fi
         fi
+        ;;
     esac 
 done

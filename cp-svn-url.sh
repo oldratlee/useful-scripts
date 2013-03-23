@@ -39,7 +39,6 @@ while true; do
         break
         ;;
     esac
-    shift
 done
 
 [ $# gt 1 ]  && { echo At most 1 local directory is need! ; usage 1; }

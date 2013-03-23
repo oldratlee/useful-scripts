@@ -42,7 +42,6 @@ while true; do
         break
         ;;
     esac
-    shift
 done
 [ -z "$1" ] && { echo No find file pattern! ; usage 1; }
 [ -z ${dir} ] && dir=.

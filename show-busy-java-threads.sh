@@ -49,7 +49,6 @@ while true; do
         break
         ;;
     esac
-    shift
 done
 [ -z "${count}" ] && count=5
 

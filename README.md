@@ -8,6 +8,19 @@ useful-shells
 下载使用
 ========================
 
+### 直接clone工程
+
+简单方便，不过要安装有`git`。
+
+```bash
+git clone git://github.com/oldratlee/useful-shells.git
+# 使用Release分支的内容
+git checkout release
+
+# 更新
+git pull
+```
+
 ### 下载单个文件
 
 以[`show-busy-java-threads.sh`](https://raw.github.com/oldratlee/useful-shells/release/show-busy-java-threads.sh)为例：
@@ -20,19 +33,9 @@ chmod +x show-busy-java-threads.sh
 ### 打包下载
 
 下载文件[release.zip](https://github.com/oldratlee/useful-shells/archive/release.zip)：
+
 ```bash
 wget --no-check-certificate https://github.com/oldratlee/useful-shells/archive/release.zip
-```
-
-### Git Clone工程代码
-
-```bash
-git clone git://github.com/oldratlee/useful-shells.git
-# 使用Release分支的内容
-git checkout release
-
-# 更新
-git pull
 ```
 
 show-busy-java-threads.sh

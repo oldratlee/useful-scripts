@@ -51,6 +51,9 @@ PS：如何操作可以参见[@bluedavy](http://weibo.com/bluedavy)的《分布�
 
 ```bash
 show-busy-java-threads.sh -c <要显示的线程栈数>
+# 上面会从所有的Java进程中找出最消耗CPU的线程，这样用更方便。
+
+show-busy-java-threads.sh -c <要显示的线程栈数> -p <指定的Java Process>
 ```
 
 示例：

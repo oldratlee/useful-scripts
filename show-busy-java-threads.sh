@@ -25,7 +25,8 @@ Find out the highest cpu consumed threads of java, and print the stack of these 
 Example: ${PROG} -c 10
 
 Options:
-    -p, --pid       print thread stack from the specifed java process, default from all java process.
+    -p, --pid       find out the highest cpu consumed threads from the specifed java process,
+                    default from all java process.
     -c, --count     set the thread count to show, default is 5
     -h, --help      display this help and exit
 EOF

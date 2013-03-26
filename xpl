@@ -22,6 +22,9 @@ EOF
     exit $1
 }
 
+# if program name is xpf, set option selected!
+[ "xpf" == "${PROG}" ] && selected=true
+
 ARGS=`getopt -a -o sh -l selected,help -- "$@"`
 [ $? -ne 0 ] && usage 1
 eval set -- "${ARGS}"
@@ -41,9 +44,6 @@ while true; do
         ;;
     esac
 done
-
-# if program name is xpf, set option selected!
-[ "xpf" == "${PROG}" ] && selected=true
 
 name=$(uname | tr A-Z a-z)
 [ $# == 0 ] && files=( "." ) || files=( "$@" )

@@ -8,4 +8,4 @@
 #
 # @author Jerry Lee
 BASE=`dirname $0`
-$BASE/xpl --select "$@"
+. $BASE/xpl "$@"

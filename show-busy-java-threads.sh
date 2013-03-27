@@ -56,6 +56,12 @@ printStackOfThreads() {
     done
 }
 
+if [ "$JAVA_HOME" = "" ]; then
+  echo "Error: JAVA_HOME is not set."
+  exit 1
+fi
+export PATH=$PATH:$JAVA_HOME/bin
+
 ARGS=`getopt -a -o c:p:h -l count:,pid:,help -- "$@"`
 [ $? -ne 0 ] && usage 1
 eval set -- "${ARGS}"

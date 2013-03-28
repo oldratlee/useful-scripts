@@ -56,12 +56,6 @@ printStackOfThreads() {
     done
 }
 
-if [ "$JAVA_HOME" = "" ]; then
-  echo "Error: JAVA_HOME is not set."
-  exit 1
-fi
-export PATH=$PATH:$JAVA_HOME/bin
-
 ARGS=`getopt -a -o c:p:h -l count:,pid:,help -- "$@"`
 [ $? -ne 0 ] && usage 1
 eval set -- "${ARGS}"
@@ -88,6 +82,15 @@ done
 [ -z "${count}" ] && count=5
 
 uuid=`date +%s`_${RANDOM}_$$
+
+if ! which jstack &> /dev/null; then
+    if [ -n "$JAVA_HOME" ] && [ -x "$JAVA_HOME/bin/jstack" ]; then
+        export PATH=$PATH:$JAVA_HOME/bin
+    else
+        redEcho "Error: jstack not found on PATH and JAVA_HOME!"
+        exit 1
+    fi
+fi
 
 if [ -z ${pid} ] ; then 
     ps -Leo pid,lwp,user,comm,pcpu --no-headers | awk '$4=="java"{print $0}' |

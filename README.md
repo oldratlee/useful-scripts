@@ -90,6 +90,8 @@ The stack of busy(26.1%) thread(24018/0x5dd2) of java process(23269) of user(adm
 ...
 ```
 
+[silentforce](https://github.com/silentforce)改进此脚本，增加对环境变量`JAVA_HOME`的判断。
+
 cp-svn-url.sh
 ==========================
 

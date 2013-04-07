@@ -79,7 +79,7 @@ while true; do
         ;;
     esac
 done
-[ -z "${count}" ] && count=5
+count=${count:-5}
 
 uuid=`date +%s`_${RANDOM}_$$
 

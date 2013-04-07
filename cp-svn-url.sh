@@ -44,7 +44,7 @@ done
 [ $# gt 1 ]  && { echo At most 1 local directory is need! ; usage 1; }
 
 dir="${1}"
-[ -z dir ] && dir=.
+dir=${dir:-.}
 
 url=$(svn info "${dir}" | grep "^URL: " | awk '{print $2}') 
 if [ -z "${url}" ]; then

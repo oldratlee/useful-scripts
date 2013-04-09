@@ -41,7 +41,7 @@ while true; do
     esac
 done
 
-[ $# gt 1 ]  && { echo At most 1 local directory is need! ; usage 1; }
+[ $# -gt 1 ]  && { echo At most 1 local directory is need! ; usage 1; }
 
 dir="${1}"
 dir=${dir:-.}

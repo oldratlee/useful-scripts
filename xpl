@@ -59,10 +59,10 @@ for file in "${files[@]}" ; do
         ;;
     *)
         if [ -f "${file}" ] ; then
-            nautilus "$(basedir "${file}")"
+            nautilus "$(dirname "${file}")"
         else
             if [ -n "${selected}" ] ; then
-                nautilus "$(basedir "${file}")"
+                nautilus "$(dirname "${file}")"
             else
                 nautilus "${file}"
             fi

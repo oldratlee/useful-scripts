@@ -55,7 +55,7 @@ for file in "${files[@]}" ; do
         ;;
     cygwin*)
         [ -f "${file}" ] && selected=true
-        explorer ${selected:+/select,} $(cygpath -w "${file}")
+        explorer ${selected:+/select,} "$(cygpath -w "${file}")"
         ;;
     *)
         if [ -f "${file}" ] ; then

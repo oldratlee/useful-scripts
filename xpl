@@ -48,6 +48,8 @@ done
 name=$(uname | tr A-Z a-z)
 [ $# == 0 ] && files=( "." ) || files=( "$@" )
 for file in "${files[@]}" ; do
+    [ ! -e $file ] && { echo "$file not exsited!"; continue; }
+
     case "${name}" in 
     darwin*)
         [ -f "${file}" ] && selected=true
@@ -69,4 +71,5 @@ for file in "${files[@]}" ; do
         fi
         ;;
     esac 
+    echo "$file opened!"
 done

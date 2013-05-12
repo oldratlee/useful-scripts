@@ -46,7 +46,7 @@ done
 dir="${1}"
 dir=${dir:-.}
 
-url=$(svn info "${dir}" | grep "^URL: " | awk '{print $2}') 
+url=$(svn info "${dir}" | awk '/^URL: /{print $2}') 
 if [ -z "${url}" ]; then
     echo "Fail to get svn url!"  1>&2
     exit 1

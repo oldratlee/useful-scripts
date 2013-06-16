@@ -164,7 +164,7 @@ xpl and xpf
 * xpl：在文件浏览器中打开指定的文件或文件夹。  
 \# xpl是`explorer`的缩写。
 * xpf: 在文件浏览器中打开指定的文件或文件夹，并选中。   
-\# xpl是`explorer file`的缩写。
+\# xpf是`explorer and select file`的缩写。
 
 用法：
 

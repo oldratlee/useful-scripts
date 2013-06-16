@@ -152,10 +152,10 @@ echo-args.sh
 
 ```bash
 $ ./echo-args.sh 1 "  2 foo  " "3        3"
-(0/3): [./echo-args.sh]
-(1/3): [1]
-(2/3): [  2 foo  ]
-(3/3): [3        3]
+0/3: [./echo-args.sh]
+1/3: [1]
+2/3: [  2 foo  ]
+3/3: [3        3]
 ```
 
 xpl and xpf

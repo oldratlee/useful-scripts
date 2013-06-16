@@ -16,7 +16,7 @@ echoArg() {
     count=$2
     value=$3
 
-    echo -n "($index/$count): "
+    echo -n "$index/$count: "
     redEcho "["
     echo -n "$value"
     redEcho "]"

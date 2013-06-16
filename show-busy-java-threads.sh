@@ -52,7 +52,9 @@ count=${count:-5}
 redEcho() {
     if [ -c /dev/stdout ] ; then
         # if stdout is console, turn on color output.
-        echo -e "\033[1;31m$@\033[0m"
+        echo -ne "\033[1;31m"
+        echo -n "$@"
+        echo -e "\033[0m"
     else
         echo "$@"
     fi

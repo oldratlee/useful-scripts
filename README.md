@@ -141,6 +141,25 @@ $ ./find-in-jars 'Service.class$'
 
 参考资料：[在多个Jar(Zip)文件查找Log4J配置文件的Shell命令行](http://oldratlee.com/458/tech/shell/find-file-in-jar-zip-files.html)
 
+echo-args.sh
+==============================
+
+在编写脚本时，常常要确认输入的参数是否是正常的：参数个数，参数值（可能包含有肉眼不容易发现的空格问题）。
+
+这个脚本就输出脚本参数。在控制台运行时，会用 *红色*的括号把参数值括起来，方便人眼查看。
+
+示例：
+
+```bash
+$ ./echo-args.sh 3 " foo " "dd dd          d x" "   [  ] x  "
+(0/4): [./echo-args.sh]
+(1/4): [3]
+(2/4): [ foo ]
+(3/4): [dd dd          d x]
+(4/4): [   [  ] x  ]
+
+```
+
 xpl and xpf
 ==============================
 

@@ -71,7 +71,7 @@ fi
 uuid=`date +%s`_${RANDOM}_$$
 
 cleanupWhenExit() {
-    rm /tmp/${uuid}_*
+    rm /tmp/${uuid}_* > /dev/null
 }
 trap "cleanupWhenExit" EXIT
 

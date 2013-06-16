@@ -151,13 +151,11 @@ echo-args.sh
 示例：
 
 ```bash
-$ ./echo-args.sh 3 " foo " "dd dd          d x" "   [  ] x  "
-(0/4): [./echo-args.sh]
-(1/4): [3]
-(2/4): [ foo ]
-(3/4): [dd dd          d x]
-(4/4): [   [  ] x  ]
-
+$ ./echo-args.sh 1 "  2 foo  " "3        3"
+(0/3): [./echo-args.sh]
+(1/3): [1]
+(2/3): [  2 foo  ]
+(3/3): [3        3]
 ```
 
 xpl and xpf

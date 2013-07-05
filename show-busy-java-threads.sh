@@ -89,7 +89,7 @@ printStackOfThreads() {
         
         [ ! -f "${jstackFile}" ] && {
             jstack ${pid} > ${jstackFile} || {
-                redEcho "Fail to jstack java process ${pid}"
+                redEcho "Fail to jstack java process ${pid}!"
                 rm ${jstackFile}
                 continue
             }
@@ -100,7 +100,7 @@ printStackOfThreads() {
     done
 }
 
-if [ -z ${pid} ] ; then 
+if [ -z "${pid}" ] ; then 
     ps -Leo pid,lwp,user,comm,pcpu --no-headers | awk '$4=="java"{print $0}' |
     sort -k5 -r -n | head --lines "${count}" | printStackOfThreads
 else

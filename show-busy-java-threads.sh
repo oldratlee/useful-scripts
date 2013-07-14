@@ -24,7 +24,7 @@ EOF
     exit $1
 }
 
-ARGS=`getopt -a -o c:p:h -l count:,pid:,help -- "$@"`
+ARGS=`getopt -n "$PROG" -a -o c:p:h -l count:,pid:,help -- "$@"`
 [ $? -ne 0 ] && usage 1
 eval set -- "${ARGS}"
 

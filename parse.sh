@@ -200,7 +200,8 @@ parseOpts() {
             ;;
         --*)
             local opt=${1#--}
-            local mode=findOptMode "$opt"
+            local mode=`findOptMode "$opt"`
+            redEcho "mode of $1 = $mode"
             case "$mode" in
             :)
                 setOptValue "$opt" "$2"
@@ -220,7 +221,8 @@ parseOpts() {
             ;;
         -*)
             local opt=${1#-}
-            local mode=findOptMode "$opt"
+            local mode=`findOptMode "$opt"`
+            redEcho "mode of $1 = $mode"
             case "$mode" in
             :)
                 setOptValue "$opt" "$2"
@@ -251,18 +253,18 @@ findOptMode() {
     for idxName in "${_OPT_INFO_LIST_INDEX[@]}" ; do
         local ele0PlaceHolder="$idxName[0]"
 
-        local arrayLenPlaceHolder="$idxName[#]"
-        local len=${!arrayLenPlaceHolder}
+        local arrayPlaceHolder="$idxName[@]"
+        local tmpArray=( "${!arrayPlaceHolder}" )
         
-        for (( i = 1; i < $len; i++)); do
+        for (( i = 1; i < ${#tmpArray[@]}; i++)); do
             local arrayElePlaceHolder="$idxName[$i]"
             [ "$opt" = "${!arrayElePlaceHolder}" ] && {
-                return "${!ele0PlaceHolder}"
+                echo "${!ele0PlaceHolder}"
             }
         done
     done
 
-    return ""
+    echo ""
 }
 
 #################################################

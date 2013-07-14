@@ -87,16 +87,79 @@ indirectReferredArray() {
 # Parse Methods
 #################################################
 
+findOptMode() {
+    opt="$1"
+    for idxName in "${_OPT_INFO_LIST_INDEX[@]}" ; do
+        local ele0PlaceHolder="$idxName[0]"
+
+        local arrayPlaceHolder="$idxName[@]"
+        local tmpArray=( "${!arrayPlaceHolder}" )
+        
+        for (( i = 1; i < ${#tmpArray[@]}; i++)); do
+            local arrayElePlaceHolder="$idxName[$i]"
+            [ "$opt" = "${!arrayElePlaceHolder}" ] && {
+                echo "${!ele0PlaceHolder}"
+            }
+        done
+    done
+
+    echo ""
+}
+
 setOptBool() {
-    return
+    setOptValue "$@"
 }
 
 setOptValue() {
-    return
+    local opt="$1"
+    local value="$2"
+
+    opt="$1"
+    for idxName in "${_OPT_INFO_LIST_INDEX[@]}" ; do
+        local ele0PlaceHolder="$idxName[0]"
+
+        local arrayPlaceHolder="$idxName[@]"
+        local tmpArray=( "${!arrayPlaceHolder}" )
+        
+        for (( i = 1; i < ${#tmpArray[@]}; i++)); do
+            local arrayElePlaceHolder="$idxName[$i]"
+            [ "$opt" = "${!arrayElePlaceHolder}" ] && {
+                for (( j = 1; j < ${#tmpArray[@]}; j++)); do
+                    local name="`echo ${tmpArray[$j]} | sed 's/-/_/g'`"
+                    eval "_OPT_VALUE_$name=\"\$value\""
+                done
+            }
+        done
+    done
+
+    redEcho "NOT Fount option $opt!"
+    return 1
 }
 
 setOptArray() {
-    return
+    local opt="$1"
+    shift
+
+    opt="$1"
+    for idxName in "${_OPT_INFO_LIST_INDEX[@]}" ; do
+        local ele0PlaceHolder="$idxName[0]"
+
+        local arrayPlaceHolder="$idxName[@]"
+        local tmpArray=( "${!arrayPlaceHolder}" )
+        
+        for (( i = 1; i < ${#tmpArray[@]}; i++)); do
+            local arrayElePlaceHolder="$idxName[$i]"
+            [ "$opt" = "${!arrayElePlaceHolder}" ] && {
+                for (( j = 1; j < ${#tmpArray[@]}; j++)); do
+                    local name="`echo ${tmpArray[$j]} | sed 's/-/_/g'`"
+                    eval "_OPT_VALUE_$name=\"(\$@)\""
+                done
+            }
+        done
+    done
+
+    redEcho "NOT Fount option $opt!"
+    return 1
 }
 
 showOptDescInfoList() {
@@ -203,15 +266,29 @@ parseOpts() {
             local mode=`findOptMode "$opt"`
             redEcho "mode of $1 = $mode"
             case "$mode" in
+            -)
+                setOptBool "$opt" "true"
+                shift
+                ;;
             :)
                 setOptValue "$opt" "$2"
                 shift 2
                 ;;
             +)
+                local valueArray=()
+                local foundComma=""
+                for value in "$@" ; do
+                    [ ";" -eq "$value"] && {
+                        foundComma=true
+                        break
+                    } || valueArray=("${valueArray[@]}" "$value")
+                done
+                [ -z ] && {
+                    redEcho "value of option $opt no end comma, value = ${valueArray[@]}"
+                    return 228
+                }
+                shift "$((${#valueArray[@]} + 2))"
                 setOptArray "$opt"
-                ;;
-            -)
-                setOptBool "$opt"
                 ;;
             *)
                 redEcho "Undefined option $opt!"
@@ -224,15 +301,29 @@ parseOpts() {
             local mode=`findOptMode "$opt"`
             redEcho "mode of $1 = $mode"
             case "$mode" in
+            -)
+                setOptBool "$opt" "true"
+                shift
+                ;;
             :)
                 setOptValue "$opt" "$2"
                 shift 2
                 ;;
             +)
+                local valueArray=()
+                local foundComma=""
+                for value in "$@" ; do
+                    [ ";" -eq "$value"] && {
+                        foundComma=true
+                        break
+                    } || valueArray=("${valueArray[@]}" "$value")
+                done
+                [ -z ] && {
+                    redEcho "value of option $opt no end comma, value = ${valueArray[@]}"
+                    return 228
+                }
+                shift "$((${#valueArray[@]} + 2))"
                 setOptArray "$opt"
-                ;;
-            -)
-                setOptBool "$opt"
                 ;;
             *)
                 redEcho "Undefined option $opt!"
@@ -246,25 +337,6 @@ parseOpts() {
             ;;
         esac
     done
-}
-
-findOptMode() {
-    opt="$1"
-    for idxName in "${_OPT_INFO_LIST_INDEX[@]}" ; do
-        local ele0PlaceHolder="$idxName[0]"
-
-        local arrayPlaceHolder="$idxName[@]"
-        local tmpArray=( "${!arrayPlaceHolder}" )
-        
-        for (( i = 1; i < ${#tmpArray[@]}; i++)); do
-            local arrayElePlaceHolder="$idxName[$i]"
-            [ "$opt" = "${!arrayElePlaceHolder}" ] && {
-                echo "${!ele0PlaceHolder}"
-            }
-        done
-    done
-
-    echo ""
 }
 
 #################################################

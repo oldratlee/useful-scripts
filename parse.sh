@@ -75,19 +75,52 @@ extractValue() {
     awk -F= '{print $2}' | sed -r 's/^\s*//;s/\s*$//'
 }
 
+indirectReferredArray() {
+    redEcho "$1"
+    local arrayName="$1"
+    local arrayNamePlaceHolder="$arrayName[@]"
+    local ret=( "${!arrayNamePlaceHolder}" )
+    return ret
+}
+
 #################################################
 # Parse Methods
 #################################################
+
+setOptBool() {
+    return
+}
+
+setOptValue() {
+    return
+}
+
+setOptArray() {
+    return
+}
+
+showOptDescInfoList() {
+    echo "===================================================="
+    echo "show option desc info list:"
+    for idx in "${_OPT_INFO_LIST_INDEX[@]}"; do
+        local arrayPlaceHolder="$idx[@]"
+        echo "$idx = ${!arrayPlaceHolder}"
+    done
+    echo "===================================================="
+}
 
 parseOpts() {
     local optsDescription="$1" # optsDescription LIKE a,a-long|b,b-long:|c,c-long+
     shift
 
-    local OPTS_TUPLES=()
-    echo "$optsDescription" | 
-    # cut head and tail space
-    sed -r 's/^\s+//;s/\s+$//' |
-    awk -F '[\t ]*\\|[\t ]*' '{for(i=1; i<=NF; i++) print $i}' |
+    _OPT_INFO_LIST_INDEX=()
+    
+    local optDescLines=`echo "$optsDescription" | 
+        # cut head and tail space
+        sed -r 's/^\s+//;s/\s+$//' |
+        awk -F '[\t ]*\\\\|[\t ]*' '{for(i=1; i<=NF; i++) print $i}'`
+    blueEcho "xxx optDescLines=$optDescLines"
+    
     while read optDesc ; do # optDesc LIKE b,b-long:
         local mode="${optDesc:(-1)}" # LIKE : or +
         case "$mode" in
@@ -98,7 +131,7 @@ parseOpts() {
             mode="-"
             ;;
         esac
-        echo "XXX mode=$mode optDesc=$optDesc"
+        blueEcho "XXX splite mode: mode=$mode optDesc=$optDesc"
 
         local optsLine=`echo "$optDesc" | awk -F '[\t ]*,[\t ]*' '{for(i=1; i<=NF; i++) print $i}'` # a\na-long
 
@@ -108,7 +141,7 @@ parseOpts() {
         }
 
         local optTuple=()
-        echo "$optsLine" | while read opt ; do # opt LIKE a , a-long
+        while read opt ; do # opt LIKE a , a-long
             [ -z "$opt" ] && continue
             
             [ ${#opt} -eq 1 ] && {
@@ -122,58 +155,114 @@ parseOpts() {
                     return 223
                 }
             }
-            optTuple=(${optTuple[@]} opt)
-        done
+            optTuple=("${optTuple[@]}" "$opt")
+            blueEcho "optTuple: ${optTuple[@]}"
+        done < <(echo "$optsLine")
 
-        echo "XXX $optDesc ${optTuple[@]}"
+        blueEcho "XXX find out optTuple: optDesc=$optDesc optTuple=${optTuple[@]}"
         [ ${#optTuple[@]} -gt 2 ] && {
             redEcho "more than 2 opt($optDesc) in option description!" 1>&2
             return 223
         }
 
         local optTupleNames=
+        local evalOpts=
         for o in "${optTuple[@]}"; do
-            optTupleNames+="$o"
+            optTupleNames+=_`echo "$o" | sed 's/-/_/g'`
+            evalOpts+=" $o"
         done
+        blueEcho "XXX optTupleNames=$optTupleNames"
 
-        eval "optTupleNames=($mode ${optTuple[@]})"
-        OPTS_TUPLES=("${OPTS_TUPLES[@]}", optTupleNames)
+        eval "$optTupleNames=($mode $evalOpts)"
+        blueEcho "XXX eval $optTupleNames=($mode $evalOpts)"
+
+        local arrayNamePlaceHolder="$optTupleNames[@]"
+        blueEcho "XXX optTupleNames Array=$optTupleNames ! ${!arrayNamePlaceHolder} "
+
+        _OPT_INFO_LIST_INDEX=("${_OPT_INFO_LIST_INDEX[@]}" "$optTupleNames")
+        blueEcho "XXX _OPT_INFO_LIST_INDEX=${_OPT_INFO_LIST_INDEX[@]}"
+    done < <(echo "$optDescLines")
+
+    showOptDescInfoList
+
+    local args=()
+
+    while true; do
+        case "$1" in
+        ---*)
+            echo "Illegal option($1), more than 2 prefix -!" 1>&2
+            return 221
+            ;;
+        --)
+            shift
+            args=("${args[@]}" "$@")
+            break
+            ;;
+        --*)
+            local opt=${1#--}
+            local mode=findOptMode "$opt"
+            case "$mode" in
+            :)
+                setOptValue "$opt" "$2"
+                shift 2
+                ;;
+            +)
+                setOptArray "$opt"
+                ;;
+            -)
+                setOptBool "$opt"
+                ;;
+            *)
+                redEcho "Undefined option $opt!"
+                return 225
+                ;;
+            esac
+            ;;
+        -*)
+            local opt=${1#-}
+            local mode=findOptMode "$opt"
+            case "$mode" in
+            :)
+                setOptValue "$opt" "$2"
+                shift 2
+                ;;
+            +)
+                setOptArray "$opt"
+                ;;
+            -)
+                setOptBool "$opt"
+                ;;
+            *)
+                redEcho "Undefined option $opt!"
+                return 225
+                ;;
+            esac
+            ;;
+        *)
+            args=("${args[@]}" "$1")
+            shift
+            ;;
+        esac
+    done
+}
+
+findOptMode() {
+    opt="$1"
+    for idxName in "${_OPT_INFO_LIST_INDEX[@]}" ; do
+        local ele0PlaceHolder="$idxName[0]"
+
+        local arrayLenPlaceHolder="$idxName[#]"
+        local len=${!arrayLenPlaceHolder}
+        
+        for (( i = 1; i < $len; i++)); do
+            local arrayElePlaceHolder="$idxName[$i]"
+            [ "$opt" = "${!arrayElePlaceHolder}" ] && {
+                return "${!ele0PlaceHolder}"
+            }
+        done
     done
 
-    echo "${OPTS_TUPLES[@]}"
-    for o in "${OPTS_TUPLES[@]}" ; do
-        eval "echo \"[\${$o[@]}]\""
-    done
-
-    # local args=()
-
-    # while true; do
-    #     case "$1" in
-    #     ---*)
-    #         echo "Illegal option($1), more than 2 prefix -!" 1>&2
-    #         return 221
-    #     --)
-    #         shift
-    #         args=("${args[@]}" "$@")
-    #         break
-    #         ;;
-    #     --*)
-    #         local opt=${1#--}
-    #         local value=$2
-    #         shift 2
-    #         ;;
-    #     -*)
-    #         local opt=${1#-}
-    #         local value=$2
-    #         shift 2
-    #         ;;
-    #     *)
-    #         args=("${args[@]}" "$1")
-    #         shift
-    #         break
-    #         ;;
-    #     esac
-    # done
+    return ""
 }
 
 #################################################

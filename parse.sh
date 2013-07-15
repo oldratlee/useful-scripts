@@ -242,7 +242,7 @@ parseOpts() {
 
         [ $(echo "$optLines" | wc -l) -gt 2 ] && {
             redEcho "Illegal option description($optDesc), more than 2 opt name!" 1>&2
-            return 223
+            return 220
         }
 
         local optTuple=()
@@ -252,12 +252,12 @@ parseOpts() {
             [ ${#opt} -eq 1 ] && {
                 redEcho "$opt" | grep -E '^[a-zA-Z0-9]$' -q || {
                     echo "Illegal short option name($opt in $optDesc) in option description!" 1>&2
-                    return 223
+                    return 221
                 }
             } || {
                 echo "$opt" | grep -E '^[-a-zA-Z0-9]+$' -q || {
                     redEcho "Illegal long option name($opt in $optDesc) in option description!" 1>&2
-                    return 223
+                    return 221
                 }
             }
             optTuple=("${optTuple[@]}" "$opt")
@@ -266,7 +266,7 @@ parseOpts() {
 
         [ ${#optTuple[@]} -gt 2 ] && {
             redEcho "more than 2 opt($optDesc) in option description!" 1>&2
-            return 223
+            return 222
         }
 
         local idxName=
@@ -298,7 +298,7 @@ parseOpts() {
         case "$1" in
         ---*)
             echo "Illegal option($1), more than 2 prefix -!" 1>&2
-            return 221
+            return 230
             ;;
         --)
             shift
@@ -317,7 +317,7 @@ parseOpts() {
             :)
                 [ $# -lt 2 ] && {
                     redEcho "Option $opt has NO value!"
-                    return 228
+                    return 231
                 } 
                 setOptValue "$opt" "$2"
                 shift 2
@@ -334,7 +334,7 @@ parseOpts() {
                 done
                 [ "$foundComma" ] || {
                     redEcho "value of option $opt no end comma, value = ${valueArray[@]}"
-                    return 228
+                    return 231
                 }
                 redEcho shift "$((${#valueArray[@]} + 2))"
                 shift "$((${#valueArray[@]} + 1))"
@@ -343,7 +343,7 @@ parseOpts() {
                 ;;
             *)
                 redEcho "Undefined option $opt!"
-                return 225
+                return 232
                 ;;
             esac
             ;;

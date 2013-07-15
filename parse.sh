@@ -32,10 +32,10 @@ blueEcho() {
 }
 
 echoCmdLineThenTimedRun() {
-    echo ===============================================================================
+    echo "==============================================================================="
     echo "run command below: "
     echo "$@"
-    echo ===============================================================================
+    echo "==============================================================================="
     local start=`date +%s`
     "$@"
     local exitCode=$?
@@ -170,17 +170,17 @@ setOptArray() {
 }
 
 showOptDescInfoList() {
-    echo "===================================================="
+    echo "==============================================================================="
     echo "show option desc info list:"
     for idxName in "${_OPT_INFO_LIST_INDEX[@]}"; do
         local idxNameArrayPlaceHolder="$idxName[@]"
         echo "$idxName = ${!idxNameArrayPlaceHolder}"
     done
-    echo "===================================================="
+    echo "==============================================================================="
 }
 
 showOptValueInfoList() {
-    echo "===================================================="
+    echo "==============================================================================="
     echo "show option value info list:"
     for idxName in "${_OPT_INFO_LIST_INDEX[@]}"; do
         local ele0PlaceHolder="$idxName[0]"
@@ -209,7 +209,7 @@ showOptValueInfoList() {
         done
     done
     echo "_OPT_ARGS=(${_OPT_ARGS[@]})"
-    echo "===================================================="
+    echo "==============================================================================="
 }
 
 parseOpts() {
@@ -360,5 +360,5 @@ parseOpts() {
 # Main Methods
 #################################################
 
-parseOpts "a,a-long|b,b-long:|c,c-long+|d,d-long+" aa -a -b bb -c c.sh -a -b -c cc a1 a2 \; bb -d d.sh d1 d2 d3 \; bb2 -- cc dd
+parseOpts "a,a-long|b,b-long:|c,c-long+|d,d-long+" aa -a -x -b bb -c c.sh -a -b -c cc a1 a2 \; bb -d d.sh d1 d2 d3 \; bb2 -- cc dd
 showOptValueInfoList

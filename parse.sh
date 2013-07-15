@@ -90,10 +90,15 @@ convertToVarName() {
 
 #################################################
 # Parse Methods
+# Use Globle Variable: 
+# * _OPT_INFO_LIST_INDEX : Option info, data structure.
+#                          _OPT_INFO_LIST_INDEX ->* _a_a_long -> option value.
+# * _OPT_VALUE_* : value of option. is Array type for + mode option
+# * _OPT_ARGS : option arguments
 #################################################
 
 findOptMode() {
-    opt="$1"
+    local opt="$1"
     for idxName in "${_OPT_INFO_LIST_INDEX[@]}" ; do
         local ele0PlaceHolder="$idxName[0]"
         local mode="${!ele0PlaceHolder}"

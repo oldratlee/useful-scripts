@@ -78,9 +78,14 @@ extractValue() {
 indirectReferredArray() {
     redEcho "$1"
     local arrayName="$1"
-    local arrayNamePlaceHolder="$arrayName[@]"
-    local ret=( "${!arrayNamePlaceHolder}" )
+    local arrayPlaceHolder="$arrayName[@]"
+    local ret=( "${!arrayPlaceHolder}" )
     return ret
+}
+
+convertToVarName() {
+    local from="$1"
+    echo "$from" | sed 's/-/_/g'
 }
 
 #################################################
@@ -91,14 +96,16 @@ findOptMode() {
     opt="$1"
     for idxName in "${_OPT_INFO_LIST_INDEX[@]}" ; do
         local ele0PlaceHolder="$idxName[0]"
+        local mode="${!ele0PlaceHolder}"
 
         local arrayPlaceHolder="$idxName[@]"
-        local tmpArray=( "${!arrayPlaceHolder}" )
-        
-        for (( i = 1; i < ${#tmpArray[@]}; i++)); do
+        local optInfo=("${!arrayPlaceHolder}")
+
+        for ((i = 1; i < ${#optInfo[@]}; i++)); do
             local arrayElePlaceHolder="$idxName[$i]"
             [ "$opt" = "${!arrayElePlaceHolder}" ] && {
-                echo "${!ele0PlaceHolder}"
+                echo "$mode"
+                return
             }
         done
     done
@@ -114,25 +121,26 @@ setOptValue() {
     local opt="$1"
     local value="$2"
 
-    opt="$1"
     for idxName in "${_OPT_INFO_LIST_INDEX[@]}" ; do
-        local ele0PlaceHolder="$idxName[0]"
-
         local arrayPlaceHolder="$idxName[@]"
-        local tmpArray=( "${!arrayPlaceHolder}" )
+        local optInfo=("${!arrayPlaceHolder}")
         
-        for (( i = 1; i < ${#tmpArray[@]}; i++)); do
+        for ((i = 1; i < ${#optInfo[@]}; i++)); do
             local arrayElePlaceHolder="$idxName[$i]"
-            [ "$opt" = "${!arrayElePlaceHolder}" ] && {
-                for (( j = 1; j < ${#tmpArray[@]}; j++)); do
-                    local name="`echo ${tmpArray[$j]} | sed 's/-/_/g'`"
-                    eval "_OPT_VALUE_$name=\"\$value\""
+            local optName="${!arrayElePlaceHolder}"
+            [ "$opt" = "$optName" ] && {
+                # set _OPT_VALUE
+                for (( j = 1; j < ${#optInfo[@]}; j++)); do
+                    local name=`convertToVarName "${optInfo[$j]}"`
+                    local from='"$value"'
+                    eval "_OPT_VALUE_$name=$from"
                 done
+                return
             }
         done
     done
 
-    redEcho "NOT Fount option $opt!"
+    redEcho "NOT Found option $opt!"
     return 1
 }
 
@@ -140,20 +148,21 @@ setOptArray() {
     local opt="$1"
     shift
 
-    opt="$1"
     for idxName in "${_OPT_INFO_LIST_INDEX[@]}" ; do
-        local ele0PlaceHolder="$idxName[0]"
-
         local arrayPlaceHolder="$idxName[@]"
-        local tmpArray=( "${!arrayPlaceHolder}" )
+        local optInfo=("${!arrayPlaceHolder}")
         
-        for (( i = 1; i < ${#tmpArray[@]}; i++)); do
+        for ((i = 1; i < ${#optInfo[@]}; i++)); do
             local arrayElePlaceHolder="$idxName[$i]"
-            [ "$opt" = "${!arrayElePlaceHolder}" ] && {
-                for (( j = 1; j < ${#tmpArray[@]}; j++)); do
-                    local name="`echo ${tmpArray[$j]} | sed 's/-/_/g'`"
-                    eval "_OPT_VALUE_$name=\"(\$@)\""
+            local optName="${!arrayElePlaceHolder}"
+            [ "$opt" = "$optName" ] && {
+                # set _OPT_VALUE
+                for (( j = 1; j < ${#optInfo[@]}; j++)); do
+                    local name=`convertToVarName "${optInfo[$j]}"`
+                    local from='"$@"'
+                    eval "_OPT_VALUE_$name=($from)"
                 done
+                return
             }
         done
     done
@@ -165,10 +174,42 @@ setOptArray() {
 showOptDescInfoList() {
     echo "===================================================="
     echo "show option desc info list:"
-    for idx in "${_OPT_INFO_LIST_INDEX[@]}"; do
-        local arrayPlaceHolder="$idx[@]"
-        echo "$idx = ${!arrayPlaceHolder}"
+    for idxName in "${_OPT_INFO_LIST_INDEX[@]}"; do
+        local arrayPlaceHolder="$idxName[@]"
+        echo "$idxName = ${!arrayPlaceHolder}"
     done
+    echo "===================================================="
+}
+
+showOptValueInfoList() {
+    echo "===================================================="
+    echo "show option value info list:"
+    for idxName in "${_OPT_INFO_LIST_INDEX[@]}"; do
+        local ele0PlaceHolder="$idxName[0]"
+        local mode="${!ele0PlaceHolder}"
+
+        local arrayPlaceHolder="$idxName[@]"
+        local optInfo=("${!arrayPlaceHolder}")
+        for ((i = 1; i < ${#optInfo[@]}; i++)); do
+            local arrayElePlaceHolder="$idxName[$i]"
+            local optName="${!arrayElePlaceHolder}"
+            local optValueVarName="_OPT_VALUE_`convertToVarName "$optName"`"
+
+            case "$mode" in
+            -)
+                echo "$optValueVarName=${!optValueVarName}"
+                ;;
+            :)
+                echo "$optValueVarName=${!optValueVarName}"
+                ;;
+            +)
+                local arrPlaceHolder="$optValueVarName[@]"
+                echo "$optValueVarName=(${!arrPlaceHolder})"
+                ;;
+            esac
+        done
+    done
+    echo "_OPT_ARGS=(${_OPT_ARGS[@]})"
     echo "===================================================="
 }
 
@@ -182,23 +223,25 @@ parseOpts() {
         # cut head and tail space
         sed -r 's/^\s+//;s/\s+$//' |
         awk -F '[\t ]*\\\\|[\t ]*' '{for(i=1; i<=NF; i++) print $i}'`
-    blueEcho "xxx optDescLines=$optDescLines"
+    blueEcho "XXX optDescLines=$optDescLines"
     
     while read optDesc ; do # optDesc LIKE b,b-long:
+        [ -z "$optDesc" ] && continue
+
         local mode="${optDesc:(-1)}" # LIKE : or +
         case "$mode" in
-        +|:)
+        +|:|-)
             optDesc="${optDesc:0:(${#optDesc}-1)}" # LIKE b,b-long
             ;;
         *)
             mode="-"
             ;;
         esac
-        blueEcho "XXX splite mode: mode=$mode optDesc=$optDesc"
+        blueEcho "XXX splite mode and optDesc: mode=$mode optDesc=$optDesc"
 
-        local optsLine=`echo "$optDesc" | awk -F '[\t ]*,[\t ]*' '{for(i=1; i<=NF; i++) print $i}'` # a\na-long
+        local optLines=`echo "$optDesc" | awk -F '[\t ]*,[\t ]*' '{for(i=1; i<=NF; i++) print $i}'` # a\na-long
 
-        [ $(echo "$optsLine" | wc -l) -gt 2 ] && {
+        [ $(echo "$optLines" | wc -l) -gt 2 ] && {
             redEcho "Illegal option description($optDesc), more than 2 opt name!" 1>&2
             return 223
         }
@@ -219,38 +262,40 @@ parseOpts() {
                 }
             }
             optTuple=("${optTuple[@]}" "$opt")
-            blueEcho "optTuple: ${optTuple[@]}"
-        done < <(echo "$optsLine")
+        done < <(echo "$optLines")
+        blueEcho "XXX find out optTuple: optDesc=$optDesc optTuple=(${optTuple[@]})"
 
-        blueEcho "XXX find out optTuple: optDesc=$optDesc optTuple=${optTuple[@]}"
         [ ${#optTuple[@]} -gt 2 ] && {
             redEcho "more than 2 opt($optDesc) in option description!" 1>&2
             return 223
         }
 
-        local optTupleNames=
+        local optInfo=
         local evalOpts=
         for o in "${optTuple[@]}"; do
-            optTupleNames+=_`echo "$o" | sed 's/-/_/g'`
+            optInfo+="_`convertToVarName "$o"`"
             evalOpts+=" $o"
         done
-        blueEcho "XXX optTupleNames=$optTupleNames"
+        blueEcho "XXX optInfo=$optInfo"
 
-        eval "$optTupleNames=($mode $evalOpts)"
-        blueEcho "XXX eval $optTupleNames=($mode $evalOpts)"
+        eval "$optInfo=($mode $evalOpts)"
+        blueEcho "XXX eval $optInfo=($mode $evalOpts)"
 
-        local arrayNamePlaceHolder="$optTupleNames[@]"
-        blueEcho "XXX optTupleNames Array=$optTupleNames ! ${!arrayNamePlaceHolder} "
+        local arrayPlaceHolder="$optInfo[@]"
+        blueEcho "XXX optInfo Array $optInfo = (${!arrayPlaceHolder})"
 
-        _OPT_INFO_LIST_INDEX=("${_OPT_INFO_LIST_INDEX[@]}" "$optTupleNames")
-        blueEcho "XXX _OPT_INFO_LIST_INDEX=${_OPT_INFO_LIST_INDEX[@]}"
+        _OPT_INFO_LIST_INDEX=("${_OPT_INFO_LIST_INDEX[@]}" "$optInfo")
+        blueEcho "XXX _OPT_INFO_LIST_INDEX=(${_OPT_INFO_LIST_INDEX[@]})"
     done < <(echo "$optDescLines")
 
     showOptDescInfoList
 
-    local args=()
+    redEcho "YYY start parse!"
 
+    local args=()
     while true; do
+        [ $# -eq 0 ] && break
+
         case "$1" in
         ---*)
             echo "Illegal option($1), more than 2 prefix -!" 1>&2
@@ -261,43 +306,8 @@ parseOpts() {
             args=("${args[@]}" "$@")
             break
             ;;
-        --*)
-            local opt=${1#--}
-            local mode=`findOptMode "$opt"`
-            redEcho "mode of $1 = $mode"
-            case "$mode" in
-            -)
-                setOptBool "$opt" "true"
-                shift
-                ;;
-            :)
-                setOptValue "$opt" "$2"
-                shift 2
-                ;;
-            +)
-                local valueArray=()
-                local foundComma=""
-                for value in "$@" ; do
-                    [ ";" -eq "$value"] && {
-                        foundComma=true
-                        break
-                    } || valueArray=("${valueArray[@]}" "$value")
-                done
-                [ -z ] && {
-                    redEcho "value of option $opt no end comma, value = ${valueArray[@]}"
-                    return 228
-                }
-                shift "$((${#valueArray[@]} + 2))"
-                setOptArray "$opt"
-                ;;
-            *)
-                redEcho "Undefined option $opt!"
-                return 225
-                ;;
-            esac
-            ;;
         -*)
-            local opt=${1#-}
+            local opt=`echo "$1" | sed -r 's/^--?//'`
             local mode=`findOptMode "$opt"`
             redEcho "mode of $1 = $mode"
             case "$mode" in
@@ -310,20 +320,23 @@ parseOpts() {
                 shift 2
                 ;;
             +)
+                shift
                 local valueArray=()
                 local foundComma=""
                 for value in "$@" ; do
-                    [ ";" -eq "$value"] && {
+                    [ ";" = "$value" ] && {
                         foundComma=true
                         break
                     } || valueArray=("${valueArray[@]}" "$value")
                 done
-                [ -z ] && {
+                [ "$foundComma" ] || {
                     redEcho "value of option $opt no end comma, value = ${valueArray[@]}"
                     return 228
                 }
-                shift "$((${#valueArray[@]} + 2))"
-                setOptArray "$opt"
+                redEcho shift "$((${#valueArray[@]} + 2))"
+                shift "$((${#valueArray[@]} + 1))"
+                redEcho setOptArray "$opt" "${valueArray[@]}"
+                setOptArray "$opt" "${valueArray[@]}"
                 ;;
             *)
                 redEcho "Undefined option $opt!"
@@ -332,10 +345,12 @@ parseOpts() {
             esac
             ;;
         *)
+            redEcho "========= $1"
             args=("${args[@]}" "$1")
             shift
             ;;
         esac
+        _OPT_ARGS=("$args")
     done
 }
 
@@ -344,6 +359,7 @@ parseOpts() {
 #################################################
 
 parseOpts "a,a-long|b,b-long:|c,c-long+" "$@"
+showOptValueInfoList
 
 # echo "a: "
 # echo "$_OPT_a"

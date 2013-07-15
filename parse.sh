@@ -90,6 +90,7 @@ convertToVarName() {
 
 #################################################
 # Parse Methods
+#
 # Use Globle Variable: 
 # * _OPT_INFO_LIST_INDEX : Option info, data structure.
 #                          _OPT_INFO_LIST_INDEX ->* _a_a_long -> option value.
@@ -311,7 +312,7 @@ parseOpts() {
             args=("${args[@]}" "$@")
             break
             ;;
-        -*)
+        -*) # short & long option(-a, -a-long), use same read-in logic.
             local opt=`echo "$1" | sed -r 's/^--?//'`
             local mode=`findOptMode "$opt"`
             redEcho "mode of $1 = $mode"
@@ -321,6 +322,10 @@ parseOpts() {
                 shift
                 ;;
             :)
+                [ $# -lt 2 ] && {
+                    redEcho "Option $opt has NO value!"
+                    return 228
+                } 
                 setOptValue "$opt" "$2"
                 shift 2
                 ;;
@@ -350,13 +355,12 @@ parseOpts() {
             esac
             ;;
         *)
-            redEcho "========= $1"
             args=("${args[@]}" "$1")
             shift
             ;;
         esac
-        _OPT_ARGS=("$args")
     done
+    _OPT_ARGS=("${args[@]}")
 }
 
 #################################################

@@ -75,14 +75,6 @@ extractValue() {
     awk -F= '{print $2}' | sed -r 's/^\s*//;s/\s*$//'
 }
 
-indirectReferredArray() {
-    redEcho "$1"
-    local arrayName="$1"
-    local arrayPlaceHolder="$arrayName[@]"
-    local ret=( "${!arrayPlaceHolder}" )
-    return ret
-}
-
 convertToVarName() {
     local from="$1"
     echo "$from" | sed 's/-/_/g'
@@ -104,10 +96,10 @@ findOptMode() {
         local ele0PlaceHolder="$idxName[0]"
         local mode="${!ele0PlaceHolder}"
 
-        local arrayPlaceHolder="$idxName[@]"
-        local optInfo=("${!arrayPlaceHolder}")
+        local idxNameArrayPlaceHolder="$idxName[@]"
+        local idxNameArray=("${!idxNameArrayPlaceHolder}")
 
-        for ((i = 1; i < ${#optInfo[@]}; i++)); do
+        for ((i = 1; i < ${#idxNameArray[@]}; i++)); do
             local arrayElePlaceHolder="$idxName[$i]"
             [ "$opt" = "${!arrayElePlaceHolder}" ] && {
                 echo "$mode"
@@ -128,16 +120,16 @@ setOptValue() {
     local value="$2"
 
     for idxName in "${_OPT_INFO_LIST_INDEX[@]}" ; do
-        local arrayPlaceHolder="$idxName[@]"
-        local optInfo=("${!arrayPlaceHolder}")
+        local idxNameArrayPlaceHolder="$idxName[@]"
+        local idxNameArray=("${!idxNameArrayPlaceHolder}")
         
-        for ((i = 1; i < ${#optInfo[@]}; i++)); do
+        for ((i = 1; i < ${#idxNameArray[@]}; i++)); do
             local arrayElePlaceHolder="$idxName[$i]"
             local optName="${!arrayElePlaceHolder}"
             [ "$opt" = "$optName" ] && {
                 # set _OPT_VALUE
-                for (( j = 1; j < ${#optInfo[@]}; j++)); do
-                    local name=`convertToVarName "${optInfo[$j]}"`
+                for (( j = 1; j < ${#idxNameArray[@]}; j++)); do
+                    local name=`convertToVarName "${idxNameArray[$j]}"`
                     local from='"$value"'
                     eval "_OPT_VALUE_$name=$from"
                 done
@@ -155,16 +147,16 @@ setOptArray() {
     shift
 
     for idxName in "${_OPT_INFO_LIST_INDEX[@]}" ; do
-        local arrayPlaceHolder="$idxName[@]"
-        local optInfo=("${!arrayPlaceHolder}")
+        local idxNameArrayPlaceHolder="$idxName[@]"
+        local idxNameArray=("${!idxNameArrayPlaceHolder}")
         
-        for ((i = 1; i < ${#optInfo[@]}; i++)); do
+        for ((i = 1; i < ${#idxNameArray[@]}; i++)); do
             local arrayElePlaceHolder="$idxName[$i]"
             local optName="${!arrayElePlaceHolder}"
             [ "$opt" = "$optName" ] && {
                 # set _OPT_VALUE
-                for (( j = 1; j < ${#optInfo[@]}; j++)); do
-                    local name=`convertToVarName "${optInfo[$j]}"`
+                for (( j = 1; j < ${#idxNameArray[@]}; j++)); do
+                    local name=`convertToVarName "${idxNameArray[$j]}"`
                     local from='"$@"'
                     eval "_OPT_VALUE_$name=($from)"
                 done
@@ -173,7 +165,7 @@ setOptArray() {
         done
     done
 
-    redEcho "NOT Fount option $opt!"
+    redEcho "NOT Found option $opt!"
     return 1
 }
 
@@ -181,8 +173,8 @@ showOptDescInfoList() {
     echo "===================================================="
     echo "show option desc info list:"
     for idxName in "${_OPT_INFO_LIST_INDEX[@]}"; do
-        local arrayPlaceHolder="$idxName[@]"
-        echo "$idxName = ${!arrayPlaceHolder}"
+        local idxNameArrayPlaceHolder="$idxName[@]"
+        echo "$idxName = ${!idxNameArrayPlaceHolder}"
     done
     echo "===================================================="
 }
@@ -194,9 +186,10 @@ showOptValueInfoList() {
         local ele0PlaceHolder="$idxName[0]"
         local mode="${!ele0PlaceHolder}"
 
-        local arrayPlaceHolder="$idxName[@]"
-        local optInfo=("${!arrayPlaceHolder}")
-        for ((i = 1; i < ${#optInfo[@]}; i++)); do
+        local idxNameArrayPlaceHolder="$idxName[@]"
+        local idxNameArray=("${!idxNameArrayPlaceHolder}")
+
+        for ((i = 1; i < ${#idxNameArray[@]}; i++)); do
             local arrayElePlaceHolder="$idxName[$i]"
             local optName="${!arrayElePlaceHolder}"
             local optValueVarName="_OPT_VALUE_`convertToVarName "$optName"`"
@@ -209,8 +202,8 @@ showOptValueInfoList() {
                 echo "$optValueVarName=${!optValueVarName}"
                 ;;
             +)
-                local arrPlaceHolder="$optValueVarName[@]"
-                echo "$optValueVarName=(${!arrPlaceHolder})"
+                local OptInfoArrayPlaceHolder="$optValueVarName[@]"
+                echo "$optValueVarName=(${!OptInfoArrayPlaceHolder})"
                 ;;
             esac
         done
@@ -276,21 +269,21 @@ parseOpts() {
             return 223
         }
 
-        local optInfo=
+        local idxName=
         local evalOpts=
         for o in "${optTuple[@]}"; do
-            optInfo+="_`convertToVarName "$o"`"
+            idxName+="_`convertToVarName "$o"`"
             evalOpts+=" $o"
         done
-        blueEcho "XXX optInfo=$optInfo"
+        blueEcho "XXX idxName=$idxName"
 
-        eval "$optInfo=($mode $evalOpts)"
-        blueEcho "XXX eval $optInfo=($mode $evalOpts)"
+        eval "$idxName=($mode $evalOpts)"
+        blueEcho "XXX eval $idxName=($mode $evalOpts)"
 
-        local arrayPlaceHolder="$optInfo[@]"
-        blueEcho "XXX optInfo Array $optInfo = (${!arrayPlaceHolder})"
+        local idxNameArrayPlaceHolder="$idxName[@]"
+        blueEcho "XXX idxName Array $idxName = (${!idxNameArrayPlaceHolder})"
 
-        _OPT_INFO_LIST_INDEX=("${_OPT_INFO_LIST_INDEX[@]}" "$optInfo")
+        _OPT_INFO_LIST_INDEX=("${_OPT_INFO_LIST_INDEX[@]}" "$idxName")
         blueEcho "XXX _OPT_INFO_LIST_INDEX=(${_OPT_INFO_LIST_INDEX[@]})"
     done < <(echo "$optDescLines")
 
@@ -367,19 +360,5 @@ parseOpts() {
 # Main Methods
 #################################################
 
-parseOpts "a,a-long|b,b-long:|c,c-long+" "$@"
+parseOpts "a,a-long|b,b-long:|c,c-long+|d,d-long+" aa -a -b bb -c c.sh -a -b -c cc a1 a2 \; bb -d d.sh d1 d2 d3 \; bb2 -- cc dd
 showOptValueInfoList
-
-# echo "a: "
-# echo "$_OPT_a"
-# echo "$_OPT_a_long"
-
-# echo "b: "
-# echo "$_OPT_b"
-# echo "$_OPT_b"
-
-# echo "c:"
-# echo "$_OPT_c"
-# echo "$_OPT_c_long"
-
-# echo "${_ARGS_[@]}"

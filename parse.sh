@@ -157,11 +157,6 @@ setOptValue() {
 }
 
 setOptArray() {
-    [ $# -ne 2 ] && {
-        redEcho "NOT 2 arguemnts when call setOptArray: $@"
-        return 1
-    }
-
     local opt="$1"
     shift
 

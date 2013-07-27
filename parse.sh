@@ -231,6 +231,10 @@ showOptValueInfoList() {
     echo "==============================================================================="
 }
 
+cleanOptValueInfoList() {
+    unset _OPT_INFO_LIST_INDEX
+}
+
 parseOpts() {
     local optsDescription="$1" # optsDescription LIKE a,a-long|b,b-long:|c,c-long+
     shift
@@ -259,6 +263,7 @@ parseOpts() {
 
         [ $(echo "$optLines" | wc -l) -gt 2 ] && {
             redEcho "Illegal option description($optDesc), more than 2 opt name!" 1>&2
+            cleanOptValueInfoList
             return 220
         }
 
@@ -269,11 +274,13 @@ parseOpts() {
             [ ${#opt} -eq 1 ] && {
                 redEcho "$opt" | grep -E '^[a-zA-Z0-9]$' -q || {
                     echo "Illegal short option name($opt in $optDesc) in option description!" 1>&2
+                    cleanOptValueInfoList
                     return 221
                 }
             } || {
                 echo "$opt" | grep -E '^[-a-zA-Z0-9]+$' -q || {
                     redEcho "Illegal long option name($opt in $optDesc) in option description!" 1>&2
+                    cleanOptValueInfoList
                     return 221
                 }
             }
@@ -282,6 +289,7 @@ parseOpts() {
 
         [ ${#optTuple[@]} -gt 2 ] && {
             redEcho "more than 2 opt($optDesc) in option description!" 1>&2
+            cleanOptValueInfoList
             return 222
         }
 
@@ -306,6 +314,7 @@ parseOpts() {
         case "$1" in
         ---*)
             echo "Illegal option($1), more than 2 prefix -!" 1>&2
+            cleanOptValueInfoList
             return 230
             ;;
         --)
@@ -323,7 +332,8 @@ parseOpts() {
                 ;;
             :)
                 [ $# -lt 2 ] && {
-                    redEcho "Option $opt has NO value!"
+                    echo "Option $opt has NO value!" 1>&2
+                    cleanOptValueInfoList
                     return 231
                 } 
                 setOptValue "$opt" "$2"
@@ -340,14 +350,16 @@ parseOpts() {
                     } || valueArray=("${valueArray[@]}" "$value")
                 done
                 [ "$foundComma" ] || {
-                    redEcho "value of option $opt no end comma, value = ${valueArray[@]}"
+                    echo "value of option $opt no end comma, value = ${valueArray[@]}" 1>&2
+                    cleanOptValueInfoList
                     return 231
                 }
                 shift "$((${#valueArray[@]} + 1))"
                 setOptArray "$opt" "${valueArray[@]}"
                 ;;
             *)
-                redEcho "Undefined option $opt!"
+                echo "Undefined option $opt!" 1>&2
+                cleanOptValueInfoList
                 return 232
                 ;;
             esac
@@ -370,3 +382,5 @@ showOptDescInfoList
 showOptValueInfoList
 
 parseOpts "a,a-long|b,b-long:|c,c-long+|d,d-long+" aa -a -b bb -x -c c.sh -p pv -q qv \; bb -d -d d.sh d1 d2 d3 \; cc -- dd ee
+showOptDescInfoList
+showOptValueInfoList

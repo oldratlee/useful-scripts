@@ -95,6 +95,11 @@ convertToVarName() {
 #################################################
 
 findOptMode() {
+    [ $# -ne 1 ] && {
+        redEcho "NOT 1 arguemnts when call findOptMode: $@"
+        return 1
+    }
+
     local opt="$1"
     for idxName in "${_OPT_INFO_LIST_INDEX[@]}" ; do
         local ele0PlaceHolder="$idxName[0]"
@@ -120,6 +125,11 @@ setOptBool() {
 }
 
 setOptValue() {
+    [ $# -ne 2 ] && {
+        redEcho "NOT 2 arguemnts when call setOptValue: $@"
+        return 1
+    }
+
     local opt="$1"
     local value="$2"
 
@@ -147,6 +157,11 @@ setOptValue() {
 }
 
 setOptArray() {
+    [ $# -ne 2 ] && {
+        redEcho "NOT 2 arguemnts when call setOptArray: $@"
+        return 1
+    }
+
     local opt="$1"
     shift
 
@@ -193,7 +208,7 @@ showOptValueInfoList() {
         local idxNameArrayPlaceHolder="$idxName[@]"
         local idxNameArray=("${!idxNameArrayPlaceHolder}")
 
-        for ((i = 1; i < ${#idxNameArray[@]}; i++)); do
+        for ((i = 1; i < ${#idxNameArray[@]}; i++)); do # index from 1, skip mode
             local arrayElePlaceHolder="$idxName[$i]"
             local optName="${!arrayElePlaceHolder}"
             local optValueVarName="_OPT_VALUE_`convertToVarName "$optName"`"
@@ -220,7 +235,7 @@ parseOpts() {
     local optsDescription="$1" # optsDescription LIKE a,a-long|b,b-long:|c,c-long+
     shift
 
-    _OPT_INFO_LIST_INDEX=()
+    _OPT_INFO_LIST_INDEX=() # Global var
     
     local optDescLines=`echo "$optsDescription" | 
         # cut head and tail space

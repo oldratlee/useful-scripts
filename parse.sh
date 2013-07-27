@@ -27,6 +27,10 @@ greenEcho() {
     colorEcho 32 "$@"
 }
 
+yellowEcho() {
+    colorEcho 33 "$@"
+}
+
 blueEcho() {
     colorEcho 34 "$@"
 }

@@ -227,8 +227,6 @@ showOptValueInfoList() {
 }
 
 cleanOptValueInfoList() {
-    echo "==============================================================================="
-    echo "show option value info list:"
     for idxName in "${_OPT_INFO_LIST_INDEX[@]}"; do
         local idxNameArrayPlaceHolder="$idxName[@]"
         local idxNameArray=("${!idxNameArrayPlaceHolder}")

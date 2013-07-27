@@ -297,7 +297,6 @@ parseOpts() {
         -*) # short & long option(-a, -a-long), use same read-in logic.
             local opt=`echo "$1" | sed -r 's/^--?//'`
             local mode=`findOptMode "$opt"`
-            redEcho "mode of $1 = $mode"
             case "$mode" in
             -)
                 setOptBool "$opt" "true"
@@ -325,9 +324,7 @@ parseOpts() {
                     redEcho "value of option $opt no end comma, value = ${valueArray[@]}"
                     return 231
                 }
-                redEcho shift "$((${#valueArray[@]} + 2))"
                 shift "$((${#valueArray[@]} + 1))"
-                redEcho setOptArray "$opt" "${valueArray[@]}"
                 setOptArray "$opt" "${valueArray[@]}"
                 ;;
             *)

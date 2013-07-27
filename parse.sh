@@ -143,9 +143,9 @@ setOptValue() {
             [ "$opt" = "$optName" ] && {
                 # set _OPT_VALUE
                 for (( j = 1; j < ${#idxNameArray[@]}; j++)); do
-                    local name=`convertToVarName "${idxNameArray[$j]}"`
+                    local optValueVarName="_OPT_VALUE_`convertToVarName "${idxNameArray[$j]}"`"
                     local from='"$value"'
-                    eval "_OPT_VALUE_$name=$from"
+                    eval "$optValueVarName=$from"
                 done
                 return
             }
@@ -170,9 +170,9 @@ setOptArray() {
             [ "$opt" = "$optName" ] && {
                 # set _OPT_VALUE
                 for (( j = 1; j < ${#idxNameArray[@]}; j++)); do
-                    local name=`convertToVarName "${idxNameArray[$j]}"`
+                    local optValueVarName="_OPT_VALUE_`convertToVarName "${idxNameArray[$j]}"`"
                     local from='"$@"'
-                    eval "_OPT_VALUE_$name=($from)"
+                    eval "$optValueVarName=($from)"
                 done
                 return
             }
@@ -227,7 +227,22 @@ showOptValueInfoList() {
 }
 
 cleanOptValueInfoList() {
+    echo "==============================================================================="
+    echo "show option value info list:"
+    for idxName in "${_OPT_INFO_LIST_INDEX[@]}"; do
+        local idxNameArrayPlaceHolder="$idxName[@]"
+        local idxNameArray=("${!idxNameArrayPlaceHolder}")
+
+        for ((i = 1; i < ${#idxNameArray[@]}; i++)); do # index from 1, skip mode
+            local arrayElePlaceHolder="$idxName[$i]"
+            local optName="${!arrayElePlaceHolder}"
+            local optValueVarName="_OPT_VALUE_`convertToVarName "$optName"`"
+            eval "unset $optValueVarName"
+        done
+    done
+
     unset _OPT_INFO_LIST_INDEX
+    unset _OPT_ARGS
 }
 
 parseOpts() {

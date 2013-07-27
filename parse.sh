@@ -222,7 +222,6 @@ parseOpts() {
         # cut head and tail space
         sed -r 's/^\s+//;s/\s+$//' |
         awk -F '[\t ]*\\\\|[\t ]*' '{for(i=1; i<=NF; i++) print $i}'`
-    blueEcho "XXX optDescLines=$optDescLines"
     
     while read optDesc ; do # optDesc LIKE b,b-long:
         [ -z "$optDesc" ] && continue
@@ -236,7 +235,6 @@ parseOpts() {
             mode="-"
             ;;
         esac
-        blueEcho "XXX splite mode and optDesc: mode=$mode optDesc=$optDesc"
 
         local optLines=`echo "$optDesc" | awk -F '[\t ]*,[\t ]*' '{for(i=1; i<=NF; i++) print $i}'` # a\na-long
 
@@ -262,7 +260,6 @@ parseOpts() {
             }
             optTuple=("${optTuple[@]}" "$opt")
         done < <(echo "$optLines")
-        blueEcho "XXX find out optTuple: optDesc=$optDesc optTuple=(${optTuple[@]})"
 
         [ ${#optTuple[@]} -gt 2 ] && {
             redEcho "more than 2 opt($optDesc) in option description!" 1>&2
@@ -275,21 +272,13 @@ parseOpts() {
             idxName+="_`convertToVarName "$o"`"
             evalOpts+=" $o"
         done
-        blueEcho "XXX idxName=$idxName"
 
         eval "$idxName=($mode $evalOpts)"
-        blueEcho "XXX eval $idxName=($mode $evalOpts)"
 
         local idxNameArrayPlaceHolder="$idxName[@]"
-        blueEcho "XXX idxName Array $idxName = (${!idxNameArrayPlaceHolder})"
 
         _OPT_INFO_LIST_INDEX=("${_OPT_INFO_LIST_INDEX[@]}" "$idxName")
-        blueEcho "XXX _OPT_INFO_LIST_INDEX=(${_OPT_INFO_LIST_INDEX[@]})"
     done < <(echo "$optDescLines")
-
-    showOptDescInfoList
-
-    redEcho "YYY start parse!"
 
     local args=()
     while true; do
@@ -361,6 +350,7 @@ parseOpts() {
 #################################################
 
 parseOpts "a,a-long|b,b-long:|c,c-long+|d,d-long+" aa -a -b bb -c c.sh -a -b -c cc a1 a2 \; bb -d d.sh d1 d2 d3 \; cc -- dd ee
+showOptDescInfoList
 showOptValueInfoList
 
 parseOpts "a,a-long|b,b-long:|c,c-long+|d,d-long+" aa -a -b bb -x -c c.sh -p pv -q qv \; bb -d -d d.sh d1 d2 d3 \; cc -- dd ee

@@ -94,9 +94,9 @@ convertToVarName() {
 # * _OPT_ARGS : option arguments
 #################################################
 
-findOptMode() {
+_opts_findOptMode() {
     [ $# -ne 1 ] && {
-        redEcho "NOT 1 arguemnts when call findOptMode: $@"
+        redEcho "NOT 1 arguemnts when call _opts_findOptMode: $@"
         return 1
     }
 
@@ -120,13 +120,18 @@ findOptMode() {
     echo ""
 }
 
-setOptBool() {
-    setOptValue "$@"
+_opts_setOptBool() {
+    [ $# -ne 2 ] && {
+        redEcho "NOT 2 arguemnts when call _opts_setOptBool: $@"
+        return 1
+    }
+    
+    _opts_setOptValue "$@"
 }
 
-setOptValue() {
+_opts_setOptValue() {
     [ $# -ne 2 ] && {
-        redEcho "NOT 2 arguemnts when call setOptValue: $@"
+        redEcho "NOT 2 arguemnts when call _opts_setOptValue: $@"
         return 1
     }
 
@@ -156,7 +161,7 @@ setOptValue() {
     return 1
 }
 
-setOptArray() {
+_opts_setOptArray() {
     local opt="$1"
     shift
 
@@ -183,7 +188,7 @@ setOptArray() {
     return 1
 }
 
-showOptDescInfoList() {
+_opts_showOptDescInfoList() {
     echo "==============================================================================="
     echo "show option desc info list:"
     for idxName in "${_OPT_INFO_LIST_INDEX[@]}"; do
@@ -193,7 +198,7 @@ showOptDescInfoList() {
     echo "==============================================================================="
 }
 
-showOptValueInfoList() {
+_opts_showOptValueInfoList() {
     echo "==============================================================================="
     echo "show option value info list:"
     for idxName in "${_OPT_INFO_LIST_INDEX[@]}"; do
@@ -226,7 +231,7 @@ showOptValueInfoList() {
     echo "==============================================================================="
 }
 
-cleanOptValueInfoList() {
+_opts_cleanOptValueInfoList() {
     for idxName in "${_OPT_INFO_LIST_INDEX[@]}"; do
         local idxNameArrayPlaceHolder="$idxName[@]"
         local idxNameArray=("${!idxNameArrayPlaceHolder}")
@@ -271,7 +276,7 @@ parseOpts() {
 
         [ $(echo "$optLines" | wc -l) -gt 2 ] && {
             redEcho "Illegal option description($optDesc), more than 2 opt name!" 1>&2
-            cleanOptValueInfoList
+            _opts_cleanOptValueInfoList
             return 220
         }
 
@@ -282,13 +287,13 @@ parseOpts() {
             [ ${#opt} -eq 1 ] && {
                 redEcho "$opt" | grep -E '^[a-zA-Z0-9]$' -q || {
                     echo "Illegal short option name($opt in $optDesc) in option description!" 1>&2
-                    cleanOptValueInfoList
+                    _opts_cleanOptValueInfoList
                     return 221
                 }
             } || {
                 echo "$opt" | grep -E '^[-a-zA-Z0-9]+$' -q || {
                     redEcho "Illegal long option name($opt in $optDesc) in option description!" 1>&2
-                    cleanOptValueInfoList
+                    _opts_cleanOptValueInfoList
                     return 221
                 }
             }
@@ -297,7 +302,7 @@ parseOpts() {
 
         [ ${#optTuple[@]} -gt 2 ] && {
             redEcho "more than 2 opt($optDesc) in option description!" 1>&2
-            cleanOptValueInfoList
+            _opts_cleanOptValueInfoList
             return 222
         }
 
@@ -322,7 +327,7 @@ parseOpts() {
         case "$1" in
         ---*)
             echo "Illegal option($1), more than 2 prefix -!" 1>&2
-            cleanOptValueInfoList
+            _opts_cleanOptValueInfoList
             return 230
             ;;
         --)
@@ -332,19 +337,19 @@ parseOpts() {
             ;;
         -*) # short & long option(-a, -a-long), use same read-in logic.
             local opt=`echo "$1" | sed -r 's/^--?//'`
-            local mode=`findOptMode "$opt"`
+            local mode=`_opts_findOptMode "$opt"`
             case "$mode" in
             -)
-                setOptBool "$opt" "true"
+                _opts_setOptBool "$opt" "true"
                 shift
                 ;;
             :)
                 [ $# -lt 2 ] && {
                     echo "Option $opt has NO value!" 1>&2
-                    cleanOptValueInfoList
+                    _opts_cleanOptValueInfoList
                     return 231
                 } 
-                setOptValue "$opt" "$2"
+                _opts_setOptValue "$opt" "$2"
                 shift 2
                 ;;
             +)
@@ -359,15 +364,15 @@ parseOpts() {
                 done
                 [ "$foundComma" ] || {
                     echo "value of option $opt no end comma, value = ${valueArray[@]}" 1>&2
-                    cleanOptValueInfoList
+                    _opts_cleanOptValueInfoList
                     return 231
                 }
                 shift "$((${#valueArray[@]} + 1))"
-                setOptArray "$opt" "${valueArray[@]}"
+                _opts_setOptArray "$opt" "${valueArray[@]}"
                 ;;
             *)
                 echo "Undefined option $opt!" 1>&2
-                cleanOptValueInfoList
+                _opts_cleanOptValueInfoList
                 return 232
                 ;;
             esac
@@ -386,9 +391,9 @@ parseOpts() {
 #################################################
 
 parseOpts "a,a-long|b,b-long:|c,c-long+|d,d-long+" aa -a -b bb -c c.sh -a -b -c cc a1 a2 \; bb -d d.sh d1 d2 d3 \; cc -- dd ee
-showOptDescInfoList
-showOptValueInfoList
+_opts_showOptDescInfoList
+_opts_showOptValueInfoList
 
 parseOpts "a,a-long|b,b-long:|c,c-long+|d,d-long+" aa -a -b bb -x -c c.sh -p pv -q qv \; bb -d -d d.sh d1 d2 d3 \; cc -- dd ee
-showOptDescInfoList
-showOptValueInfoList
+_opts_showOptDescInfoList
+_opts_showOptValueInfoList

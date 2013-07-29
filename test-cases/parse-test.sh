@@ -106,7 +106,7 @@ _opts_showOptDescInfoList
 _opts_showOptValueInfoList
 
 [ $exitCode -eq 0 ] || fail "Wrong exit code!"
-[ ${#_OPT_INFO_LIST_INDEX[@]} -eq 0 ] || fail "Wrong _OPT_INFO_LIST_INDEX!"
+[ ${#_OPT_INFO_LIST_INDEX[@]} -eq 4 ] || fail "Wrong _OPT_INFO_LIST_INDEX!"
 [ "$_OPT_VALUE_a" = "" ] && [ "$_OPT_VALUE_a_long"  = "" ] || fail "Wrong option value of a!"
 [ "$_OPT_VALUE_b" = "" ] && [ "$_OPT_VALUE_b_long" = "" ] || fail "Wrong option value of b!"
 [ "$_OPT_VALUE_c" = "" ] && [ "$_OPT_VALUE_c_long" = "" ] || fail "Wrong option value of c!"
@@ -117,7 +117,7 @@ _opts_showOptValueInfoList
 
 blueEcho "Test case: illegal option name"
 
-parseOpts "a,a-long|b,b-long:|c,c-long+|d,d-long+|-#,-z-long" aa -a -b bb -x -c c.sh -p pv -q qv cc \; bb -d d.sh -x xv d1 d2 d3 \; cc -- dd ee
+parseOpts "a,a-long|b,b-long:|c,c-long+|d,d-long+|#,z-long" aa -a -b bb -x -c c.sh -p pv -q qv cc \; bb -d d.sh -x xv d1 d2 d3 \; cc -- dd ee
 exitCode=$?
 _opts_showOptDescInfoList
 _opts_showOptValueInfoList
@@ -131,7 +131,7 @@ _opts_showOptValueInfoList
 [ "$_OPT_ARGS" = "" ] || fail "Wrong args!"
 
 
-parseOpts "a,a-long|b,b-long:|c,c-long+|d,d-long+|-z,-z-#long" aa -a -b bb -x -c c.sh -p pv -q qv cc \; bb -d d.sh -x xv d1 d2 d3 \; cc -- dd ee
+parseOpts "a,a-long|b,b-long:|c,c-long+|d,d-long+|z,z-#long" aa -a -b bb -x -c c.sh -p pv -q qv cc \; bb -d d.sh -x xv d1 d2 d3 \; cc -- dd ee
 exitCode=$?
 _opts_showOptDescInfoList
 _opts_showOptValueInfoList

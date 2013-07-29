@@ -197,7 +197,7 @@ parseOpts() {
             
             [ ${#opt} -eq 1 ] && {
                 echo "$opt" | grep -E '^[a-zA-Z0-9]$' -q || {
-                    echo "Illegal short option name($opt in $optDesc) in option description!" 1>&2
+                    _opts_redEcho "Illegal short option name($opt in $optDesc) in option description!" 1>&2
                     _opts_cleanOptValueInfoList
                     return 221
                 }
@@ -254,7 +254,7 @@ parseOpts() {
                 ;;
             :)
                 [ $# -lt 2 ] && {
-                    echo "Option $opt has NO value!" 1>&2
+                    _opts_redEcho "Option $opt has NO value!" 1>&2
                     _opts_cleanOptValueInfoList
                     return 231
                 } 
@@ -272,7 +272,7 @@ parseOpts() {
                     } || valueArray=("${valueArray[@]}" "$value")
                 done
                 [ "$foundComma" ] || {
-                    echo "value of option $opt no end comma, value = ${valueArray[@]}" 1>&2
+                    _opts_redEcho "value of option $opt no end comma, value = ${valueArray[@]}" 1>&2
                     _opts_cleanOptValueInfoList
                     return 231
                 }
@@ -280,7 +280,7 @@ parseOpts() {
                 _opts_setOptArray "$optName" "${valueArray[@]}"
                 ;;
             *)
-                echo "Undefined option $opt!" 1>&2
+                _opts_redEcho "Undefined option $opt!" 1>&2
                 _opts_cleanOptValueInfoList
                 return 232
                 ;;

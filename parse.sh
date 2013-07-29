@@ -1,4 +1,21 @@
 #!/bin/bash
+# @Function
+#   parse options lib, support multiple values for one option.
+#
+# @Usage
+#   source this script to your script file, then use func parseOpts.
+#   parseOpts func useage sample:
+#   $ parseOpts "a,a-long|b,b-long:|c,c-long+" -a -b bv -c c.sh -p pv -q qv arg1 \; aa bb cc
+#       then below globle var is set:
+#           _OPT_VALUE_a = true
+#           _OPT_VALUE_a_long = true
+#           _OPT_VALUE_b = bv
+#           _OPT_VALUE_b_long = bv
+#           _OPT_VALUE_c = (c.sh -p pv -q qv arg1) # Array type
+#           _OPT_VALUE_c_long = (c.sh -p pv -q qv arg1) # Array type
+#           _OPT_ARGS = (aa bb cc) # Array type
+#
+# @author Jerry Lee
 
 #####################################################################
 # Utils Methods
@@ -22,8 +39,11 @@ _opts_redEcho() {
 }
 
 _opts_convertToVarName() {
-    local from="$1"
-    echo "$from" | sed 's/-/_/g'
+    [ $# -ne 1 ] && {
+        _opts_redEcho "NOT 1 arguemnts when call _opts_convertToVarName: $@"
+        return 1
+    }
+    echo "$1" | sed 's/-/_/g'
 }
 
 #####################################################################
@@ -42,7 +62,7 @@ _opts_findOptMode() {
         return 1
     }
 
-    local opt="$1"
+    local opt="$1" # like a, a-long
     for idxName in "${_OPT_INFO_LIST_INDEX[@]}" ; do
         local idxNameArrayPlaceHolder="$idxName[@]"
         local idxNameArray=("${!idxNameArrayPlaceHolder}")
@@ -75,7 +95,7 @@ _opts_setOptValue() {
         return 1
     }
 
-    local opt="$1"
+    local opt="$1" # like a, a-long
     local value="$2"
 
     for idxName in "${_OPT_INFO_LIST_INDEX[@]}" ; do
@@ -100,7 +120,7 @@ _opts_setOptValue() {
 }
 
 _opts_setOptArray() {
-    local opt="$1"
+    local opt="$1" # like a, a-long
     shift
 
     for idxName in "${_OPT_INFO_LIST_INDEX[@]}" ; do

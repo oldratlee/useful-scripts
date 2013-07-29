@@ -185,7 +185,7 @@ parseOpts() {
                 echo "$opt" | grep -E '^[-a-zA-Z0-9]+$' -q || {
                     _opts_redEcho "Illegal long option name($opt in $optDesc) in option description!" 1>&2
                     _opts_cleanOptValueInfoList
-                    return 221
+                    return 222
                 }
             }
             optTuple=("${optTuple[@]}" "$opt")
@@ -194,7 +194,7 @@ parseOpts() {
         [ ${#optTuple[@]} -gt 2 ] && {
             _opts_redEcho "more than 2 opt($optDesc) in option description!" 1>&2
             _opts_cleanOptValueInfoList
-            return 222
+            return 223
         }
 
         local idxName=

@@ -44,15 +44,13 @@ _opts_findOptMode() {
 
     local opt="$1"
     for idxName in "${_OPT_INFO_LIST_INDEX[@]}" ; do
-        local ele0PlaceHolder="$idxName[0]"
-        local mode="${!ele0PlaceHolder}"
-
         local idxNameArrayPlaceHolder="$idxName[@]"
         local idxNameArray=("${!idxNameArrayPlaceHolder}")
 
-        for ((i = 1; i < ${#idxNameArray[@]}; i++)); do
-            local arrayElePlaceHolder="$idxName[$i]"
-            [ "$opt" = "${!arrayElePlaceHolder}" ] && {
+        local mode="${idxNameArray[0]}"
+
+        for optName in "${idxNameArray:1:${#idxNameArray[@]}}"; do
+            [ "$opt" = "${optName}" ] && {
                 echo "$mode"
                 return
             }
@@ -83,14 +81,12 @@ _opts_setOptValue() {
     for idxName in "${_OPT_INFO_LIST_INDEX[@]}" ; do
         local idxNameArrayPlaceHolder="$idxName[@]"
         local idxNameArray=("${!idxNameArrayPlaceHolder}")
-        
-        for ((i = 1; i < ${#idxNameArray[@]}; i++)); do
-            local arrayElePlaceHolder="$idxName[$i]"
-            local optName="${!arrayElePlaceHolder}"
+
+        for optName in "${idxNameArray:1:${#idxNameArray[@]}}"; do
             [ "$opt" = "$optName" ] && {
                 # set _OPT_VALUE
-                for (( j = 1; j < ${#idxNameArray[@]}; j++)); do
-                    local optValueVarName="_OPT_VALUE_`_opts_convertToVarName "${idxNameArray[$j]}"`"
+                for optName2 in "${idxNameArray:1:${#idxNameArray[@]}}"; do
+                    local optValueVarName="_OPT_VALUE_`_opts_convertToVarName "${optName2}"`"
                     local from='"$value"'
                     eval "$optValueVarName=$from"
                 done
@@ -111,13 +107,11 @@ _opts_setOptArray() {
         local idxNameArrayPlaceHolder="$idxName[@]"
         local idxNameArray=("${!idxNameArrayPlaceHolder}")
         
-        for ((i = 1; i < ${#idxNameArray[@]}; i++)); do
-            local arrayElePlaceHolder="$idxName[$i]"
-            local optName="${!arrayElePlaceHolder}"
+        for optName in "${idxNameArray:1:${#idxNameArray[@]}}"; do
             [ "$opt" = "$optName" ] && {
                 # set _OPT_VALUE
-                for (( j = 1; j < ${#idxNameArray[@]}; j++)); do
-                    local optValueVarName="_OPT_VALUE_`_opts_convertToVarName "${idxNameArray[$j]}"`"
+                for optName2 in "${idxNameArray:1:${#idxNameArray[@]}}"; do
+                    local optValueVarName="_OPT_VALUE_`_opts_convertToVarName "${optName2}"`"
                     local from='"$@"'
                     eval "$optValueVarName=($from)"
                 done
@@ -135,9 +129,7 @@ _opts_cleanOptValueInfoList() {
         local idxNameArrayPlaceHolder="$idxName[@]"
         local idxNameArray=("${!idxNameArrayPlaceHolder}")
 
-        for ((i = 1; i < ${#idxNameArray[@]}; i++)); do # index from 1, skip mode
-            local arrayElePlaceHolder="$idxName[$i]"
-            local optName="${!arrayElePlaceHolder}"
+        for optName in "${idxNameArray:1:${#idxNameArray[@]}}"; do # index from 1, skip mode
             local optValueVarName="_OPT_VALUE_`_opts_convertToVarName "$optName"`"
             eval "unset $optValueVarName"
         done
@@ -303,17 +295,13 @@ _opts_showOptValueInfoList() {
     echo "==============================================================================="
     echo "show option value info list:"
     for idxName in "${_OPT_INFO_LIST_INDEX[@]}"; do
-        local ele0PlaceHolder="$idxName[0]"
-        local mode="${!ele0PlaceHolder}"
-
         local idxNameArrayPlaceHolder="$idxName[@]"
         local idxNameArray=("${!idxNameArrayPlaceHolder}")
 
-        for ((i = 1; i < ${#idxNameArray[@]}; i++)); do # index from 1, skip mode
-            local arrayElePlaceHolder="$idxName[$i]"
-            local optName="${!arrayElePlaceHolder}"
-            local optValueVarName="_OPT_VALUE_`_opts_convertToVarName "$optName"`"
+        local mode=${idxNameArray[0]}
 
+        for optName in "${idxNameArray:1:${#idxNameArray[@]}}"; do # index from 1, skip mode
+            local optValueVarName="_OPT_VALUE_`_opts_convertToVarName "$optName"`" 
             case "$mode" in
             -)
                 echo "$optValueVarName=${!optValueVarName}"

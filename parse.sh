@@ -49,7 +49,7 @@ _opts_findOptMode() {
 
         local mode="${idxNameArray[0]}"
 
-        for optName in "${idxNameArray:1:${#idxNameArray[@]}}"; do
+        for optName in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do
             [ "$opt" = "${optName}" ] && {
                 echo "$mode"
                 return
@@ -82,10 +82,10 @@ _opts_setOptValue() {
         local idxNameArrayPlaceHolder="$idxName[@]"
         local idxNameArray=("${!idxNameArrayPlaceHolder}")
 
-        for optName in "${idxNameArray:1:${#idxNameArray[@]}}"; do
+        for optName in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do
             [ "$opt" = "$optName" ] && {
                 # set _OPT_VALUE
-                for optName2 in "${idxNameArray:1:${#idxNameArray[@]}}"; do
+                for optName2 in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do
                     local optValueVarName="_OPT_VALUE_`_opts_convertToVarName "${optName2}"`"
                     local from='"$value"'
                     eval "$optValueVarName=$from"
@@ -107,10 +107,10 @@ _opts_setOptArray() {
         local idxNameArrayPlaceHolder="$idxName[@]"
         local idxNameArray=("${!idxNameArrayPlaceHolder}")
         
-        for optName in "${idxNameArray:1:${#idxNameArray[@]}}"; do
+        for optName in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do
             [ "$opt" = "$optName" ] && {
                 # set _OPT_VALUE
-                for optName2 in "${idxNameArray:1:${#idxNameArray[@]}}"; do
+                for optName2 in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do
                     local optValueVarName="_OPT_VALUE_`_opts_convertToVarName "${optName2}"`"
                     local from='"$@"'
                     eval "$optValueVarName=($from)"
@@ -129,7 +129,7 @@ _opts_cleanOptValueInfoList() {
         local idxNameArrayPlaceHolder="$idxName[@]"
         local idxNameArray=("${!idxNameArrayPlaceHolder}")
 
-        for optName in "${idxNameArray:1:${#idxNameArray[@]}}"; do # index from 1, skip mode
+        for optName in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do # index from 1, skip mode
             local optValueVarName="_OPT_VALUE_`_opts_convertToVarName "$optName"`"
             eval "unset $optValueVarName"
         done
@@ -227,11 +227,12 @@ parseOpts() {
             break
             ;;
         -*) # short & long option(-a, -a-long), use same read-in logic.
-            local opt=`echo "$1" | sed -r 's/^--?//'`
-            local mode=`_opts_findOptMode "$opt"`
+            local opt="$1"
+            local optName=`echo "$1" | sed -r 's/^--?//'`
+            local mode=`_opts_findOptMode "$optName"`
             case "$mode" in
             -)
-                _opts_setOptBool "$opt" "true"
+                _opts_setOptBool "$optName" "true"
                 shift
                 ;;
             :)
@@ -240,7 +241,7 @@ parseOpts() {
                     _opts_cleanOptValueInfoList
                     return 231
                 } 
-                _opts_setOptValue "$opt" "$2"
+                _opts_setOptValue "$optName" "$2"
                 shift 2
                 ;;
             +)
@@ -259,7 +260,7 @@ parseOpts() {
                     return 231
                 }
                 shift "$((${#valueArray[@]} + 1))"
-                _opts_setOptArray "$opt" "${valueArray[@]}"
+                _opts_setOptArray "$optName" "${valueArray[@]}"
                 ;;
             *)
                 echo "Undefined option $opt!" 1>&2
@@ -300,7 +301,7 @@ _opts_showOptValueInfoList() {
 
         local mode=${idxNameArray[0]}
 
-        for optName in "${idxNameArray:1:${#idxNameArray[@]}}"; do # index from 1, skip mode
+        for optName in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do # index from 1, skip mode
             local optValueVarName="_OPT_VALUE_`_opts_convertToVarName "$optName"`" 
             case "$mode" in
             -)

@@ -49,7 +49,7 @@ _opts_findOptMode() {
 
         local mode="${idxNameArray[0]}"
 
-        for optName in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do
+        for optName in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do # index from 1, skip mode
             [ "$opt" = "${optName}" ] && {
                 echo "$mode"
                 return
@@ -82,7 +82,7 @@ _opts_setOptValue() {
         local idxNameArrayPlaceHolder="$idxName[@]"
         local idxNameArray=("${!idxNameArrayPlaceHolder}")
 
-        for optName in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do
+        for optName in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do # index from 1, skip mode
             [ "$opt" = "$optName" ] && {
                 # set _OPT_VALUE
                 for optName2 in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do
@@ -107,7 +107,7 @@ _opts_setOptArray() {
         local idxNameArrayPlaceHolder="$idxName[@]"
         local idxNameArray=("${!idxNameArrayPlaceHolder}")
         
-        for optName in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do
+        for optName in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do # index from 1, skip mode
             [ "$opt" = "$optName" ] && {
                 # set _OPT_VALUE
                 for optName2 in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do
@@ -287,7 +287,7 @@ _opts_showOptDescInfoList() {
     echo "show option desc info list:"
     for idxName in "${_OPT_INFO_LIST_INDEX[@]}"; do
         local idxNameArrayPlaceHolder="$idxName[@]"
-        echo "$idxName = ${!idxNameArrayPlaceHolder}"
+        echo "$idxName = (${!idxNameArrayPlaceHolder})"
     done
     echo "==============================================================================="
 }
@@ -311,8 +311,8 @@ _opts_showOptValueInfoList() {
                 echo "$optValueVarName=${!optValueVarName}"
                 ;;
             +)
-                local OptInfoArrayPlaceHolder="$optValueVarName[@]"
-                echo "$optValueVarName=(${!OptInfoArrayPlaceHolder})"
+                local optArrayValueArrayPlaceHolder="$optValueVarName[@]"
+                echo "$optValueVarName=(${!optArrayValueArrayPlaceHolder})"
                 ;;
             esac
         done

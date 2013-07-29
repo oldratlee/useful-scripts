@@ -196,7 +196,7 @@ parseOpts() {
             [ -z "$opt" ] && continue
             
             [ ${#opt} -eq 1 ] && {
-                _opts_redEcho "$opt" | grep -E '^[a-zA-Z0-9]$' -q || {
+                echo "$opt" | grep -E '^[a-zA-Z0-9]$' -q || {
                     echo "Illegal short option name($opt in $optDesc) in option description!" 1>&2
                     _opts_cleanOptValueInfoList
                     return 221
@@ -225,9 +225,6 @@ parseOpts() {
         done
 
         eval "$idxName=($mode $evalOpts)"
-
-        local idxNameArrayPlaceHolder="$idxName[@]"
-
         _OPT_INFO_LIST_INDEX=("${_OPT_INFO_LIST_INDEX[@]}" "$idxName")
     done < <(echo "$optDescLines")
 
@@ -237,7 +234,7 @@ parseOpts() {
 
         case "$1" in
         ---*)
-            echo "Illegal option($1), more than 2 prefix -!" 1>&2
+            _opts_redEcho "Illegal option($1), more than 2 prefix '-'!" 1>&2
             _opts_cleanOptValueInfoList
             return 230
             ;;

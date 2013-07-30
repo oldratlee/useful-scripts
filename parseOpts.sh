@@ -104,11 +104,10 @@ _opts_setOptValue() {
 
         for optName in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do # index from 1, skip mode
             [ "$opt" = "$optName" ] && {
-                # set _OPT_VALUE
                 for optName2 in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do
                     local optValueVarName="_OPT_VALUE_`_opts_convertToVarName "${optName2}"`"
                     local from='"$value"'
-                    eval "$optValueVarName=$from"
+                    eval "$optValueVarName=$from" # set global var!
                 done
                 return
             }
@@ -133,7 +132,7 @@ _opts_setOptArray() {
                 for optName2 in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do
                     local optValueVarName="_OPT_VALUE_`_opts_convertToVarName "${optName2}"`"
                     local from='"$@"'
-                    eval "$optValueVarName=($from)"
+                    eval "$optValueVarName=($from)" # set global var!
                 done
                 return
             }
@@ -163,7 +162,7 @@ parseOpts() {
     local optsDescription="$1" # optsDescription LIKE a,a-long|b,b-long:|c,c-long+
     shift
 
-    _OPT_INFO_LIST_INDEX=() # Global var
+    _OPT_INFO_LIST_INDEX=() # set global var!
     
     local optDescLines=`echo "$optsDescription" | 
         # cut head and tail space
@@ -292,7 +291,7 @@ parseOpts() {
             ;;
         esac
     done
-    _OPT_ARGS=("${args[@]}")
+    _OPT_ARGS=("${args[@]}") # set global var!
 }
 
 #####################################################################

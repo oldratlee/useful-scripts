@@ -62,7 +62,7 @@ redEcho() {
 
 ## Check the existence of jstack command!
 if ! which jstack &> /dev/null; then
-    if [ -n "$JAVA_HOME" ] && [ -x "$JAVA_HOME/bin/jstack" ]; then
+    if [ -n "$JAVA_HOME" ] && [ -f "$JAVA_HOME/bin/jstack" ] && [ -x "$JAVA_HOME/bin/jstack" ]; then
         export PATH=$PATH:$JAVA_HOME/bin
     else
         redEcho "Error: jstack not found on PATH and JAVA_HOME!"

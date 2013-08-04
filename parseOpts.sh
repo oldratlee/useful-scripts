@@ -63,12 +63,14 @@ _opts_findOptMode() {
     }
 
     local opt="$1" # like a, a-long
+    local idxName
     for idxName in "${_OPT_INFO_LIST_INDEX[@]}" ; do
         local idxNameArrayPlaceHolder="$idxName[@]"
         local idxNameArray=("${!idxNameArrayPlaceHolder}")
 
         local mode="${idxNameArray[0]}"
 
+        local optName
         for optName in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do # index from 1, skip mode
             [ "$opt" = "${optName}" ] && {
                 echo "$mode"
@@ -98,12 +100,15 @@ _opts_setOptValue() {
     local opt="$1" # like a, a-long
     local value="$2"
 
+    local idxName
     for idxName in "${_OPT_INFO_LIST_INDEX[@]}" ; do
         local idxNameArrayPlaceHolder="$idxName[@]"
         local idxNameArray=("${!idxNameArrayPlaceHolder}")
 
+        local optName
         for optName in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do # index from 1, skip mode
             [ "$opt" = "$optName" ] && {
+                local optName2
                 for optName2 in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do
                     local optValueVarName="_OPT_VALUE_`_opts_convertToVarName "${optName2}"`"
                     local from='"$value"'
@@ -122,13 +127,16 @@ _opts_setOptArray() {
     local opt="$1" # like a, a-long
     shift
 
+    local idxName
     for idxName in "${_OPT_INFO_LIST_INDEX[@]}" ; do
         local idxNameArrayPlaceHolder="$idxName[@]"
         local idxNameArray=("${!idxNameArrayPlaceHolder}")
         
+        local optName
         for optName in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do # index from 1, skip mode
             [ "$opt" = "$optName" ] && {
                 # set _OPT_VALUE
+                local optName2
                 for optName2 in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do
                     local optValueVarName="_OPT_VALUE_`_opts_convertToVarName "${optName2}"`"
                     local from='"$@"'
@@ -144,10 +152,12 @@ _opts_setOptArray() {
 }
 
 _opts_cleanOptValueInfoList() {
+    local idxName
     for idxName in "${_OPT_INFO_LIST_INDEX[@]}"; do
         local idxNameArrayPlaceHolder="$idxName[@]"
         local idxNameArray=("${!idxNameArrayPlaceHolder}")
 
+        local optName
         for optName in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do # index from 1, skip mode
             local optValueVarName="_OPT_VALUE_`_opts_convertToVarName "$optName"`"
             eval "unset $optValueVarName"
@@ -218,6 +228,7 @@ parseOpts() {
 
         local idxName=
         local evalOpts=
+        local o
         for o in "${optTuple[@]}"; do
             idxName+="_`_opts_convertToVarName "$o"`"
             evalOpts+=" $o"
@@ -264,6 +275,8 @@ parseOpts() {
                 shift
                 local valueArray=()
                 local foundComma=""
+
+                local value
                 for value in "$@" ; do
                     [ ";" = "$value" ] && {
                         foundComma=true
@@ -301,6 +314,7 @@ parseOpts() {
 _opts_showOptDescInfoList() {
     echo "==============================================================================="
     echo "show option desc info list:"
+    local idxName
     for idxName in "${_OPT_INFO_LIST_INDEX[@]}"; do
         local idxNameArrayPlaceHolder="$idxName[@]"
         echo "$idxName = (${!idxNameArrayPlaceHolder})"
@@ -311,12 +325,14 @@ _opts_showOptDescInfoList() {
 _opts_showOptValueInfoList() {
     echo "==============================================================================="
     echo "show option value info list:"
+    local idxName
     for idxName in "${_OPT_INFO_LIST_INDEX[@]}"; do
         local idxNameArrayPlaceHolder="$idxName[@]"
         local idxNameArray=("${!idxNameArrayPlaceHolder}")
 
         local mode=${idxNameArray[0]}
 
+        local optName
         for optName in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do # index from 1, skip mode
             local optValueVarName="_OPT_VALUE_`_opts_convertToVarName "$optName"`" 
             case "$mode" in

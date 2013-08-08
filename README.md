@@ -141,7 +141,7 @@ parseOpts "a,a-long|b,b-long:|c,c-long+" -a -b bv -c c.sh -p pv -q qv arg1 \; aa
 #	_OPT_VALUE_b_long = bv
 #	_OPT_VALUE_c = (c.sh -p pv -q qv arg1) ，数组类型
 #	_OPT_VALUE_c_long = (c.sh -p pv -q qv arg1) ，数组类型
-#	_OPT_ARGS = (aa bb cc) # Array type
+#	_OPT_ARGS = (aa bb cc) ，数组类型
 ```
 
 cp-svn-url.sh

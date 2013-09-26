@@ -25,6 +25,7 @@ EOF
 }
 
 ARGS=`getopt -n "$PROG" -a -o c:p:h -l count:,pid:,help -- "$@"`
+echo "$ARGS"
 [ $? -ne 0 ] && usage 1
 eval set -- "${ARGS}"
 
@@ -73,7 +74,7 @@ fi
 uuid=`date +%s`_${RANDOM}_$$
 
 cleanupWhenExit() {
-    rm /tmp/${uuid}_* > /dev/null
+    rm /tmp/${uuid}_* &> /dev/null
 }
 trap "cleanupWhenExit" EXIT
 

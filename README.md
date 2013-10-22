@@ -242,3 +242,12 @@ xpl /path/to/dir1 /path/to/foo1.txt
 xpf /path/to/foo1.txt
 xpf /path/to/dir1 /path/to/foo1.txt
 ```
+
+process-command.sh
+==============================
+
+如果一个分布式应用部署在多个节点上，分别登陆到每一台机器上维护非常麻烦，process-command.sh能够帮助你在一台机器上启动节点进程。
+### 示例
+* ./process-command.sh ustc ustc2013 "ls -la"
+* ./process-command.sh ustc ustc2013 "./inm-bigdata-worker-1.0.0-SNAPSHOT/bin/server.sh start"
+* ./process-command.sh ustc ustc2013 "./inm-bigdata-worker-1.0.0-SNAPSHOT/bin/server.sh stop &"

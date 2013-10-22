@@ -47,7 +47,7 @@ PS：如何操作可以参见[@bluedavy](http://weibo.com/bluedavy)的《分布�
 
 这个脚本的功能是，打印出在运行的`Java`进程中，消耗`CPU`最多的线程栈（缺省是5个线程）。
 
-用法：
+### 用法
 
 ```bash
 show-busy-java-threads.sh -c <要显示的线程栈数>
@@ -56,7 +56,7 @@ show-busy-java-threads.sh -c <要显示的线程栈数>
 show-busy-java-threads.sh -c <要显示的线程栈数> -p <指定的Java Process>
 ```
 
-示例：
+### 示例
 
 ```bash
 $ show-busy-java-threads.sh 
@@ -90,37 +90,93 @@ The stack of busy(26.1%) thread(24018/0x5dd2) of java process(23269) of user(adm
 ...
 ```
 
+### 贡献者
+
 [silentforce](https://github.com/silentforce)改进此脚本，增加对环境变量`JAVA_HOME`的判断。
+
+parseOpts.sh
+==========================
+
+提供命令行选项解析函数`parseOpts`，支持选项的值有多个值（即数组）。  
+\# 自己写一个命令行选项解析函数，是因为`bash`的buildin命令`getopts`和加强版本命令`getopt`都不支持数组的值。
+
+### 用法
+
+parseOpts函数的第一个参数是要解析的选项说明，后面跟实际要解析的输入参数。
+
+选项说明可以长选项和短选项，用逗号分隔，如`a,a-long`。不同选项的说明间用坚号分隔，如`a,a-long|b,b-long:`。
+
+选项说明最后可以有选项类型说明：
+
+* `-`，无参数的选项。即有选项则把值设置成`true`。这是缺省的类型。
+* `:`，有参数的选项，值只有一个。
+* `+`，有多个参数值的选项。值要以`;`表示结束。注意，`;`是`Bash`的元字符，可以写成`\;`，具体参见用法示例。
+
+实际要解析的输入参数往往是你的脚本参数，这样parseOpts函数调用一般是:
+```bash
+parseOpts "a,a-long|b,b-long:|c,c-long+" "$@"
+# "$@" 即是回放你的脚本参数
+```
+
+通过约定的全局变量来获取选项值：
+
+* 选项名为`a`，通过全局变量`_OPT_VALUE_a`来获取选项的值。
+* 选项名为`a-long`，通过全局变量`_OPT_VALUE_a_long`来获取选项的值。
+
+即，把选项名的`-`转`_`，再加上前缀`_OPT_VALUE_`对应的全局变量来获得选项值。
+
+选项及选项值剩下的参数，通过`_OPT_ARGS`来获取。
+
+### 示例
+
+```bash
+# 导入parseOpts.sh
+source /path/to/parseOpts.sh
+
+parseOpts "a,a-long|b,b-long:|c,c-long+" -a -b bv -c c.sh -p pv -q qv arg1 \; aa bb cc
+# 可以通过下面全局变量来获得解析的参数值：
+#	_OPT_VALUE_a = true
+#	_OPT_VALUE_a_long = true
+#	_OPT_VALUE_b = bv
+#	_OPT_VALUE_b_long = bv
+#	_OPT_VALUE_c = (c.sh -p pv -q qv arg1) ，数组类型
+#	_OPT_VALUE_c_long = (c.sh -p pv -q qv arg1) ，数组类型
+#	_OPT_ARGS = (aa bb cc) ，数组类型
+```
 
 cp-svn-url.sh
 ==========================
 
 拷贝当前`svn`目录对应的远程分支。
 
-用法：
+### 用法
 
 ```bash
 cp-svn-url.sh # 缺省使用当前目录作为SVN工作目录
 cp-svn-url.sh /path/to/svn/work/directory
 ```
 
-示例：
+### 示例
 
 ```bash
 $ cp-svn-url.sh
 http://www.foo.com/project1/branches/feature1 copied!
 ```
 
-此脚本由[ivanzhangwb](https://github.com/ivanzhangwb)提供。
+### 贡献者
 
-参考资料：[拷贝复制命令行输出放在系统剪贴板上](http://oldratlee.com/post/2012-12-23/command-output-to-clip)，给出了不同系统可用命令。
+[ivanzhangwb](https://github.com/ivanzhangwb)提供此脚本。
+
+### 参考资料
+
+[拷贝复制命令行输出放在系统剪贴板上](http://oldratlee.com/post/2012-12-23/command-output-to-clip)，给出了不同系统可用命令。
 
 find-in-jars.sh
 ==========================
 
 在当前目录下所有`Jar`文件里，查找文件名。
 
-用法：
+### 用法
 
 ```bash
 find-in-jars.sh 'log4j\.properties'
@@ -131,7 +187,7 @@ find-in-jars.sh 'log4j\.properties|log4j\.xml'
 
 注意，后面Pattern是`grep`的扩展正则表达式。
 
-示例：
+### 示例
 
 ```bash
 $ ./find-in-jars 'Service.class$'
@@ -139,7 +195,9 @@ $ ./find-in-jars 'Service.class$'
 ./rpc-benchmark-0.0.1-SNAPSHOT.jar!com/taobao/rpc/benchmark/service/HelloService.class
 ```
 
-参考资料：[在多个Jar(Zip)文件查找Log4J配置文件的Shell命令行](http://oldratlee.com/458/tech/shell/find-file-in-jar-zip-files.html)
+### 参考资料
+
+[在多个Jar(Zip)文件查找Log4J配置文件的Shell命令行](http://oldratlee.com/458/tech/shell/find-file-in-jar-zip-files.html)
 
 echo-args.sh
 ==============================
@@ -148,7 +206,7 @@ echo-args.sh
 
 这个脚本输出脚本收到的参数。在控制台运行时，把参数值括起的括号显示成 **红色**，方便人眼查看。
 
-示例：
+### 示例
 
 ```bash
 $ ./echo-args.sh 1 "  2 foo  " "3        3"
@@ -158,7 +216,7 @@ $ ./echo-args.sh 1 "  2 foo  " "3        3"
 3/3: [3        3]
 ```
 
-使用方式：
+### 使用方式
 
 需要查看某个脚本（实际上也可以是其它的可执行程序）输出参数时，可以这么做：
 
@@ -175,7 +233,7 @@ xpl and xpf
 * xpf: 在文件浏览器中打开指定的文件或文件夹，并选中。   
 \# xpf是`explorer and select file`的缩写。
 
-用法：
+### 用法&示例
 
 ```bash
 xpl /path/to/dir

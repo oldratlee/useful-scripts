@@ -24,7 +24,8 @@ EOF
     exit $1
 }
 
-ARGS=`getopt -a -o c:p:h -l count:,pid:,help -- "$@"`
+ARGS=`getopt -n "$PROG" -a -o c:p:h -l count:,pid:,help -- "$@"`
+echo "$ARGS"
 [ $? -ne 0 ] && usage 1
 eval set -- "${ARGS}"
 
@@ -62,7 +63,7 @@ redEcho() {
 
 ## Check the existence of jstack command!
 if ! which jstack &> /dev/null; then
-    if [ -n "$JAVA_HOME" ] && [ -x "$JAVA_HOME/bin/jstack" ]; then
+    if [ -n "$JAVA_HOME" ] && [ -f "$JAVA_HOME/bin/jstack" ] && [ -x "$JAVA_HOME/bin/jstack" ]; then
         export PATH=$PATH:$JAVA_HOME/bin
     else
         redEcho "Error: jstack not found on PATH and JAVA_HOME!"
@@ -73,7 +74,7 @@ fi
 uuid=`date +%s`_${RANDOM}_$$
 
 cleanupWhenExit() {
-    rm /tmp/${uuid}_* > /dev/null
+    rm /tmp/${uuid}_* &> /dev/null
 }
 trap "cleanupWhenExit" EXIT
 
@@ -89,7 +90,7 @@ printStackOfThreads() {
         
         [ ! -f "${jstackFile}" ] && {
             jstack ${pid} > ${jstackFile} || {
-                redEcho "Fail to jstack java process ${pid}"
+                redEcho "Fail to jstack java process ${pid}!"
                 rm ${jstackFile}
                 continue
             }
@@ -100,7 +101,7 @@ printStackOfThreads() {
     done
 }
 
-if [ -z ${pid} ] ; then 
+if [ -z "${pid}" ] ; then 
     ps -Leo pid,lwp,user,comm,pcpu --no-headers | awk '$4=="java"{print $0}' |
     sort -k5 -r -n | head --lines "${count}" | printStackOfThreads
 else

@@ -201,12 +201,32 @@ $ swtrunk.sh /path/to/svn/work/dir
 # <svn sw output...>
 svn work dir /path/to/svn/work/dir switch from http://www.foo.com/project1/branches/feature1 to http://www.foo.com/project1/trunk !
 
-
 $ swtrunk.sh /path/to/svn/work/dir1 /path/to/svn/work/dir2
 # <svn sw output...>
 svn work dir /path/to/svn/work/dir1 switch from http://www.foo.com/project1/branches/feature1 to http://www.foo.com/project1/trunk !
 # <svn sw output...>
 svn work dir /path/to/svn/work/dir2 switch from http://www.foo.com/project2/branches/feature1 to http://www.foo.com/project2/trunk !
+```
+
+svn-merge-stop-on-copy.sh
+==========================
+
+把指定的远程分支从刚新建分支以来的修改合并到本地SVN目录或是另一个远程分支。
+
+### 用法
+
+```bash
+svn-merge-stop-on-copy.sh <来源的远程分支> # 合并当前本地svn目录
+svn-merge-stop-on-copy.sh <来源的远程分支> <目标本地svn目录>
+svn-merge-stop-on-copy.sh <来源的远程分支> <目标远程分支>
+```
+
+### 示例
+
+```bash
+svn-merge-stop-on-copy.sh http://www.foo.com/project1/branches/feature1 # 缺省使用当前目录作为SVN工作目录
+svn-merge-stop-on-copy.sh http://www.foo.com/project1/branches/feature1 /path/to/svn/work/directory
+svn-merge-stop-on-copy.sh http://www.foo.com/project1/branches/feature1 http://www.foo.com/project1/branches/feature2
 ```
 
 find-in-jars.sh

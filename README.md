@@ -290,6 +290,13 @@ show-console-color.sh
 
 脚本中，也给出了`colorEcho`和`colorEchoWithoutNewLine`函数更方便输出彩色文本。
 
+```bash
+# red text
+colorEcho "0;31;40" "Hello world!"
+# yello text with underscore
+colorEchoWithoutNewLine "4;33;40" "Hello world!"
+```
+
 xpl and xpf
 ==============================
 

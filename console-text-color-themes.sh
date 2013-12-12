@@ -44,7 +44,7 @@ echo "Output of above code:"
 echo -e "    \033[1;36;41mSample Text\033[0m"
 echo
 echo "If you are going crazy to write text in escapes string like me,"
-echo "you can use colorEcho and colorEchoWithoutNewLine in this script."
+echo "you can use colorEcho and colorEchoWithoutNewLine function in this script."
 echo
 echo "Code sample to print color text:"
 echo "    colorEcho \"1;36;41\" \"Sample Text\""

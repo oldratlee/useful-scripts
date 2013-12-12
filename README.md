@@ -288,6 +288,8 @@ show-console-color.sh
 
 显示`Terminator`的全部文字彩色组合的效果。
 
+脚本中，也给出了`colorEcho`和`colorEchoWithoutNewLine`函数更方便输出彩色文本。
+
 xpl and xpf
 ==============================
 

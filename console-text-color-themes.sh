@@ -35,7 +35,7 @@ for style in 0 1 2 3 4 5 6 7; do
 done
 
 echo "Code sample to print color text:"
-echo -n "    echo -e \"\033["
+echo -n '    echo -e "\033['
 colorEchoWithoutNewLine "3;35;40" "1;36;41"
 echo -n "m"
 colorEchoWithoutNewLine "0;32;40" "Sample Text"
@@ -47,7 +47,7 @@ echo "If you are going crazy to write text in escapes string like me,"
 echo "you can use colorEcho and colorEchoWithoutNewLine function in this script."
 echo
 echo "Code sample to print color text:"
-echo "    colorEcho \"1;36;41\" \"Sample Text\""
+echo '    colorEcho "1;36;41" "Sample Text"'
 echo "Output of above code:"
 echo -n "    "
 colorEcho "1;36;41" "Sample Text"

@@ -3,7 +3,7 @@ useful-shells
 
 把平时有用的手动操作做成脚本，这样可以便捷的使用。
 
-有好的脚本 或是 平时常用但没有写成脚本的操作，欢迎[提供](https://github.com/oldratlee/useful-shells/issues)和分享！
+有自己用的好的脚本 或是 平时常用但没有写成脚本的功能，欢迎提供（[提交Issue](https://github.com/oldratlee/useful-shells/issues))和分享（[Fork后提交代码](https://github.com/oldratlee/useful-shells/fork)）！
 
 下载使用
 ========================
@@ -170,6 +170,44 @@ http://www.foo.com/project1/branches/feature1 copied!
 ### 参考资料
 
 [拷贝复制命令行输出放在系统剪贴板上](http://oldratlee.com/post/2012-12-23/command-output-to-clip)，给出了不同系统可用命令。
+
+swtrunk.sh
+==========================
+
+`svn`工作目录从分支（`branches`）切换到主干（`trunk`）。
+
+命令以`SVN`的标准目录命名约定来识别分支和主干。
+即，分支在目录`branches`下，主干在目录`trunk`下。
+示例：
+- 分支： http://www.foo.com/project1/branches/feature1
+- 主干： http://www.foo.com/project1/trunk
+
+### 用法
+
+```bash
+swtrunk.sh # 缺省使用当前目录作为SVN工作目录
+cp-svn-url.sh /path/to/svn/work/directory
+cp-svn-url.sh /path/to/svn/work/directory1 /path/to/svn/work/directory2 # SVN工作目录个数不限制
+```
+
+### 示例
+
+```bash
+$ swtrunk.sh
+# <svn sw output...>
+svn work dir . switch from http://www.foo.com/project1/branches/feature1 to http://www.foo.com/project1/trunk !
+
+$ swtrunk.sh /path/to/svn/work/dir
+# <svn sw output...>
+svn work dir /path/to/svn/work/dir switch from http://www.foo.com/project1/branches/feature1 to http://www.foo.com/project1/trunk !
+
+
+$ swtrunk.sh /path/to/svn/work/dir1 /path/to/svn/work/dir2
+# <svn sw output...>
+svn work dir /path/to/svn/work/dir1 switch from http://www.foo.com/project1/branches/feature1 to http://www.foo.com/project1/trunk !
+# <svn sw output...>
+svn work dir /path/to/svn/work/dir2 switch from http://www.foo.com/project2/branches/feature1 to http://www.foo.com/project2/trunk !
+```
 
 find-in-jars.sh
 ==========================

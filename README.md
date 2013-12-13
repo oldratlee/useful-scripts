@@ -283,19 +283,28 @@ $ ./echo-args.sh 1 "  2 foo  " "3        3"
 
 这样可以不改其它的程序，查看到输入参数的信息。
 
-show-console-color.sh
+console-text-color-themes.sh
 ==============================
 
 显示`Terminator`的全部文字彩色组合的效果。
 
-脚本中，也给出了`colorEcho`和`colorEchoWithoutNewLine`函数更方便输出彩色文本。
+脚本中，也给出了`colorEcho`和`colorEchoWithoutNewLine`函数更方便输出彩色文本，用法：
 
 ```bash
-# red text
-colorEcho "0;31;40" "Hello world!"
-# yello text with underscore
-colorEchoWithoutNewLine "4;33;40" "Hello world!"
+colorEcho <颜色样式> [<要输出的文本>...]
+colorEchoWithoutNewLine  <颜色样式> [<要输出的文本>...]
 ```
+
+```bash
+# 输出红色文本
+colorEcho "0;31;40" "Hello world!"
+# 输出黄色带下划线的文本
+colorEchoWithoutNewLine "4;33;40" "Hello world!" "Hello Hell!"
+```
+
+### 贡献者
+
+[姜太公](https://github.com/jiangjizhong)提供循环输出彩色组合的脚本。
 
 xpl and xpf
 ==============================

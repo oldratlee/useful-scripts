@@ -9,6 +9,8 @@
 #
 # @author Jerry Lee
 
+PROG=`basename $0`
+
 usage() {
     cat <<EOF
 Usage: ${PROG} <source branch> [target branch]

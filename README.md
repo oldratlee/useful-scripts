@@ -229,6 +229,10 @@ svn-merge-stop-on-copy.sh http://www.foo.com/project1/branches/feature1 /path/to
 svn-merge-stop-on-copy.sh http://www.foo.com/project1/branches/feature1 http://www.foo.com/project1/branches/feature2
 ```
 
+### 贡献者
+
+[姜太公](https://github.com/jiangjizhong)提供此脚本。
+
 find-in-jars.sh
 ==========================
 

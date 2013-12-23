@@ -24,11 +24,12 @@ Example:
 
 	${PROG} http://www.foo.com/project1/branches/feature1 /path/to/svn/direcotry
 	# merge branch http://www.foo.com/project1/branches/feature1 to svn direcotry /path/to/svn/direcotry
+	# will prompt comfirm for committing to target branch.
 
 	${PROG} http://www.foo.com/project1/branches/feature1 http://www.foo.com/project1/branches/feature2
 	# merge http://www.foo.com/project1/branches/feature1 to branch http://www.foo.com/project1/branches/feature2
-	# because http://www.foo.com/project1/branches/feature2 is remote url, will check out target branch to tmp direcotry,
-	# and prompt comfirm for committing to target branch.
+	# because http://www.foo.com/project1/branches/feature2 is remote url,
+	# will check out target branch to tmp direcotry, and prompt comfirm for committing to target branch.
 EOF
     exit $1
 }

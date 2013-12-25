@@ -19,6 +19,6 @@ for d in "${dirs[@]}" ; do
 		branches=`svn info | grep '^URL' | awk '{print $2}'`
 		trunk=`echo $branches | awk -F'/branches/' '{print $1}'`/trunk
 		svn sw "$trunk"
-		echo "svn work dir $d switch from ${branches} to ${trunk} !"
+		echo "svn work dir $d switch from ${branches} to ${trunk} ."
 	)
 done

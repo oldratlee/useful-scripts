@@ -55,14 +55,14 @@ target=${2:-.}
 } || workDir="$target"
 
 cleanup() {
-	[ "$workDir" = "$target" ] && {
+	[ "$workDir" != "$target" ] && {
 		echo "rm tmp dir $workDir ."
 		rm -rf "$workDir"
 	}
 }
 trap "cleanup" EXIT
 
-svnstatusline=$(svn status "$workDir" | wc -l)
+svnstatusline=$(svn status --ignore-externals "$workDir" | grep -v ^X | wc -l)
 [ "$svnstatusline" -ne 0 ] && {
 	echo "svn work direcotry is modified!"
 	exit 1

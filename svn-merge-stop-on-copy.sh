@@ -17,6 +17,7 @@ usage() {
 Usage: ${PROG} <source branch> [target branch]
 svn merge commit between verison when source branch copy(--stop-on-copy)
 and head version of source branch.
+Source branch must be a remote branch.
 
 Example: 
 	${PROG} http://www.foo.com/project1/branches/feature1
@@ -46,6 +47,10 @@ target=${2:-.}
 	echo "missing source branch argument!"
 	usage 1
 }
+[ -e "$source_branch" ] && {
+	echo "source branch must be a remote branch!"
+	usage 1
+}
 
 [ ! -d "$target" ] && {
 	workDir=$(mktemp -d) && svn co "$target" "$workDir" || {
@@ -69,14 +74,14 @@ svnstatusline=$(svn status --ignore-externals "$workDir" | grep -v ^X | wc -l)
 }
 
 cd "$workDir" &&
-version=$(svn log --stop-on-copy --quiet "$source_branch" | awk '$1~/^r[0-9]+/{print $1}' | tail -n1) && {
-	echo "oldest version($version) of source branch $source_branch ."
+from_version=$(svn log --stop-on-copy --quiet "$source_branch" | awk '$1~/^r[0-9]+/{print $1}' | tail -n1) && {
+	echo "oldest version($from_version) of source branch $source_branch ."
 	echo "starting merge to $workDir ."
-	svn merge -$version:HEAD $source_branch
+	svn merge -${from_version}:HEAD $source_branch
 } || {
 	echo "Fail to merge to work dir $workDir ."
 	exit 2
 }
 
 read -p "Check In? (Y/N)" ci
-[ "$ci" = "Y" ] && svn ci -m "merge from $source_branch"
+[ "$ci" = "Y" ] && svn ci -m "svn merge -${from_version}:HEAD $source_branch"

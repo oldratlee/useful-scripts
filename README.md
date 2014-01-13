@@ -293,8 +293,8 @@ console-text-color-themes.sh
 脚本中，也给出了`colorEcho`和`colorEchoWithoutNewLine`函数更方便输出彩色文本，用法：
 
 ```bash
-colorEcho <颜色样式> [<要输出的文本>...]
-colorEchoWithoutNewLine  <颜色样式> [<要输出的文本>...]
+colorEcho <颜色样式> <要输出的文本>...
+colorEchoWithoutNewLine  <颜色样式> <要输出的文本>...
 ```
 
 ```bash
@@ -316,7 +316,21 @@ xpl and xpf
 * xpf: 在文件浏览器中打开指定的文件或文件夹，并选中。   
 \# xpf是`explorer and select file`的缩写。
 
-### 用法&示例
+### 用法
+
+```bash
+xpl
+# 缺省打开当前目录
+xpl <文件或是目录>...
+# 打开多个文件或目录
+
+xpf
+# 缺省打开当前目录
+xpf <文件或是目录>...
+# 打开多个文件或目录
+```
+
+### 示例
 
 ```bash
 xpl /path/to/dir

@@ -38,6 +38,12 @@ chmod +x show-busy-java-threads.sh
 wget --no-check-certificate https://github.com/oldratlee/useful-shells/archive/release.zip
 ```
 
+### `curl`直接用`bash`运行
+
+```bash
+curl -sLk 'https://raw.github.com/oldratlee/useful-shells/release/show-busy-java-threads.sh' | bash
+```
+
 show-busy-java-threads.sh
 ==========================
 

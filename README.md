@@ -8,40 +8,53 @@ useful-shells
 下载使用
 ========================
 
-### 直接clone工程
+### 下载整个工程的脚本
 
-简单方便，不过要安装有`git`。
+#### 直接clone工程
+
+使用简单、方便更新，不过要安装有`git`。
 
 ```bash
 git clone git://github.com/oldratlee/useful-shells.git
 # 使用Release分支的内容
 git checkout release
 
-# 更新
+# 更新脚本
 git pull
 ```
 
-### 下载单个文件
+包含2个分支：
 
-以[`show-busy-java-threads.sh`](https://raw.github.com/oldratlee/useful-shells/release/show-busy-java-threads.sh)为例：
+- `master`：开发分支
+- `release`：发布分支，功能稳定的脚本
 
-```bash
-wget --no-check-certificate https://raw.github.com/oldratlee/useful-shells/release/show-busy-java-threads.sh
-chmod +x show-busy-java-threads.sh
-```
-
-### 打包下载
+#### 打包下载
 
 下载文件[release.zip](https://github.com/oldratlee/useful-shells/archive/release.zip)：
 
 ```bash
 wget --no-check-certificate https://github.com/oldratlee/useful-shells/archive/release.zip
+
+unzip release.zip
 ```
 
-### `curl`直接用`bash`运行
+### 下载和运行单个文件
+
+以[`show-busy-java-threads.sh`](https://raw.github.com/oldratlee/useful-shells/release/show-busy-java-threads.sh)为例。
+
+#### `curl`文件直接用`bash`运行
 
 ```bash
 curl -sLk 'https://raw.github.com/oldratlee/useful-shells/release/show-busy-java-threads.sh' | bash
+```
+
+#### 下载单个文件
+
+```bash
+wget --no-check-certificate https://raw.github.com/oldratlee/useful-shells/release/show-busy-java-threads.sh
+chmod +x show-busy-java-threads.sh
+
+./show-busy-java-threads.sh
 ```
 
 show-busy-java-threads.sh

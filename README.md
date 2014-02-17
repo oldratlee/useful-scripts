@@ -62,7 +62,7 @@ show-busy-java-threads.sh
 
 在排查`Java`的`CPU`性能问题时(`top us`值过高)，要找出`Java`进程中消耗`CPU`多的线程，并查看它的线程栈，从而找出导致性能问题的方法调用。
 
-PS：如何操作可以参见[@bluedavy](http://weibo.com/bluedavy)的《分布式Java应用》的【5.1.1 cpu消耗分析】一节，说得很详细：`top`命令开启线程显示模式、按`CPU`使用率排序、记下Java进程里`CPU`高的线程号；手动转成十六进制（可以用`printf %x 1234`）；jstack，grep十六进制的线程id，找到线程栈。查问题时，会要多次这样操作，太繁琐。
+PS：如何操作可以参见[@bluedavy](http://weibo.com/bluedavy)的《分布式Java应用》的【5.1.1 cpu消耗分析】一节，说得很详细：`top`命令开启线程显示模式、按`CPU`使用率排序、记下`Java`进程里`CPU`高的线程号；手动转成十六进制（可以用`printf %x 1234`）；`jstack`，`grep`十六进制的线程`id`，找到线程栈。查问题时，会要多次这样操作，太繁琐。
 
 这个脚本的功能是，打印出在运行的`Java`进程中，消耗`CPU`最多的线程栈（缺省是5个线程）。
 
@@ -264,7 +264,7 @@ find-in-jars.sh log4j\\.xml
 find-in-jars.sh 'log4j\.properties|log4j\.xml'
 ```
 
-注意，后面Pattern是`grep`的扩展正则表达式。
+注意，后面Pattern是`grep`的 **扩展**正则表达式。
 
 ### 示例
 

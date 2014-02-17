@@ -16,6 +16,9 @@ useful-shells
 
 ```bash
 git clone git://github.com/oldratlee/useful-shells.git
+
+cd useful-shells
+
 # 使用Release分支的内容
 git checkout release
 
@@ -27,6 +30,10 @@ git pull
 
 - `master`：开发分支
 - `release`：发布分支，功能稳定的脚本
+
+PS：
+
+我的做法是把`useful-shells` checkout到`$HOME/bin/useful-shells`目录下，再把`$HOME/bin/useful-shells`配置到`PATH`变量上，这样方便我本地使用所有的脚本。
 
 #### 打包下载
 
@@ -164,7 +171,7 @@ parseOpts "a,a-long|b,b-long:|c,c-long+" -a -b bv -c c.sh -p pv -q qv arg1 \; aa
 cp-svn-url.sh
 ==========================
 
-拷贝当前`svn`目录对应的远程分支。
+拷贝当前`svn`目录对应的远程分支到系统的粘贴板，省去`CTRL+C`操作。
 
 ### 用法
 

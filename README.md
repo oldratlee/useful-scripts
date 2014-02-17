@@ -330,6 +330,9 @@ colorEcho "0;31;40" "Hello world!"
 colorEchoWithoutNewLine "4;33;40" "Hello world!" "Hello Hell!"
 ```
 
+`console-text-color-themes.sh`的运行效果图如下：   
+![console-text-color-themes.sh的运行效果图](https://raw.github.com/wiki/oldratlee/useful-shells/console-colorful-text.png)
+
 ### 贡献者
 
 [姜太公](https://github.com/jiangjizhong)提供循环输出彩色组合的脚本。

@@ -116,6 +116,16 @@ The stack of busy(26.1%) thread(24018/0x5dd2) of java process(23269) of user(adm
 ...
 ```
 
+上面的线程栈可以看出，`CPU`消耗最高的2个线程都在执行`java.text.DateFormat.format`，业务代码对应的方法是`shared.monitor.schedule.AppMonitorDataAvgScheduler.run`。可以基本确定：
+
+- `AppMonitorDataAvgScheduler.run`调用`DateFormat.format`次数比较频繁。
+- `DateFormat.format`比较慢。（这个可以由`DateFormat.format`的实现确定。）
+
+多个执行几次`show-busy-java-threads.sh`，如果上面情况高概率出现，则可以确定上面的判定。  
+\# 因为调用越少代码执行越快，则出现在线程栈的概率就越低。
+
+分析`shared.monitor.schedule.AppMonitorDataAvgScheduler.run`实现逻辑和调用方式，以优化实现解决问题。
+
 ### 贡献者
 
 [silentforce](https://github.com/silentforce)改进此脚本，增加对环境变量`JAVA_HOME`的判断。

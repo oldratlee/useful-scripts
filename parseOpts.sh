@@ -157,6 +157,8 @@ _opts_cleanOptValueInfoList() {
         local idxNameArrayPlaceHolder="$idxName[@]"
         local idxNameArray=("${!idxNameArrayPlaceHolder}")
 
+        eval "unset $idxName"
+
         local optName
         for optName in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do # index from 1, skip mode
             local optValueVarName="_OPT_VALUE_`_opts_convertToVarName "$optName"`"
@@ -232,7 +234,7 @@ parseOpts() {
         local evalOpts=
         local o
         for o in "${optTuple[@]}"; do
-            idxName+="_`_opts_convertToVarName "$o"`"
+            idxName+="_opts_index_name_`_opts_convertToVarName "$o"`"
             evalOpts+=" $o"
         done
 

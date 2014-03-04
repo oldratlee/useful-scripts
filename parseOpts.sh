@@ -179,6 +179,7 @@ parseOpts() {
         sed -r 's/^\s+//;s/\s+$//' |
         awk -F '[\t ]*\\\\|[\t ]*' '{for(i=1; i<=NF; i++) print $i}'`
     
+    local optDesc
     while read optDesc ; do # optDesc LIKE b,b-long:
         [ -z "$optDesc" ] && continue
 
@@ -201,6 +202,7 @@ parseOpts() {
         }
 
         local optTuple=()
+        local opt
         while read opt ; do # opt LIKE a , a-long
             [ -z "$opt" ] && continue
             

@@ -31,6 +31,17 @@ git pull
 - `master`：开发分支
 - `release`：发布分支，功能稳定的脚本
 
+当然如果你不想安装`git`,`github`是支持`svn`的：
+
+```bash
+svn co https://github.com/oldratlee/useful-shells/branches/release
+
+cd useful-shells
+
+# 更新脚本
+svn up
+```
+
 PS：
 
 我的做法是把`useful-shells` checkout到`$HOME/bin/useful-shells`目录下，再把`$HOME/bin/useful-shells`配置到`PATH`变量上，这样方便我本地使用所有的脚本。

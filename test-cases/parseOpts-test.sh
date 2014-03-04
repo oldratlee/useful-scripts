@@ -54,12 +54,16 @@ arrayEquals() {
 
 compareAllVars() {
     local test_afterVars=`declare`
-    blueEcho "compare vars before and after:"
     diff <(echo "$test_beforeVars" | grep -v '^BASH_\|^_=') <(echo "$test_afterVars" | grep -v '^BASH_\|^_=\|^FUNCNAME=\|^test_')
 }
 
+compareAllVarsExcludeOptVars() {
+    local test_afterVars=`declare`
+    diff <(echo "$test_beforeVars" | grep -v '^BASH_\|^_=') <(echo "$test_afterVars" | grep -v '^BASH_\|^_=\|^FUNCNAME=\|^test_\|^_OPT_\|^_opts_index_name_')
+}
+
 fail() {
-    redEcho "$@"
+    redEcho "TEST FAIL: $@"
     exit 1
 }
 
@@ -87,8 +91,9 @@ arrayEquals test_dArray _OPT_VALUE_d && arrayEquals test_dArray _OPT_VALUE_d_lon
 test_argArray=(aa bb cc dd ee)
 arrayEquals test_argArray _OPT_ARGS || fail "Wrong args!"
 
+compareAllVarsExcludeOptVars || fail "Unpected extra glable vars!"
 _opts_cleanOptValueInfoList
-compareAllVars
+compareAllVars || fail "Unpected extra glable vars!"
 
 
 
@@ -155,4 +160,6 @@ _opts_showOptValueInfoList
 [ "$_OPT_VALUE_d" = "" ] && [ "$_OPT_VALUE_d_long" = "" ] || fail "Wrong option value of d!"
 [ "$_OPT_ARGS" = "" ] || fail "Wrong args!"
 
-compareAllVars
+compareAllVars || fail "Unpected extra glable vars!"
+
+greenEcho "TEST SUCCESS!!!"

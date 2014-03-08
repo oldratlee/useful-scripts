@@ -105,10 +105,9 @@ printStackOfThread() {
     done
 }
 
-[ -z "${pid}" ] && {
-    ps -Leo pid,lwp,user,comm,pcpu --no-headers | awk '$4=="java"{print $0}' |
-    sort -k5 -r -n | head --lines "${count}" | printStackOfThread
-} || {
-    ps -Leo pid,lwp,user,comm,pcpu --no-headers | awk -v "pid=${pid}" '$1==pid,$4=="java"{print $0}' |
-    sort -k5 -r -n | head --lines "${count}" | printStackOfThread
-}
+ps -Leo pid,lwp,user,comm,pcpu --no-headers | {
+    [ -z "${pid}" ] &&
+    awk '$4=="java"{print $0}' ||
+    awk -v "pid=${pid}" '$1==pid,$4=="java"{print $0}'
+} | sort -k5 -r -n | head --lines "${count}" | printStackOfThread
+

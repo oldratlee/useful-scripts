@@ -58,14 +58,21 @@ redEcho() {
     } || echo "$@"
 }
 
-## Check the existence of jstack command!
+# Check the existence of jstack command!
 if ! which jstack &> /dev/null; then
-    [ -n "$JAVA_HOME" ] && [ -f "$JAVA_HOME/bin/jstack" ] && [ -x "$JAVA_HOME/bin/jstack" ] && {
-        export PATH="$JAVA_HOME/bin:$PATH"
-    } || {
-        redEcho "Error: jstack not found on PATH and JAVA_HOME!"
+    [ -z "$JAVA_HOME" ] && {
+        redEcho "Error: jstack not found on PATH!"
         exit 1
     }
+    ! [ -f "$JAVA_HOME/bin/jstack" ] && {
+        redEcho "Error: jstack not found on PATH and $JAVA_HOME/bin/jstack file does NOT exists!"
+        exit 1
+    }
+    ! [ -x "$JAVA_HOME/bin/jstack" ] && {
+        redEcho "Error: jstack not found on PATH and $JAVA_HOME/bin/jstack is NOT executalbe!"
+        exit 1
+    }
+    export PATH="$JAVA_HOME/bin:$PATH"
 fi
 
 uuid=`date +%s`_${RANDOM}_$$

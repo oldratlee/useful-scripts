@@ -360,13 +360,17 @@ colorEchoWithoutNewLine "4;33;40" "Hello world!" "Hello Hell!"
 
 [姜太公](https://github.com/jiangjizhong)提供循环输出彩色组合的脚本。
 
+### 参考资料
+
+- [utensil](https://github.com/utensil)的[在Bash下输出彩色的文本](http://utensil.github.io/tech/2007/09/10/colorful-bash.html)，这是篇很有信息量很钻研的文章！
+
 xpl and xpf
 ==============================
 
-* xpl：在文件浏览器中打开指定的文件或文件夹。  
-\# xpl是`explorer`的缩写。
-* xpf: 在文件浏览器中打开指定的文件或文件夹，并选中。   
-\# xpf是`explorer and select file`的缩写。
+* `xpl`：在文件浏览器中打开指定的文件或文件夹。  
+\# `xpl`是`explorer`的缩写。
+* `xpf`: 在文件浏览器中打开指定的文件或文件夹，并选中。   
+\# `xpf`是`explorer and select file`的缩写。
 
 ### 用法
 

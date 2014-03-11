@@ -99,8 +99,8 @@ printStackOfThread() {
                 continue
             }
         }
-        
-        redEcho "The stack of busy(${pcpu}%) thread(${threadId}/0x${threadId0x}) of java process(${pid}) of user(${user}):"
+
+        redEcho "Busy(${pcpu}%) thread(${threadId}/0x${threadId0x}) stack of java process(${pid}) under user(${user}):"
         sed "/nid=0x${threadId0x}/,/^$/p" -n ${jstackFile}
     done
 }

@@ -141,6 +141,32 @@ The stack of busy(26.1%) thread(24018/0x5dd2) of java process(23269) of user(adm
 
 [silentforce](https://github.com/silentforce)改进此脚本，增加对环境变量`JAVA_HOME`的判断。
 
+tcp-connection-state-counter.sh
+==========================
+
+统计各个`TCP`连接状态的个数。
+
+像`Nginx`、`Apache`的机器上需要查看，`TCP`连接的个数，以判定
+
+- 连接数、负荷
+- 是否有攻击，查看`SYN_RECV`数（`SYN`攻击）
+- `TIME_WAIT`数，太多会导致`TCP: time wait bucket table overflow`。
+
+### 用法
+
+```bash
+tcp-connection-state-counter.sh
+```
+
+### 示例
+
+```bash
+$ tcp-connection-state-counter.sh
+ESTABLISHED	290
+TIME_WAIT	212
+SYN_SENT	17
+```
+
 parseOpts.sh
 ==========================
 

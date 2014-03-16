@@ -13,6 +13,6 @@ netstat -tn | awk 'NR > 2 {
 
 END {
     for(v in s) {
-        print v "\t" s[v]
+        printf "%-12s%s\n", v, s[v]
     }
 }' | sort -nr -k2,2

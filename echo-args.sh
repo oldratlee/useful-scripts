@@ -12,9 +12,9 @@ redEcho() {
 }
 
 echoArg() {
-    index=$1
-    count=$2
-    value=$3
+    local index=$1
+    local count=$2
+    local value=$3
 
     echo -n "$index/$count: "
     redEcho "["
@@ -27,6 +27,5 @@ echoArg() {
 echoArg 0 $# "$0"
 idx=1
 for a ; do
-    echoArg $idx $# "$a"
-    idx=$((idx + 1))
+    echoArg $((idx++)) $# "$a"
 done

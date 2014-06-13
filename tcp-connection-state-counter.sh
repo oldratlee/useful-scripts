@@ -7,7 +7,7 @@
 #
 # @author Jerry Lee
 
-netstat -tn | awk 'NR > 2 {
+netstat -tna | awk 'NR > 2 {
     s[$NF]++ 
 }
 

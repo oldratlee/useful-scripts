@@ -60,10 +60,10 @@ for file in "${files[@]}" ; do
         explorer ${selected:+/select,} "$(cygpath -w "${file}")"
         ;;
     *)
-        if [ -f "${file}" ] ; then
+        if [ -d "${file}" ] ; then
             nautilus "$(dirname "${file}")"
         else
-            if [ -n "${selected}" ] ; then
+            if [ -z "${selected}" ] ; then
                 nautilus "$(dirname "${file}")"
             else
                 nautilus "${file}"

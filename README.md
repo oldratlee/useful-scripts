@@ -421,3 +421,7 @@ xpl /path/to/dir1 /path/to/foo1.txt
 xpf /path/to/foo1.txt
 xpf /path/to/dir1 /path/to/foo1.txt
 ```
+
+### 贡献者
+
+[Linhua Tan](https://github.com/toolchainX)修复Linux的选定Bug。

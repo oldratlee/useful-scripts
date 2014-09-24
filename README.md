@@ -5,78 +5,17 @@ useful-shells
 
 有自己用的好的脚本 或是 平时常用但没有写成脚本的功能，欢迎提供（[提交Issue](https://github.com/oldratlee/useful-shells/issues))和分享（[Fork后提交代码](https://github.com/oldratlee/useful-shells/fork)）！
 
-下载使用
-========================
-
-### 下载整个工程的脚本
-
-#### 直接clone工程
-
-使用简单、方便更新，不过要安装有`git`。
+快速下载&使用
+----------------------
 
 ```bash
-git clone git://github.com/oldratlee/useful-shells.git
-
-cd useful-shells
-
-# 使用Release分支的内容
-git checkout release
-
-# 更新脚本
-git pull
+source <(curl -fsSL https://raw.githubusercontent.com/oldratlee/useful-shells/master/test-cases/self-installer.sh)
 ```
 
-包含2个分支：
-
-- `master`：开发分支
-- `release`：发布分支，功能稳定的脚本
-
-当然如果你不想安装`git`,`github`是支持`svn`的：
-
-```bash
-svn co https://github.com/oldratlee/useful-shells/branches/release
-
-cd useful-shells
-
-# 更新脚本
-svn up
-```
-
-PS：
-
-我的做法是把`useful-shells` checkout到`$HOME/bin/useful-shells`目录下，再把`$HOME/bin/useful-shells`配置到`PATH`变量上，这样方便我本地使用所有的脚本。
-
-#### 打包下载
-
-下载文件[release.zip](https://github.com/oldratlee/useful-shells/archive/release.zip)：
-
-```bash
-wget --no-check-certificate https://github.com/oldratlee/useful-shells/archive/release.zip
-
-unzip release.zip
-```
-
-### 下载和运行单个文件
-
-以[`show-busy-java-threads.sh`](https://raw.github.com/oldratlee/useful-shells/release/show-busy-java-threads.sh)为例。
-
-#### `curl`文件直接用`bash`运行
-
-```bash
-curl -sLk 'https://raw.github.com/oldratlee/useful-shells/release/show-busy-java-threads.sh' | bash
-```
-
-#### 下载单个文件
-
-```bash
-wget --no-check-certificate https://raw.github.com/oldratlee/useful-shells/release/show-busy-java-threads.sh
-chmod +x show-busy-java-threads.sh
-
-./show-busy-java-threads.sh
-```
+更多下载&使用方式，参见[下载使用](#下载使用)一节。
 
 show-busy-java-threads.sh
-==========================
+----------------------
 
 在排查`Java`的`CPU`性能问题时(`top us`值过高)，要找出`Java`进程中消耗`CPU`多的线程，并查看它的线程栈，从而找出导致性能问题的方法调用。
 
@@ -142,7 +81,7 @@ The stack of busy(26.1%) thread(24018/0x5dd2) of java process(23269) of user(adm
 [silentforce](https://github.com/silentforce)改进此脚本，增加对环境变量`JAVA_HOME`的判断。
 
 tcp-connection-state-counter.sh
-==========================
+----------------------
 
 统计各个`TCP`连接状态的个数。
 
@@ -168,7 +107,7 @@ SYN_SENT	17
 ```
 
 parseOpts.sh
-==========================
+----------------------
 
 提供命令行选项解析函数`parseOpts`，支持选项的值有多个值（即数组）。  
 \# 自己写一个命令行选项解析函数，是因为`bash`的`buildin`命令`getopts`和加强版本命令`getopt`都不支持数组的值。
@@ -218,7 +157,7 @@ parseOpts "a,a-long|b,b-long:|c,c-long+" -a -b bv -c c.sh -p pv -q qv arg1 \; aa
 ```
 
 cp-svn-url.sh
-==========================
+----------------------
 
 拷贝当前`svn`目录对应的远程分支到系统的粘贴板，省去`CTRL+C`操作。
 
@@ -245,7 +184,7 @@ http://www.foo.com/project1/branches/feature1 copied!
 [拷贝复制命令行输出放在系统剪贴板上](http://oldratlee.com/post/2012-12-23/command-output-to-clip)，给出了不同系统可用命令。
 
 swtrunk.sh
-==========================
+----------------------
 
 `svn`工作目录从分支（`branches`）切换到主干（`trunk`）。
 
@@ -282,7 +221,7 @@ svn work dir /path/to/svn/work/dir2 switch from http://www.foo.com/project2/bran
 ```
 
 svn-merge-stop-on-copy.sh
-==========================
+----------------------
 
 把指定的远程分支从刚新建分支以来的修改合并到本地SVN目录或是另一个远程分支。
 
@@ -307,7 +246,7 @@ svn-merge-stop-on-copy.sh http://www.foo.com/project1/branches/feature1 http://w
 [姜太公](https://github.com/jiangjizhong)提供此脚本。
 
 find-in-jars.sh
-==========================
+----------------------
 
 在当前目录下所有`Jar`文件里，查找文件名。
 
@@ -335,7 +274,7 @@ $ ./find-in-jars 'Service.class$'
 [在多个Jar(Zip)文件查找Log4J配置文件的Shell命令行](http://oldratlee.com/458/tech/shell/find-file-in-jar-zip-files.html)
 
 echo-args.sh
-==============================
+----------------------
 
 在编写脚本时，常常要确认输入参数是否是期望的：参数个数，参数值（可能包含有人眼不容易发现的空格问题）。
 
@@ -361,7 +300,7 @@ $ ./echo-args.sh 1 "  2 foo  " "3        3"
 这样可以不改其它的程序，查看到输入参数的信息。
 
 console-text-color-themes.sh
-==============================
+----------------------
 
 显示`Terminator`的全部文字彩色组合的效果。
 
@@ -391,7 +330,7 @@ colorEchoWithoutNewLine "4;33;40" "Hello world!" "Hello Hell!"
 - [utensil](https://github.com/utensil)的[在Bash下输出彩色的文本](http://utensil.github.io/tech/2007/09/10/colorful-bash.html)，这是篇很有信息量很钻研的文章！
 
 xpl and xpf
-==============================
+----------------------
 
 * `xpl`：在文件浏览器中打开指定的文件或文件夹。  
 \# `xpl`是`explorer`的缩写。
@@ -425,3 +364,72 @@ xpf /path/to/dir1 /path/to/foo1.txt
 ### 贡献者
 
 [Linhua Tan](https://github.com/toolchainX)修复Linux的选定Bug。
+
+下载使用
+----------------------
+
+### 下载整个工程的脚本
+
+#### 直接clone工程
+
+使用简单、方便更新，不过要安装有`git`。
+
+```bash
+git clone git://github.com/oldratlee/useful-shells.git
+
+cd useful-shells
+
+# 使用Release分支的内容
+git checkout release
+
+# 更新脚本
+git pull
+```
+
+包含2个分支：
+
+- `master`：开发分支
+- `release`：发布分支，功能稳定的脚本
+
+当然如果你不想安装`git`,`github`是支持`svn`的：
+
+```bash
+svn co https://github.com/oldratlee/useful-shells/branches/release
+
+cd useful-shells
+
+# 更新脚本
+svn up
+```
+
+PS：     
+我的做法是把`useful-shells` checkout到`$HOME/bin/useful-shells`目录下，再把`$HOME/bin/useful-shells`配置到`PATH`变量上，这样方便我本地使用所有的脚本。
+
+#### 打包下载
+
+下载文件[release.zip](https://github.com/oldratlee/useful-shells/archive/release.zip)：
+
+```bash
+wget --no-check-certificate https://github.com/oldratlee/useful-shells/archive/release.zip
+
+unzip release.zip
+```
+
+### 下载和运行单个文件
+
+以[`show-busy-java-threads.sh`](https://raw.github.com/oldratlee/useful-shells/release/show-busy-java-threads.sh)为例。
+
+#### `curl`文件直接用`bash`运行
+
+```bash
+curl -sLk 'https://raw.github.com/oldratlee/useful-shells/release/show-busy-java-threads.sh' | bash
+```
+
+#### 下载单个文件
+
+```bash
+wget --no-check-certificate https://raw.github.com/oldratlee/useful-shells/release/show-busy-java-threads.sh
+chmod +x show-busy-java-threads.sh
+
+./show-busy-java-threads.sh
+```

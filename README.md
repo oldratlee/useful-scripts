@@ -1,5 +1,5 @@
-useful-shells
-==================
+:snail: useful-shells
+====================================
 
 把平时有用的手动操作做成脚本，这样可以便捷的使用。 :sparkles:
 
@@ -12,7 +12,7 @@ useful-shells
 source <(curl -fsSL https://raw.githubusercontent.com/oldratlee/useful-shells/master/test-cases/self-installer.sh)
 ```
 
-更多下载&使用方式，参见[下载使用](#下载使用)一节。
+更多下载&使用方式，参见[下载使用](#key-下载使用)一节。
 
 :beer: [show-busy-java-threads.sh](show-busy-java-threads.sh)
 ----------------------
@@ -226,6 +226,33 @@ colorEchoWithoutNewLine "4;33;40" "Hello world!" "Hello Hell!"
 ### 参考资料
 
 - [utensil](https://github.com/utensil)的[在Bash下输出彩色的文本](http://utensil.github.io/tech/2007/09/10/colorful-bash.html)，这是篇很有信息量很钻研的文章！
+
+:beer: [colorful-lines](colorful-lines)
+----------------------
+
+彩色`cat`出文件行，方便人眼区分不同的行。
+
+### 示例
+
+```bash
+$ echo a | colorful-lines
+a
+$ echo -e 'a\nb' | colorful-lines
+a
+b
+$ echo -e 'a\nb' | nl | colorful-lines
+1   a
+2   b
+$ colorful-lines file1 file2
+==== file1 ====
+file1 line1
+file1 line2
+==== file2 ====
+file2 line1
+file2 line2
+```
+
+注：上面显示中，没有彩色，在控制台上运行可以看出彩色效果。
 
 :beer: [echo-args.sh](echo-args.sh)
 ----------------------

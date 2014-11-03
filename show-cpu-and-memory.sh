@@ -13,12 +13,12 @@ total_cpu="`top -n 1 | grep 'Cpu'`"
 
 echo '**********'$cur_date'**********'
 
-echo 
+echo ''
 
 echo $total_mem
 echo $total_cpu
 
-echo
+echo ''
 
 for i in `ps -ef | grep -v "awk|$0" | awk '{print $2}'` 
 do 

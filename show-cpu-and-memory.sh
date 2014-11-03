@@ -1,13 +1,26 @@
 #!/bin/bash
 # @Function
-# Show every process's memory and cpu usage
+# Show total and every process's memory and cpu usage
 #
 # @Usage
 #   $ ./show-cpu-and-memory.sh
 #
 # @author Bryant Hang
+cur_date="`date +%Y%m%d`"
 
-for i in `ps -ef | egrep -v "awk|$0" | awk '/'$1'/{print $2}'` 
+total_mem="`free -m | grep 'Mem'`"
+total_cpu="`top -n 1 | grep 'Cpu'`"
+
+echo '**********'$cur_date'**********'
+
+echo 
+
+echo $total_mem
+echo $total_cpu
+
+echo
+
+for i in `ps -ef | grep -v "awk|$0" | awk '{print $2}'` 
 do 
 	# not pid
 	if [[ $i == *[!0-9]* ]]; then

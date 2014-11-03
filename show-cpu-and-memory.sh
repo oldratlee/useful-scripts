@@ -17,5 +17,5 @@ do
     mem=`cat /proc/$i/status 2> /dev/null | grep VmRSS | awk '{print $2" " $3}'` 
     cpu=`top -n 1 -b | awk '$1=='$i'{print $9}'` 
 
-    echo 'pid: '$i', memory: '$mem', cpu:'$cpu
+    echo 'pid: '$i', memory: '$mem', cpu:'$cpu'%'
 done

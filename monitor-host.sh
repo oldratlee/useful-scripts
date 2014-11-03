@@ -3,7 +3,7 @@
 # monitor host:network io memory cpu 
 #
 # @Usage
-#   $ 0 * * * * ./monitor-host.sh
+#   $ ./monitor-host.sh
 #
 # @author Bryant Hang
 
@@ -25,16 +25,16 @@ io_log_path=$LOG_PATH'/io_'$cur_date'.log'
 network_log_path=$LOG_PATH'/network_'$cur_date'.log'
 
 # total performance check
-top -b -d $delay -n $count > top_log_path 2>&1 &
+top -b -d $DELAY -n $COUNT > top_log_path 2>&1 &
 
 # memory check
-vmstat $delay $count > memory_log_path 2>&1 &
+vmstat $DELAY $COUNT > memory_log_path 2>&1 &
 
 # cpu check
-sar -u $delay $count > cpu_log_path 2>&1 &
+sar -u $DELAY $COUNT > cpu_log_path 2>&1 &
 
 # IO check
-iostat $delay $count > io_log_path 2>&1 &
+iostat $DELAY $COUNT > io_log_path 2>&1 &
 
 # network check
-sar -n DEV $delay $count > network_log_path 2>&1 &
+sar -n DEV $DELAY $COUNT > network_log_path 2>&1 &

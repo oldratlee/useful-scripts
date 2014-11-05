@@ -75,7 +75,7 @@ test_beforeVars=`declare`
 
 blueEcho "Test case: success parse"
 
-parseOpts "a,a-long|b,b-long:|c,c-long+|d,d-long+" aa -a -b bb -c c.sh -p pv -q qv cc \; bb -d d.sh -x xv d1 d2 d3 \; cc -- dd ee
+parseOpts "a,a-long|b,b-long:|c,c-long+|d,d-long+" aa -a -b bb -c c.sh -p pv -q qv cc \; bb --d-long d.sh -x xv d1 d2 d3 \; cc -- dd ee
 test_exitCode=$?
 _opts_showOptDescInfoList
 _opts_showOptValueInfoList
@@ -99,7 +99,7 @@ compareAllVars || fail "Unpected extra glable vars!"
 
 blueEcho "Test case: illegal option x"
 
-parseOpts "a,a-long|b,b-long:|c,c-long+|d,d-long+" aa -a -b bb -x -c c.sh -p pv -q qv cc \; bb -d d.sh -x xv d1 d2 d3 \; cc -- dd ee
+parseOpts "a,a-long|b,b-long:|c,c-long+|d,d-long+" aa -a -b bb -x -c c.sh -p pv -q qv cc \; bb --d-long d.sh -x xv d1 d2 d3 \; cc -- dd ee
 test_exitCode=$?
 _opts_showOptDescInfoList
 _opts_showOptValueInfoList

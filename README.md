@@ -334,7 +334,7 @@ find file: bar.txt
 - `+`： 有多个参数值的选项。值列表要以`;`表示结束。   
 注意，`;`是`Bash`的元字符（用于一行中多个命令分隔），所以加上转义写成`\;`（当然也可以按你的喜好写成`";"`或`';'`）。
 
-实际要解析的输入参数往往是你的脚本参数，这样`parseOpts`函数调用一般是:
+实际要解析的输入参数往往是你的脚本参数，这样`parseOpts`函数调用一般是：
 
 ```bash
 parseOpts "a,a-long|b,b-long:|c,c-long+" "$@"
@@ -348,13 +348,15 @@ parseOpts "a,a-long|b,b-long:|c,c-long+" "$@"
 即，把选项名的`-`转`_`，再加上前缀`_OPT_VALUE_`对应的全局变量来获得选项值。
 * 除了选项剩下的参数，通过全局变量`_OPT_ARGS`来获取。
 
+按照惯例，输入参数中如果有`--`表示之后参数中不再有选项，即之后都是参数。
+
 ### 示例
 
 ```bash
 # 导入parseOpts.sh
 source /path/to/parseOpts.sh
 
-parseOpts "a,a-long|b,b-long:|c,c-long+" -a -b bv -c c.sh -p pv -q qv arg1 \; aa bb cc
+parseOpts "a,a-long|b,b-long:|c,c-long+" -a -b bv --c-long c.sh -p pv -q qv arg1 \; aa bb cc
 # 可以通过下面全局变量来获得解析的参数值：
 #	_OPT_VALUE_a = true
 #	_OPT_VALUE_a_long = true
@@ -363,6 +365,23 @@ parseOpts "a,a-long|b,b-long:|c,c-long+" -a -b bv -c c.sh -p pv -q qv arg1 \; aa
 #	_OPT_VALUE_c = (c.sh -p pv -q qv arg1) ，数组类型
 #	_OPT_VALUE_c_long = (c.sh -p pv -q qv arg1) ，数组类型
 #	_OPT_ARGS = (aa bb cc) ，数组类型
+```
+
+`--`的使用效果示例：
+
+```bash
+# 导入parseOpts.sh
+source /path/to/parseOpts.sh
+
+parseOpts "a,a-long|b,b-long:|c,c-long+" -a -b bv -- --c-long c.sh -p pv -q qv arg1 \; aa bb cc
+# 可以通过下面全局变量来获得解析的参数值：
+#	_OPT_VALUE_a = true
+#	_OPT_VALUE_a_long = true
+#	_OPT_VALUE_b = bv
+#	_OPT_VALUE_b_long = bv
+#	_OPT_VALUE_c 没有设置过
+#	_OPT_VALUE_c_long 没有设置过
+#	_OPT_ARGS = (--c-long c.sh -p pv -q qv arg1 ';' aa bb cc) ，数组类型
 ```
 
 :beer: [xpl](xpl) and [xpf](xpf)

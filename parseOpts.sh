@@ -66,7 +66,7 @@ _opts_findOptMode() {
     local idxName
     for idxName in "${_OPT_INFO_LIST_INDEX[@]}" ; do
         local idxNameArrayPlaceHolder="$idxName[@]"
-        local idxNameArray=("${!idxNameArrayPlaceHolder}")
+        local -a idxNameArray=("${!idxNameArrayPlaceHolder}")
 
         local mode="${idxNameArray[0]}"
 
@@ -103,7 +103,7 @@ _opts_setOptValue() {
     local idxName
     for idxName in "${_OPT_INFO_LIST_INDEX[@]}" ; do
         local idxNameArrayPlaceHolder="$idxName[@]"
-        local idxNameArray=("${!idxNameArrayPlaceHolder}")
+        local -a idxNameArray=("${!idxNameArrayPlaceHolder}")
 
         local optName
         for optName in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do # index from 1, skip mode
@@ -130,7 +130,7 @@ _opts_setOptArray() {
     local idxName
     for idxName in "${_OPT_INFO_LIST_INDEX[@]}" ; do
         local idxNameArrayPlaceHolder="$idxName[@]"
-        local idxNameArray=("${!idxNameArrayPlaceHolder}")
+        local -a idxNameArray=("${!idxNameArrayPlaceHolder}")
         
         local optName
         for optName in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do # index from 1, skip mode
@@ -155,7 +155,7 @@ _opts_cleanOptValueInfoList() {
     local idxName
     for idxName in "${_OPT_INFO_LIST_INDEX[@]}"; do
         local idxNameArrayPlaceHolder="$idxName[@]"
-        local idxNameArray=("${!idxNameArrayPlaceHolder}")
+        local -a idxNameArray=("${!idxNameArrayPlaceHolder}")
 
         eval "unset $idxName"
 
@@ -195,7 +195,7 @@ parseOpts() {
             ;;
         esac
 
-        local optLines=`echo "$optDesc" | awk -F '[\t ]*,[\t ]*' '{for(i=1; i<=NF; i++) print $i}'` # a\na-long
+        local optLines=`echo "$optDesc" | awk -F '[\t ]*,[\t ]*' '{for(i=1; i<=NF; i++) print $i}'` # LIKE "a\na-long"
 
         [ $(echo "$optLines" | wc -l) -gt 2 ] && {
             _opts_redEcho "Illegal option description($optDesc), more than 2 opt name!" 1>&2
@@ -203,7 +203,7 @@ parseOpts() {
             return 220
         }
 
-        local optTuple=()
+        local -a optTuple=()
         local opt
         while read opt ; do # opt LIKE a , a-long
             [ -z "$opt" ] && continue
@@ -225,7 +225,7 @@ parseOpts() {
         done < <(echo "$optLines")
 
         [ ${#optTuple[@]} -gt 2 ] && {
-            _opts_redEcho "more than 2 opt($optDesc) in option description!" 1>&2
+            _opts_redEcho "more than 2 opt(${optTuple[@]}) in option description($optDesc)!" 1>&2
             _opts_cleanOptValueInfoList
             return 223
         }
@@ -234,15 +234,15 @@ parseOpts() {
         local evalOpts=
         local o
         for o in "${optTuple[@]}"; do
-            idxName+="_opts_index_name_`_opts_convertToVarName "$o"`"
-            evalOpts+=" $o"
+            idxName="${idxName}_opts_index_name_`_opts_convertToVarName "$o"`"
+            evalOpts="${evalOpts} $o"
         done
 
         eval "$idxName=($mode $evalOpts)"
         _OPT_INFO_LIST_INDEX=("${_OPT_INFO_LIST_INDEX[@]}" "$idxName")
     done < <(echo "$optDescLines")
 
-    local args=()
+    local -a args=()
     while true; do
         [ $# -eq 0 ] && break
 
@@ -277,7 +277,7 @@ parseOpts() {
                 ;;
             +)
                 shift
-                local valueArray=()
+                local -a valueArray=()
                 local foundComma=""
 
                 local value
@@ -332,7 +332,7 @@ _opts_showOptValueInfoList() {
     local idxName
     for idxName in "${_OPT_INFO_LIST_INDEX[@]}"; do
         local idxNameArrayPlaceHolder="$idxName[@]"
-        local idxNameArray=("${!idxNameArrayPlaceHolder}")
+        local -a idxNameArray=("${!idxNameArrayPlaceHolder}")
 
         local mode=${idxNameArray[0]}
 

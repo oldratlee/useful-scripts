@@ -384,6 +384,27 @@ parseOpts "a,a-long|b,b-long:|c,c-long+" -a -b bv -- --c-long c.sh -p pv -q qv a
 #	_OPT_ARGS = (--c-long c.sh -p pv -q qv arg1 ';' aa bb cc) ，数组类型
 ```
 
+### 兼容性
+
+这个脚本比较复杂，测试过的环境有：
+
+1. `bash --version`  
+`GNU bash, version 4.1.5(1)-release (x86_64-pc-linux-gnu)`  
+`uname -a`  
+`Linux foo-host 2.6.32-41-generic #94-Ubuntu SMP Fri Jul 6 18:00:34 UTC 2012 x86_64 GNU/Linux`
+1. `bash --version`  
+`GNU bash, version 3.2.53(1)-release (x86_64-apple-darwin14)`  
+`uname -a`   
+`Darwin foo-host 14.0.0 Darwin Kernel Version 14.0.0: Fri Sep 19 00:26:44 PDT 2014; root:xnu-2782.1.97~2/RELEASE_X86_64 x86_64 i386 MacBookPro10,1 Darwin`
+1. `bash --version`  
+`GNU bash, version 3.00.15(1)-release (i386-redhat-linux-gnu)`  
+`uname -a`   
+`Linux foo-host 2.6.9-103.ELxenU #1 SMP Wed Mar 14 16:31:15 CST 2012 i686 i686 i386 GNU/Linux`
+
+### 贡献者
+
+[Khotyn Huang](https://github.com/khotyn)指出`bash` `3.0`下使用有问题，并提供`bash` `3.0`的测试机器。
+
 :beer: [xpl](xpl) and [xpf](xpf)
 ----------------------
 

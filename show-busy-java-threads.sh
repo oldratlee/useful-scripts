@@ -101,7 +101,7 @@ printStackOfThread() {
         }
 
         redEcho "Busy(${pcpu}%) thread(${threadId}/0x${threadId0x}) stack of java process(${pid}) under user(${user}):"
-        sed "/nid=0x${threadId0x}/,/^$/p" -n ${jstackFile}
+        sed "/nid=0x${threadId0x} /,/^$/p" -n ${jstackFile}
     done
 }
 

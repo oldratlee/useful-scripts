@@ -1,8 +1,8 @@
 #!/bin/bash
 
 if which svn &> /dev/null; then
-	[ ! -d "/tmp/useful-shells-$USER" ] &&
-	svn checkout https://github.com/oldratlee/useful-shells/trunk "/tmp/useful-shells-$USER"
+	[ ! -d "/tmp/useful-scripts-$USER" ] &&
+	svn checkout https://github.com/oldratlee/useful-scripts/trunk "/tmp/useful-scripts-$USER"
 fi
 
-export PATH="$PATH:/tmp/useful-shells-$USER"
+export PATH="$PATH:/tmp/useful-scripts-$USER"

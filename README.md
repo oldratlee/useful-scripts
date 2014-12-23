@@ -1,15 +1,15 @@
-:snail: useful-shells
+:snail: useful-scripts
 ====================================
 
 把平时有用的手动操作做成脚本，这样可以便捷的使用。 :sparkles:
 
-有自己用的好的脚本 或是 平时常用但没有写成脚本的功能，欢迎提供（[提交Issue](https://github.com/oldratlee/useful-shells/issues))和分享（[Fork后提交代码](https://github.com/oldratlee/useful-shells/fork)）！ :sparkling_heart:
+有自己用的好的脚本 或是 平时常用但没有写成脚本的功能，欢迎提供（[提交Issue](https://github.com/oldratlee/useful-scripts/issues))和分享（[Fork后提交代码](https://github.com/oldratlee/useful-scripts/fork)）！ :sparkling_heart:
 
 :beginner: 快速下载&使用
 ----------------------
 
 ```bash
-source <(curl -fsSL https://raw.githubusercontent.com/oldratlee/useful-shells/master/test-cases/self-installer.sh)
+source <(curl -fsSL https://raw.githubusercontent.com/oldratlee/useful-scripts/master/test-cases/self-installer.sh)
 ```
 
 更多下载&使用方式，参见[下载使用](#key-下载使用)一节。
@@ -217,7 +217,7 @@ colorEchoWithoutNewLine "4;33;40" "Hello world!" "Hello Hell!"
 ```
 
 `console-text-color-themes.sh`的运行效果图如下：   
-![console-text-color-themes.sh的运行效果图](https://raw.github.com/wiki/oldratlee/useful-shells/console-colorful-text.png)
+![console-text-color-themes.sh的运行效果图](https://raw.github.com/wiki/oldratlee/useful-scripts/console-colorful-text.png)
 
 ### 贡献者
 
@@ -451,9 +451,9 @@ xpf /path/to/dir1 /path/to/foo1.txt
 使用简单、方便更新，不过要安装有`git`。
 
 ```bash
-git clone git://github.com/oldratlee/useful-shells.git
+git clone git://github.com/oldratlee/useful-scripts.git
 
-cd useful-shells
+cd useful-scripts
 
 # 使用Release分支的内容
 git checkout release
@@ -470,41 +470,41 @@ git pull
 当然如果你不想安装`git`,`github`是支持`svn`的：
 
 ```bash
-svn co https://github.com/oldratlee/useful-shells/branches/release
+svn co https://github.com/oldratlee/useful-scripts/branches/release
 
-cd useful-shells
+cd useful-scripts
 
 # 更新脚本
 svn up
 ```
 
 PS：     
-我的做法是把`useful-shells` checkout到`$HOME/bin/useful-shells`目录下，再把`$HOME/bin/useful-shells`配置到`PATH`变量上，这样方便我本地使用所有的脚本。
+我的做法是把`useful-scripts` checkout到`$HOME/bin/useful-scripts`目录下，再把`$HOME/bin/useful-scripts`配置到`PATH`变量上，这样方便我本地使用所有的脚本。
 
 #### 打包下载
 
-下载文件[release.zip](https://github.com/oldratlee/useful-shells/archive/release.zip)：
+下载文件[release.zip](https://github.com/oldratlee/useful-scripts/archive/release.zip)：
 
 ```bash
-wget --no-check-certificate https://github.com/oldratlee/useful-shells/archive/release.zip
+wget --no-check-certificate https://github.com/oldratlee/useful-scripts/archive/release.zip
 
 unzip release.zip
 ```
 
 ### 下载和运行单个文件
 
-以[`show-busy-java-threads.sh`](https://raw.github.com/oldratlee/useful-shells/release/show-busy-java-threads.sh)为例。
+以[`show-busy-java-threads.sh`](https://raw.github.com/oldratlee/useful-scripts/release/show-busy-java-threads.sh)为例。
 
 #### `curl`文件直接用`bash`运行
 
 ```bash
-curl -sLk 'https://raw.github.com/oldratlee/useful-shells/release/show-busy-java-threads.sh' | bash
+curl -sLk 'https://raw.github.com/oldratlee/useful-scripts/release/show-busy-java-threads.sh' | bash
 ```
 
 #### 下载单个文件
 
 ```bash
-wget --no-check-certificate https://raw.github.com/oldratlee/useful-shells/release/show-busy-java-threads.sh
+wget --no-check-certificate https://raw.github.com/oldratlee/useful-scripts/release/show-busy-java-threads.sh
 chmod +x show-busy-java-threads.sh
 
 ./show-busy-java-threads.sh

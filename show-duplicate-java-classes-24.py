@@ -72,9 +72,10 @@ if __name__ == '__main__':
         printer = JarOnlyPrinter()
 
     printer.before()
-    for t in groupby(sorted(
-            [c for p in args for z in glob(p + '/*.jar') if not matchexclude(z, options.excludes) for c in walkzip(z)]),
-                     lambda x: x[0]):
+    class_file_to_jar = [c for p in args
+                         for z in glob(p + '/*.jar') if not matchexclude(z, options.excludes)
+                         for c in walkzip(z)]
+    for t in groupby(sorted(class_file_to_jar), lambda x: x[0]):
         for clzname, jars in zfilter(*t):
             printer.put(clzname, jars)
 

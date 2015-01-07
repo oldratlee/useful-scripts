@@ -512,6 +512,8 @@ chmod +x show-busy-java-threads.sh
 
 
 #### git 快速 add 多个文件(before commit)
+当在 repo 内对多个文件做了大量的修改后, 使用 git add . 等命令并不是一个好习惯. 该脚本让用户能够有个稍微方便的选择方式
+执行 ```git-auto-add.sh``` 之后, 回车确定选择文件, 其他输入为不添加文件
 
 ```
 git-auto-add.sh
@@ -555,5 +557,4 @@ Changes to be committed:
 	modified:   README.md
 	new file:   git-auto-add.sh
 
-当在 repo 内对多个文件做了大量的修改后, 使用 git add . 等命令并不是一个好习惯. 该脚本让用户能够有个稍微方便的选择方式
 ```

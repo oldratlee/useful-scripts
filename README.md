@@ -80,6 +80,49 @@ The stack of busy(26.1%) thread(24018/0x5dd2) of java process(23269) of user(adm
 
 [silentforce](https://github.com/silentforce)改进此脚本，增加对环境变量`JAVA_HOME`的判断。
 
+:beer: [show-duplicate-java-classes.py](show-duplicate-java-classes.py)
+----------------------
+
+找出`java`库（即`jar`文件）中的重复类。
+
+`java`开发的一个麻烦的问题是`jar`冲突（即多个版本的jar），或者说重复类。会出`NoSuchMethod`等的问题，还不见得当时出问题。
+
+找出有重复类的`jar`，可以防患未然。
+
+### 用法
+
+```bash
+# 查找当前目录下所有Jar中的重复类的jar
+show-duplicate-java-classes.py
+
+# 查找当前目录下所有Jar中的重复类的Jar
+show-duplicate-java-classes.py -v
+
+# 查找当前目录及其子目录下所有Jar中的重复类
+show-duplicate-java-classes.py -r
+
+# 查找当前目录下所有Jar中的重复类，排除指定的一些Jar，使用glob匹配
+show-duplicate-java-classes.py -e '*spring*.jar' --excludes '*apache*.jar'
+
+# 查找当前目录下所有Jar中的重复类，结果到html文件中，包含Jar中重复类的明细
+show-duplicate-java-classes.py --html
+```
+
+### 示例
+
+```bash
+$ show-duplicate-java-classes.py
+['./ace4j-servicemgr-inner-api-0.0.1-20141223.031744-27.jar', './ace4j-servicemgr-inner-impl-0.0.1-20141223.031744-27.jar']
+['./ace4j-servicemgr-impl-0.0.1-SNAPSHOT.jar', './ace4j-servicemgr-inner-impl-0.0.1-20141223.031744-27.jar']
+......
+
+$ show-duplicate-java-classes.py --html > result.html
+```
+
+### 贡献者
+
+[tgic](https://github.com/tg123)提供此脚本。友情贡献者的链接[commandlinefu.cn](http://commandlinefu.cn/)|[微博linux命令行精选](http://weibo.com/u/2674868673)
+
 :beer: [find-in-jars.sh](find-in-jars.sh)
 ----------------------
 

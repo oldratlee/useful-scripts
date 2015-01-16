@@ -552,3 +552,52 @@ chmod +x show-busy-java-threads.sh
 
 ./show-busy-java-threads.sh
 ```
+
+
+#### git 快速 add 多个文件(before commit)
+当在 repo 内对多个文件做了大量的修改后, 使用 git add . 等命令并不是一个好习惯. 该脚本让用户能够有个稍微方便的选择方式
+执行 ```git-auto-add.sh``` 之后, 回车确定选择文件, 其他输入为不添加文件
+
+```
+git-auto-add.sh
+
+[11:45]:git status
+On branch master
+Your branch is up-to-date with 'origin/master'.
+
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+	new file:   git-auto-add.sh
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	modified:   README.md
+
+sunus@mbpRocks[~/githubs/useful-scripts] (master ⚡ )
+[11:45]:git-auto-add.sh
+New Files
+Ready to add new file: git-auto-add.sh
+any other input value to abort!
+
+Modifies Files
+Ready to add modified README.md
+any other input value to abort!
+
+Deleted Files
+None
+All Done
+sunus@mbpRocks[~/githubs/useful-scripts] (master ⚡ )
+[11:45]:git status
+On branch master
+Your branch is up-to-date with 'origin/master'.
+
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+	modified:   README.md
+	new file:   git-auto-add.sh
+
+```

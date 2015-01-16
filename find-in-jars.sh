@@ -46,10 +46,8 @@ done
 [ -z "$1" ] && { echo No find file pattern! ; usage 1; }
 dir=${dir:-.}
 
-find ${dir} -iname '*.jar' | while read jarFile
-do
-        jar tf ${jarFile} | egrep "$1" | while read file
-        do
-                echo "${jarFile}"\!"${file}"
-        done
+find ${dir} -iname '*.jar' | while read jarFile; do
+    jar tf ${jarFile} | egrep "$1" | while read file; do
+        echo "${jarFile}"\!"${file}"
+    done
 done

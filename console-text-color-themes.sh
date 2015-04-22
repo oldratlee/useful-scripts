@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 # @Function
 # show all console text color themes.
 

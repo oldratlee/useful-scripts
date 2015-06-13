@@ -1,7 +1,7 @@
 :snail: `Java`相关脚本
 ====================================
 
-:beer: [show-busy-java-threads.sh](show-busy-java-threads.sh)
+:beer: [show-busy-java-threads.sh](../show-busy-java-threads.sh)
 ----------------------
 
 在排查`Java`的`CPU`性能问题时(`top us`值过高)，要找出`Java`进程中消耗`CPU`多的线程，并查看它的线程栈，从而找出导致性能问题的方法调用。
@@ -67,7 +67,7 @@ The stack of busy(26.1%) thread(24018/0x5dd2) of java process(23269) of user(adm
 
 [silentforce](https://github.com/silentforce)改进此脚本，增加对环境变量`JAVA_HOME`的判断。
 
-:beer: [show-duplicate-java-classes](show-duplicate-java-classes)
+:beer: [show-duplicate-java-classes](../show-duplicate-java-classes)
 ----------------------
 
 找出`java`库（即`jar`文件）或`class`目录中的重复类。
@@ -82,21 +82,32 @@ The stack of busy(26.1%) thread(24018/0x5dd2) of java process(23269) of user(adm
 # 查找当前目录下所有Jar中的重复类
 show-duplicate-java-classes
 
-# 查找指定目录下所有Jar中的重复类
-show-duplicate-java-classes path/to/lib/dir
+# 查找多个指定目录下所有Jar中的重复类
+show-duplicate-java-classes path/to/lib_dir1 /path/to/lib_dir2
 
-# 查找多个指定Class目录下的重复类
-show-duplicate-java-classes path/to/lib/dir1 /path/to/lib/dir2
+# 查找多个指定Class目录下的重复类。 Class目录 通过 -c 选项指定
+show-duplicate-java-classes -c path/to/class_dir1 -c /path/to/class_dir2
 
 # 查找指定Class目录和指定目录下所有Jar中的重复类的jar
-show-duplicate-java-classes -c path/to/classes/dir1 -c path/to/classes/dir2 path/to/lib/dir1 /path/to/lib/dir2
+show-duplicate-java-classes path/to/lib_dir1 /path/to/lib_dir2 -c path/to/class_dir1 -c path/to/class_dir2
 ```
 
 ### 示例
 
 ```bash
 $ show-duplicate-java-classes WEB-INF/lib
-$ show-duplicate-java-classes -c WEB-INF/classes WEB-INF/libFound duplicate classes in below class path:
+COOL! No duplicate classes found!
+
+================================================================================
+class paths to find:
+================================================================================
+1  : WEB-INF/lib/sourceforge.spring.modules.context-2.5.6.SEC02.jar
+2  : WEB-INF/lib/misc.htmlparser-0.0.0.jar
+3  : WEB-INF/lib/normandy.client-1.0.2.jar
+...
+
+$ show-duplicate-java-classes -c WEB-INF/classes WEB-INF/lib
+Found duplicate classes in below class path:
 1  (293@2): WEB-INF/lib/sourceforge.spring-2.5.6.SEC02.jar WEB-INF/lib/sourceforge.spring.modules.orm-2.5.6.SEC02.jar
 2  (2@3): WEB-INF/lib/servlet-api-3.0-alpha-1.jar WEB-INF/lib/jsp-api-2.1-rev-1.jar WEB-INF/lib/jstl-api-1.2-rev-1.jar
 3  (104@2): WEB-INF/lib/commons-io-2.2.jar WEB-INF/lib/jakarta.commons.io-2.0.jar
@@ -135,26 +146,13 @@ class paths to find:
 4  : WEB-INF/lib/xml.xmlgraphics__batik-css-1.7.jar-1.7.jar
 5  : WEB-INF/lib/jakarta.ecs-1.4.2.jar
 ...
-
-$ show-duplicate-java-classes WEB-INF/lib
-COOL! No duplicate classes found!
-
-================================================================================
-class paths to find:
-================================================================================
-1  : WEB-INF/lib/sourceforge.spring.modules.context-2.5.6.SEC02.jar
-2  : WEB-INF/lib/misc.htmlparser-0.0.0.jar
-3  : WEB-INF/lib/normandy.client-1.0.2.jar
-4  : WEB-INF/lib/xml.xmlgraphics__batik-css-1.7.jar-1.7.jar
-5  : WEB-INF/lib/jakarta.ecs-1.4.2.jar
-...
 ```
 
 ### 贡献者
 
 [tgic](https://github.com/tg123)提供此脚本。友情贡献者的链接[commandlinefu.cn](http://commandlinefu.cn/)|[微博linux命令行精选](http://weibo.com/u/2674868673)
 
-:beer: [find-in-jars.sh](find-in-jars.sh)
+:beer: [find-in-jars.sh](../find-in-jars.sh)
 ----------------------
 
 在当前目录下所有`jar`文件里，查找类或资源文件。

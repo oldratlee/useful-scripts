@@ -3,7 +3,7 @@
 
 包含`Shell`使用或命令加强的脚本。
 
-:beer: [console-text-color-themes.sh](console-text-color-themes.sh)
+:beer: [console-text-color-themes.sh](../console-text-color-themes.sh)
 ----------------------
 
 显示`Terminator`的全部文字彩色组合的效果及其打印方式。
@@ -23,7 +23,7 @@ colorEchoWithoutNewLine "4;33;40" "Hello world!" "Hello Hell!"
 ```
 
 `console-text-color-themes.sh`的运行效果图如下：   
-![console-text-color-themes.sh的运行效果图](https://raw.github.com/wiki/oldratlee/useful-scripts/console-colorful-text.png)
+![console-text-color-themes.sh的运行效果图](console-colorful-text.png)
 
 ### 贡献者
 
@@ -33,7 +33,7 @@ colorEchoWithoutNewLine "4;33;40" "Hello world!" "Hello Hell!"
 
 - [utensil](https://github.com/utensil)的[在Bash下输出彩色的文本](http://utensil.github.io/tech/2007/09/10/colorful-bash.html)，这是篇很有信息量很钻研的文章！
 
-:beer: [colorful-lines](colorful-lines)
+:beer: [colorful-lines](../colorful-lines)
 ----------------------
 
 彩色`cat`出文件行，方便人眼区分不同的行。
@@ -60,7 +60,7 @@ file2 line2
 
 注：上面显示中，没有彩色，在控制台上运行可以看出彩色效果。
 
-:beer: [echo-args.sh](echo-args.sh)
+:beer: [echo-args.sh](../echo-args.sh)
 ----------------------
 
 在编写脚本时，常常要确认输入参数是否是期望的：参数个数，参数值（可能包含有人眼不容易发现的空格问题）。
@@ -86,7 +86,7 @@ $ ./echo-args.sh 1 "  2 foo  " "3        3"
 
 这样可以不改其它的程序，查看到输入参数的信息。
 
-:beer: [tcp-connection-state-counter.sh](tcp-connection-state-counter.sh)
+:beer: [tcp-connection-state-counter.sh](../tcp-connection-state-counter.sh)
 ----------------------
 
 统计各个`TCP`连接状态的个数。
@@ -107,12 +107,12 @@ tcp-connection-state-counter.sh
 
 ```bash
 $ tcp-connection-state-counter.sh
-ESTABLISHED    290
+ESTABLISHED  290
 TIME_WAIT    212
-SYN_SENT    17
+SYN_SENT     17
 ```
 
-:beer: [parseOpts.sh](parseOpts.sh)
+:beer: [parseOpts.sh](../parseOpts.sh)
 ----------------------
 
 提供命令行选项解析函数`parseOpts`，支持选项的值有多个值（即数组）。  
@@ -211,7 +211,7 @@ parseOpts "a,a-long|b,b-long:|c,c-long+" -a -b bv -- --c-long c.sh -p pv -q qv a
 
 [Khotyn Huang](https://github.com/khotyn)指出`bash` `3.0`下使用有问题，并提供`bash` `3.0`的测试机器。
 
-:beer: [xpl](xpl) and [xpf](xpf)
+:beer: [xpl](../xpl) and [xpf](../xpf)
 ----------------------
 
 * `xpl`：在文件浏览器中打开指定的文件或文件夹。  

@@ -39,30 +39,30 @@ $ show-busy-java-threads.sh
 The stack of busy(57.0%) thread(23355/0x5b3b) of java process(23269) of user(admin):
 "pool-1-thread-1" prio=10 tid=0x000000005b5c5000 nid=0x5b3b runnable [0x000000004062c000]
    java.lang.Thread.State: RUNNABLE
-	at java.text.DateFormat.format(DateFormat.java:316)
-	at com.xxx.foo.services.common.DateFormatUtil.format(DateFormatUtil.java:41)
-	at com.xxx.foo.shared.monitor.schedule.AppMonitorDataAvgScheduler.run(AppMonitorDataAvgScheduler.java:127)
-	at com.xxx.foo.services.common.utils.AliTimer$2.run(AliTimer.java:128)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
-	at java.lang.Thread.run(Thread.java:662)
+    at java.text.DateFormat.format(DateFormat.java:316)
+    at com.xxx.foo.services.common.DateFormatUtil.format(DateFormatUtil.java:41)
+    at com.xxx.foo.shared.monitor.schedule.AppMonitorDataAvgScheduler.run(AppMonitorDataAvgScheduler.java:127)
+    at com.xxx.foo.services.common.utils.AliTimer$2.run(AliTimer.java:128)
+    at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+    at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+    at java.lang.Thread.run(Thread.java:662)
 
 The stack of busy(26.1%) thread(24018/0x5dd2) of java process(23269) of user(admin):
 "pool-1-thread-2" prio=10 tid=0x000000005a968800 nid=0x5dd2 runnable [0x00000000420e9000]
    java.lang.Thread.State: RUNNABLE
-	at java.util.Arrays.copyOf(Arrays.java:2882)
-	at java.lang.AbstractStringBuilder.expandCapacity(AbstractStringBuilder.java:100)
-	at java.lang.AbstractStringBuilder.append(AbstractStringBuilder.java:572)
-	at java.lang.StringBuffer.append(StringBuffer.java:320)
-	- locked <0x00000007908d0030> (a java.lang.StringBuffer)
-	at java.text.SimpleDateFormat.format(SimpleDateFormat.java:890)
-	at java.text.SimpleDateFormat.format(SimpleDateFormat.java:869)
-	at java.text.DateFormat.format(DateFormat.java:316)
-	at com.xxx.foo.services.common.DateFormatUtil.format(DateFormatUtil.java:41)
-	at com.xxx.foo.shared.monitor.schedule.AppMonitorDataAvgScheduler.run(AppMonitorDataAvgScheduler.java:126)
-	at com.xxx.foo.services.common.utils.AliTimer$2.run(AliTimer.java:128)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+    at java.util.Arrays.copyOf(Arrays.java:2882)
+    at java.lang.AbstractStringBuilder.expandCapacity(AbstractStringBuilder.java:100)
+    at java.lang.AbstractStringBuilder.append(AbstractStringBuilder.java:572)
+    at java.lang.StringBuffer.append(StringBuffer.java:320)
+    - locked <0x00000007908d0030> (a java.lang.StringBuffer)
+    at java.text.SimpleDateFormat.format(SimpleDateFormat.java:890)
+    at java.text.SimpleDateFormat.format(SimpleDateFormat.java:869)
+    at java.text.DateFormat.format(DateFormat.java:316)
+    at com.xxx.foo.services.common.DateFormatUtil.format(DateFormatUtil.java:41)
+    at com.xxx.foo.shared.monitor.schedule.AppMonitorDataAvgScheduler.run(AppMonitorDataAvgScheduler.java:126)
+    at com.xxx.foo.services.common.utils.AliTimer$2.run(AliTimer.java:128)
+    at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+    at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 ...
 ```
 
@@ -92,31 +92,75 @@ The stack of busy(26.1%) thread(24018/0x5dd2) of java process(23269) of user(adm
 ### 用法
 
 ```bash
-# 查找当前目录下所有Jar中的重复类的jar
-show-duplicate-java-classes.py
+# 查找当前目录下所有Jar中的重复类
+show-duplicate-java-classes
 
-# 查找当前目录下所有Jar中的重复类的Jar
-show-duplicate-java-classes.py -v
+# 查找指定目录下所有Jar中的重复类
+show-duplicate-java-classes path/to/lib/dir
 
-# 查找当前目录及其子目录下所有Jar中的重复类
-show-duplicate-java-classes.py -r
+# 查找多个指定Class目录下的重复类
+show-duplicate-java-classes path/to/lib/dir1 /path/to/lib/dir2
 
-# 查找当前目录下所有Jar中的重复类，排除指定的一些Jar，使用glob匹配
-show-duplicate-java-classes.py -e '*spring*.jar' --excludes '*apache*.jar'
-
-# 查找当前目录下所有Jar中的重复类，结果到html文件中，包含Jar中重复类的明细
-show-duplicate-java-classes.py --html
+# 查找指定Class目录和指定目录下所有Jar中的重复类的jar
+show-duplicate-java-classes -c path/to/classes/dir1 -c path/to/classes/dir2 path/to/lib/dir1 /path/to/lib/dir2
 ```
 
 ### 示例
 
 ```bash
-$ show-duplicate-java-classes.py
-['./ace4j-servicemgr-inner-api-0.0.1-20141223.031744-27.jar', './ace4j-servicemgr-inner-impl-0.0.1-20141223.031744-27.jar']
-['./ace4j-servicemgr-impl-0.0.1-SNAPSHOT.jar', './ace4j-servicemgr-inner-impl-0.0.1-20141223.031744-27.jar']
-......
+$ show-duplicate-java-classes WEB-INF/lib
+$ show-duplicate-java-classes -c WEB-INF/classes WEB-INF/libFound duplicate classes in below class path:
+1  (293@2): WEB-INF/lib/sourceforge.spring-2.5.6.SEC02.jar WEB-INF/lib/sourceforge.spring.modules.orm-2.5.6.SEC02.jar
+2  (2@3): WEB-INF/lib/servlet-api-3.0-alpha-1.jar WEB-INF/lib/jsp-api-2.1-rev-1.jar WEB-INF/lib/jstl-api-1.2-rev-1.jar
+3  (104@2): WEB-INF/lib/commons-io-2.2.jar WEB-INF/lib/jakarta.commons.io-2.0.jar
+4  (6@3): WEB-INF/lib/jakarta.commons.logging-1.1.jar WEB-INF/lib/commons-logging-1.1.1.jar WEB-INF/lib/org.slf4j.jcl104-over-slf4j-1.5.6.jar
+5  (344@2): WEB-INF/lib/sourceforge.spring-2.5.6.SEC02.jar WEB-INF/lib/sourceforge.spring.modules.context-2.5.6.SEC02.jar
+...
 
-$ show-duplicate-java-classes.py --html > result.html
+================================================================================
+Duplicate classes detail info:
+================================================================================
+1  (293@2): WEB-INF/lib/sourceforge.spring-2.5.6.SEC02.jar WEB-INF/lib/sourceforge.spring.modules.orm-2.5.6.SEC02.jar
+    1   org/springframework/orm/toplink/TopLinkTemplate$13.class
+    2   org/springframework/orm/hibernate3/HibernateTemplate$24.class
+    3   org/springframework/orm/jpa/vendor/HibernateJpaDialect.class
+    4   org/springframework/orm/hibernate3/TypeDefinitionBean.class
+    5   org/springframework/orm/hibernate3/SessionHolder.class
+    ...
+2  (2@3): WEB-INF/lib/servlet-api-3.0-alpha-1.jar WEB-INF/lib/jsp-api-2.1-rev-1.jar WEB-INF/lib/jstl-api-1.2-rev-1.jar
+    1   javax/servlet/ServletException.class
+    2   javax/servlet/ServletContext.class
+3  (104@2): WEB-INF/lib/commons-io-2.2.jar WEB-INF/lib/jakarta.commons.io-2.0.jar
+    1   org/apache/commons/io/input/ProxyReader.class
+    2   org/apache/commons/io/output/FileWriterWithEncoding.class
+    3   org/apache/commons/io/output/TaggedOutputStream.class
+    4   org/apache/commons/io/filefilter/NotFileFilter.class
+    5   org/apache/commons/io/filefilter/TrueFileFilter.class
+    ...
+...
+
+================================================================================
+class paths to find:
+================================================================================
+1  : WEB-INF/lib/sourceforge.spring.modules.context-2.5.6.SEC02.jar
+2  : WEB-INF/lib/misc.htmlparser-0.0.0.jar
+3  : WEB-INF/lib/normandy.client-1.0.2.jar
+4  : WEB-INF/lib/xml.xmlgraphics__batik-css-1.7.jar-1.7.jar
+5  : WEB-INF/lib/jakarta.ecs-1.4.2.jar
+...
+
+$ show-duplicate-java-classes WEB-INF/lib
+COOL! No duplicate classes found!
+
+================================================================================
+class paths to find:
+================================================================================
+1  : WEB-INF/lib/sourceforge.spring.modules.context-2.5.6.SEC02.jar
+2  : WEB-INF/lib/misc.htmlparser-0.0.0.jar
+3  : WEB-INF/lib/normandy.client-1.0.2.jar
+4  : WEB-INF/lib/xml.xmlgraphics__batik-css-1.7.jar-1.7.jar
+5  : WEB-INF/lib/jakarta.ecs-1.4.2.jar
+...
 ```
 
 ### 贡献者
@@ -344,9 +388,9 @@ tcp-connection-state-counter.sh
 
 ```bash
 $ tcp-connection-state-counter.sh
-ESTABLISHED	290
-TIME_WAIT	212
-SYN_SENT	17
+ESTABLISHED    290
+TIME_WAIT    212
+SYN_SENT    17
 ```
 
 :beer: [parseOpts.sh](parseOpts.sh)
@@ -401,13 +445,13 @@ source /path/to/parseOpts.sh
 
 parseOpts "a,a-long|b,b-long:|c,c-long+" -a -b bv --c-long c.sh -p pv -q qv arg1 \; aa bb cc
 # 可以通过下面全局变量来获得解析的参数值：
-#	_OPT_VALUE_a = true
-#	_OPT_VALUE_a_long = true
-#	_OPT_VALUE_b = bv
-#	_OPT_VALUE_b_long = bv
-#	_OPT_VALUE_c = (c.sh -p pv -q qv arg1) ，数组类型
-#	_OPT_VALUE_c_long = (c.sh -p pv -q qv arg1) ，数组类型
-#	_OPT_ARGS = (aa bb cc) ，数组类型
+#    _OPT_VALUE_a = true
+#    _OPT_VALUE_a_long = true
+#    _OPT_VALUE_b = bv
+#    _OPT_VALUE_b_long = bv
+#    _OPT_VALUE_c = (c.sh -p pv -q qv arg1) ，数组类型
+#    _OPT_VALUE_c_long = (c.sh -p pv -q qv arg1) ，数组类型
+#    _OPT_ARGS = (aa bb cc) ，数组类型
 ```
 
 `--`的使用效果示例：
@@ -418,13 +462,13 @@ source /path/to/parseOpts.sh
 
 parseOpts "a,a-long|b,b-long:|c,c-long+" -a -b bv -- --c-long c.sh -p pv -q qv arg1 \; aa bb cc
 # 可以通过下面全局变量来获得解析的参数值：
-#	_OPT_VALUE_a = true
-#	_OPT_VALUE_a_long = true
-#	_OPT_VALUE_b = bv
-#	_OPT_VALUE_b_long = bv
-#	_OPT_VALUE_c 没有设置过
-#	_OPT_VALUE_c_long 没有设置过
-#	_OPT_ARGS = (--c-long c.sh -p pv -q qv arg1 ';' aa bb cc) ，数组类型
+#    _OPT_VALUE_a = true
+#    _OPT_VALUE_a_long = true
+#    _OPT_VALUE_b = bv
+#    _OPT_VALUE_b_long = bv
+#    _OPT_VALUE_c 没有设置过
+#    _OPT_VALUE_c_long 没有设置过
+#    _OPT_ARGS = (--c-long c.sh -p pv -q qv arg1 ';' aa bb cc) ，数组类型
 ```
 
 ### 兼容性

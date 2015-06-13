@@ -1,0 +1,101 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+__author__ = 'tg123'
+
+from glob import glob
+from os import walk
+from zipfile import ZipFile
+from os.path import relpath, isdir
+from optparse import OptionParser
+
+
+def list_jar_file_under_lib_dirs(libs):
+    jar_files = set()
+    for lib in libs:
+        if isdir(lib):
+            jar_files |= {f for f in glob(lib + '/*.jar')}
+        else:
+            jar_files.add(lib)
+    return jar_files
+
+
+def list_class_under_jar_file(jar_file):
+    return {f for f in ZipFile(jar_file).namelist() if f.lower().endswith('.class')}
+
+
+def list_class_under_class_dir(class_dir):
+    return {relpath(dir_path + "/" + filename, class_dir)
+            for dir_path, _, file_names in walk(class_dir)
+            for filename in file_names if filename.lower().endswith('.class')}
+
+
+def expand_2_class_path(jar_files, class_dirs):
+    java_class_2_class_paths = {}
+    # list all classes in jar files
+    for jar_file in jar_files:
+        for class_file in list_class_under_jar_file(jar_file):
+            java_class_2_class_paths.setdefault(class_file, set()).add(jar_file)
+    # list all classes in class dir
+    for class_dir in class_dirs:
+        for class_file in list_class_under_class_dir(class_dir):
+            java_class_2_class_paths.setdefault(class_file, set()).add(class_dir)
+
+    return java_class_2_class_paths, jar_files | set(class_dirs)
+
+
+def find_duplicate_classes(java_class_2_class_paths):
+    class_path_2_duplicate_classes = {}
+
+    for java_class, class_paths in java_class_2_class_paths.items():
+        if len(class_paths) > 1:
+            classes = class_path_2_duplicate_classes.setdefault(frozenset(class_paths), set())
+            classes.add(java_class)
+
+    return class_path_2_duplicate_classes
+
+
+def print_class_paths(class_paths):
+    print
+    print "=" * 80
+    print "class paths to find:"
+    print "=" * 80
+    for idx, class_path in enumerate(class_paths):
+        print("%-3d: %s" % (idx + 1, class_path))
+
+
+if __name__ == '__main__':
+    optionParser = OptionParser('usage: %prog '
+                                '[-c class-dir1 [-c class-dir2] ...] '
+                                '[lib-dir1|jar-file [lib-dir2|jar=file] ...]')
+    optionParser.add_option("-c", "--class-dir", dest="class_dirs", default=[], action="append", help="add class dir")
+    options, libs = optionParser.parse_args()
+
+    if not options.class_dirs and not libs:
+        libs = ['.']
+
+    java_class_2_class_paths, class_paths = expand_2_class_path(
+        list_jar_file_under_lib_dirs(libs), options.class_dirs)
+
+    class_path_2_duplicate_classes = find_duplicate_classes(java_class_2_class_paths)
+
+    if not class_path_2_duplicate_classes:
+        print "COOL! No duplicate classes found!"
+        print_class_paths(class_paths)
+        exit()
+
+    print "Found duplicate classes in below class path:"
+    for idx, jars in enumerate(class_path_2_duplicate_classes):
+        print "%-3d(%d@%d): %s" % (idx + 1, len(class_path_2_duplicate_classes[jars]), len(jars), " ".join(jars))
+
+    print
+    print "=" * 80
+    print "Duplicate classes detail info:"
+    print "=" * 80
+    for idx, (jars, classes) in enumerate(class_path_2_duplicate_classes.iteritems()):
+        print "%-3d(%d@%d): %s" % (idx + 1, len(class_path_2_duplicate_classes[jars]), len(jars), " ".join(jars))
+        for i, c in enumerate(classes):
+            print "\t%-3d %s" % (i + 1, c)
+
+    print_class_paths(class_paths)
+    exit(1)

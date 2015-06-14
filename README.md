@@ -14,10 +14,10 @@ source <(curl -fsSL https://raw.githubusercontent.com/oldratlee/useful-scripts/m
 
 更多下载&使用方式，参见[下载使用](docs/install.md)。
 
-:books: 脚本文档
+:books: 使用文档
 ----------------------
 
-### [`Java`相关脚本](docs/java.md)
+### :coffee: [`Java`相关脚本](docs/java.md)
 
 1. [show-busy-java-threads.sh](docs/java.md#beer-show-busy-java-threadssh)  
     打印出在运行的`Java`进程中，消耗`CPU`最多的线程栈。用于快速排查`Java`的性能问题。
@@ -26,7 +26,7 @@ source <(curl -fsSL https://raw.githubusercontent.com/oldratlee/useful-scripts/m
 1. [find-in-jars.sh](docs/java.md#beer-find-in-jarssh)  
     在目录下所有`jar`文件里，查找类或资源文件。
 
-### [`VCS`相关脚本](docs/vcs.md)
+### :watch: [`VCS`相关脚本](docs/vcs.md)
 
 1. [swtrunk.sh](docs/vcs.md#beer-swtrunksh)  
     自动`svn`工作目录从分支（`branches`）切换到主干（`trunk`）。
@@ -35,7 +35,7 @@ source <(curl -fsSL https://raw.githubusercontent.com/oldratlee/useful-scripts/m
 1. [cp-svn-url.sh](docs/vcs.md#beer-cp-svn-urlsh)  
     拷贝当前`svn`目录对应的远程分支到系统的粘贴板，省去`CTRL+C`操作。
 
-### [`Shell`相关脚本](docs/shell.md)
+### :shell: [`Shell`相关脚本](docs/shell.md)
 
 包含`Shell`使用或命令加强的脚本。
 

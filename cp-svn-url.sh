@@ -3,11 +3,11 @@
 # copy the svn remote url of current svn directory.
 #
 # @Usage
-#   $ ./svn-url.sh
+#   $ ./cp-svn-url.sh
+#   $ ./cp-svn-url.sh /path/to/svn/work/dir
 #
 # @author ivanzhangwb
-
-PROG=`basename $0`
+readonly PROG=`basename $0`
 
 usage() {
     cat <<EOF
@@ -25,42 +25,33 @@ EOF
     exit $1
 }
 
-ARGS=`getopt -a -o h -l help -- "$@"`
-[ $? -ne 0 ] && usage 1
-eval set -- "${ARGS}"
-
-while true; do
-    case "$1" in
-    -h|--help)
-        usage
-        ;;
-    --)
-        shift
-        break
-        ;;
-    esac
+for a in "$@"; do
+    [ -h = "$a" -o  --help = "$1" ] && usage
 done
 
 [ $# -gt 1 ]  && { echo At most 1 local directory is need! ; usage 1; }
 
-dir="${1}"
-dir=${dir:-.}
+readonly dir="${1:-.}"
 
-url=$(svn info "${dir}" | awk '/^URL: /{print $2}') 
+readonly url=$(svn info "${dir}" | awk '/^URL: /{print $2}') 
 if [ -z "${url}" ]; then
     echo "Fail to get svn url!"  1>&2
     exit 1
 fi
 
-name=$(uname | tr A-Z a-z)
+copy() {
+    local name=$(uname | tr A-Z a-z)
 
-case "${name}" in 
-darwin*)
-    echo -n "${url}" | pbcopy ;;
-cygwin*)
-    echo -n "${url}" | clip ;;
-*)
-    echo -n "${url}" | xsel -b ;;
-esac 
+    case "${name}" in
+    darwin*)
+        pbcopy ;;
+    cygwin*)
+        clip ;;
+    mingw*)
+        clip ;;
+    *)
+        xsel -b ;;
+    esac
+}
 
-[ $? == 0 ] && echo "${url} copied!" || exit 2
+echo -n "${url}" | copy && echo "${url} copied!"

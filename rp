@@ -1,0 +1,27 @@
+#!/bin/bash
+[ $# -eq 0 ] && {
+    echo "ERROR: NO argument!"
+    exit 1
+}
+
+[ $# -eq 1 ] && {
+    relativeTo=.
+    files=("$@")
+} || {
+    argv=("$@")
+    argc=$#
+
+    # Get last argument
+    relativeTo="${argv[$((argc - 1))]}"
+    files=( "${argv[@]:0:$((argc - 1))}" )
+}
+
+[ -f "$relativeTo" ] && relativeTo="$(dirname "$relativeTo")"
+
+for f in "${files[@]}" ; do
+    ! [ -e $f ] && {
+        echo "$f does not exists!"
+        continue
+    }
+    realpath "$f"  --relative-to="$relativeTo"
+done

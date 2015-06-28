@@ -1,0 +1,30 @@
+#!/bin/bash
+# @Function
+# echo each arguments on one line colorfully.
+#
+# @Usage
+#   $ ./2line arg1 arg2
+#   $ ./2line *.txt
+#
+# @author Jerry Lee
+
+
+colorEcho() {
+    local color="$1"
+    shift
+    if [ -c /dev/stdout ] ; then
+        # if stdout is console, turn on color output.
+        echo -ne "\033[1;${color}m"
+        echo -n "$@"
+        echo -e "\033[0m"
+    else
+        echo "$@"
+    fi
+}
+
+readonly ECHO_COLORS=(37 31 32 34 33 35 56)
+COUNT=0
+
+for a in "$@"; do
+    colorEcho "${ECHO_COLORS[$((COUNT++ % ${#ECHO_COLORS[@]}))]}" "$a"
+done

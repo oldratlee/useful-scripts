@@ -41,7 +41,7 @@ source <(curl -fsSL https://raw.githubusercontent.com/oldratlee/useful-scripts/m
 
 1. [console-text-color-themes.sh](docs/shell.md#beer-console-text-color-themessh)  
     显示`Terminator`的全部文字彩色组合的效果及其打印方式。
-1. [colorful-lines](docs/shell.md#beer-colorful-lines)  
+1. [colines](docs/shell.md#beer-colines)  
     彩色`cat`出文件行，方便人眼区分不同的行。
 1. [echo-args.sh](docs/shell.md#beer-echo-argssh)    
     输出脚本收到的参数，在控制台运行时，把参数值括起的括号显示成 **红色**，方便人眼查看。用于调试脚本参数输入。

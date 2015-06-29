@@ -33,7 +33,7 @@ colorEchoWithoutNewLine "4;33;40" "Hello world!" "Hello Hell!"
 
 - [utensil](https://github.com/utensil)的[在Bash下输出彩色的文本](http://utensil.github.io/tech/2007/09/10/colorful-bash.html)，这是篇很有信息量很钻研的文章！
 
-:beer: [colorful-lines](../colorful-lines)
+:beer: [colines](../colines)
 ----------------------
 
 彩色`cat`出文件行，方便人眼区分不同的行。
@@ -41,19 +41,23 @@ colorEchoWithoutNewLine "4;33;40" "Hello world!" "Hello Hell!"
 ### 示例
 
 ```bash
-$ echo a | colorful-lines
+$ echo a | colines
 a
-$ echo -e 'a\nb' | colorful-lines
+$ echo -e 'a\nb' | colines
 a
 b
-$ echo -e 'a\nb' | nl | colorful-lines
+$ echo -e 'a\nb' | nl | colines
 1   a
 2   b
-$ colorful-lines file1 file2
-==== file1 ====
+$ colines file1 file2.txt
+================================================================================
+file1
+================================================================================
 file1 line1
 file1 line2
-==== file2 ====
+================================================================================
+file2.txt
+================================================================================
 file2 line1
 file2 line2
 ```

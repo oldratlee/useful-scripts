@@ -3,8 +3,8 @@
 # echo each arguments on one line colorfully.
 #
 # @Usage
-#   $ ./2line arg1 arg2
-#   $ ./2line *.txt
+#   $ ./a2l arg1 arg2
+#   $ ./a2l *.txt
 #
 # @author Jerry Lee
 

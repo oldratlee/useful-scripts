@@ -3,40 +3,43 @@
 
 包含`Shell`使用或命令加强的脚本。
 
-:beer: [console-text-color-themes.sh](../console-text-color-themes.sh)
+:beer: [c](../c)
 ----------------------
 
-显示`Terminator`的全部文字彩色组合的效果及其打印方式。
+原样命令行输出，并拷贝标准输出到系统剪贴板，省去`CTRL+C`，`CTRL+V`操作。支持`Linux`、`Mac`、`Windows`（`cygwin`、`MSSYS`）。
 
-脚本中，也给出了`colorEcho`和`colorEchoWithoutNewLine`函数更方便输出彩色文本，用法：
+命令名`c`意思是`Copy`，因为这个命令我平时非常常用，所以使用一个字符的命令名，方便键入。
+
+更多说明参见[拷贝复制命令行输出放在系统剪贴板上](http://oldratlee.com/post/2012-12-23/command-output-to-clip)。
+
+### 示例
 
 ```bash
-colorEcho <颜色样式> <要输出的文本>...
-colorEchoWithoutNewLine  <颜色样式> <要输出的文本>...
+# 前缀方式，后面跟上要运行的命令
+$ c pwd
+/Users/jerry
+$ c echo -e 'a\nb'
+a
+b
+# 从标准输入读取内容
+$ c < id_rsa.pub
+ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAz+ETZEgoLeIiC0rjWewdDs0sbo8c...== a@b.com
+# 后缀方式，管道
+$ echo -e 'a\nb' | nl | c
+1   a
+2   b
 ```
-
-```bash
-# 输出红色文本
-colorEcho "0;31;40" "Hello world!"
-# 输出黄色带下划线的文本
-colorEchoWithoutNewLine "4;33;40" "Hello world!" "Hello Hell!"
-```
-
-`console-text-color-themes.sh`的运行效果图如下：   
-![console-text-color-themes.sh的运行效果图](console-colorful-text.png)
-
-### 贡献者
-
-[姜太公](https://github.com/jiangjizhong)提供循环输出彩色组合的脚本。
 
 ### 参考资料
 
-- [utensil](https://github.com/utensil)的[在Bash下输出彩色的文本](http://utensil.github.io/tech/2007/09/10/colorful-bash.html)，这是篇很有信息量很钻研的文章！
+[拷贝复制命令行输出放在系统剪贴板上](http://oldratlee.com/post/2012-12-23/command-output-to-clip)，给出了不同系统可用命令。
 
 :beer: [colines](../colines)
 ----------------------
 
 彩色`cat`出文件行，方便人眼区分不同的行。
+
+命令名`colines`意思是`COLorful LINES`。
 
 ### 示例
 
@@ -60,6 +63,33 @@ file2.txt
 ================================================================================
 file2 line1
 file2 line2
+```
+
+注：上面显示中，没有彩色，在控制台上运行可以看出彩色效果。
+
+:beer: [a2l](../a2l)
+----------------------
+
+按行彩色输出参数，方便人眼查看。
+
+命令名`a2l`意思是`Arguments to(2) Lines`。
+
+### 示例
+
+```bash
+$ a2l *.java
+A.java
+B.java
+...
+
+# zsh支持 **/* 跨目录glob，可以方便搜索，但是输出内容是空格分隔的不方便查看。
+# 把参数按行输出方便查看 或是 grep
+$ a2l **/*.sh
+swtrunk.sh
+tcp-connection-state-counter.sh
+test-cases/parseOpts-test.sh
+test-cases/self-installer.sh
+...
 ```
 
 注：上面显示中，没有彩色，在控制台上运行可以看出彩色效果。
@@ -89,6 +119,36 @@ $ ./echo-args.sh 1 "  2 foo  " "3        3"
 * 建一个`echo-args.sh`脚本的符号链接到要查看参数的脚本的位置，名字和查看脚本一样。
 
 这样可以不改其它的程序，查看到输入参数的信息。
+
+:beer: [console-text-color-themes.sh](../console-text-color-themes.sh)
+----------------------
+
+显示`Terminator`的全部文字彩色组合的效果及其打印方式。
+
+脚本中，也给出了`colorEcho`和`colorEchoWithoutNewLine`函数更方便输出彩色文本，用法：
+
+```bash
+colorEcho <颜色样式> <要输出的文本>...
+colorEchoWithoutNewLine  <颜色样式> <要输出的文本>...
+```
+
+```bash
+# 输出红色文本
+colorEcho "0;31;40" "Hello world!"
+# 输出黄色带下划线的文本
+colorEchoWithoutNewLine "4;33;40" "Hello world!" "Hello Hell!"
+```
+
+`console-text-color-themes.sh`的运行效果图如下：   
+![console-text-color-themes.sh的运行效果图](console-colorful-text.png)
+
+### 贡献者
+
+[姜太公](https://github.com/jiangjizhong)提供循环输出彩色组合的脚本。
+
+### 参考资料
+
+- [utensil](https://github.com/utensil)的[在Bash下输出彩色的文本](http://utensil.github.io/tech/2007/09/10/colorful-bash.html)，这是篇很有信息量很钻研的文章！
 
 :beer: [tcp-connection-state-counter.sh](../tcp-connection-state-counter.sh)
 ----------------------

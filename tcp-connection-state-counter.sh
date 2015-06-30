@@ -8,7 +8,7 @@
 # @author Jerry Lee
 
 netstat -tna | awk 'NR > 2 {
-    s[$NF]++ 
+    s[$NF]++
 }
 
 END {

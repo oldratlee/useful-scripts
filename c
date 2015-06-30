@@ -33,4 +33,4 @@ if [ $# -eq 0 ]; then
     teeAndCopy
 else
     "$@" | teeAndCopy
-fi 
+fi

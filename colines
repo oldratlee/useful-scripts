@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # @Function
-# cat lines colorfully. colines means COL(orfule L)INES.
+# cat lines colorfully. colines means COLorful LINES.
 #
 # @Usage
 #   $ echo -n 'Hello\nWorld' | colines

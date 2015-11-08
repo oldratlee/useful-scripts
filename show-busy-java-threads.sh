@@ -7,7 +7,7 @@
 #
 # @author Jerry Lee
 
-PROG=`basename $0`
+readonly PROG=`basename $0`
 
 usage() {
     cat <<EOF
@@ -24,7 +24,7 @@ EOF
     exit $1
 }
 
-ARGS=`getopt -n "$PROG" -a -o c:p:h -l count:,pid:,help -- "$@"`
+readonly ARGS=`getopt -n "$PROG" -a -o c:p:h -l count:,pid:,help -- "$@"`
 [ $? -ne 0 ] && usage 1
 eval set -- "${ARGS}"
 
@@ -75,7 +75,7 @@ if ! which jstack &> /dev/null; then
     export PATH="$JAVA_HOME/bin:$PATH"
 fi
 
-uuid=`date +%s`_${RANDOM}_$$
+readonly uuid=`date +%s`_${RANDOM}_$$
 
 cleanupWhenExit() {
     rm /tmp/${uuid}_* &> /dev/null
@@ -83,15 +83,17 @@ cleanupWhenExit() {
 trap "cleanupWhenExit" EXIT
 
 printStackOfThread() {
+    local threadLine
+    local count=1
     while read threadLine ; do
-        pid=`echo ${threadLine} | awk '{print $1}'`
-        threadId=`echo ${threadLine} | awk '{print $2}'`
-        threadId0x=`printf %x ${threadId}`
-        user=`echo ${threadLine} | awk '{print $3}'`
-        pcpu=`echo ${threadLine} | awk '{print $5}'`
-        
-        jstackFile=/tmp/${uuid}_${pid}
-        
+        local pid=`echo ${threadLine} | awk '{print $1}'`
+        local threadId=`echo ${threadLine} | awk '{print $2}'`
+        local threadId0x=`printf %x ${threadId}`
+        local user=`echo ${threadLine} | awk '{print $3}'`
+        local pcpu=`echo ${threadLine} | awk '{print $5}'`
+
+        local jstackFile=/tmp/${uuid}_${pid}
+
         [ ! -f "${jstackFile}" ] && {
             jstack ${pid} > ${jstackFile} || {
                 redEcho "Fail to jstack java process ${pid}!"
@@ -100,7 +102,7 @@ printStackOfThread() {
             }
         }
 
-        redEcho "Busy(${pcpu}%) thread(${threadId}/0x${threadId0x}) stack of java process(${pid}) under user(${user}):"
+        redEcho "[$((count++))] Busy(${pcpu}%) thread(${threadId}/0x${threadId0x}) stack of java process(${pid}) under user(${user}):"
         sed "/nid=0x${threadId0x} /,/^$/p" -n ${jstackFile}
     done
 }
@@ -110,4 +112,3 @@ ps -Leo pid,lwp,user,comm,pcpu --no-headers | {
     awk '$4=="java"{print $0}' ||
     awk -v "pid=${pid}" '$1==pid,$4=="java"{print $0}'
 } | sort -k5 -r -n | head --lines "${count}" | printStackOfThread
-

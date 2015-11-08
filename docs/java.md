@@ -23,7 +23,7 @@ show-busy-java-threads.sh -c <要显示的线程栈数> -p <指定的Java Proces
 
 ```bash
 $ show-busy-java-threads.sh 
-The stack of busy(57.0%) thread(23355/0x5b3b) of java process(23269) of user(admin):
+[1] Busy(57.0%) thread(23355/0x5b3b) stack of java process(23269) under user(admin):
 "pool-1-thread-1" prio=10 tid=0x000000005b5c5000 nid=0x5b3b runnable [0x000000004062c000]
    java.lang.Thread.State: RUNNABLE
     at java.text.DateFormat.format(DateFormat.java:316)
@@ -34,7 +34,7 @@ The stack of busy(57.0%) thread(23355/0x5b3b) of java process(23269) of user(adm
     at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
     at java.lang.Thread.run(Thread.java:662)
 
-The stack of busy(26.1%) thread(24018/0x5dd2) of java process(23269) of user(admin):
+[2] Busy(26.1%) thread(24018/0x5dd2) stack of java process(23269) under user(admin):
 "pool-1-thread-2" prio=10 tid=0x000000005a968800 nid=0x5dd2 runnable [0x00000000420e9000]
    java.lang.Thread.State: RUNNABLE
     at java.util.Arrays.copyOf(Arrays.java:2882)

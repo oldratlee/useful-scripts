@@ -19,12 +19,13 @@ Options:
     -p, --pid       find out the highest cpu consumed threads from the specifed java process,
                     default from all java process.
     -c, --count     set the thread count to show, default is 5
+    -u, --user      set java process user
     -h, --help      display this help and exit
 EOF
     exit $1
 }
 
-readonly ARGS=`getopt -n "$PROG" -a -o c:p:h -l count:,pid:,help -- "$@"`
+readonly ARGS=`getopt -n "$PROG" -a -o c:p:u:h -l count:,pid:,help -- "$@"`
 [ $? -ne 0 ] && usage 1
 eval set -- "${ARGS}"
 
@@ -36,6 +37,10 @@ while true; do
         ;;
     -p|--pid)
         pid="$2"
+        shift 2
+        ;;
+    -u|--user)
+        jvmuser="$2"
         shift 2
         ;;
     -h|--help)
@@ -93,14 +98,25 @@ printStackOfThread() {
         local pcpu=`echo ${threadLine} | awk '{print $5}'`
 
         local jstackFile=/tmp/${uuid}_${pid}
-
+        
+        
         [ ! -f "${jstackFile}" ] && {
-            jstack ${pid} > ${jstackFile} || {
-                redEcho "Fail to jstack java process ${pid}!"
-                rm ${jstackFile}
-                continue
-            }
-        }
+            if [ `uname -m` == "x86_64" ];then
+                flag="-J-d64" # x86-64 specify jstack option "-J-d64"
+            fi
+            if [ -z ${jvmuser+x} ];then
+                # root user
+                jstackCmd="$JAVA_HOME/bin/jstack $flag"
+            else
+                # non-root user use sudo -u user
+                jstackCmd="sudo -u $jvmuser $JAVA_HOME/bin/jstack $flag"
+            fi
+            $jstackCmd ${pid} > ${jstackFile} || {
+                    redEcho "Fail to jstack java process ${pid}!"
+                    rm ${jstackFile}
+                    continue
+                }
+            }    
 
         redEcho "[$((count++))] Busy(${pcpu}%) thread(${threadId}/0x${threadId0x}) stack of java process(${pid}) under user(${user}):"
         sed "/nid=0x${threadId0x} /,/^$/p" -n ${jstackFile}

@@ -19,13 +19,12 @@ Options:
     -p, --pid       find out the highest cpu consumed threads from the specifed java process,
                     default from all java process.
     -c, --count     set the thread count to show, default is 5
-    -u, --user      set java process user
     -h, --help      display this help and exit
 EOF
     exit $1
 }
 
-readonly ARGS=`getopt -n "$PROG" -a -o c:p:u:h -l count:,pid:,help -- "$@"`
+readonly ARGS=`getopt -n "$PROG" -a -o c:p:h -l count:,pid:,help -- "$@"`
 [ $? -ne 0 ] && usage 1
 eval set -- "${ARGS}"
 
@@ -37,10 +36,6 @@ while true; do
         ;;
     -p|--pid)
         pid="$2"
-        shift 2
-        ;;
-    -u|--user)
-        jvmuser="$2"
         shift 2
         ;;
     -h|--help)
@@ -90,38 +85,33 @@ trap "cleanupWhenExit" EXIT
 printStackOfThread() {
     local threadLine
     local count=1
-    while read threadLine ; do
-        local pid=`echo ${threadLine} | awk '{print $1}'`
-        local threadId=`echo ${threadLine} | awk '{print $2}'`
+    while IFS=" " read -a line ; do
+        local pid=${line[0]}
+        local threadId=${line[1]}
         local threadId0x=`printf %x ${threadId}`
-        local user=`echo ${threadLine} | awk '{print $3}'`
-        local pcpu=`echo ${threadLine} | awk '{print $5}'`
+        local user=${line[2]}
+        local pcpu=${line[4]}
 
         local jstackFile=/tmp/${uuid}_${pid}
-        
-        
-        [ ! -f "${jstackFile}" ] && {
-            if [ `uname -m` == "x86_64" ];then
-                flag="-J-d64" # x86-64 specify jstack option "-J-d64"
-            fi
-            if [ -z ${jvmuser+x} ];then
-                # root user
-                jstackCmd="$JAVA_HOME/bin/jstack $flag"
-            else
-                # non-root user use sudo -u user
-                jstackCmd="sudo -u $jvmuser $JAVA_HOME/bin/jstack $flag"
-            fi
-            $jstackCmd ${pid} > ${jstackFile} || {
-                    redEcho "Fail to jstack java process ${pid}!"
-                    rm ${jstackFile}
-                    continue
-                }
-            }    
 
+        [ ! -f "${jstackFile}" ] && {
+            {
+                if [ "${user}" == "${USER}" ];then
+                    jstack ${pid} > ${jstackFile}
+                else
+                    sudo -u ${user} jstack ${pid} > ${jstackFile}
+                fi
+            } || {
+                redEcho "Fail to jstack java process ${pid}!"
+                rm ${jstackFile}
+                continue
+            }
+        }
         redEcho "[$((count++))] Busy(${pcpu}%) thread(${threadId}/0x${threadId0x}) stack of java process(${pid}) under user(${user}):"
         sed "/nid=0x${threadId0x} /,/^$/p" -n ${jstackFile}
     done
 }
+
 
 ps -Leo pid,lwp,user,comm,pcpu --no-headers | {
     [ -z "${pid}" ] &&

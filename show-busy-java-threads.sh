@@ -83,7 +83,7 @@ cleanupWhenExit() {
 trap "cleanupWhenExit" EXIT
 
 printStackOfThread() {
-    local threadLine
+    local line
     local count=1
     while IFS=" " read -a line ; do
         local pid=${line[0]}

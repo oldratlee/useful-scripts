@@ -83,29 +83,35 @@ cleanupWhenExit() {
 trap "cleanupWhenExit" EXIT
 
 printStackOfThread() {
-    local threadLine
+    local line
     local count=1
-    while read threadLine ; do
-        local pid=`echo ${threadLine} | awk '{print $1}'`
-        local threadId=`echo ${threadLine} | awk '{print $2}'`
+    while IFS=" " read -a line ; do
+        local pid=${line[0]}
+        local threadId=${line[1]}
         local threadId0x=`printf %x ${threadId}`
-        local user=`echo ${threadLine} | awk '{print $3}'`
-        local pcpu=`echo ${threadLine} | awk '{print $5}'`
+        local user=${line[2]}
+        local pcpu=${line[4]}
 
         local jstackFile=/tmp/${uuid}_${pid}
 
         [ ! -f "${jstackFile}" ] && {
-            jstack ${pid} > ${jstackFile} || {
+            {
+                if [ "${user}" == "${USER}" ];then
+                    jstack ${pid} > ${jstackFile}
+                else
+                    sudo -u ${user} jstack ${pid} > ${jstackFile}
+                fi
+            } || {
                 redEcho "Fail to jstack java process ${pid}!"
                 rm ${jstackFile}
                 continue
             }
         }
-
         redEcho "[$((count++))] Busy(${pcpu}%) thread(${threadId}/0x${threadId0x}) stack of java process(${pid}) under user(${user}):"
         sed "/nid=0x${threadId0x} /,/^$/p" -n ${jstackFile}
     done
 }
+
 
 ps -Leo pid,lwp,user,comm,pcpu --no-headers | {
     [ -z "${pid}" ] &&

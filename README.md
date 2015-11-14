@@ -21,6 +21,7 @@ source <(curl -fsSL https://raw.githubusercontent.com/oldratlee/useful-scripts/m
 
 1. [show-busy-java-threads.sh](docs/java.md#beer-show-busy-java-threadssh)  
     打印出在运行的`Java`进程中，消耗`CPU`最多的线程栈。用于快速排查`Java`的性能问题。
+    如果执行脚本的用户不是root,需要前面加上sudo
 1. [show-duplicate-java-classes](docs/java.md#beer-show-duplicate-java-classes)  
     找出`jar`文件和`class`目录中的重复类。用于排查`Java`类冲突问题。
 1. [find-in-jars.sh](docs/java.md#beer-find-in-jarssh)  

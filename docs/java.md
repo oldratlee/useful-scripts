@@ -17,6 +17,13 @@ show-busy-java-threads.sh -c <要显示的线程栈数>
 # 上面会从所有的Java进程中找出最消耗CPU的线程，这样用更方便。
 
 show-busy-java-threads.sh -c <要显示的线程栈数> -p <指定的Java Process>
+
+##############################
+# 注意：
+##############################
+# 如果Java进程的用户 与 执行脚本的当前用户 不同，则jstack不了这个Java进程。
+# 为了能切换到Java进程的用户，需要加sudo来执行，即可以解决：
+sudo show-busy-java-threads.sh
 ```
 
 ### 示例

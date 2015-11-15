@@ -8,6 +8,7 @@
 # @author Jerry Lee
 
 readonly PROG=`basename $0`
+readonly -a COMMAND_LINE=("$0" "$@")
 
 usage() {
     cat <<EOF
@@ -58,6 +59,24 @@ redEcho() {
     } || echo "$@"
 }
 
+yellowEcho() {
+    [ -c /dev/stdout ] && {
+        # if stdout is console, turn on color output.
+        echo -ne "\033[1;33m"
+        echo -n "$@"
+        echo -e "\033[0m"
+    } || echo "$@"
+}
+
+blueEcho() {
+    [ -c /dev/stdout ] && {
+        # if stdout is console, turn on color output.
+        echo -ne "\033[1;36m"
+        echo -n "$@"
+        echo -e "\033[0m"
+    } || echo "$@"
+}
+
 # Check the existence of jstack command!
 if ! which jstack &> /dev/null; then
     [ -z "$JAVA_HOME" ] && {
@@ -96,18 +115,27 @@ printStackOfThread() {
 
         [ ! -f "${jstackFile}" ] && {
             {
-                if [ "${user}" == "${USER}" ];then
+                if [ "${user}" == "${USER}" ]; then
                     jstack ${pid} > ${jstackFile}
                 else
-                    sudo -u ${user} jstack ${pid} > ${jstackFile}
+                    if [ $UID == 0 ]; then
+                        sudo -u ${user} jstack ${pid} > ${jstackFile}
+                    else
+                        redEcho "[$((count++))] Fail to jstack Busy(${pcpu}%) thread(${threadId}/0x${threadId0x}) stack of java process(${pid}) under user(${user})."
+                        redEcho "User of java process($user) is not current user($USER), need sudo to run again:"
+                        yellowEcho "    sudo ${COMMAND_LINE[@]}"
+                        echo
+                        continue
+                    fi
                 fi
             } || {
-                redEcho "Fail to jstack java process ${pid}!"
+                redEcho "[$((count++))] Fail to jstack Busy(${pcpu}%) thread(${threadId}/0x${threadId0x}) stack of java process(${pid}) under user(${user})."
+                echo
                 rm ${jstackFile}
                 continue
             }
         }
-        redEcho "[$((count++))] Busy(${pcpu}%) thread(${threadId}/0x${threadId0x}) stack of java process(${pid}) under user(${user}):"
+        blueEcho "[$((count++))] Busy(${pcpu}%) thread(${threadId}/0x${threadId0x}) stack of java process(${pid}) under user(${user}):"
         sed "/nid=0x${threadId0x} /,/^$/p" -n ${jstackFile}
     done
 }

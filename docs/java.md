@@ -88,6 +88,10 @@ $ show-busy-java-threads.sh
 
 ### 用法
 
+- 通过脚本参数指定`Libs`目录，查找目录下`Jar`文件，收集`Jar`文件中`Class`文件以分析重复类。可以指定多个`Libs`目录。  
+    注意，只会查找这个目录下`Jar`文件，不会查找子目录下`Jar`文件。因为`Libs`目录一般不会用子目录再放`Jar`，这样也避免把去查找不期望`Jar`。
+- 通过`-c`选项指定`Class`目录，直接收集这个目录下的`Class`文件以分析重复类。可以指定多个`Class`目录。
+
 ```bash
 # 查找当前目录下所有Jar中的重复类
 show-duplicate-java-classes

@@ -101,13 +101,13 @@ cleanupWhenExit() {
 }
 trap "cleanupWhenExit" EXIT
 
-printStackOfThread() {
+printStackOfThreads() {
     local line
     local count=1
     while IFS=" " read -a line ; do
         local pid=${line[0]}
         local threadId=${line[1]}
-        local threadId0x=`printf %x ${threadId}`
+        local threadId0x="0x`printf %x ${threadId}`"
         local user=${line[2]}
         local pcpu=${line[4]}
 
@@ -121,7 +121,7 @@ printStackOfThread() {
                     if [ $UID == 0 ]; then
                         sudo -u ${user} jstack ${pid} > ${jstackFile}
                     else
-                        redEcho "[$((count++))] Fail to jstack Busy(${pcpu}%) thread(${threadId}/0x${threadId0x}) stack of java process(${pid}) under user(${user})."
+                        redEcho "[$((count++))] Fail to jstack Busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user})."
                         redEcho "User of java process($user) is not current user($USER), need sudo to run again:"
                         yellowEcho "    sudo ${COMMAND_LINE[@]}"
                         echo
@@ -129,14 +129,14 @@ printStackOfThread() {
                     fi
                 fi
             } || {
-                redEcho "[$((count++))] Fail to jstack Busy(${pcpu}%) thread(${threadId}/0x${threadId0x}) stack of java process(${pid}) under user(${user})."
+                redEcho "[$((count++))] Fail to jstack Busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user})."
                 echo
                 rm ${jstackFile}
                 continue
             }
         }
-        blueEcho "[$((count++))] Busy(${pcpu}%) thread(${threadId}/0x${threadId0x}) stack of java process(${pid}) under user(${user}):"
-        sed "/nid=0x${threadId0x} /,/^$/p" -n ${jstackFile}
+        blueEcho "[$((count++))] Busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user}):"
+        sed "/nid=${threadId0x} /,/^$/p" -n ${jstackFile}
     done
 }
 
@@ -145,4 +145,4 @@ ps -Leo pid,lwp,user,comm,pcpu --no-headers | {
     [ -z "${pid}" ] &&
     awk '$4=="java"{print $0}' ||
     awk -v "pid=${pid}" '$1==pid,$4=="java"{print $0}'
-} | sort -k5 -r -n | head --lines "${count}" | printStackOfThread
+} | sort -k5 -r -n | head --lines "${count}" | printStackOfThreads

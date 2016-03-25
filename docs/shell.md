@@ -1,7 +1,8 @@
 :snail: `Shell`相关脚本
 ====================================
 
-包含`Shell`使用或命令加强的脚本。
+`Shell`使用加强
+====================================
 
 :beer: [c](../c)
 ----------------------
@@ -94,6 +95,73 @@ test-cases/self-installer.sh
 
 注：上面显示中，没有彩色，在控制台上运行可以看出彩色效果。
 
+:beer: [xpl](../xpl) and [xpf](../xpf)
+----------------------
+
+在命令行中快速完成 在文件浏览器中 打开/选中 指定的文件或文件夹的操作。
+
+* `xpl`：在文件浏览器中打开指定的文件或文件夹。  
+\# `xpl`是`explorer`的缩写。
+* `xpf`: 在文件浏览器中打开指定的文件或文件夹，并选中。   
+\# `xpf`是`explorer and select file`的缩写。
+
+### 用法
+
+```bash
+xpl
+# 缺省打开当前目录
+xpl <文件或是目录>...
+# 打开多个文件或目录
+
+xpf
+# 缺省打开当前目录
+xpf <文件或是目录>...
+# 打开多个文件或目录
+```
+
+### 示例
+
+```bash
+xpl /path/to/dir
+xpl /path/to/foo.txt
+xpl /path/to/dir1 /path/to/foo1.txt
+xpf /path/to/foo1.txt
+xpf /path/to/dir1 /path/to/foo1.txt
+```
+
+### 贡献者
+
+[Linhua Tan](https://github.com/toolchainX)修复Linux的选定Bug。
+
+:beer: [tcp-connection-state-counter.sh](../tcp-connection-state-counter.sh)
+----------------------
+
+统计各个`TCP`连接状态的个数。
+
+像`Nginx`、`Apache`的机器上需要查看，`TCP`连接的个数，以判定
+
+- 连接数、负荷
+- 是否有攻击，查看`SYN_RECV`数（`SYN`攻击）
+- `TIME_WAIT`数，太多会导致`TCP: time wait bucket table overflow`。
+
+### 用法
+
+```bash
+tcp-connection-state-counter.sh
+```
+
+### 示例
+
+```bash
+$ tcp-connection-state-counter.sh
+ESTABLISHED  290
+TIME_WAIT    212
+SYN_SENT     17
+```
+
+`Shell`开发/测试加强
+====================================
+
 :beer: [echo-args.sh](../echo-args.sh)
 ----------------------
 
@@ -149,32 +217,6 @@ colorEchoWithoutNewLine "4;33;40" "Hello world!" "Hello Hell!"
 ### 参考资料
 
 - [utensil](https://github.com/utensil)的[在Bash下输出彩色的文本](http://utensil.github.io/tech/2007/09/10/colorful-bash.html)，这是篇很有信息量很钻研的文章！
-
-:beer: [tcp-connection-state-counter.sh](../tcp-connection-state-counter.sh)
-----------------------
-
-统计各个`TCP`连接状态的个数。
-
-像`Nginx`、`Apache`的机器上需要查看，`TCP`连接的个数，以判定
-
-- 连接数、负荷
-- 是否有攻击，查看`SYN_RECV`数（`SYN`攻击）
-- `TIME_WAIT`数，太多会导致`TCP: time wait bucket table overflow`。
-
-### 用法
-
-```bash
-tcp-connection-state-counter.sh
-```
-
-### 示例
-
-```bash
-$ tcp-connection-state-counter.sh
-ESTABLISHED  290
-TIME_WAIT    212
-SYN_SENT     17
-```
 
 :beer: [parseOpts.sh](../parseOpts.sh)
 ----------------------
@@ -275,40 +317,3 @@ parseOpts "a,a-long|b,b-long:|c,c-long+" -a -b bv -- --c-long c.sh -p pv -q qv a
 
 [Khotyn Huang](https://github.com/khotyn)指出`bash` `3.0`下使用有问题，并提供`bash` `3.0`的测试机器。
 
-:beer: [xpl](../xpl) and [xpf](../xpf)
-----------------------
-
-用于在命令行中直接完成 在文件浏览器中 打开/选中 指定的文件或文件夹的操作。
-
-* `xpl`：在文件浏览器中打开指定的文件或文件夹。  
-\# `xpl`是`explorer`的缩写。
-* `xpf`: 在文件浏览器中打开指定的文件或文件夹，并选中。   
-\# `xpf`是`explorer and select file`的缩写。
-
-### 用法
-
-```bash
-xpl
-# 缺省打开当前目录
-xpl <文件或是目录>...
-# 打开多个文件或目录
-
-xpf
-# 缺省打开当前目录
-xpf <文件或是目录>...
-# 打开多个文件或目录
-```
-
-### 示例
-
-```bash
-xpl /path/to/dir
-xpl /path/to/foo.txt
-xpl /path/to/dir1 /path/to/foo1.txt
-xpf /path/to/foo1.txt
-xpf /path/to/dir1 /path/to/foo1.txt
-```
-
-### 贡献者
-
-[Linhua Tan](https://github.com/toolchainX)修复Linux的选定Bug。

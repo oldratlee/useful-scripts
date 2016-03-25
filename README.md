@@ -30,7 +30,7 @@ source <(curl -fsSL https://raw.githubusercontent.com/oldratlee/useful-scripts/m
 
 1. [swtrunk.sh](docs/vcs.md#beer-swtrunksh)  
     自动`svn`工作目录从分支（`branches`）切换到主干（`trunk`）。
-1. [svn-merge-stop-on-copy.sh](docs/vcs.md#beer-svn-merge-stop-on-copysh)    
+1. [svn-merge-stop-on-copy.sh](docs/vcs.md#beer-svn-merge-stop-on-copysh)  
     把指定的远程分支从刚新建分支以来的修改合并到本地`svn`目录或是另一个远程分支。
 1. [cp-svn-url.sh](docs/vcs.md#beer-cp-svn-urlsh)  
     拷贝当前`svn`目录对应的远程分支到系统的粘贴板，省去`CTRL+C`操作。
@@ -45,13 +45,13 @@ source <(curl -fsSL https://raw.githubusercontent.com/oldratlee/useful-scripts/m
     彩色`cat`出文件行，方便人眼区分不同的行。
 1. [a2l](docs/shell.md#beer-a2l)  
     按行彩色输出参数，方便人眼查看。
-1. [echo-args.sh](docs/shell.md#beer-echo-argssh)    
+1. [echo-args.sh](docs/shell.md#beer-echo-argssh)  
     输出脚本收到的参数，在控制台运行时，把参数值括起的括号显示成 **红色**，方便人眼查看。用于调试脚本参数输入。
 1. [console-text-color-themes.sh](docs/shell.md#beer-console-text-color-themessh)  
     显示`Terminator`的全部文字彩色组合的效果及其打印方式。
-1. [tcp-connection-state-counter.sh](docs/shell.md#beer-tcp-connection-state-countersh)   
+1. [tcp-connection-state-counter.sh](docs/shell.md#beer-tcp-connection-state-countersh)  
     统计各个`TCP`连接状态的个数。用于方便排查系统连接负荷问题。
-1. [parseOpts.sh](docs/shell.md#beer-parseoptssh)   
-    提供命令行选项解析函数`parseOpts`，支持选项的值有多个值（即数组）。
-1. [xpl and xpf](docs/shell.md#beer-xpl-and-xpf)    
-    在文件浏览器中 打开/选中 指定的文件或文件夹。
+1. [parseOpts.sh](docs/shell.md#beer-parseoptssh)  
+    提供命令行选项解析函数`parseOpts`，以加强支持选项的值有多个值（即数组）。
+1. [xpl and xpf](docs/shell.md#beer-xpl-and-xpf)  
+    用于在命令行中直接完成 在文件浏览器中 打开/选中 指定的文件或文件夹的操作。

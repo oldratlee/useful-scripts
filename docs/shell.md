@@ -179,7 +179,7 @@ SYN_SENT     17
 :beer: [parseOpts.sh](../parseOpts.sh)
 ----------------------
 
-提供命令行选项解析函数`parseOpts`，支持选项的值有多个值（即数组）。  
+提供命令行选项解析函数`parseOpts`，以加强支持选项的值有多个值（即数组）。  
 \# 自己写一个命令行选项解析函数，是因为[`bash`](http://linux.die.net/man/1/bash)的`buildin`命令[`getopts`](http://linux.die.net/man/1/getopts)和加强版本命令[`getopt`](http://linux.die.net/man/1/getopt)都不支持数组的值。
 
 指定选项的多个值（即数组）的风格模仿[`find`](http://linux.die.net/man/1/find)命令的`-exec`选项：
@@ -277,6 +277,8 @@ parseOpts "a,a-long|b,b-long:|c,c-long+" -a -b bv -- --c-long c.sh -p pv -q qv a
 
 :beer: [xpl](../xpl) and [xpf](../xpf)
 ----------------------
+
+用于在命令行中直接完成 在文件浏览器中 打开/选中 指定的文件或文件夹的操作。
 
 * `xpl`：在文件浏览器中打开指定的文件或文件夹。  
 \# `xpl`是`explorer`的缩写。

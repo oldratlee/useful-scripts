@@ -26,15 +26,6 @@ source <(curl -fsSL https://raw.githubusercontent.com/oldratlee/useful-scripts/m
 1. [find-in-jars.sh](docs/java.md#beer-find-in-jarssh)  
     在目录下所有`jar`文件里，查找类或资源文件。
 
-### :watch: [`VCS`相关脚本](docs/vcs.md)
-
-1. [swtrunk.sh](docs/vcs.md#beer-swtrunksh)  
-    自动`svn`工作目录从分支（`branches`）切换到主干（`trunk`）。
-1. [svn-merge-stop-on-copy.sh](docs/vcs.md#beer-svn-merge-stop-on-copysh)  
-    把指定的远程分支从刚新建分支以来的修改合并到本地`svn`目录或是另一个远程分支。
-1. [cp-svn-url.sh](docs/vcs.md#beer-cp-svn-urlsh)  
-    拷贝当前`svn`目录对应的远程分支到系统的粘贴板，省去`CTRL+C`操作。
-
 ### :shell: [`Shell`相关脚本](docs/shell.md)
 
 包含`Shell`使用或命令加强的脚本。
@@ -55,3 +46,12 @@ source <(curl -fsSL https://raw.githubusercontent.com/oldratlee/useful-scripts/m
     提供命令行选项解析函数`parseOpts`，以加强支持选项的值有多个值（即数组）。
 1. [xpl and xpf](docs/shell.md#beer-xpl-and-xpf)  
     用于在命令行中直接完成 在文件浏览器中 打开/选中 指定的文件或文件夹的操作。
+
+### :watch: [`VCS`相关脚本](docs/vcs.md)
+
+1. [swtrunk.sh](docs/vcs.md#beer-swtrunksh)  
+    自动`svn`工作目录从分支（`branches`）切换到主干（`trunk`）。
+1. [svn-merge-stop-on-copy.sh](docs/vcs.md#beer-svn-merge-stop-on-copysh)  
+    把指定的远程分支从刚新建分支以来的修改合并到本地`svn`目录或是另一个远程分支。
+1. [cp-svn-url.sh](docs/vcs.md#beer-cp-svn-urlsh)  
+    拷贝当前`svn`目录对应的远程分支到系统的粘贴板，省去`CTRL+C`操作。

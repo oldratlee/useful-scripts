@@ -1,4 +1,15 @@
 #!/bin/bash
+# @Function
+# convert to Relative Path.
+#
+# @Usage
+#   # if 1 argument, print relative path to current dir.
+#   $ ./rp /etc/apache2/httpd.conf
+#   # if more than 1 argument, print relative path to last argument.
+#   $ ./rp a.txt ../b.txt /etc/passwd /etc/apache2
+#
+# @author Jerry Lee
+
 [ $# -eq 0 ] && {
     echo "ERROR: NO argument!"
     exit 1

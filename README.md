@@ -36,6 +36,8 @@ source <(curl -fsSL https://raw.githubusercontent.com/oldratlee/useful-scripts/m
     彩色`cat`出文件行，方便人眼区分不同的行。
 1. [a2l](docs/shell.md#beer-a2l)  
     按行彩色输出参数，方便人眼查看。
+1. [ap and rp](docs/shell.md#beer-ap-and-rp)  
+    批量转换文件路径为绝对路径/相对路径，会自动跟踪链接并规范化路径。
 1. [xpl and xpf](docs/shell.md#beer-xpl-and-xpf)  
     在命令行中快速完成 在文件浏览器中 打开/选中 指定的文件或文件夹的操作。
 1. [tcp-connection-state-counter.sh](docs/shell.md#beer-tcp-connection-state-countersh)  

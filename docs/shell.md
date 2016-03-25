@@ -95,6 +95,37 @@ test-cases/self-installer.sh
 
 注：上面显示中，没有彩色，在控制台上运行可以看出彩色效果。
 
+:beer: [ap](../ap) and [rp](../rp)
+----------------------
+
+批量转换文件路径为绝对路径/相对路径，会自动跟踪链接并规范化路径。
+
+命令名`ap`意思是`Absolute Path`，`rp`是`Relative Path`。
+
+### 示例
+
+```bash
+# ap缺省打印当前路径的绝对路径
+$ ap
+/home/admin/useful-scripts/test
+$ ap ..
+/home/admin/useful-scripts
+# 支持多个参数
+$ ap .. ../.. /etc /etc/../etc
+/home/admin/useful-scripts
+/home/admin
+/etc
+/etc
+
+# rp当一个参数时，打印相对于当前路径的相对路径
+$ rp /home
+../..
+# 多于一个参数时，打印相对于最后一个参数的相对路径
+$ rp /home /etc/../etc /home/admin
+..
+../../etc
+```
+
 :beer: [xpl](../xpl) and [xpf](../xpf)
 ----------------------
 

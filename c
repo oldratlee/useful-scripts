@@ -7,18 +7,13 @@
 #   $ echo "hello world!" | c
 #
 # @author Jerry Lee
-
-readonly PROG=`basename $0`
-
 copy() {
-    local name=$(uname | tr A-Z a-z)
-
-    case "${name}" in
-    darwin*)
+    case "`uname`" in
+    Darwin*)
         pbcopy ;;
-    cygwin*)
+    CYGWIN*)
         clip ;;
-    mingw*)
+    MINGW*)
         clip ;;
     *)
         xsel -b ;;

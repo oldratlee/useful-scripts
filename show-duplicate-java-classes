@@ -67,7 +67,7 @@ def print_class_paths(class_paths):
 if __name__ == '__main__':
     optionParser = OptionParser('usage: %prog '
                                 '[-c class-dir1 [-c class-dir2] ...] '
-                                '[lib-dir1|jar-file [lib-dir2|jar=file] ...]')
+                                '[lib-dir1|jar-file1 [lib-dir2|jar-file2] ...]')
     optionParser.add_option("-c", "--class-dir", dest="class_dirs", default=[], action="append", help="add class dir")
     options, libs = optionParser.parse_args()
 

@@ -4,27 +4,28 @@
 :beer: [show-busy-java-threads.sh](../show-busy-java-threads.sh)
 ----------------------
 
-在排查`Java`的`CPU`性能问题时(`top us`值过高)，要找出`Java`进程中消耗`CPU`多的线程，并查看它的线程栈，从而找出导致性能问题的方法调用。
+用于快速排查`Java`的`CPU`性能问题(`top us`值过高)，自动查出运行的`Java`进程中消耗`CPU`多的线程，并打印出其线程栈，从而确定导致性能问题的方法调用。
 
-PS：如何操作可以参见[@bluedavy](http://weibo.com/bluedavy)的《分布式Java应用》的【5.1.1 cpu消耗分析】一节，说得很详细：
+PS，如何操作可以参见[@bluedavy](http://weibo.com/bluedavy)的《分布式Java应用》的【5.1.1 cpu消耗分析】一节，说得很详细：
 
-1. `top`命令找出有问题`Java`进程及其线程号：
+1. `top`命令找出有问题`Java`进程及线程`id`：
     1. 开启线程显示模式
     1. 按`CPU`使用率排序
-    1. 记下`Java`进程号及其`CPU`高的线程号
-1. 手动转成十六进制（可以用`printf %x 1234`）。
-1. `jstack`有问题的`Java`进程。
-1. `grep`十六进制的线程`id`，找到线程栈。
+    1. 记下`Java`进程`id`及其`CPU`高的线程`id`
+1. 用进程`id`作为参数，`jstack`有问题的`Java`进程
+1. 手动转换线程`id`成十六进制（可以用`printf %x 1234`）
+1. 查找十六进制的线程`id`（可以用`grep`）
+1. 查看对应的线程栈
 
-查问题时，会要多次这样操作，**太繁琐**。
-
-这个脚本的功能是，打印出在运行的`Java`进程中，消耗`CPU`最多的线程栈（缺省是5个线程）。
+查问题时，会要多次这样操作以确定问题，上面过程**太繁琐太慢了**。
 
 ### 用法
 
 ```bash
+show-busy-java-threads.sh
+# 从 所有的 Java进程中找出最消耗CPU的线程（缺省5个），打印出其线程栈。
+
 show-busy-java-threads.sh -c <要显示的线程栈数>
-# 上面会从所有的Java进程中找出最消耗CPU的线程，这样用更方便。
 
 show-busy-java-threads.sh -c <要显示的线程栈数> -p <指定的Java Process>
 
@@ -39,7 +40,7 @@ sudo show-busy-java-threads.sh
 ### 示例
 
 ```bash
-$ show-busy-java-threads.sh 
+$ show-busy-java-threads.sh
 [1] Busy(57.0%) thread(23355/0x5b3b) stack of java process(23269) under user(admin):
 "pool-1-thread-1" prio=10 tid=0x000000005b5c5000 nid=0x5b3b runnable [0x000000004062c000]
    java.lang.Thread.State: RUNNABLE
@@ -90,11 +91,9 @@ $ show-busy-java-threads.sh
 :beer: [show-duplicate-java-classes](../show-duplicate-java-classes)
 ----------------------
 
-找出`java`库（即`jar`文件）或`class`目录中的重复类。
+找出`Java Lib`（`Java`库，即`Jar`文件）或`Class`目录（类目录）中的重复类。
 
-`java`开发的一个麻烦的问题是`jar`冲突（即多个版本的`jar`），或者说重复类。会出`NoSuchMethod`等的问题，还不见得当时出问题。
-
-找出有重复类的`jar`，可以防患未然。
+`Java`开发的一个麻烦的问题是`Jar`冲突（即多个版本的`Jar`），或者说重复类。会出`NoSuchMethod`等的问题，还不见得当时出问题。找出有重复类的`Jar`，可以防患未然。
 
 ### 用法
 
@@ -112,8 +111,70 @@ show-duplicate-java-classes path/to/lib_dir1 /path/to/lib_dir2
 # 查找多个指定Class目录下的重复类。 Class目录 通过 -c 选项指定
 show-duplicate-java-classes -c path/to/class_dir1 -c /path/to/class_dir2
 
-# 查找指定Class目录和指定目录下所有Jar中的重复类的jar
+# 查找指定Class目录和指定目录下所有Jar中的重复类的Jar
 show-duplicate-java-classes path/to/lib_dir1 /path/to/lib_dir2 -c path/to/class_dir1 -c path/to/class_dir2
+```
+
+#### `JDK`开发场景使用说明
+
+以`Maven`作为构建工程示意过程。
+
+#### 对于一般的工程
+
+```sh
+# 在项目模块目录下执行，拷贝依赖Jar到目录target/dependency下
+$ mvn dependency:copy-dependencies -DincludeScope=runtime
+...
+# 检查重复类
+$ show-duplicate-java-classes target/dependency
+...
+```
+
+#### 对于`Web`工程
+
+对于`Web`工程，即`war` `maven`模块，会打包生成`war`文件。
+
+```sh
+# 在war模块目录下执行，生成war文件
+$ mvn install
+...
+# 解压war文件，war文件中包含了应用的依赖的Jar文件
+$ unzip target/*.war -d target/war
+# 检查重复类
+$ show-duplicate-java-classes -c target/war/WEB-INF/classes target/war/WEB-INF/lib
+...
+```
+
+#### `Android`开发场景使用说明
+
+`Android`开发，有重复类在编译打包时会报`[Dex Loader] Unable to execute dex: Multiple dex files define Lorg/foo/xxx/Yyy`。
+
+但只会给出一个重复类名，如果重复类比较多时，上面打包/报错/排查会要进行多次，而`Android`的打包比较费时，这个过程比较麻烦，希望可以一次把所有重复类都列出来，一起排查掉。
+
+以`Gradle`作为构建工程示意过程。
+
+在`App`的`build.gradle`中添加拷贝库到目录`build/dependencies`下。
+
+```java
+task copyDependencies(type: Copy) {
+    def dest = new File(buildDir, "dependencies")
+
+    // clean dir
+    dest.deleteDir()
+    dest.mkdirs()
+
+    // fill dir with dependencies
+    from configurations.compile into dest
+}
+```
+
+```sh
+# 拷贝依赖
+$ ./gradlew app:copyDependencies
+...
+# 检查重复类
+$ show-duplicate-java-classes app/build/dependencies
+...
 ```
 
 ### 示例

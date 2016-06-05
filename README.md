@@ -20,7 +20,7 @@ source <(curl -fsSL https://raw.githubusercontent.com/oldratlee/useful-scripts/m
 ### :coffee: [`Java`相关脚本](docs/java.md)
 
 1. [show-busy-java-threads.sh](docs/java.md#beer-show-busy-java-threadssh)  
-    打印出在运行的`Java`进程中，消耗`CPU`最多的线程栈。用于快速排查`Java`的性能问题。
+    用于快速排查`Java`的`CPU`性能问题(`top us`值过高)，自动查出运行的`Java`进程中消耗`CPU`多的线程，并打印出其线程栈，从而确定导致性能问题的方法调用。
 1. [show-duplicate-java-classes](docs/java.md#beer-show-duplicate-java-classes)  
     找出`jar`文件和`class`目录中的重复类。用于排查`Java`类冲突问题。
 1. [find-in-jars.sh](docs/java.md#beer-find-in-jarssh)  

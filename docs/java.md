@@ -1,6 +1,29 @@
 :snail: `Java`相关脚本
 ====================================
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [:beer: show-busy-java-threads.sh](#beer-show-busy-java-threadssh)
+    - [用法](#%E7%94%A8%E6%B3%95)
+    - [示例](#%E7%A4%BA%E4%BE%8B)
+    - [贡献者](#%E8%B4%A1%E7%8C%AE%E8%80%85)
+- [:beer: show-duplicate-java-classes](#beer-show-duplicate-java-classes)
+    - [用法](#%E7%94%A8%E6%B3%95-1)
+        - [`JDK`开发场景使用说明](#jdk%E5%BC%80%E5%8F%91%E5%9C%BA%E6%99%AF%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E)
+            - [对于一般的工程](#%E5%AF%B9%E4%BA%8E%E4%B8%80%E8%88%AC%E7%9A%84%E5%B7%A5%E7%A8%8B)
+            - [对于`Web`工程](#%E5%AF%B9%E4%BA%8Eweb%E5%B7%A5%E7%A8%8B)
+        - [`Android`开发场景使用说明](#android%E5%BC%80%E5%8F%91%E5%9C%BA%E6%99%AF%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E)
+    - [示例](#%E7%A4%BA%E4%BE%8B-1)
+    - [贡献者](#%E8%B4%A1%E7%8C%AE%E8%80%85-1)
+- [:beer: find-in-jars.sh](#beer-find-in-jarssh)
+    - [用法](#%E7%94%A8%E6%B3%95-2)
+    - [示例](#%E7%A4%BA%E4%BE%8B-2)
+    - [参考资料](#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 :beer: [show-busy-java-threads.sh](../show-busy-java-threads.sh)
 ----------------------
 
@@ -119,7 +142,7 @@ show-duplicate-java-classes path/to/lib_dir1 /path/to/lib_dir2 -c path/to/class_
 
 以`Maven`作为构建工程示意过程。
 
-#### 对于一般的工程
+##### 对于一般的工程
 
 ```sh
 # 在项目模块目录下执行，拷贝依赖Jar到目录target/dependency下
@@ -130,7 +153,7 @@ $ show-duplicate-java-classes target/dependency
 ...
 ```
 
-#### 对于`Web`工程
+##### 对于`Web`工程
 
 对于`Web`工程，即`war` `maven`模块，会打包生成`war`文件。
 
@@ -140,6 +163,7 @@ $ mvn install
 ...
 # 解压war文件，war文件中包含了应用的依赖的Jar文件
 $ unzip target/*.war -d target/war
+...
 # 检查重复类
 $ show-duplicate-java-classes -c target/war/WEB-INF/classes target/war/WEB-INF/lib
 ...

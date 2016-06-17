@@ -1,6 +1,42 @@
 :snail: `Shell`相关脚本
 ====================================
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [`Shell`使用加强](#shell%E4%BD%BF%E7%94%A8%E5%8A%A0%E5%BC%BA)
+    - [:beer: c](#beer-c)
+        - [示例](#%E7%A4%BA%E4%BE%8B)
+        - [参考资料](#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99)
+    - [:beer: colines](#beer-colines)
+        - [示例](#%E7%A4%BA%E4%BE%8B-1)
+    - [:beer: a2l](#beer-a2l)
+        - [示例](#%E7%A4%BA%E4%BE%8B-2)
+    - [:beer: ap and rp](#beer-ap-and-rp)
+        - [示例](#%E7%A4%BA%E4%BE%8B-3)
+    - [:beer: xpl and xpf](#beer-xpl-and-xpf)
+        - [用法](#%E7%94%A8%E6%B3%95)
+        - [示例](#%E7%A4%BA%E4%BE%8B-4)
+        - [贡献者](#%E8%B4%A1%E7%8C%AE%E8%80%85)
+    - [:beer: tcp-connection-state-counter.sh](#beer-tcp-connection-state-countersh)
+        - [用法](#%E7%94%A8%E6%B3%95-1)
+        - [示例](#%E7%A4%BA%E4%BE%8B-5)
+- [`Shell`开发/测试加强](#shell%E5%BC%80%E5%8F%91%E6%B5%8B%E8%AF%95%E5%8A%A0%E5%BC%BA)
+    - [:beer: echo-args.sh](#beer-echo-argssh)
+        - [示例](#%E7%A4%BA%E4%BE%8B-6)
+        - [使用方式](#%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F)
+    - [:beer: console-text-color-themes.sh](#beer-console-text-color-themessh)
+        - [贡献者](#%E8%B4%A1%E7%8C%AE%E8%80%85-1)
+        - [参考资料](#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99-1)
+    - [:beer: parseOpts.sh](#beer-parseoptssh)
+        - [用法](#%E7%94%A8%E6%B3%95-2)
+        - [示例](#%E7%A4%BA%E4%BE%8B-7)
+        - [兼容性](#%E5%85%BC%E5%AE%B9%E6%80%A7)
+        - [贡献者](#%E8%B4%A1%E7%8C%AE%E8%80%85-2)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 `Shell`使用加强
 ====================================
 

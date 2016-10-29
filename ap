@@ -13,7 +13,7 @@
 [ $# -eq 0 ] && files=(.) || files=("$@")
 
 for f in "${files[@]}" ; do
-    ! [ -e $f ] && {
+    ! [ -e "$f" ] && {
         echo "$f does not exists!"
         continue
     }

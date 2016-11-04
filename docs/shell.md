@@ -51,19 +51,26 @@
 
 ### 示例
 
+有3种使用风格，根据需要或是你的偏好选取。
+
 ```bash
-# 前缀方式，后面跟上要运行的命令
+# 1. 前缀方式，后面跟上要运行的命令
 $ c pwd
 /Users/jerry
 $ c echo -e 'a\nb'
 a
 b
-# 从标准输入读取内容
-$ c < id_rsa.pub
-ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAz+ETZEgoLeIiC0rjWewdDs0sbo8c...== a@b.com
-# 后缀方式，管道
+# 这种使用方式，后面跟的命令不能是别名（alias），对于别名可以用下面的使用方式。
+
+# 2. 后缀方式，管道
 $ echo -e 'a\nb' | nl | c
 1   a
+# gb是oh-my-zsh的别名，列出git的分支，需要后缀的方式的使用。
+$ gb | c
+
+# 3. 从标准输入读取内容。拷贝文件内容时这种方式最直接。
+$ c < id_rsa.pub
+ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAz+ETZEgoLeIiC0rjWewdDs0sbo8c...== a@b.com
 2   b
 ```
 

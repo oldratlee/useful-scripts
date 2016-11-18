@@ -286,7 +286,7 @@ colorEchoWithoutNewLine "4;33;40" "Hello world!" "Hello Hell!"
 
 ### 贡献者
 
-[姜太公](https://github.com/jiangjizhong)提供循环输出彩色组合的脚本。
+[姜太公](https://github.com/jzwlqx)提供循环输出彩色组合的脚本。
 
 ### 参考资料
 

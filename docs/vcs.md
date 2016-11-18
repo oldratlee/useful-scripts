@@ -61,7 +61,7 @@ svn-merge-stop-on-copy.sh http://www.foo.com/project1/branches/feature1 http://w
 
 ### 贡献者
 
-[姜太公](https://github.com/jiangjizhong)提供此脚本。
+[姜太公](https://github.com/jzwlqx)提供此脚本。
 
 :beer: [cp-svn-url.sh](../cp-svn-url.sh)
 ----------------------

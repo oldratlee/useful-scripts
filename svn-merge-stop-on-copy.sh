@@ -7,7 +7,7 @@
 #   $ ./svnmerge.sh <source branch> [target branch]
 #   if no target branch, merge to current svn direcotry
 #
-# @author jiangjizhong
+# @author jiangjizhong(@jzwlqx)
 # @author Jerry Lee
 
 PROG=`basename $0`

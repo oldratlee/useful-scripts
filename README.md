@@ -56,6 +56,15 @@ source <(curl -fsSL https://raw.githubusercontent.com/oldratlee/useful-scripts/m
 1. [parseOpts.sh](docs/shell.md#beer-parseoptssh)  
     提供命令行选项解析函数`parseOpts`。用于加强支持选项的值有多个值（即数组）。
 
+`Shell`部署类加强：
+
+1. [exe_shell_time.sh](docs/shell.md#exe-shell-timesh)  
+    输出执行程序的时间
+1. [shell_debug.sh](docs/shell.md#shell-debugsh)  
+    部署类脚本时可以将脚本内变量等变化输出到日志中，存档查看
+1. [shell_process.sh](docs/shell.md#shell_processsh)  
+    部署类脚本可以添加进度条，了解程序进度
+
 ### :watch: [`VCS`相关脚本](docs/vcs.md)
 
 1. [swtrunk.sh](docs/vcs.md#beer-swtrunksh)  

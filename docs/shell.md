@@ -65,13 +65,13 @@ b
 # 2. 后缀方式，管道
 $ echo -e 'a\nb' | nl | c
 1   a
+2   b
 # gb是oh-my-zsh的别名，列出git的分支，需要后缀的方式的使用。
 $ gb | c
 
 # 3. 从标准输入读取内容。拷贝文件内容时这种方式最直接。
 $ c < id_rsa.pub
 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAz+ETZEgoLeIiC0rjWewdDs0sbo8c...== a@b.com
-2   b
 ```
 
 ### 参考资料

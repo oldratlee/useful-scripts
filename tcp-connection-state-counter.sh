@@ -6,8 +6,8 @@
 #   $ ./tcp-connection-state-counter.sh
 #
 # @author Jerry Lee
-
-netstat -tna | awk 'NR > 2 {
+# on mac osx , netstat need to using -p tcp to get only tcp output.
+netstat -tna `[ ! -z $(uname|grep Darwin) ] && echo "-ptcp"` | awk 'NR > 2 {
     s[$NF]++
 }
 

@@ -18,15 +18,14 @@ idx = 0
 
 
 def color_print(*args):
-    line = " ".join(args)
+    _line = " ".join(args)
     global idx
     idx += 1
     color = ECHO_COLORS[idx % len(ECHO_COLORS)]
     if sys.stdout.isatty():
-        line_ = """\033[1;%sm%s\033[0m""" % (color, line)
-        print line_
+        print("""\033[1;%sm%s\033[0m""" % (color, _line))
     else:
-        print(line)
+        print(_line)
 
 
 if __name__ == '__main__':

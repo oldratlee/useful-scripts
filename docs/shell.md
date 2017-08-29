@@ -233,6 +233,10 @@ TIME_WAIT    212
 SYN_SENT     17
 ```
 
+### 贡献者
+
+[sunuslee](https://github.com/sunuslee)改进此脚本，增加对`MacOS`的支持。 [#56](https://github.com/oldratlee/useful-scripts/pull/56)
+
 `Shell`开发/测试加强
 ====================================
 

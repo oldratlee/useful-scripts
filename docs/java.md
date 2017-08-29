@@ -106,10 +106,10 @@ $ show-busy-java-threads.sh
 
 ### 贡献者
 
-- [silentforce](https://github.com/silentforce)改进此脚本，增加对环境变量`JAVA_HOME`的判断。 #15
+- [silentforce](https://github.com/silentforce)改进此脚本，增加对环境变量`JAVA_HOME`的判断。 [#15](https://github.com/oldratlee/useful-scripts/pull/15)
 - [liuyangc3](https://github.com/liuyangc3)
-    - 优化性能，通过`read -a`简化反复的`awk`操作 #51
-    - 发现并解决`jstack`非当前用户`Java`进程的问题 #50
+    - 发现并解决`jstack`非当前用户`Java`进程的问题。 [#50](https://github.com/oldratlee/useful-scripts/pull/50)
+    - 优化性能，通过`read -a`简化反复的`awk`操作。 [#51](https://github.com/oldratlee/useful-scripts/pull/51)
 
 :beer: [show-duplicate-java-classes](../show-duplicate-java-classes)
 ----------------------

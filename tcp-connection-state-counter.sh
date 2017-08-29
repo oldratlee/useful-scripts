@@ -5,7 +5,8 @@
 # @Usage
 #   $ ./tcp-connection-state-counter.sh
 #
-# @author Jerry Lee
+# @author Jerry Lee(@oldratlee)
+# @author @sunuslee
 
 # On MacOS, netstat need to using -p tcp to get only tcp output.
 [ -n "$(uname | grep Darwin)" ] && option_for_mac="-ptcp"

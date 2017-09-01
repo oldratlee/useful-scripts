@@ -9,7 +9,7 @@
 # @author @sunuslee
 
 # On MacOS, netstat need to using -p tcp to get only tcp output.
-[ -n "$(uname | grep Darwin)" ] && option_for_mac="-ptcp"
+uname | grep Darwin -q && option_for_mac="-ptcp"
 
 netstat -tna $option_for_mac | awk 'NR > 2 {
     s[$NF]++
@@ -17,6 +17,6 @@ netstat -tna $option_for_mac | awk 'NR > 2 {
 
 END {
     for(v in s) {
-        printf "%-12s%s\n", v, s[v]
+        printf "%-11s %s\n", v, s[v]
     }
 }' | sort -nr -k2,2

@@ -3,7 +3,7 @@
 # Run command and put output to system clipper.
 #
 # @Usage
-#   $ ./c echo "hello world!"
+#   $ c echo "hello world!"
 #   $ echo "hello world!" | c
 #
 # @author Jerry Lee

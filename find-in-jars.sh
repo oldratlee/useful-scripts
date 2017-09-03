@@ -82,9 +82,30 @@ fi
 ################################################################################
 # find logic
 ################################################################################
+[ -c /dev/stdout ] && readonly is_console=true || readonly is_console=false
+
+clear_line_if_is_console() {
+    # How to delete line with echo?
+    # https://unix.stackexchange.com/questions/26576
+    #
+    # terminal escapes: http://ascii-table.com/ansi-escape-sequences.php
+    # In particular, to clear from the cursor position to the beginning of the line:
+    # echo -e "\033[1K"
+    # Or everything on the line, regardless of cursor position:
+    # echo -e "\033[2K"
+    $is_console && echo -n -e "\033[2K\\r"
+}
+
 
 find "${dirs[@]}" -iname '*.jar' | while read jarFile; do
+
+    $is_console && echo -n "finding in jar: $jarFile"
+
     jar tf "${jarFile}" | grep -E "$pattern" | while read file; do
+        clear_line_if_is_console
+
         echo "${jarFile}"\!"${file}"
     done
+
+    clear_line_if_is_console
 done

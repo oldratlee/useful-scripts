@@ -35,17 +35,17 @@ source <(curl -fsSL https://raw.githubusercontent.com/oldratlee/useful-scripts/m
 `Shell`使用加强：
 
 1. [c](docs/shell.md#beer-c)  
-    原样命令行输出，并拷贝标准输出到系统剪贴板，省去`CTRL+C`，`CTRL+V`操作。
+    原样命令行输出，并拷贝标准输出到系统剪贴板，省去`CTRL+C`操作，优化命令行与其它应用之间的操作流。
 1. [colines](docs/shell.md#beer-colines)  
     彩色`cat`出文件行，方便人眼区分不同的行。
 1. [a2l](docs/shell.md#beer-a2l)  
     按行彩色输出参数，方便人眼查看。
 1. [ap and rp](docs/shell.md#beer-ap-and-rp)  
     批量转换文件路径为绝对路径/相对路径，会自动跟踪链接并规范化路径。
-1. [xpl and xpf](docs/shell.md#beer-xpl-and-xpf)  
-    在命令行中快速完成 在文件浏览器中 打开/选中 指定的文件或文件夹的操作。
 1. [tcp-connection-state-counter.sh](docs/shell.md#beer-tcp-connection-state-countersh)  
     统计各个`TCP`连接状态的个数。用于方便排查系统连接负荷问题。
+1. [xpl and xpf](docs/shell.md#beer-xpl-and-xpf)  
+    在命令行中快速完成 在文件浏览器中 打开/选中 指定的文件或文件夹的操作，优化命令行与其它应用之间的操作流。
 
 `Shell`开发/测试加强：
 
@@ -54,7 +54,7 @@ source <(curl -fsSL https://raw.githubusercontent.com/oldratlee/useful-scripts/m
 1. [console-text-color-themes.sh](docs/shell.md#beer-console-text-color-themessh)  
     显示`Terminator`的全部文字彩色组合的效果及其打印方式，用于开发`Shell`的彩色输出。
 1. [parseOpts.sh](docs/shell.md#beer-parseoptssh)  
-    提供命令行选项解析函数`parseOpts`。用于加强支持选项的值有多个值（即数组）。
+    命令行选项解析库，加强支持选项有多个值（即数组）。
 
 ### :watch: [`VCS`相关脚本](docs/vcs.md)
 

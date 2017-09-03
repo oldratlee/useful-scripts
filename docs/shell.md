@@ -15,25 +15,26 @@
         - [示例](#%E7%A4%BA%E4%BE%8B-2)
     - [:beer: ap and rp](#beer-ap-and-rp)
         - [示例](#%E7%A4%BA%E4%BE%8B-3)
-    - [:beer: xpl and xpf](#beer-xpl-and-xpf)
+    - [:beer: tcp-connection-state-counter.sh](#beer-tcp-connection-state-countersh)
         - [用法](#%E7%94%A8%E6%B3%95)
         - [示例](#%E7%A4%BA%E4%BE%8B-4)
         - [贡献者](#%E8%B4%A1%E7%8C%AE%E8%80%85)
-    - [:beer: tcp-connection-state-counter.sh](#beer-tcp-connection-state-countersh)
+    - [:beer: xpl and xpf](#beer-xpl-and-xpf)
         - [用法](#%E7%94%A8%E6%B3%95-1)
         - [示例](#%E7%A4%BA%E4%BE%8B-5)
+        - [贡献者](#%E8%B4%A1%E7%8C%AE%E8%80%85-1)
 - [`Shell`开发/测试加强](#shell%E5%BC%80%E5%8F%91%E6%B5%8B%E8%AF%95%E5%8A%A0%E5%BC%BA)
     - [:beer: echo-args.sh](#beer-echo-argssh)
         - [示例](#%E7%A4%BA%E4%BE%8B-6)
         - [使用方式](#%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F)
     - [:beer: console-text-color-themes.sh](#beer-console-text-color-themessh)
-        - [贡献者](#%E8%B4%A1%E7%8C%AE%E8%80%85-1)
+        - [贡献者](#%E8%B4%A1%E7%8C%AE%E8%80%85-2)
         - [参考资料](#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99-1)
     - [:beer: parseOpts.sh](#beer-parseoptssh)
         - [用法](#%E7%94%A8%E6%B3%95-2)
         - [示例](#%E7%A4%BA%E4%BE%8B-7)
         - [兼容性](#%E5%85%BC%E5%AE%B9%E6%80%A7)
-        - [贡献者](#%E8%B4%A1%E7%8C%AE%E8%80%85-2)
+        - [贡献者](#%E8%B4%A1%E7%8C%AE%E8%80%85-3)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -43,7 +44,7 @@
 :beer: [c](../c)
 ----------------------
 
-原样命令行输出，并拷贝标准输出到系统剪贴板，省去`CTRL+C`，`CTRL+V`操作。  
+原样命令行输出，并拷贝标准输出到系统剪贴板，省去`CTRL+C`操作，优化命令行与其它应用之间的操作流。  
 支持`Linux`、`Mac`、`Windows`（`cygwin`、`MSSYS`）。
 
 命令名`c`意思是`Copy`，因为这个命令我平时非常常用，所以使用一个字符的命令名，方便键入。
@@ -173,10 +174,41 @@ $ rp /home /etc/../etc /home/admin
 ../../etc
 ```
 
+:beer: [tcp-connection-state-counter.sh](../tcp-connection-state-counter.sh)
+----------------------
+
+统计各个`TCP`连接状态的个数。  
+支持`Linux`、`Mac`、`Windows`（`cygwin`、`MSSYS`）。
+
+像`Nginx`、`Apache`的机器上需要查看，`TCP`连接的个数，以判定
+
+- 连接数、负荷
+- 是否有攻击，查看`SYN_RECV`数（`SYN`攻击）
+- `TIME_WAIT`数，太多会导致`TCP: time wait bucket table overflow`。
+
+### 用法
+
+```bash
+tcp-connection-state-counter.sh
+```
+
+### 示例
+
+```bash
+$ tcp-connection-state-counter.sh
+ESTABLISHED  290
+TIME_WAIT    212
+SYN_SENT     17
+```
+
+### 贡献者
+
+[sunuslee](https://github.com/sunuslee)改进此脚本，增加对`MacOS`的支持。 [#56](https://github.com/oldratlee/useful-scripts/pull/56)
+
 :beer: [xpl](../xpl) and [xpf](../xpf)
 ----------------------
 
-在命令行中快速完成 在文件浏览器中 打开/选中 指定的文件或文件夹的操作。
+在命令行中快速完成 在文件浏览器中 打开/选中 指定的文件或文件夹的操作，优化命令行与其它应用之间的操作流。  
 支持`Linux`、`Mac`、`Windows`（`cygwin`、`MSSYS`）。
 
 * `xpl`：在文件浏览器中打开指定的文件或文件夹。  
@@ -211,37 +243,6 @@ xpf /path/to/dir1 /path/to/foo1.txt
 ### 贡献者
 
 [Linhua Tan](https://github.com/toolchainX)修复Linux的选定Bug。
-
-:beer: [tcp-connection-state-counter.sh](../tcp-connection-state-counter.sh)
-----------------------
-
-统计各个`TCP`连接状态的个数。  
-支持`Linux`、`Mac`、`Windows`（`cygwin`、`MSSYS`）。
-
-像`Nginx`、`Apache`的机器上需要查看，`TCP`连接的个数，以判定
-
-- 连接数、负荷
-- 是否有攻击，查看`SYN_RECV`数（`SYN`攻击）
-- `TIME_WAIT`数，太多会导致`TCP: time wait bucket table overflow`。
-
-### 用法
-
-```bash
-tcp-connection-state-counter.sh
-```
-
-### 示例
-
-```bash
-$ tcp-connection-state-counter.sh
-ESTABLISHED  290
-TIME_WAIT    212
-SYN_SENT     17
-```
-
-### 贡献者
-
-[sunuslee](https://github.com/sunuslee)改进此脚本，增加对`MacOS`的支持。 [#56](https://github.com/oldratlee/useful-scripts/pull/56)
 
 `Shell`开发/测试加强
 ====================================
@@ -307,7 +308,7 @@ colorEchoWithoutNewLine "4;33;40" "Hello world!" "Hello Hell!"
 :beer: [parseOpts.sh](../parseOpts.sh)
 ----------------------
 
-提供命令行选项解析函数`parseOpts`，以加强支持选项的值有多个值（即数组）。  
+命令行选项解析库，加强支持选项有多个值（即数组）。  
 支持`Linux`、`Mac`、`Windows`（`cygwin`、`MSSYS`）。  
 \# 自己写一个命令行选项解析函数，是因为[`bash`](http://linux.die.net/man/1/bash)的`buildin`命令[`getopts`](http://linux.die.net/man/1/getopts)和加强版本命令[`getopt`](http://linux.die.net/man/1/getopt)都不支持数组的值。
 

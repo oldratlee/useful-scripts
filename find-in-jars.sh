@@ -97,15 +97,19 @@ clear_line_if_is_console() {
 }
 
 
-find "${dirs[@]}" -iname '*.jar' | while read jarFile; do
+readonly jar_files="$(find "${dirs[@]}" -iname '*.jar')"
+readonly total_count="$(echo "$jar_files" | wc -l)"
 
-    $is_console && echo -n "finding in jar: $jarFile"
+counter=1
+while read jar_file; do
+    $is_console && echo -n "finding in jar($((counter++))/$total_count): $jar_file"
 
-    jar tf "${jarFile}" | grep -E "$pattern" | while read file; do
+    jar tf "${jar_file}" | grep -E "$pattern" | while read file; do
         clear_line_if_is_console
 
-        echo "${jarFile}"\!"${file}"
+        echo "${jar_file}"\!"${file}"
     done
 
     clear_line_if_is_console
-done
+
+done < <(echo "$jar_files")

@@ -27,7 +27,8 @@
 :beer: [show-busy-java-threads.sh](../show-busy-java-threads.sh)
 ----------------------
 
-用于快速排查`Java`的`CPU`性能问题(`top us`值过高)，自动查出运行的`Java`进程中消耗`CPU`多的线程，并打印出其线程栈，从而确定导致性能问题的方法调用。
+用于快速排查`Java`的`CPU`性能问题(`top us`值过高)，自动查出运行的`Java`进程中消耗`CPU`多的线程，并打印出其线程栈，从而确定导致性能问题的方法调用。  
+目前只支持`Linux`。原因是`Mac`、`Windows`的`ps`命令不支持列出线程线程，更多信息参见[#33](https://github.com/oldratlee/useful-scripts/issues/33)，欢迎提供解法。
 
 PS，如何操作可以参见[@bluedavy](http://weibo.com/bluedavy)的《分布式Java应用》的【5.1.1 cpu消耗分析】一节，说得很详细：
 
@@ -114,7 +115,8 @@ $ show-busy-java-threads.sh
 :beer: [show-duplicate-java-classes](../show-duplicate-java-classes)
 ----------------------
 
-找出`Java Lib`（`Java`库，即`Jar`文件）或`Class`目录（类目录）中的重复类。
+找出`Java Lib`（`Java`库，即`Jar`文件）或`Class`目录（类目录）中的重复类。  
+全系统支持（`Python`实现，安装`Python`即可），如`Linux`、`Mac`、`Windows`。
 
 `Java`开发的一个麻烦的问题是`Jar`冲突（即多个版本的`Jar`），或者说重复类。会出`NoSuchMethod`等的问题，还不见得当时出问题。找出有重复类的`Jar`，可以防患未然。
 
@@ -264,15 +266,20 @@ class paths to find:
 :beer: [find-in-jars.sh](../find-in-jars.sh)
 ----------------------
 
-在当前目录下所有`jar`文件里，查找类或资源文件。
+在当前目录下所有`jar`文件里，查找类或资源文件。  
+支持`Linux`、`Mac`、`Windows`（`cygwin`、`MSSYS`）。
 
 ### 用法
 
 ```bash
+# 在当前目录下所有`jar`文件里，查找类或资源文件。
 find-in-jars.sh 'log4j\.properties'
-find-in-jars.sh 'log4j\.xml$' -d /path/to/find/directory
+find-in-jars.sh 'log4j\.xml$'
 find-in-jars.sh log4j\\.xml
 find-in-jars.sh 'log4j\.properties|log4j\.xml'
+
+# -d选项 指定 查找目录（覆盖缺省的当前目录）
+find-in-jars.sh 'log4j\.properties' -d /path/to/find/directory
 ```
 
 注意，后面Pattern是`grep`的 **扩展**正则表达式。

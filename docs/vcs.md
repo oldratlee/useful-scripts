@@ -23,7 +23,8 @@
 :beer: [swtrunk.sh](../swtrunk.sh)
 ----------------------
 
-`svn`工作目录从分支（`branches`）切换到主干（`trunk`）。
+`svn`工作目录从分支（`branches`）切换到主干（`trunk`）。  
+支持`Linux`、`Mac`、`Windows`（`cygwin`、`MSSYS`）。
 
 命令以`svn`的标准目录命名约定来识别分支和主干。
 即，分支在目录`branches`下，主干在目录`trunk`下。
@@ -60,7 +61,8 @@ svn work dir /path/to/svn/work/dir2 switch from http://www.foo.com/project2/bran
 :beer: [svn-merge-stop-on-copy.sh](../svn-merge-stop-on-copy.sh)
 ----------------------
 
-把指定的远程分支从刚新建分支以来的修改合并到本地`svn`目录或是另一个远程分支。
+把指定的远程分支从刚新建分支以来的修改合并到本地`svn`目录或是另一个远程分支。  
+支持`Linux`、`Mac`、`Windows`（`cygwin`、`MSSYS`）。
 
 ### 用法
 
@@ -85,7 +87,8 @@ svn-merge-stop-on-copy.sh http://www.foo.com/project1/branches/feature1 http://w
 :beer: [cp-svn-url.sh](../cp-svn-url.sh)
 ----------------------
 
-拷贝当前`svn`目录对应的远程分支到系统的粘贴板，省去`CTRL+C`操作。
+拷贝当前`svn`目录对应的远程分支到系统的粘贴板，省去`CTRL+C`操作。  
+支持`Linux`、`Mac`、`Windows`（`cygwin`、`MSSYS`）。
 
 ### 用法
 

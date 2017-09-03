@@ -43,7 +43,8 @@
 :beer: [c](../c)
 ----------------------
 
-原样命令行输出，并拷贝标准输出到系统剪贴板，省去`CTRL+C`，`CTRL+V`操作。支持`Linux`、`Mac`、`Windows`（`cygwin`、`MSSYS`）。
+原样命令行输出，并拷贝标准输出到系统剪贴板，省去`CTRL+C`，`CTRL+V`操作。  
+支持`Linux`、`Mac`、`Windows`（`cygwin`、`MSSYS`）。
 
 命令名`c`意思是`Copy`，因为这个命令我平时非常常用，所以使用一个字符的命令名，方便键入。
 
@@ -81,7 +82,8 @@ ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAz+ETZEgoLeIiC0rjWewdDs0sbo8c...== a@b.com
 :beer: [colines](../colines)
 ----------------------
 
-彩色`cat`出文件行，方便人眼区分不同的行。
+彩色`cat`出文件行，方便人眼区分不同的行。  
+全系统支持（`Python`实现，安装`Python`即可），如`Linux`、`Mac`、`Windows`。
 
 命令名`colines`意思是`COLorful LINES`。
 
@@ -114,7 +116,8 @@ file2 line2
 :beer: [a2l](../a2l)
 ----------------------
 
-按行彩色输出参数，方便人眼查看。
+按行彩色输出参数，方便人眼查看。  
+支持`Linux`、`Mac`、`Windows`（`cygwin`、`MSSYS`）。
 
 命令名`a2l`意思是`Arguments to(2) Lines`。
 
@@ -141,7 +144,8 @@ test-cases/self-installer.sh
 :beer: [ap](../ap) and [rp](../rp)
 ----------------------
 
-批量转换文件路径为绝对路径/相对路径，会自动跟踪链接并规范化路径。
+批量转换文件路径为绝对路径/相对路径，会自动跟踪链接并规范化路径。  
+支持`Linux`、`Mac`、`Windows`（`cygwin`、`MSSYS`）。
 
 命令名`ap`意思是`Absolute Path`，`rp`是`Relative Path`。
 
@@ -173,6 +177,7 @@ $ rp /home /etc/../etc /home/admin
 ----------------------
 
 在命令行中快速完成 在文件浏览器中 打开/选中 指定的文件或文件夹的操作。
+支持`Linux`、`Mac`、`Windows`（`cygwin`、`MSSYS`）。
 
 * `xpl`：在文件浏览器中打开指定的文件或文件夹。  
 \# `xpl`是`explorer`的缩写。
@@ -210,7 +215,8 @@ xpf /path/to/dir1 /path/to/foo1.txt
 :beer: [tcp-connection-state-counter.sh](../tcp-connection-state-counter.sh)
 ----------------------
 
-统计各个`TCP`连接状态的个数。
+统计各个`TCP`连接状态的个数。  
+支持`Linux`、`Mac`、`Windows`（`cygwin`、`MSSYS`）。
 
 像`Nginx`、`Apache`的机器上需要查看，`TCP`连接的个数，以判定
 
@@ -243,7 +249,8 @@ SYN_SENT     17
 :beer: [echo-args.sh](../echo-args.sh)
 ----------------------
 
-在编写脚本时，常常要确认输入参数是否是期望的：参数个数，参数值（可能包含有人眼不容易发现的空格问题）。
+在编写脚本时，常常要确认输入参数是否是期望的：参数个数，参数值（可能包含有人眼不容易发现的空格问题）。  
+支持`Linux`、`Mac`、`Windows`（`cygwin`、`MSSYS`）。
 
 这个脚本输出脚本收到的参数。在控制台运行时，把参数值括起的括号显示成 **红色**，方便人眼查看。
 
@@ -269,7 +276,8 @@ $ ./echo-args.sh 1 "  2 foo  " "3        3"
 :beer: [console-text-color-themes.sh](../console-text-color-themes.sh)
 ----------------------
 
-显示`Terminator`的全部文字彩色组合的效果及其打印方式。
+显示`Terminator`的全部文字彩色组合的效果及其打印方式。  
+支持`Linux`、`Mac`、`Windows`（`cygwin`、`MSSYS`）。
 
 脚本中，也给出了`colorEcho`和`colorEchoWithoutNewLine`函数更方便输出彩色文本，用法：
 
@@ -300,6 +308,7 @@ colorEchoWithoutNewLine "4;33;40" "Hello world!" "Hello Hell!"
 ----------------------
 
 提供命令行选项解析函数`parseOpts`，以加强支持选项的值有多个值（即数组）。  
+支持`Linux`、`Mac`、`Windows`（`cygwin`、`MSSYS`）。  
 \# 自己写一个命令行选项解析函数，是因为[`bash`](http://linux.die.net/man/1/bash)的`buildin`命令[`getopts`](http://linux.die.net/man/1/getopts)和加强版本命令[`getopt`](http://linux.die.net/man/1/getopt)都不支持数组的值。
 
 指定选项的多个值（即数组）的风格模仿[`find`](http://linux.die.net/man/1/find)命令的`-exec`选项：

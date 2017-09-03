@@ -11,7 +11,10 @@ readonly PROG=`basename $0`
 readonly -a COMMAND_LINE=("$0" "$@")
 
 usage() {
-    cat <<EOF
+    local out
+    [ -n "$1" -a "$1" != 0 ] && out=/dev/stderr || out=/dev/stdout
+
+    > $out cat <<EOF
 Usage: ${PROG} [OPTION]...
 Find out the highest cpu consumed threads of java, and print the stack of these threads.
 Example: ${PROG} -c 10
@@ -22,6 +25,7 @@ Options:
     -c, --count     set the thread count to show, default is 5
     -h, --help      display this help and exit
 EOF
+
     exit $1
 }
 
@@ -80,15 +84,15 @@ blueEcho() {
 # Check the existence of jstack command!
 if ! which jstack &> /dev/null; then
     [ -z "$JAVA_HOME" ] && {
-        redEcho "Error: jstack not found on PATH!"
+        redEcho "Error: jstack not found on PATH!" 1>&2
         exit 1
     }
     ! [ -f "$JAVA_HOME/bin/jstack" ] && {
-        redEcho "Error: jstack not found on PATH and $JAVA_HOME/bin/jstack file does NOT exists!"
+        redEcho "Error: jstack not found on PATH and \$JAVA_HOME/bin/jstack($JAVA_HOME/bin/jstack) file does NOT exists!" 1>&2
         exit 1
     }
     ! [ -x "$JAVA_HOME/bin/jstack" ] && {
-        redEcho "Error: jstack not found on PATH and $JAVA_HOME/bin/jstack is NOT executalbe!"
+        redEcho "Error: jstack not found on PATH and \$JAVA_HOME/bin/jstack($JAVA_HOME/bin/jstack) is NOT executalbe!" 1>&2
         exit 1
     }
     export PATH="$JAVA_HOME/bin:$PATH"

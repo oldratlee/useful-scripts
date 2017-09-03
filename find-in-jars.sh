@@ -9,7 +9,7 @@
 #
 # @author Jerry Lee
 
-PROG=`basename $0`
+readonly PROG=`basename $0`
 
 usage() {
     cat <<EOF
@@ -24,30 +24,39 @@ EOF
     exit $1
 }
 
-ARGS=`getopt -a -o d:h -l dir:,help -- "$@"`
-[ $? -ne 0 ] && usage 1
-eval set -- "${ARGS}"
+################################################################################
+# parse options
+################################################################################
 
-while true; do
+args=()
+while [ $# -gt 0 ]; do
     case "$1" in
     -d|--dir)
+        [ -n "${dir}" ] && { echo "more than a jar directory option!"; usage 1;}
         dir="$2"
         shift 2
         ;;
     -h|--help)
         usage
         ;;
-    --)
+    *)
+        args=("${args[@]}" "$1")
         shift
-        break
         ;;
     esac
 done
-[ -z "$1" ] && { echo No find file pattern! ; usage 1; }
 dir=${dir:-.}
 
-find ${dir} -iname '*.jar' | while read jarFile; do
-    jar tf ${jarFile} | egrep "$1" | while read file; do
+[ "${#args[@]}" -eq 0 ] && { echo "No find file pattern!" ; usage 1; }
+[ "${#args[@]}" -gt 1 ] && { echo "More than 1 file pattern!" ; usage 1; }
+readonly pattern="${args[0]}"
+
+################################################################################
+# find logic
+################################################################################
+
+find "${dir}" -iname '*.jar' | while read jarFile; do
+    jar tf "${jarFile}" | egrep "$pattern" | while read file; do
         echo "${jarFile}"\!"${file}"
     done
 done

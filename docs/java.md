@@ -275,11 +275,13 @@ class paths to find:
 # 在当前目录下所有`jar`文件里，查找类或资源文件。
 find-in-jars.sh 'log4j\.properties'
 find-in-jars.sh 'log4j\.xml$'
-find-in-jars.sh log4j\\.xml
-find-in-jars.sh 'log4j\.properties|log4j\.xml'
+find-in-jars.sh log4j\\.xml$ # 和上面命令一样，Shell转义的不同写法而已
+find-in-jars.sh '/(log4j\.properties|log4j\.xml)$'
 
 # -d选项 指定 查找目录（覆盖缺省的当前目录）
-find-in-jars.sh 'log4j\.properties' -d /path/to/find/directory
+find-in-jars.sh 'log4j\.properties$' -d /path/to/find/directory
+# 支持多个查找目录
+find-in-jars.sh 'log4j\.properties' -d /path/to/find/directory1 -d /path/to/find/directory2
 ```
 
 注意，后面Pattern是`grep`的 **扩展**正则表达式。
@@ -287,9 +289,29 @@ find-in-jars.sh 'log4j\.properties' -d /path/to/find/directory
 ### 示例
 
 ```bash
+# 在当前目录下的所有Jar文件中，查找出 log4j.properties文件
+$ find-in-jars.sh 'log4j\.properties$'
+./hadoop-core-0.20.2-cdh3u3.jar!log4j.properties
+
+# 查找出 以Service结尾的类
 $ ./find-in-jars 'Service.class$'
 ./WEB-INF/libs/spring-2.5.6.SEC03.jar!org/springframework/stereotype/Service.class
 ./rpc-benchmark-0.0.1-SNAPSHOT.jar!com/taobao/rpc/benchmark/service/HelloService.class
+......
+
+# 在指定的多个目录的Jar文件中，查找出 properties文件
+find-in-jars.sh '\.properties$' -d ../WEB-INF/lib -d ../deploy/lib | grep -v '/pom\.properties$'
+../WEB-INF/lib/aspectjtools-1.6.2.jar!org/aspectj/ajdt/ajc/messages.properties
+../WEB-INF/lib/aspectjtools-1.6.2.jar!org/aspectj/ajdt/internal/compiler/parser/readableNames.properties
+../WEB-INF/lib/aspectjweaver-1.8.8.jar!org/aspectj/weaver/XlintDefault.properties
+../WEB-INF/lib/aspectjweaver-1.8.8.jar!org/aspectj/weaver/weaver-messages.properties
+../deploy/lib/groovy-all-1.1-rc-1.jar!groovy/ui/InteractiveShell.properties
+../deploy/lib/groovy-all-1.1-rc-1.jar!org/codehaus/groovy/tools/shell/CommandAlias.properties
+../deploy/lib/httpcore-4.3.3.jar!org/apache/http/version.properties
+../deploy/lib/httpmime-4.2.2.jar!org/apache/http/entity/mime/version.properties
+../deploy/lib/javax.servlet-api-3.0.1.jar!javax/servlet/LocalStrings_fr.properties
+../deploy/lib/javax.servlet-api-3.0.1.jar!javax/servlet/http/LocalStrings_es.properties
+......
 ```
 
 ### 参考资料

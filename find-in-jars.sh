@@ -60,23 +60,30 @@ dirs=${dirs:-.}
 readonly pattern="${args[0]}"
 
 ################################################################################
-# Check the existence of jar command!
+# Check the existence of command for listing zip entry!
 ################################################################################
 
-if ! which jar &> /dev/null; then
-    [ -z "$JAVA_HOME" ] && {
-        echo "Error: jar not found on PATH!" 1>&2
-        exit 1
-    }
-    ! [ -f "$JAVA_HOME/bin/jar" ] && {
-        echo "Error: jar not found on PATH and \$JAVA_HOME/bin/jar($JAVA_HOME/bin/jar) file does NOT exists!" 1>&2
-        exit 1
-    }
-    ! [ -x "$JAVA_HOME/bin/jar" ] && {
-        echo "Error: jar not found on PATH and \$JAVA_HOME/bin/jar($JAVA_HOME/bin/jar) is NOT executalbe!" 1>&2
-        exit 1
-    }
-    export PATH="$JAVA_HOME/bin:$PATH"
+if which zipinfo &> /dev/null; then
+    # `zipinfo -1` is ~25 times faster than `jar tf`, find zipinfo command first.
+    readonly command_for_list_zip='zipinfo -1'
+else
+    if ! which jar &> /dev/null; then
+        [ -z "$JAVA_HOME" ] && {
+            echo "Error: jar not found on PATH!" 1>&2
+            exit 1
+        }
+        ! [ -f "$JAVA_HOME/bin/jar" ] && {
+            echo "Error: jar not found on PATH and \$JAVA_HOME/bin/jar($JAVA_HOME/bin/jar) file does NOT exists!" 1>&2
+            exit 1
+        }
+        ! [ -x "$JAVA_HOME/bin/jar" ] && {
+            echo "Error: jar not found on PATH and \$JAVA_HOME/bin/jar($JAVA_HOME/bin/jar) is NOT executalbe!" 1>&2
+            exit 1
+        }
+        export PATH="$JAVA_HOME/bin:$PATH"
+    fi
+
+    readonly command_for_list_zip='jar tf'
 fi
 
 ################################################################################
@@ -104,7 +111,7 @@ counter=1
 while read jar_file; do
     $is_console && echo -n "finding in jar($((counter++))/$total_count): $jar_file"
 
-    jar tf "${jar_file}" | grep -E "$pattern" | while read file; do
+    $command_for_list_zip "${jar_file}" | grep -E "$pattern" | while read file; do
         clear_line_if_is_console
 
         echo "${jar_file}"\!"${file}"

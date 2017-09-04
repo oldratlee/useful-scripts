@@ -23,13 +23,14 @@ Options:
     -p, --pid       find out the highest cpu consumed threads from the specifed java process,
                     default from all java process.
     -c, --count     set the thread count to show, default is 5
+    -F, --force     set jstack to force a thread dump(use jstack -F option)
     -h, --help      display this help and exit
 EOF
 
     exit $1
 }
 
-readonly ARGS=`getopt -n "$PROG" -a -o c:p:h -l count:,pid:,help -- "$@"`
+readonly ARGS=`getopt -n "$PROG" -a -o c:p:Fh -l count:,pid:,force,help -- "$@"`
 [ $? -ne 0 ] && usage 1
 eval set -- "${ARGS}"
 
@@ -42,6 +43,10 @@ while true; do
     -p|--pid)
         pid="$2"
         shift 2
+        ;;
+    -F|--force)
+        force=-F
+        shift 1
         ;;
     -h|--help)
         usage
@@ -120,10 +125,10 @@ printStackOfThreads() {
         [ ! -f "${jstackFile}" ] && {
             {
                 if [ "${user}" == "${USER}" ]; then
-                    jstack ${pid} > ${jstackFile}
+                    jstack ${force} ${pid} > ${jstackFile}
                 else
                     if [ $UID == 0 ]; then
-                        sudo -u ${user} jstack ${pid} > ${jstackFile}
+                        sudo -u ${user} jstack ${force} ${pid} > ${jstackFile}
                     else
                         redEcho "[$((count++))] Fail to jstack Busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user})."
                         redEcho "User of java process($user) is not current user($USER), need sudo to run again:"

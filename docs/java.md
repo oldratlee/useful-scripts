@@ -52,6 +52,8 @@ show-busy-java-threads.sh
 show-busy-java-threads.sh -c <要显示的线程栈数>
 
 show-busy-java-threads.sh -c <要显示的线程栈数> -p <指定的Java Process>
+# -F选项：执行jstack命令时加上-F选项（强制jstack），一般情况不需要使用
+show-busy-java-threads.sh -p <指定的Java Process> -F
 
 ##############################
 # 注意：
@@ -300,7 +302,7 @@ $ ./find-in-jars 'Service.class$'
 ......
 
 # 在指定的多个目录的Jar文件中，查找出 properties文件
-find-in-jars.sh '\.properties$' -d ../WEB-INF/lib -d ../deploy/lib | grep -v '/pom\.properties$'
+$ find-in-jars.sh '\.properties$' -d ../WEB-INF/lib -d ../deploy/lib | grep -v '/pom\.properties$'
 ../WEB-INF/lib/aspectjtools-1.6.2.jar!org/aspectj/ajdt/ajc/messages.properties
 ../WEB-INF/lib/aspectjtools-1.6.2.jar!org/aspectj/ajdt/internal/compiler/parser/readableNames.properties
 ../WEB-INF/lib/aspectjweaver-1.8.8.jar!org/aspectj/weaver/XlintDefault.properties

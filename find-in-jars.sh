@@ -89,9 +89,24 @@ fi
 ################################################################################
 # find logic
 ################################################################################
+
 [ -c /dev/stdout ] && readonly is_console=true || readonly is_console=false
 
-clear_line_if_is_console() {
+# Getting console width using a bash script
+# https://unix.stackexchange.com/questions/299067
+$is_console && readonly columns=$(stty size | awk '{print $2}')
+
+print_responsive_message() {
+    $is_console || return
+
+    local message="$*"
+    # http://www.linuxforums.org/forum/red-hat-fedora-linux/142825-how-truncate-string-bash-script.html
+    echo -n "${message:0:columns}"
+}
+
+clear_responsive_message() {
+    $is_console || return
+
     # How to delete line with echo?
     # https://unix.stackexchange.com/questions/26576
     #
@@ -100,7 +115,7 @@ clear_line_if_is_console() {
     # echo -e "\033[1K"
     # Or everything on the line, regardless of cursor position:
     # echo -e "\033[2K"
-    $is_console && echo -n -e "\033[2K\\r"
+    echo -n -e "\033[2K\\r"
 }
 
 
@@ -109,14 +124,14 @@ readonly total_count="$(echo "$jar_files" | wc -l)"
 
 counter=1
 while read jar_file; do
-    $is_console && echo -n "finding in jar($((counter++))/$total_count): $jar_file"
+    print_responsive_message "finding in jar($((counter++))/$total_count): $jar_file"
 
     $command_for_list_zip "${jar_file}" | grep -E "$pattern" | while read file; do
-        clear_line_if_is_console
+        clear_responsive_message
 
         echo "${jar_file}"\!"${file}"
     done
 
-    clear_line_if_is_console
+    clear_responsive_message
 
 done < <(echo "$jar_files")

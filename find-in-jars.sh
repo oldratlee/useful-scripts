@@ -63,9 +63,14 @@ readonly pattern="${args[0]}"
 # Check the existence of command for listing zip entry!
 ################################################################################
 
+# `zipinfo -1`/`unzip -Z1` is ~25 times faster than `jar tf`, find zipinfo/unzip command first.
+#
+# How to list files in a zip without extra information in command line
+# https://unix.stackexchange.com/a/128304/136953
 if which zipinfo &> /dev/null; then
-    # `zipinfo -1` is ~25 times faster than `jar tf`, find zipinfo command first.
     readonly command_for_list_zip='zipinfo -1'
+elif which unzip &> /dev/null; then
+    readonly command_for_list_zip='unzip -Z1'
 else
     if ! which jar &> /dev/null; then
         [ -z "$JAVA_HOME" ] && {

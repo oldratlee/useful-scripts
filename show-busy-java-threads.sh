@@ -112,7 +112,7 @@ trap "cleanupWhenExit" EXIT
 
 printStackOfThreads() {
     local line
-    local count=1
+    local counter=1
     while IFS=" " read -a line ; do
         local pid=${line[0]}
         local threadId=${line[1]}
@@ -121,30 +121,28 @@ printStackOfThreads() {
         local pcpu=${line[4]}
 
         local jstackFile=/tmp/${uuid}_${pid}
-
         [ ! -f "${jstackFile}" ] && {
             {
                 if [ "${user}" == "${USER}" ]; then
                     jstack ${force} ${pid} > ${jstackFile}
+                elif [ $UID == 0 ]; then
+                    sudo -u "${user}" jstack ${force} ${pid} > ${jstackFile}
                 else
-                    if [ $UID == 0 ]; then
-                        sudo -u ${user} jstack ${force} ${pid} > ${jstackFile}
-                    else
-                        redEcho "[$((count++))] Fail to jstack Busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user})."
-                        redEcho "User of java process($user) is not current user($USER), need sudo to run again:"
-                        yellowEcho "    sudo ${COMMAND_LINE[@]}"
-                        echo
-                        continue
-                    fi
+                    redEcho "[$((counter++))] Fail to jstack Busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user})."
+                    redEcho "User of java process($user) is not current user($USER), need sudo to run again:"
+                    yellowEcho "    sudo ${COMMAND_LINE[@]}"
+                    echo
+                    continue
                 fi
             } || {
-                redEcho "[$((count++))] Fail to jstack Busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user})."
+                redEcho "[$((counter++))] Fail to jstack Busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user})."
                 echo
                 rm ${jstackFile}
                 continue
             }
         }
-        blueEcho "[$((count++))] Busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user}):"
+
+        blueEcho "[$((counter++))] Busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user}):"
         sed "/nid=${threadId0x} /,/^$/p" -n ${jstackFile}
     done
 }

@@ -3,9 +3,10 @@
 # Find file in the jar files under current directory
 #
 # @Usage
-#   $ find-in-jars.sh log4j\\.xml
 #   $ find-in-jars.sh 'log4j\.properties'
-#   $ find-in-jars.sh 'log4j\.properties|log4j\.xml'
+#   $ find-in-jars.sh 'log4j(\.properties|\.xml)$'
+#   $ find-in-jars.sh 'log4j\.properties$' -d /path/to/find/directory
+#   $ find-in-jars.sh 'log4j\.properties' -d /path/to/find/directory1 -d /path/to/find/directory2
 #
 # @author Jerry Lee
 
@@ -21,11 +22,14 @@ Find file in the jar files under specified directory(recursive, include subdirec
 Pattern is *extended* regex.
 
 Example:
-    ${PROG} -d 'log4j\.properties'
-    ${PROG} -d libs 'log4j\.properties$'
+    ${PROG} 'log4j\.properties'
+    ${PROG} 'log4j(\.properties|\.xml)$'
+    ${PROG} 'log4j\.properties$' -d /path/to/find/directory
+    ${PROG} 'log4j\.properties' -d /path/to/find/dir1 -d /path/to/find/dir2
 
 Options:
-    -d, --dir   the directory that find jar files, can specify multiply times
+    -d, --dir   the directory that find jar files, default is current directory.
+                this option can specify multiply times to find in multiply directory.
     -h, --help  display this help and exit
 EOF
 

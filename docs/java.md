@@ -278,7 +278,7 @@ class paths to find:
 find-in-jars.sh 'log4j\.properties'
 find-in-jars.sh 'log4j\.xml$'
 find-in-jars.sh log4j\\.xml$ # 和上面命令一样，Shell转义的不同写法而已
-find-in-jars.sh '/(log4j\.properties|log4j\.xml)$'
+find-in-jars.sh 'log4j(\.properties|\.xml)$'
 
 # -d选项 指定 查找目录（覆盖缺省的当前目录）
 find-in-jars.sh 'log4j\.properties$' -d /path/to/find/directory

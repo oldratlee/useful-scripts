@@ -4,7 +4,7 @@
 #
 # @Usage
 #   $ find-in-jars.sh 'log4j\.properties'
-#   $ find-in-jars.sh 'log4j(\.properties|\.xml)$'
+#   $ find-in-jars.sh '^log4j(\.properties|\.xml)$'
 #   $ find-in-jars.sh 'log4j\.properties$' -d /path/to/find/directory
 #   $ find-in-jars.sh 'log4j\.properties' -d /path/to/find/directory1 -d /path/to/find/directory2
 #
@@ -19,18 +19,22 @@ usage() {
     > $out cat <<EOF
 Usage: ${PROG} [OPTION]... PATTERN
 Find file in the jar files under specified directory(recursive, include subdirectory).
-Pattern is *extended* regex.
+The pattern default is *extended* regex.
 
 Example:
     ${PROG} 'log4j\.properties'
-    ${PROG} 'log4j(\.properties|\.xml)$'
+    ${PROG} '^log4j(\.properties|\.xml)$' # search file log4j.properties/log4j.xml at zip root
     ${PROG} 'log4j\.properties$' -d /path/to/find/directory
     ${PROG} 'log4j\.properties' -d /path/to/find/dir1 -d /path/to/find/dir2
 
 Options:
-    -d, --dir   the directory that find jar files, default is current directory.
-                this option can specify multiply times to find in multiply directory.
-    -h, --help  display this help and exit
+  -d, --dir              the directory that find jar files, default is current directory.
+                         this option can specify multiply times to find in multiply directory.
+  -E, --extended-regexp  PATTERN is an extended regular expression (*default*)
+  -F, --fixed-strings    PATTERN is a set of newline-separated strings
+  -G, --basic-regexp     PATTERN is a basic regular expression
+  -P, --perl-regexp      PATTERN is a Perl regular expression
+  -h, --help             display this help and exit
 EOF
 
     exit $1
@@ -42,11 +46,28 @@ EOF
 
 args=()
 dirs=()
+regex_mode=-E
 while [ $# -gt 0 ]; do
     case "$1" in
     -d|--dir)
         dirs=("${dirs[@]}" "$2")
         shift 2
+        ;;
+    -E|--extended-regexp)
+        regex_mode=-E
+        shift
+        ;;
+    -F|--fixed-strings)
+        regex_mode=-F
+        shift
+        ;;
+    -G|--basic-regexp)
+        regex_mode=-G
+        shift
+        ;;
+    -P|--perl-regexp)
+        regex_mode=-P
+        shift
         ;;
     -h|--help)
         usage
@@ -135,7 +156,7 @@ counter=1
 while read jar_file; do
     print_responsive_message "finding in jar($((counter++))/$total_count): $jar_file"
 
-    $command_for_list_zip "${jar_file}" | grep -E "$pattern" | while read file; do
+    $command_for_list_zip "${jar_file}" | grep $regex_mode "$pattern" | while read file; do
         clear_responsive_message
 
         echo "${jar_file}"\!"${file}"

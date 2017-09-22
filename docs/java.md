@@ -286,7 +286,7 @@ find-in-jars.sh 'log4j\.properties$' -d /path/to/find/directory
 find-in-jars.sh 'log4j\.properties' -d /path/to/find/directory1 -d /path/to/find/directory2
 ```
 
-注意，后面Pattern是`grep`的 **扩展**正则表达式。
+注意，Pattern缺省是`grep`的 **扩展**正则表达式。
 
 ### 示例
 

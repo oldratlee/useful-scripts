@@ -13,8 +13,7 @@
 readonly PROG=`basename $0`
 
 usage() {
-    local out
-    [ -n "$1" -a "$1" != 0 ] && out=/dev/stderr || out=/dev/stdout
+    [ -n "$1" -a "$1" != 0 ] && local out=/dev/stderr || local out=/dev/stdout
 
     > $out cat <<EOF
 Usage: ${PROG} [OPTION]... PATTERN
@@ -151,6 +150,10 @@ clear_responsive_message() {
 
 readonly jar_files="$(find "${dirs[@]}" -iname '*.jar')"
 readonly total_count="$(echo "$jar_files" | wc -l)"
+[ -z "$jar_files" ] && {
+    echo "No jar found!" 1>&2
+    exit 1
+}
 
 counter=1
 while read jar_file; do

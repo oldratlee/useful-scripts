@@ -55,12 +55,39 @@ show-busy-java-threads.sh -c <要显示的线程栈数> -p <指定的Java Proces
 # -F选项：执行jstack命令时加上-F选项（强制jstack），一般情况不需要使用
 show-busy-java-threads.sh -p <指定的Java Process> -F
 
+show-busy-java-threads.sh -s <指定jstack命令的全路径>
+# 对于sudo方式的运行，JAVA_HOME环境变量不能传递给root，
+# 而root用户往往没有配置JAVA_HOME且不方便配置，
+# 显式指定jstack命令的路径就反而显得更方便了
+
+show-busy-java-threads.sh -a <输出记录到的文件>
+
+show-busy-java-threads.sh -t <重复执行的次数> -i <重复执行的间隔秒数>
+# 缺省执行一次；执行间隔缺省是3秒
+
 ##############################
 # 注意：
 ##############################
 # 如果Java进程的用户 与 执行脚本的当前用户 不同，则jstack不了这个Java进程。
 # 为了能切换到Java进程的用户，需要加sudo来执行，即可以解决：
 sudo show-busy-java-threads.sh
+
+# 帮助信息
+$ show-busy-java-threads.sh -h
+Usage: show-busy-java-threads.sh [OPTION]...
+Find out the highest cpu consumed threads of java, and print the stack of these threads.
+Example: show-busy-java-threads.sh -c 10
+
+Options:
+  -p, --pid <java pid>      find out the highest cpu consumed threads from the specifed java process,
+                            default from all java process.
+  -c, --count <num>         set the thread count to show, default is 5
+  -a, --append-file <file>  specify the file to append output as log
+  -t, --repeat-times <num>  specify the show times, default just show 1 time
+  -i, --interval <secs>     seconds to wait between updates, default 3 seconds
+  -s, --jstack-path <path>  specify the path of jstack command
+  -F, --force               set jstack to force a thread dump(use jstack -F option)
+  -h, --help                display this help and exit
 ```
 
 ### 示例
@@ -140,6 +167,15 @@ show-duplicate-java-classes -c path/to/class_dir1 -c /path/to/class_dir2
 
 # 查找指定Class目录和指定目录下所有Jar中的重复类的Jar
 show-duplicate-java-classes path/to/lib_dir1 /path/to/lib_dir2 -c path/to/class_dir1 -c path/to/class_dir2
+
+# 帮助信息
+$ show-duplicate-java-classes -h
+Usage: show-duplicate-java-classes [-c class-dir1 [-c class-dir2] ...] [lib-dir1|jar-file1 [lib-dir2|jar-file2] ...]
+
+Options:
+  -h, --help            show this help message and exit
+  -c CLASS_DIRS, --class-dir=CLASS_DIRS
+                        add class dir
 ```
 
 #### `JDK`开发场景使用说明
@@ -284,6 +320,27 @@ find-in-jars.sh 'log4j(\.properties|\.xml)$'
 find-in-jars.sh 'log4j\.properties$' -d /path/to/find/directory
 # 支持多个查找目录
 find-in-jars.sh 'log4j\.properties' -d /path/to/find/directory1 -d /path/to/find/directory2
+
+# 帮助信息
+$ find-in-jars.sh -h
+Usage: find-in-jars.sh [OPTION]... PATTERN
+Find file in the jar files under specified directory(recursive, include subdirectory).
+The pattern default is *extended* regex.
+
+Example:
+    find-in-jars.sh 'log4j\.properties'
+    find-in-jars.sh '^log4j(\.properties|\.xml)$' # search file log4j.properties/log4j.xml at zip root
+    find-in-jars.sh 'log4j\.properties$' -d /path/to/find/directory
+    find-in-jars.sh 'log4j\.properties' -d /path/to/find/dir1 -d /path/to/find/dir2
+
+Options:
+  -d, --dir              the directory that find jar files, default is current directory.
+                         this option can specify multiply times to find in multiply directory.
+  -E, --extended-regexp  PATTERN is an extended regular expression (*default*)
+  -F, --fixed-strings    PATTERN is a set of newline-separated strings
+  -G, --basic-regexp     PATTERN is a basic regular expression
+  -P, --perl-regexp      PATTERN is a Perl regular expression
+  -h, --help             display this help and exit
 ```
 
 注意，Pattern缺省是`grep`的 **扩展**正则表达式。

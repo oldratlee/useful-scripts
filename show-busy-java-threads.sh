@@ -20,17 +20,19 @@ Find out the highest cpu consumed threads of java, and print the stack of these 
 Example: ${PROG} -c 10
 
 Options:
-    -p, --pid       find out the highest cpu consumed threads from the specifed java process,
-                    default from all java process.
-    -c, --count     set the thread count to show, default is 5
-    -F, --force     set jstack to force a thread dump(use jstack -F option)
-    -h, --help      display this help and exit
+  -p, --pid          find out the highest cpu consumed threads from the specifed java process,
+                     default from all java process.
+  -c, --count        set the thread count to show, default is 5
+  -a, --append-file  specify the file to append output as log
+  -s, --jstack-path  specify the path of jstack command
+  -F, --force        set jstack to force a thread dump(use jstack -F option)
+  -h, --help         display this help and exit
 EOF
 
     exit $1
 }
 
-readonly ARGS=`getopt -n "$PROG" -a -o c:p:Fh -l count:,pid:,force,help -- "$@"`
+readonly ARGS=`getopt -n "$PROG" -a -o c:p:a:s:Fh -l count:,pid:,append-file:,jstack-path:,force,help -- "$@"`
 [ $? -ne 0 ] && usage 1
 eval set -- "${ARGS}"
 
@@ -42,6 +44,14 @@ while true; do
         ;;
     -p|--pid)
         pid="$2"
+        shift 2
+        ;;
+    -a|--append-file)
+        append_file="$2"
+        shift 2
+        ;;
+    -s|--jstack-path)
+        jstack_path="$2"
         shift 2
         ;;
     -F|--force)
@@ -59,48 +69,64 @@ while true; do
 done
 count=${count:-5}
 
-redEcho() {
-    [ -c /dev/stdout ] && {
+colorPrint() {
+    local color=$1
+    shift
+    if [ -c /dev/stdout ] ; then
         # if stdout is console, turn on color output.
-        echo -ne "\033[1;31m"
+        echo -ne "\033[1;${color}m"
         echo -n "$@"
         echo -e "\033[0m"
-    } || echo "$@"
+    else
+        echo "$@"
+    fi
+
+    [ -n "$append_file" ] && echo "$@" >> "$append_file"
 }
 
-yellowEcho() {
-    [ -c /dev/stdout ] && {
-        # if stdout is console, turn on color output.
-        echo -ne "\033[1;33m"
-        echo -n "$@"
-        echo -e "\033[0m"
-    } || echo "$@"
+redPrint() {
+    colorPrint 31 "$@"
 }
 
-blueEcho() {
-    [ -c /dev/stdout ] && {
-        # if stdout is console, turn on color output.
-        echo -ne "\033[1;36m"
-        echo -n "$@"
-        echo -e "\033[0m"
-    } || echo "$@"
+greenPrint() {
+    colorPrint 32 "$@"
 }
 
+yellowPrint() {
+    colorPrint 33 "$@"
+}
+
+bluePrint() {
+    colorPrint 36 "$@"
+}
+
+normalPrint() {
+    echo "$@"
+
+    [ -z "$append_file" ] && echo "$@" >> "$append_file"
+}
+
+if [ -n "$jstack_path" ]; then
+    ! [ -x "$jstack_path" ] && {
+        redPrint "Error: $jstack_path is NOT executalbe!" 1>&2
+        exit 1
+    }
 # Check the existence of jstack command!
-if ! which jstack &> /dev/null; then
+elif ! which jstack &> /dev/null; then
     [ -z "$JAVA_HOME" ] && {
-        redEcho "Error: jstack not found on PATH!" 1>&2
+        redPrint "Error: jstack not found on PATH!" 1>&2
         exit 1
     }
     ! [ -f "$JAVA_HOME/bin/jstack" ] && {
-        redEcho "Error: jstack not found on PATH and \$JAVA_HOME/bin/jstack($JAVA_HOME/bin/jstack) file does NOT exists!" 1>&2
+        redPrint "Error: jstack not found on PATH and \$JAVA_HOME/bin/jstack($JAVA_HOME/bin/jstack) file does NOT exists!" 1>&2
         exit 1
     }
     ! [ -x "$JAVA_HOME/bin/jstack" ] && {
-        redEcho "Error: jstack not found on PATH and \$JAVA_HOME/bin/jstack($JAVA_HOME/bin/jstack) is NOT executalbe!" 1>&2
+        redPrint "Error: jstack not found on PATH and \$JAVA_HOME/bin/jstack($JAVA_HOME/bin/jstack) is NOT executalbe!" 1>&2
         exit 1
     }
     export PATH="$JAVA_HOME/bin:$PATH"
+    jstack_path="`which jstack`"
 fi
 
 readonly uuid=`date +%s`_${RANDOM}_$$
@@ -124,29 +150,36 @@ printStackOfThreads() {
         [ ! -f "${jstackFile}" ] && {
             {
                 if [ "${user}" == "${USER}" ]; then
-                    jstack ${force} ${pid} > ${jstackFile}
+                    "$jstack_path" ${force} ${pid} > ${jstackFile}
                 elif [ $UID == 0 ]; then
-                    sudo -u "${user}" jstack ${force} ${pid} > ${jstackFile}
+                    sudo -u "${user}" "$jstack_path" ${force} ${pid} > ${jstackFile}
                 else
-                    redEcho "[$((counter++))] Fail to jstack Busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user})."
-                    redEcho "User of java process($user) is not current user($USER), need sudo to run again:"
-                    yellowEcho "    sudo ${COMMAND_LINE[@]}"
-                    echo
+                    redPrint "[$((counter++))] Fail to jstack Busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user})."
+                    redPrint "User of java process($user) is not current user($USER), need sudo to run again:"
+                    yellowPrint "    sudo ${COMMAND_LINE[@]}"
+                    normalPrint
                     continue
                 fi
             } || {
-                redEcho "[$((counter++))] Fail to jstack Busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user})."
-                echo
+                redPrint "[$((counter++))] Fail to jstack Busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user})."
+                normalPrint
                 rm ${jstackFile}
                 continue
             }
         }
 
-        blueEcho "[$((counter++))] Busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user}):"
-        sed "/nid=${threadId0x} /,/^$/p" -n ${jstackFile}
+        bluePrint "[$((counter++))] Busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user}):"
+        sed "/nid=${threadId0x} /,/^$/p" -n ${jstackFile} | tee ${append_file+-a "$append_file"}
     done
 }
 
+
+[ -n "$append_file" ] && {
+    echo ================================================================================
+    echo "$(date "+%Y-%m-%d %H:%M:%S.%N"): ${COMMAND_LINE[@]}"
+    echo ================================================================================
+    echo
+} >> "$append_file"
 
 ps -Leo pid,lwp,user,comm,pcpu --no-headers | {
     [ -z "${pid}" ] &&

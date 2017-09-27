@@ -20,19 +20,21 @@ Find out the highest cpu consumed threads of java, and print the stack of these 
 Example: ${PROG} -c 10
 
 Options:
-  -p, --pid          find out the highest cpu consumed threads from the specifed java process,
-                     default from all java process.
-  -c, --count        set the thread count to show, default is 5
-  -a, --append-file  specify the file to append output as log
-  -s, --jstack-path  specify the path of jstack command
-  -F, --force        set jstack to force a thread dump(use jstack -F option)
-  -h, --help         display this help and exit
+  -p, --pid <java pid>      find out the highest cpu consumed threads from the specifed java process,
+                            default from all java process.
+  -c, --count <num>         set the thread count to show, default is 5
+  -a, --append-file <file>  specify the file to append output as log
+  -t, --repeat-times <num>  specify the show times, default just show 1 time
+  -i, --interval <secs>     seconds to wait between updates, default 3 seconds
+  -s, --jstack-path <path>  specify the path of jstack command
+  -F, --force               set jstack to force a thread dump(use jstack -F option)
+  -h, --help                display this help and exit
 EOF
 
     exit $1
 }
 
-readonly ARGS=`getopt -n "$PROG" -a -o c:p:a:s:Fh -l count:,pid:,append-file:,jstack-path:,force,help -- "$@"`
+readonly ARGS=`getopt -n "$PROG" -a -o p:c:a:t:i:s:Fh -l count:,pid:,append-file:,repeat-times:,interval:,jstack-path:,force,help -- "$@"`
 [ $? -ne 0 ] && usage 1
 eval set -- "${ARGS}"
 
@@ -48,6 +50,14 @@ while true; do
         ;;
     -a|--append-file)
         append_file="$2"
+        shift 2
+        ;;
+    -t|--repeat-times)
+        repeat_times="$2"
+        shift 2
+        ;;
+    -i|--interval)
+        interval="$2"
         shift 2
         ;;
     -s|--jstack-path)
@@ -68,6 +78,8 @@ while true; do
     esac
 done
 count=${count:-5}
+repeat_times=${repeat_times:-1}
+interval=${interval:-3}
 
 colorPrint() {
     local color=$1
@@ -174,15 +186,22 @@ printStackOfThreads() {
 }
 
 
-[ -n "$append_file" ] && {
+head_info() {
     echo ================================================================================
     echo "$(date "+%Y-%m-%d %H:%M:%S.%N"): ${COMMAND_LINE[@]}"
     echo ================================================================================
     echo
-} >> "$append_file"
+}
 
-ps -Leo pid,lwp,user,comm,pcpu --no-headers | {
-    [ -z "${pid}" ] &&
-    awk '$4=="java"{print $0}' ||
-    awk -v "pid=${pid}" '$1==pid,$4=="java"{print $0}'
-} | sort -k5 -r -n | head --lines "${count}" | printStackOfThreads
+for((i = 0; i < repeat_times; ++i)); do
+    [ "$i" -gt 0 ] && sleep "$interval"
+
+    [ -n "$append_file" ] && head_info >> "$append_file"
+    [ "$repeat_times" -gt 1 ] && head_info
+
+    ps -Leo pid,lwp,user,comm,pcpu --no-headers | {
+        [ -z "${pid}" ] &&
+        awk '$4=="java"{print $0}' ||
+        awk -v "pid=${pid}" '$1==pid,$4=="java"{print $0}'
+    } | sort -k5 -r -n | head --lines "${count}" | printStackOfThreads
+done

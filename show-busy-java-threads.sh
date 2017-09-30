@@ -115,7 +115,7 @@ bluePrint() {
 normalPrint() {
     echo "$@"
 
-    [ -z "$append_file" ] && echo "$@" >> "$append_file"
+    [ -n "$append_file" ] && echo "$@" >> "$append_file"
 }
 
 if [ -n "$jstack_path" ]; then
@@ -193,7 +193,7 @@ head_info() {
     echo
 }
 
-for((i = 0; i < repeat_times; ++i)); do
+for ((i = 0; i < repeat_times; ++i)); do
     [ "$i" -gt 0 ] && sleep "$interval"
 
     [ -n "$append_file" ] && head_info >> "$append_file"

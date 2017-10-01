@@ -6,6 +6,7 @@
 #   $ ./show-busy-java-threads.sh
 #
 # @author Jerry Lee
+# @author superhj1987
 
 readonly PROG=`basename $0`
 readonly -a COMMAND_LINE=("$0" "$@")
@@ -15,26 +16,31 @@ usage() {
     [ -n "$1" -a "$1" != 0 ] && out=/dev/stderr || out=/dev/stdout
 
     > $out cat <<EOF
-Usage: ${PROG} [OPTION]...
+Usage: ${PROG} [OPTION]... [delay [count]]
 Find out the highest cpu consumed threads of java, and print the stack of these threads.
-Example: ${PROG} -c 10
+
+Example:
+  ${PROG}       # show busy java threads info
+  ${PROG} 1     # update every 1 seconds, (stop by eg: CTRL+C)
+  ${PROG} 3 10  # update every 3 seconds, update 10 times
 
 Options:
   -p, --pid <java pid>      find out the highest cpu consumed threads from the specifed java process,
                             default from all java process.
   -c, --count <num>         set the thread count to show, default is 5
   -a, --append-file <file>  specify the file to append output as log
-  -t, --repeat-times <num>  specify the show times, default just show 1 time
-  -i, --interval <secs>     seconds to wait between updates, default 3 seconds
   -s, --jstack-path <path>  specify the path of jstack command
   -F, --force               set jstack to force a thread dump(use jstack -F option)
   -h, --help                display this help and exit
+  delay                     the delay between updates in seconds.
+  count                     the number of updates.
+                            the usage of delay/count imitates vmstat
 EOF
 
     exit $1
 }
 
-readonly ARGS=`getopt -n "$PROG" -a -o p:c:a:t:i:s:Fh -l count:,pid:,append-file:,repeat-times:,interval:,jstack-path:,force,help -- "$@"`
+readonly ARGS=`getopt -n "$PROG" -a -o p:c:a:s:Fh -l count:,pid:,append-file:,jstack-path:,force,help -- "$@"`
 [ $? -ne 0 ] && usage 1
 eval set -- "${ARGS}"
 
@@ -50,14 +56,6 @@ while true; do
         ;;
     -a|--append-file)
         append_file="$2"
-        shift 2
-        ;;
-    -t|--repeat-times)
-        repeat_times="$2"
-        shift 2
-        ;;
-    -i|--interval)
-        interval="$2"
         shift 2
         ;;
     -s|--jstack-path)
@@ -78,8 +76,10 @@ while true; do
     esac
 done
 count=${count:-5}
-repeat_times=${repeat_times:-1}
-interval=${interval:-3}
+
+update_delay=${1:-0}
+[ -z "$1" ] && update_count=1 || update_count=${2:-0}
+[ $update_count -lt 0 ] && update_count=0
 
 colorPrint() {
     local color=$1
@@ -120,11 +120,13 @@ normalPrint() {
 
 if [ -n "$jstack_path" ]; then
     ! [ -x "$jstack_path" ] && {
-        redPrint "Error: $jstack_path is NOT executalbe!" 1>&2
+        redPrint "Error: $jstack_path is NOT found/executalbe!" 1>&2
         exit 1
     }
-# Check the existence of jstack command!
-elif ! which jstack &> /dev/null; then
+elif which jstack &> /dev/null; then
+    # Check the existence of jstack command!
+    jstack_path="`which jstack`"
+else
     [ -z "$JAVA_HOME" ] && {
         redPrint "Error: jstack not found on PATH!" 1>&2
         exit 1
@@ -185,19 +187,19 @@ printStackOfThreads() {
     done
 }
 
-
 head_info() {
     echo ================================================================================
-    echo "$(date "+%Y-%m-%d %H:%M:%S.%N"): ${COMMAND_LINE[@]}"
+    echo "$(date "+%Y-%m-%d %H:%M:%S.%N") [$((i+1))/$update_count]: ${COMMAND_LINE[@]}"
     echo ================================================================================
     echo
 }
 
-for ((i = 0; i < repeat_times; ++i)); do
-    [ "$i" -gt 0 ] && sleep "$interval"
+# if update_count <= 0, infinite loop till user interupted (eg: CTRL+C)
+for ((i = 0; update_count <= 0 || i < update_count; ++i)); do
+    [ "$i" -gt 0 ] && sleep "$update_delay"
 
     [ -n "$append_file" ] && head_info >> "$append_file"
-    [ "$repeat_times" -gt 1 ] && head_info
+    [ "$update_count" -ne 1 ] && head_info
 
     ps -Leo pid,lwp,user,comm,pcpu --no-headers | {
         [ -z "${pid}" ] &&

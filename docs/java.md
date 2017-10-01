@@ -61,9 +61,10 @@ show-busy-java-threads.sh -s <指定jstack命令的全路径>
 # 显式指定jstack命令的路径就反而显得更方便了
 
 show-busy-java-threads.sh -a <输出记录到的文件>
+# 记录到文件以方便回溯查看
 
-show-busy-java-threads.sh -t <重复执行的次数> -i <重复执行的间隔秒数>
-# 缺省执行一次；执行间隔缺省是3秒
+show-busy-java-threads.sh <重复执行的间隔秒数> [<重复执行的次数>]
+# 多次执行，类似vmstat行为
 
 ##############################
 # 注意：
@@ -74,20 +75,25 @@ sudo show-busy-java-threads.sh
 
 # 帮助信息
 $ show-busy-java-threads.sh -h
-Usage: show-busy-java-threads.sh [OPTION]...
+Usage: show-busy-java-threads.sh [OPTION]... [delay [count]]
 Find out the highest cpu consumed threads of java, and print the stack of these threads.
-Example: show-busy-java-threads.sh -c 10
+
+Example:
+  show-busy-java-threads.sh       # show busy java threads info
+  show-busy-java-threads.sh 1     # update every 1 seconds, (stop by eg: CTRL+C)
+  show-busy-java-threads.sh 3 10  # update every 3 seconds, update 10 times
 
 Options:
   -p, --pid <java pid>      find out the highest cpu consumed threads from the specifed java process,
                             default from all java process.
   -c, --count <num>         set the thread count to show, default is 5
   -a, --append-file <file>  specify the file to append output as log
-  -t, --repeat-times <num>  specify the show times, default just show 1 time
-  -i, --interval <secs>     seconds to wait between updates, default 3 seconds
   -s, --jstack-path <path>  specify the path of jstack command
   -F, --force               set jstack to force a thread dump(use jstack -F option)
   -h, --help                display this help and exit
+  delay                     the delay between updates in seconds.
+  count                     the number of updates.
+                            the usage of delay/count imitates vmstat
 ```
 
 ### 示例
@@ -131,7 +137,7 @@ $ show-busy-java-threads.sh
 
 多执行几次`show-busy-java-threads.sh`，如果上面情况高概率出现，则可以确定上面的判定。  
 \# 因为调用越少代码执行越快，则出现在线程栈的概率就越低。  
-\# 脚本有自动多次执行的功能，`-t`选项，详见使用文档。
+\# 脚本有自动多次执行的功能，指定 重复执行的间隔秒数/重复执行的次数 参数。
 
 分析`shared.monitor.schedule.AppMonitorDataAvgScheduler.run`实现逻辑和调用方式，以优化实现解决问题。
 
@@ -141,6 +147,8 @@ $ show-busy-java-threads.sh
 - [liuyangc3](https://github.com/liuyangc3)
     - 发现并解决`jstack`非当前用户`Java`进程的问题。 [#50](https://github.com/oldratlee/useful-scripts/pull/50)
     - 优化性能，通过`read -a`简化反复的`awk`操作。 [#51](https://github.com/oldratlee/useful-scripts/pull/51)
+- [superhj1987](https://github.com/superhj1987) / [lirenzuo](https://github.com/lirenzuo)
+    - 提供/实现多次执行的功能 [superhj1987/awesome-scripts#1](https://github.com/superhj1987/awesome-scripts/issues/1)
 
 :beer: [show-duplicate-java-classes](../show-duplicate-java-classes)
 ----------------------

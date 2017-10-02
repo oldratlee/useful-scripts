@@ -128,15 +128,15 @@ elif which jstack &> /dev/null; then
     jstack_path="`which jstack`"
 else
     [ -z "$JAVA_HOME" ] && {
-        redPrint "Error: jstack not found on PATH!" 1>&2
+        redPrint "Error: jstack not found on PATH! Use -s option set jstack path manually." 1>&2
         exit 1
     }
     ! [ -f "$JAVA_HOME/bin/jstack" ] && {
-        redPrint "Error: jstack not found on PATH and \$JAVA_HOME/bin/jstack($JAVA_HOME/bin/jstack) file does NOT exists!" 1>&2
+        redPrint "Error: jstack not found on PATH and \$JAVA_HOME/bin/jstack($JAVA_HOME/bin/jstack) file does NOT exists! Use -s option set jstack path manually." 1>&2
         exit 1
     }
     ! [ -x "$JAVA_HOME/bin/jstack" ] && {
-        redPrint "Error: jstack not found on PATH and \$JAVA_HOME/bin/jstack($JAVA_HOME/bin/jstack) is NOT executalbe!" 1>&2
+        redPrint "Error: jstack not found on PATH and \$JAVA_HOME/bin/jstack($JAVA_HOME/bin/jstack) is NOT executalbe! Use -s option set jstack path manually." 1>&2
         exit 1
     }
     export PATH="$JAVA_HOME/bin:$PATH"

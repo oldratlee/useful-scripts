@@ -11,6 +11,11 @@
 readonly PROG=`basename $0`
 readonly -a COMMAND_LINE=("$0" "$@")
 
+# Get corrent current user name via whoami command
+#   See get https://www.lifewire.com/current-linux-user-whoami-command-3867579
+# Because if use `sudo -u` to run command, env var $USER is not rewrited/correct, just inherited from outside!
+readonly USER="`whoami`"
+
 usage() {
     local out
     [ -n "$1" -a "$1" != 0 ] && out=/dev/stderr || out=/dev/stdout

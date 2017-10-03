@@ -64,7 +64,7 @@ show-busy-java-threads.sh -a <输出记录到的文件>
 # 记录到文件以方便回溯查看
 
 show-busy-java-threads.sh <重复执行的间隔秒数> [<重复执行的次数>]
-# 多次执行，类似vmstat行为
+# 多次执行；这2个参数的使用方式类似vmstat命令
 
 ##############################
 # 注意：
@@ -91,9 +91,9 @@ Options:
   -s, --jstack-path <path>  specify the path of jstack command
   -F, --force               set jstack to force a thread dump(use jstack -F option)
   -h, --help                display this help and exit
-  delay                     the delay between updates in seconds.
-  count                     the number of updates.
-                            the usage of delay/count imitates vmstat
+  delay                     the delay between updates in seconds
+  count                     the number of updates
+                            delay/count arguments imitates style of vmstat command
 ```
 
 ### 示例
@@ -148,7 +148,7 @@ $ show-busy-java-threads.sh
     - 发现并解决`jstack`非当前用户`Java`进程的问题。 [#50](https://github.com/oldratlee/useful-scripts/pull/50)
     - 优化性能，通过`read -a`简化反复的`awk`操作。 [#51](https://github.com/oldratlee/useful-scripts/pull/51)
 - [superhj1987](https://github.com/superhj1987) / [lirenzuo](https://github.com/lirenzuo)
-    - 提供/实现多次执行的功能 [superhj1987/awesome-scripts#1](https://github.com/superhj1987/awesome-scripts/issues/1)
+    - 提出/实现了多次执行的功能 [superhj1987/awesome-scripts#1](https://github.com/superhj1987/awesome-scripts/issues/1)
 
 :beer: [show-duplicate-java-classes](../show-duplicate-java-classes)
 ----------------------

@@ -8,7 +8,7 @@
 # @author Jerry Lee
 # @author superhj1987
 
-readonly PROG=`basename $0`
+readonly PROG="`basename $0`"
 readonly -a COMMAND_LINE=("$0" "$@")
 
 # Get corrent current user name via whoami command
@@ -17,8 +17,7 @@ readonly -a COMMAND_LINE=("$0" "$@")
 readonly USER="`whoami`"
 
 usage() {
-    local out
-    [ -n "$1" -a "$1" != 0 ] && out=/dev/stderr || out=/dev/stdout
+    [ -n "$1" -a "$1" != 0 ] && local out=/dev/stderr || local out=/dev/stdout
 
     > $out cat <<EOF
 Usage: ${PROG} [OPTION]... [delay [count]]
@@ -37,9 +36,9 @@ Options:
   -s, --jstack-path <path>  specify the path of jstack command
   -F, --force               set jstack to force a thread dump(use jstack -F option)
   -h, --help                display this help and exit
-  delay                     the delay between updates in seconds.
-  count                     the number of updates.
-                            the usage of delay/count imitates vmstat
+  delay                     the delay between updates in seconds
+  count                     the number of updates
+                            delay/count arguments imitates style of vmstat command
 EOF
 
     exit $1
@@ -124,7 +123,7 @@ normalPrint() {
 }
 
 if [ -n "$jstack_path" ]; then
-    ! [ -x "$jstack_path" ] && {
+    [ ! -x "$jstack_path" ] && {
         redPrint "Error: $jstack_path is NOT found/executalbe!" 1>&2
         exit 1
     }
@@ -136,11 +135,11 @@ else
         redPrint "Error: jstack not found on PATH! Use -s option set jstack path manually." 1>&2
         exit 1
     }
-    ! [ -f "$JAVA_HOME/bin/jstack" ] && {
+    [ ! -f "$JAVA_HOME/bin/jstack" ] && {
         redPrint "Error: jstack not found on PATH and \$JAVA_HOME/bin/jstack($JAVA_HOME/bin/jstack) file does NOT exists! Use -s option set jstack path manually." 1>&2
         exit 1
     }
-    ! [ -x "$JAVA_HOME/bin/jstack" ] && {
+    [ ! -x "$JAVA_HOME/bin/jstack" ] && {
         redPrint "Error: jstack not found on PATH and \$JAVA_HOME/bin/jstack($JAVA_HOME/bin/jstack) is NOT executalbe! Use -s option set jstack path manually." 1>&2
         exit 1
     }
@@ -210,5 +209,5 @@ for ((i = 0; update_count <= 0 || i < update_count; ++i)); do
         [ -z "${pid}" ] &&
         awk '$4=="java"{print $0}' ||
         awk -v "pid=${pid}" '$1==pid,$4=="java"{print $0}'
-    } | sort -k5 -r -n | head --lines "${count}" | printStackOfThreads
+    } | sort -k5 -r -n | head -n "${count}" | printStackOfThreads
 done

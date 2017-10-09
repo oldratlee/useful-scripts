@@ -96,9 +96,8 @@ colorPrint() {
     shift
     if [ -c /dev/stdout ] ; then
         # if stdout is console, turn on color output.
-        echo -ne "\033[1;${color}m"
-        echo -n "$@"
-        echo -e "\033[0m"
+        #   NOTE: $'foo' is the escape sequence syntax of bash
+        echo $'\033'"[1;${color}m$@"$'\033[0m'
     else
         echo "$@"
     fi

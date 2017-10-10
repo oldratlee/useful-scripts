@@ -5,8 +5,9 @@
 # @Usage
 #   $ ./show-busy-java-threads.sh
 #
-# @author Jerry Lee
-# @author superhj1987
+# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/java.md#beer-show-busy-java-threadssh
+# @author Jerry Lee (oldratlee at gmail dot com)
+# @author superhj1987 (superhj1987 at 126 dot com)
 
 readonly PROG="`basename $0`"
 readonly -a COMMAND_LINE=("$0" "$@")

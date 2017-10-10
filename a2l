@@ -6,7 +6,8 @@
 #   $ ./a2l arg1 arg2
 #   $ ./a2l *.txt
 #
-# @author Jerry Lee
+# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/shell.md#beer-a2l
+# @author Jerry Lee (oldratlee at gmail dot com)
 
 
 # NOTE: $'foo' is the escape sequence syntax of bash

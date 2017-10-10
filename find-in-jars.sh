@@ -8,7 +8,8 @@
 #   $ find-in-jars.sh 'log4j\.properties$' -d /path/to/find/directory
 #   $ find-in-jars.sh 'log4j\.properties' -d /path/to/find/directory1 -d /path/to/find/directory2
 #
-# @author Jerry Lee
+# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/java.md#beer-find-in-jarssh
+# @author Jerry Lee (oldratlee at gmail dot com)
 
 readonly PROG=`basename $0`
 

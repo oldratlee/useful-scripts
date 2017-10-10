@@ -5,7 +5,8 @@
 # @Usage
 #   $ ./swtrunk.sh [<svn work dir>...]
 #
-# @author Jerry Lee
+# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/vcs.md#beer-swtrunksh
+# @author Jerry Lee (oldratlee at gmail dot com)
 
 # NOTE: $'foo' is the escape sequence syntax of bash
 readonly ec=$'\033' # escape char

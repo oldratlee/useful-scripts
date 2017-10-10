@@ -7,7 +7,9 @@
 #   $ echo -n 'Hello\nWorld' | colines
 #   $ colines /path/to/file1
 #   $ colines /path/to/file1 /path/to/file2
-
+#
+# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/shell.md#beer-colines
+# @author Jerry Lee (oldratlee at gmail dot com)
 
 __author__ = 'Jerry Lee'
 

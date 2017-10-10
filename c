@@ -6,7 +6,9 @@
 #   $ c echo "hello world!"
 #   $ echo "hello world!" | c
 #
-# @author Jerry Lee
+# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/shell.md#beer-c
+# @author Jerry Lee (oldratlee at gmail dot com)
+
 copy() {
     case "`uname`" in
     Darwin*)

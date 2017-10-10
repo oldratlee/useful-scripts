@@ -47,31 +47,39 @@ PS，如何操作可以参见[@bluedavy](http://weibo.com/bluedavy)的《分布�
 
 ```bash
 show-busy-java-threads.sh
-# 从 所有的 Java进程中找出最消耗CPU的线程（缺省5个），打印出其线程栈。
+# 从所有运行的Java进程中找出最消耗CPU的线程（缺省5个），打印出其线程栈
+
+# 缺省会自动从所有的Java进程中找出最消耗CPU的线程，这样用更方便
+# 当然你可以手动指定要分析的Java进程Id，以保证只会显示出那个你关心的Java进程的信息
+show-busy-java-threads.sh -p <指定的Java进程Id>
 
 show-busy-java-threads.sh -c <要显示的线程栈数>
 
-show-busy-java-threads.sh -c <要显示的线程栈数> -p <指定的Java Process>
-# -F选项：执行jstack命令时加上-F选项（强制jstack），一般情况不需要使用
-show-busy-java-threads.sh -p <指定的Java Process> -F
+show-busy-java-threads.sh <重复执行的间隔秒数> [<重复执行的次数>]
+# 多次执行；这2个参数的使用方式类似vmstat命令
+
+show-busy-java-threads.sh -a <输出记录到的文件>
+# 记录到文件以方便回溯查看
+
+##############################
+# 注意：
+##############################
+# 如果Java进程的用户 与 执行脚本的当前用户 不同，则jstack不了这个Java进程
+# 为了能切换到Java进程的用户，需要加sudo来执行，即可以解决：
+sudo show-busy-java-threads.sh
 
 show-busy-java-threads.sh -s <指定jstack命令的全路径>
 # 对于sudo方式的运行，JAVA_HOME环境变量不能传递给root，
 # 而root用户往往没有配置JAVA_HOME且不方便配置，
 # 显式指定jstack命令的路径就反而显得更方便了
 
-show-busy-java-threads.sh -a <输出记录到的文件>
-# 记录到文件以方便回溯查看
-
-show-busy-java-threads.sh <重复执行的间隔秒数> [<重复执行的次数>]
-# 多次执行；这2个参数的使用方式类似vmstat命令
-
-##############################
-# 注意：
-##############################
-# 如果Java进程的用户 与 执行脚本的当前用户 不同，则jstack不了这个Java进程。
-# 为了能切换到Java进程的用户，需要加sudo来执行，即可以解决：
-sudo show-busy-java-threads.sh
+# -m选项：执行jstack命令时加上-m选项，显示上Native的栈帧，一般应用排查不需要使用
+show-busy-java-threads.sh -m
+# -l选项：执行jstack命令时加上 -l 选项，显示上更多相关锁的信息，一般情况不需要使用
+# 注意：和 -m -F 选项一起使用时，可能会大大增加jstack操作的耗时
+show-busy-java-threads.sh -l
+# -F选项：执行jstack命令时加上 -F 选项（如果直接jstack无响应时，用于强制jstack），一般情况不需要使用
+show-busy-java-threads.sh -F
 
 # 帮助信息
 $ show-busy-java-threads.sh -h
@@ -89,7 +97,10 @@ Options:
   -c, --count <num>         set the thread count to show, default is 5
   -a, --append-file <file>  specify the file to append output as log
   -s, --jstack-path <path>  specify the path of jstack command
-  -F, --force               set jstack to force a thread dump(use jstack -F option)
+  -F, --force               set jstack to force a thread dump
+                            use when jstack <pid> does not respond (process is hung)
+  -m, --mix-native-frames   set jstack to print both java and native frames (mixed mode)
+  -l, --lock-info           set jstack with long listing. Prints additional information about locks
   -h, --help                display this help and exit
   delay                     the delay between updates in seconds
   count                     the number of updates

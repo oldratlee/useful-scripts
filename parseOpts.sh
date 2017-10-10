@@ -21,13 +21,16 @@
 # Utils Methods
 #####################################################################
 
+# NOTE: $'foo' is the escape sequence syntax of bash
+readonly _opts_ec=$'\033' # escape char
+readonly _opts_eend=$'\033[0m' # escape end
+
 _opts_colorEcho() {
     local color=$1
     shift
     if [ -c /dev/stdout ] ; then
         # if stdout is console, turn on color output.
-        #   NOTE: $'foo' is the escape sequence syntax of bash
-        echo $'\033'"[1;${color}m$@"$'\033[0m'
+        echo "$_opts_ec[1;${color}m$@$_opts_eend"
     else
         echo "$@"
     fi

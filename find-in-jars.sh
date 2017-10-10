@@ -125,6 +125,9 @@ fi
 # https://unix.stackexchange.com/questions/299067
 $is_console && readonly columns=$(stty size | awk '{print $2}')
 
+readonly ec=$'\033' # escape char
+readonly cr=$'\r'   # carriage return
+
 print_responsive_message() {
     $is_console || return
 
@@ -144,7 +147,7 @@ clear_responsive_message() {
     # echo -e "\033[1K"
     # Or everything on the line, regardless of cursor position:
     # echo -e "\033[2K"
-    echo -n -e "\033[2K\\r"
+    echo -n "$ec[2K$cr"
 }
 
 

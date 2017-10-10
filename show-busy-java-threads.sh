@@ -91,13 +91,16 @@ update_delay=${1:-0}
 [ -z "$1" ] && update_count=1 || update_count=${2:-0}
 [ $update_count -lt 0 ] && update_count=0
 
+# NOTE: $'foo' is the escape sequence syntax of bash
+readonly ec=$'\033' # escape char
+readonly eend=$'\033[0m' # escape end
+
 colorPrint() {
     local color=$1
     shift
     if [ -c /dev/stdout ] ; then
         # if stdout is console, turn on color output.
-        #   NOTE: $'foo' is the escape sequence syntax of bash
-        echo $'\033'"[1;${color}m$@"$'\033[0m'
+        echo "$ec[1;${color}m$@$eend"
     else
         echo "$@"
     fi

@@ -40,7 +40,10 @@ Options:
   -c, --count <num>         set the thread count to show, default is 5
   -a, --append-file <file>  specify the file to append output as log
   -s, --jstack-path <path>  specify the path of jstack command
-  -F, --force               set jstack to force a thread dump(use jstack -F option)
+  -F, --force               set jstack to force a thread dump
+                            use when jstack <pid> does not respond (process is hung)
+  -m, --mix-native-frames   set jstack to print both java and native frames (mixed mode)
+  -l, --lock-info           set jstack with long listing. Prints additional information about locks
   -h, --help                display this help and exit
   delay                     the delay between updates in seconds
   count                     the number of updates
@@ -50,7 +53,7 @@ EOF
     exit $1
 }
 
-readonly ARGS=`getopt -n "$PROG" -a -o p:c:a:s:Fh -l count:,pid:,append-file:,jstack-path:,force,help -- "$@"`
+readonly ARGS=`getopt -n "$PROG" -a -o p:c:a:s:Fmlh -l count:,pid:,append-file:,jstack-path:,force,mix-native-frames,lock-info,help -- "$@"`
 [ $? -ne 0 ] && usage 1
 eval set -- "${ARGS}"
 
@@ -74,6 +77,14 @@ while true; do
         ;;
     -F|--force)
         force=-F
+        shift 1
+        ;;
+    -m|--mix-native-frames)
+        mix_native_frames=-m
+        shift 1
+        ;;
+    -l|--lock-info)
+        more_lock_info=-l
         shift 1
         ;;
     -h|--help)
@@ -176,9 +187,9 @@ printStackOfThreads() {
         [ ! -f "${jstackFile}" ] && {
             {
                 if [ "${user}" == "${USER}" ]; then
-                    "$jstack_path" ${force} ${pid} > ${jstackFile}
+                    "$jstack_path" ${force} $mix_native_frames $more_lock_info ${pid} > ${jstackFile}
                 elif [ $UID == 0 ]; then
-                    sudo -u "${user}" "$jstack_path" ${force} ${pid} > ${jstackFile}
+                    sudo -u "${user}" "$jstack_path" ${force} $mix_native_frames $more_lock_info ${pid} > ${jstackFile}
                 else
                     redPrint "[$((counter++))] Fail to jstack Busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user})."
                     redPrint "User of java process($user) is not current user($USER), need sudo to run again:"
@@ -195,7 +206,19 @@ printStackOfThreads() {
         }
 
         bluePrint "[$((counter++))] Busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user}):"
-        sed "/nid=${threadId0x} /,/^$/p" -n ${jstackFile} | tee ${append_file:+-a "$append_file"}
+
+        if [ -n "$mix_native_frames" ]; then
+            local sed_script="/------------- $threadId -------------/,/^---------------/ {
+                /^---------------/b # skip seperator lines
+                p
+            }"
+        elif [ -n "$force" ]; then
+            local sed_script="/Thread $threadId:/,/^$/p"
+        else
+            local sed_script="/nid=${threadId0x} /,/^$/p"
+        fi
+
+        sed "$sed_script" -n ${jstackFile} | tee ${append_file:+-a "$append_file"}
     done
 }
 

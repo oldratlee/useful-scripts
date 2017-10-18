@@ -129,7 +129,7 @@ $is_console && readonly columns=$(stty size | awk '{print $2}')
 readonly ec=$'\033' # escape char
 readonly cr=$'\r'   # carriage return
 
-print_responsive_message() {
+printResponsiveMessage() {
     $is_console || return
 
     local message="$*"
@@ -137,7 +137,7 @@ print_responsive_message() {
     echo -n "${message:0:columns}"
 }
 
-clear_responsive_message() {
+clearResponsiveMessage() {
     $is_console || return
 
     # How to delete line with echo?
@@ -161,14 +161,14 @@ readonly total_count="$(echo "$jar_files" | wc -l)"
 
 counter=1
 while read jar_file; do
-    print_responsive_message "finding in jar($((counter++))/$total_count): $jar_file"
+    printResponsiveMessage "finding in jar($((counter++))/$total_count): $jar_file"
 
     $command_for_list_zip "${jar_file}" | grep $regex_mode "$pattern" | while read file; do
-        clear_responsive_message
+        clearResponsiveMessage
 
         echo "${jar_file}"\!"${file}"
     done
 
-    clear_responsive_message
+    clearResponsiveMessage
 
 done < <(echo "$jar_files")

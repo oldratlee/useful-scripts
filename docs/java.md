@@ -75,11 +75,11 @@ show-busy-java-threads.sh -s <指定jstack命令的全路径>
 
 # -m选项：执行jstack命令时加上-m选项，显示上Native的栈帧，一般应用排查不需要使用
 show-busy-java-threads.sh -m
+# -F选项：执行jstack命令时加上 -F 选项（如果直接jstack无响应时，用于强制jstack），一般情况不需要使用
+show-busy-java-threads.sh -F
 # -l选项：执行jstack命令时加上 -l 选项，显示上更多相关锁的信息，一般情况不需要使用
 # 注意：和 -m -F 选项一起使用时，可能会大大增加jstack操作的耗时
 show-busy-java-threads.sh -l
-# -F选项：执行jstack命令时加上 -F 选项（如果直接jstack无响应时，用于强制jstack），一般情况不需要使用
-show-busy-java-threads.sh -F
 
 # 帮助信息
 $ show-busy-java-threads.sh -h

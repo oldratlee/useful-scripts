@@ -163,8 +163,7 @@ else
         redPrint "Error: jstack not found on PATH and \$JAVA_HOME/bin/jstack($JAVA_HOME/bin/jstack) is NOT executalbe! Use -s option set jstack path manually." 1>&2
         exit 1
     }
-    export PATH="$JAVA_HOME/bin:$PATH"
-    jstack_path="`which jstack`"
+    jstack_path="$JAVA_HOME/bin/jstack"
 fi
 
 readonly uuid=`date +%s`_${RANDOM}_$$
@@ -176,7 +175,7 @@ trap "cleanupWhenExit" EXIT
 
 printStackOfThreads() {
     local line
-    local counter=1
+    local counter=0
     while IFS=" " read -a line ; do
         local pid=${line[0]}
         local threadId=${line[1]}
@@ -184,6 +183,7 @@ printStackOfThreads() {
         local user=${line[2]}
         local pcpu=${line[4]}
 
+        ((counter++))
         local jstackFile=/tmp/${uuid}_${pid}
         [ ! -f "${jstackFile}" ] && {
             {
@@ -192,38 +192,38 @@ printStackOfThreads() {
                 elif [ $UID == 0 ]; then
                     sudo -u "${user}" "$jstack_path" ${force} $mix_native_frames $more_lock_info ${pid} > ${jstackFile}
                 else
-                    redPrint "[$((counter++))] Fail to jstack Busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user})."
+                    redPrint "[$counter] Fail to jstack Busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user})."
                     redPrint "User of java process($user) is not current user($USER), need sudo to run again:"
                     yellowPrint "    sudo ${COMMAND_LINE[@]}"
                     normalPrint
                     continue
                 fi
             } || {
-                redPrint "[$((counter++))] Fail to jstack Busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user})."
+                redPrint "[$counter] Fail to jstack Busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user})."
                 normalPrint
                 rm ${jstackFile}
                 continue
             }
         }
 
-        bluePrint "[$((counter++))] Busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user}):"
+        bluePrint "[$counter] Busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user}):"
 
         if [ -n "$mix_native_frames" ]; then
-            local sed_script="/------------- $threadId -------------/,/^---------------/ {
-                /^---------------/b # skip seperator lines
+            local sed_script="/--------------- $threadId ---------------/,/^---------------/ {
+                /--------------- $threadId ---------------/b # skip first seperator line
+                /^---------------/s/.*// # replace sencond seperator line to empty line
                 p
             }"
         elif [ -n "$force" ]; then
-            local sed_script="/Thread $threadId:/,/^$/p"
+            local sed_script="/^Thread ${threadId}:/,/^$/p"
         else
             local sed_script="/nid=${threadId0x} /,/^$/p"
         fi
-
         sed "$sed_script" -n ${jstackFile} | tee ${append_file:+-a "$append_file"}
     done
 }
 
-head_info() {
+headInfo() {
     echo ================================================================================
     echo "$(date "+%Y-%m-%d %H:%M:%S.%N") [$((i+1))/$update_count]: ${COMMAND_LINE[@]}"
     echo ================================================================================
@@ -234,8 +234,8 @@ head_info() {
 for ((i = 0; update_count <= 0 || i < update_count; ++i)); do
     [ "$i" -gt 0 ] && sleep "$update_delay"
 
-    [ -n "$append_file" ] && head_info >> "$append_file"
-    [ "$update_count" -ne 1 ] && head_info
+    [ -n "$append_file" ] && headInfo >> "$append_file"
+    [ "$update_count" -ne 1 ] && headInfo
 
     ps -Leo pid,lwp,user,comm,pcpu --no-headers | {
         [ -z "${pid}" ] &&

@@ -1,6 +1,9 @@
 #!/bin/bash
 # @Function
 # show all console text color themes.
+#
+# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/shell.md#beer-console-text-color-themessh
+# @author Jerry Lee (oldratlee at gmail dot com)
 
 readonly _ctct_PROG="$(basename "$(readlink -f "$0")")"
 [ "$_ctct_PROG" == 'console-text-color-themes.sh'  ] && readonly _ctct_is_direct_run=true

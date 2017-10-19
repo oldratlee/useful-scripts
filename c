@@ -13,9 +13,7 @@ copy() {
     case "`uname`" in
     Darwin*)
         pbcopy ;;
-    CYGWIN*)
-        clip ;;
-    MINGW*)
+    CYGWIN*|MINGW*)
         clip ;;
     *)
         xsel -b ;;

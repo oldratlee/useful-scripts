@@ -26,5 +26,5 @@ readonly -a ECHO_COLORS=(31 32 37 34 33 35 36)
 COUNT=0
 
 for a; do
-    colorEcho "${ECHO_COLORS[$((COUNT++ % ${#ECHO_COLORS[@]}))]}" "$a"
+    colorEcho "${ECHO_COLORS[COUNT++ % ${#ECHO_COLORS[@]}]}" "$a"
 done

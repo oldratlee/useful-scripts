@@ -147,8 +147,8 @@ $ show-busy-java-threads.sh
 - `DateFormat.format`比较慢。（这个可以由`DateFormat.format`的实现确定。）
 
 多执行几次`show-busy-java-threads.sh`，如果上面情况高概率出现，则可以确定上面的判定。  
-\# 因为调用越少代码执行越快，则出现在线程栈的概率就越低。  
-\# 脚本有自动多次执行的功能，指定 重复执行的间隔秒数/重复执行的次数 参数。
+因为调用越少代码执行越快，则出现在线程栈的概率就越低。  
+脚本有自动多次执行的功能，指定 重复执行的间隔秒数/重复执行的次数 参数。
 
 分析`shared.monitor.schedule.AppMonitorDataAvgScheduler.run`实现逻辑和调用方式，以优化实现解决问题。
 

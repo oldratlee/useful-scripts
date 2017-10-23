@@ -88,7 +88,8 @@ ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAz+ETZEgoLeIiC0rjWewdDs0sbo8c...== a@b.com
 
 命令支持选项、功能和使用方式与[`cat`命令](https://linux.die.net/man/1/cat)完全一样（实际上读流操作在实现上全部代理给`cat`命令）。
 
-命令名`coat`意思是`COlorful cAT`；当然单词`coat`的意思是外套，彩色输入行就像件漂亮的外套～ :satisfied:
+命令名`coat`意思是`COlorful cAT`；当然单词`coat`的意思是外套，彩色输入行就像件漂亮的外套～ :satisfied:  
+注：之前命名是`colines`（意思是`COLorful LINES`）。
 
 ### 示例
 
@@ -168,7 +169,7 @@ test-cases/self-installer.sh
 ...
 ```
 
-注：上面显示中，没有彩色，在控制台上运行可以看出彩色效果。
+注：上面示例中，没有彩色；在控制台上运行可以看出彩色效果，和上面的`coat`命令一样。
 
 :beer: [ap](../ap) and [rp](../rp)
 ----------------------
@@ -240,9 +241,9 @@ SYN_SENT     17
 支持`Linux`、`Mac`、`Windows`（`cygwin`、`MSSYS`）。
 
 * `xpl`：在文件浏览器中打开指定的文件或文件夹。  
-\# `xpl`是`explorer`的缩写。
+    `xpl`是`explorer`的缩写。
 * `xpf`: 在文件浏览器中打开指定的文件或文件夹，并选中。   
-\# `xpf`是`explorer and select file`的缩写。
+    `xpf`是`explorer and select file`的缩写。
 
 ### 用法
 
@@ -337,8 +338,9 @@ colorEchoWithoutNewLine "4;33;40" "Hello world!" "Hello Hell!"
 ----------------------
 
 命令行选项解析库，加强支持选项有多个值（即数组）。  
-支持`Linux`、`Mac`、`Windows`（`cygwin`、`MSSYS`）。  
-\# 自己写一个命令行选项解析函数，是因为[`bash`](http://linux.die.net/man/1/bash)的`buildin`命令[`getopts`](http://linux.die.net/man/1/getopts)和加强版本命令[`getopt`](http://linux.die.net/man/1/getopt)都不支持数组的值。
+支持`Linux`、`Mac`、`Windows`（`cygwin`、`MSSYS`）。
+
+自己写一个命令行选项解析函数，是因为[`bash`](http://linux.die.net/man/1/bash)的`buildin`命令[`getopts`](http://linux.die.net/man/1/getopts)和加强版本命令[`getopt`](http://linux.die.net/man/1/getopt)都不支持数组的值。
 
 指定选项的多个值（即数组）的风格模仿[`find`](http://linux.die.net/man/1/find)命令的`-exec`选项：
 

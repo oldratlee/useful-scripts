@@ -32,11 +32,11 @@ source <(curl -fsSL https://raw.githubusercontent.com/oldratlee/useful-scripts/m
 
 ### :coffee: [`Java`相关脚本](docs/java.md)
 
-1. [show-busy-java-threads.sh](docs/java.md#beer-show-busy-java-threadssh)  
+1. [show-busy-java-threads](docs/java.md#beer-show-busy-java-threads)  
     用于快速排查`Java`的`CPU`性能问题(`top us`值过高)，自动查出运行的`Java`进程中消耗`CPU`多的线程，并打印出其线程栈，从而确定导致性能问题的方法调用。
 1. [show-duplicate-java-classes](docs/java.md#beer-show-duplicate-java-classes)  
     找出`jar`文件和`class`目录中的重复类。用于排查`Java`类冲突问题。
-1. [find-in-jars.sh](docs/java.md#beer-find-in-jarssh)  
+1. [find-in-jars](docs/java.md#beer-find-in-jars)  
     在目录下所有`jar`文件里，查找类或资源文件。
 
 ### :shell: [`Shell`相关脚本](docs/shell.md)
@@ -51,14 +51,14 @@ source <(curl -fsSL https://raw.githubusercontent.com/oldratlee/useful-scripts/m
     按行彩色输出参数，方便人眼查看。
 1. [ap and rp](docs/shell.md#beer-ap-and-rp)  
     批量转换文件路径为绝对路径/相对路径，会自动跟踪链接并规范化路径。
-1. [tcp-connection-state-counter.sh](docs/shell.md#beer-tcp-connection-state-countersh)  
+1. [tcp-connection-state-counter](docs/shell.md#beer-tcp-connection-state-counter)  
     统计各个`TCP`连接状态的个数。用于方便排查系统连接负荷问题。
 1. [xpl and xpf](docs/shell.md#beer-xpl-and-xpf)  
     在命令行中快速完成 在文件浏览器中 打开/选中 指定的文件或文件夹的操作，优化命令行与其它应用之间的操作流。
 
 `Shell`开发/测试加强：
 
-1. [echo-args.sh](docs/shell.md#beer-echo-argssh)  
+1. [echo-args](docs/shell.md#beer-echo-args)  
     输出脚本收到的参数，在控制台运行时，把参数值括起的括号显示成 **红色**，方便人眼查看。用于调试脚本参数输入。
 1. [console-text-color-themes.sh](docs/shell.md#beer-console-text-color-themessh)  
     显示`Terminator`的全部文字彩色组合的效果及其打印方式，用于开发`Shell`的彩色输出。

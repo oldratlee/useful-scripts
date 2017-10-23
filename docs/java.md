@@ -5,7 +5,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 
-- [:beer: show-busy-java-threads.sh](#beer-show-busy-java-threadssh)
+- [:beer: show-busy-java-threads](#beer-show-busy-java-threads)
     - [用法](#%E7%94%A8%E6%B3%95)
     - [示例](#%E7%A4%BA%E4%BE%8B)
     - [贡献者](#%E8%B4%A1%E7%8C%AE%E8%80%85)
@@ -17,14 +17,14 @@
         - [`Android`开发场景使用说明](#android%E5%BC%80%E5%8F%91%E5%9C%BA%E6%99%AF%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E)
     - [示例](#%E7%A4%BA%E4%BE%8B-1)
     - [贡献者](#%E8%B4%A1%E7%8C%AE%E8%80%85-1)
-- [:beer: find-in-jars.sh](#beer-find-in-jarssh)
+- [:beer: find-in-jars](#beer-find-in-jars)
     - [用法](#%E7%94%A8%E6%B3%95-2)
     - [示例](#%E7%A4%BA%E4%BE%8B-2)
     - [参考资料](#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-:beer: [show-busy-java-threads.sh](../show-busy-java-threads.sh)
+:beer: [show-busy-java-threads](../show-busy-java-threads)
 ----------------------
 
 用于快速排查`Java`的`CPU`性能问题(`top us`值过高)，自动查出运行的`Java`进程中消耗`CPU`多的线程，并打印出其线程栈，从而确定导致性能问题的方法调用。  
@@ -46,19 +46,19 @@ PS，如何操作可以参见[@bluedavy](http://weibo.com/bluedavy)的《分布�
 ### 用法
 
 ```bash
-show-busy-java-threads.sh
+show-busy-java-threads
 # 从所有运行的Java进程中找出最消耗CPU的线程（缺省5个），打印出其线程栈
 
 # 缺省会自动从所有的Java进程中找出最消耗CPU的线程，这样用更方便
 # 当然你可以手动指定要分析的Java进程Id，以保证只会显示出那个你关心的Java进程的信息
-show-busy-java-threads.sh -p <指定的Java进程Id>
+show-busy-java-threads -p <指定的Java进程Id>
 
-show-busy-java-threads.sh -c <要显示的线程栈数>
+show-busy-java-threads -c <要显示的线程栈数>
 
-show-busy-java-threads.sh <重复执行的间隔秒数> [<重复执行的次数>]
+show-busy-java-threads <重复执行的间隔秒数> [<重复执行的次数>]
 # 多次执行；这2个参数的使用方式类似vmstat命令
 
-show-busy-java-threads.sh -a <输出记录到的文件>
+show-busy-java-threads -a <输出记录到的文件>
 # 记录到文件以方便回溯查看
 
 ##############################
@@ -66,30 +66,30 @@ show-busy-java-threads.sh -a <输出记录到的文件>
 ##############################
 # 如果Java进程的用户 与 执行脚本的当前用户 不同，则jstack不了这个Java进程
 # 为了能切换到Java进程的用户，需要加sudo来执行，即可以解决：
-sudo show-busy-java-threads.sh
+sudo show-busy-java-threads
 
-show-busy-java-threads.sh -s <指定jstack命令的全路径>
+show-busy-java-threads -s <指定jstack命令的全路径>
 # 对于sudo方式的运行，JAVA_HOME环境变量不能传递给root，
 # 而root用户往往没有配置JAVA_HOME且不方便配置，
 # 显式指定jstack命令的路径就反而显得更方便了
 
 # -m选项：执行jstack命令时加上-m选项，显示上Native的栈帧，一般应用排查不需要使用
-show-busy-java-threads.sh -m
+show-busy-java-threads -m
 # -F选项：执行jstack命令时加上 -F 选项（如果直接jstack无响应时，用于强制jstack），一般情况不需要使用
-show-busy-java-threads.sh -F
+show-busy-java-threads -F
 # -l选项：执行jstack命令时加上 -l 选项，显示上更多相关锁的信息，一般情况不需要使用
 # 注意：和 -m -F 选项一起使用时，可能会大大增加jstack操作的耗时
-show-busy-java-threads.sh -l
+show-busy-java-threads -l
 
 # 帮助信息
-$ show-busy-java-threads.sh -h
-Usage: show-busy-java-threads.sh [OPTION]... [delay [count]]
+$ show-busy-java-threads -h
+Usage: show-busy-java-threads [OPTION]... [delay [count]]
 Find out the highest cpu consumed threads of java, and print the stack of these threads.
 
 Example:
-  show-busy-java-threads.sh       # show busy java threads info
-  show-busy-java-threads.sh 1     # update every 1 seconds, (stop by eg: CTRL+C)
-  show-busy-java-threads.sh 3 10  # update every 3 seconds, update 10 times
+  show-busy-java-threads       # show busy java threads info
+  show-busy-java-threads 1     # update every 1 seconds, (stop by eg: CTRL+C)
+  show-busy-java-threads 3 10  # update every 3 seconds, update 10 times
 
 Options:
   -p, --pid <java pid>      find out the highest cpu consumed threads from the specifed java process,
@@ -110,7 +110,7 @@ Options:
 ### 示例
 
 ```bash
-$ show-busy-java-threads.sh
+$ show-busy-java-threads
 [1] Busy(57.0%) thread(23355/0x5b3b) stack of java process(23269) under user(admin):
 "pool-1-thread-1" prio=10 tid=0x000000005b5c5000 nid=0x5b3b runnable [0x000000004062c000]
    java.lang.Thread.State: RUNNABLE
@@ -146,7 +146,7 @@ $ show-busy-java-threads.sh
 - `AppMonitorDataAvgScheduler.run`调用`DateFormat.format`次数比较频繁。
 - `DateFormat.format`比较慢。（这个可以由`DateFormat.format`的实现确定。）
 
-多执行几次`show-busy-java-threads.sh`，如果上面情况高概率出现，则可以确定上面的判定。  
+多执行几次`show-busy-java-threads`，如果上面情况高概率出现，则可以确定上面的判定。  
 因为调用越少代码执行越快，则出现在线程栈的概率就越低。  
 脚本有自动多次执行的功能，指定 重复执行的间隔秒数/重复执行的次数 参数。
 
@@ -321,7 +321,7 @@ class paths to find:
 
 [tgic](https://github.com/tg123)提供此脚本。友情贡献者的链接[commandlinefu.cn](http://commandlinefu.cn/)|[微博linux命令行精选](http://weibo.com/u/2674868673)
 
-:beer: [find-in-jars.sh](../find-in-jars.sh)
+:beer: [find-in-jars](../find-in-jars)
 ----------------------
 
 在当前目录下所有`jar`文件里，查找类或资源文件。  
@@ -331,27 +331,27 @@ class paths to find:
 
 ```bash
 # 在当前目录下所有`jar`文件里，查找类或资源文件。
-find-in-jars.sh 'log4j\.properties'
-find-in-jars.sh 'log4j\.xml$'
-find-in-jars.sh log4j\\.xml$ # 和上面命令一样，Shell转义的不同写法而已
-find-in-jars.sh 'log4j(\.properties|\.xml)$'
+find-in-jars 'log4j\.properties'
+find-in-jars 'log4j\.xml$'
+find-in-jars log4j\\.xml$ # 和上面命令一样，Shell转义的不同写法而已
+find-in-jars 'log4j(\.properties|\.xml)$'
 
 # -d选项 指定 查找目录（覆盖缺省的当前目录）
-find-in-jars.sh 'log4j\.properties$' -d /path/to/find/directory
+find-in-jars 'log4j\.properties$' -d /path/to/find/directory
 # 支持多个查找目录
-find-in-jars.sh 'log4j\.properties' -d /path/to/find/directory1 -d /path/to/find/directory2
+find-in-jars 'log4j\.properties' -d /path/to/find/directory1 -d /path/to/find/directory2
 
 # 帮助信息
-$ find-in-jars.sh -h
-Usage: find-in-jars.sh [OPTION]... PATTERN
+$ find-in-jars -h
+Usage: find-in-jars [OPTION]... PATTERN
 Find file in the jar files under specified directory(recursive, include subdirectory).
 The pattern default is *extended* regex.
 
 Example:
-    find-in-jars.sh 'log4j\.properties'
-    find-in-jars.sh '^log4j(\.properties|\.xml)$' # search file log4j.properties/log4j.xml at zip root
-    find-in-jars.sh 'log4j\.properties$' -d /path/to/find/directory
-    find-in-jars.sh 'log4j\.properties' -d /path/to/find/dir1 -d /path/to/find/dir2
+    find-in-jars 'log4j\.properties'
+    find-in-jars '^log4j(\.properties|\.xml)$' # search file log4j.properties/log4j.xml at zip root
+    find-in-jars 'log4j\.properties$' -d /path/to/find/directory
+    find-in-jars 'log4j\.properties' -d /path/to/find/dir1 -d /path/to/find/dir2
 
 Options:
   -d, --dir              the directory that find jar files, default is current directory.
@@ -369,7 +369,7 @@ Options:
 
 ```bash
 # 在当前目录下的所有Jar文件中，查找出 log4j.properties文件
-$ find-in-jars.sh 'log4j\.properties$'
+$ find-in-jars 'log4j\.properties$'
 ./hadoop-core-0.20.2-cdh3u3.jar!log4j.properties
 
 # 查找出 以Service结尾的类
@@ -379,7 +379,7 @@ $ ./find-in-jars 'Service.class$'
 ......
 
 # 在指定的多个目录的Jar文件中，查找出 properties文件
-$ find-in-jars.sh '\.properties$' -d ../WEB-INF/lib -d ../deploy/lib | grep -v '/pom\.properties$'
+$ find-in-jars '\.properties$' -d ../WEB-INF/lib -d ../deploy/lib | grep -v '/pom\.properties$'
 ../WEB-INF/lib/aspectjtools-1.6.2.jar!org/aspectj/ajdt/ajc/messages.properties
 ../WEB-INF/lib/aspectjtools-1.6.2.jar!org/aspectj/ajdt/internal/compiler/parser/readableNames.properties
 ../WEB-INF/lib/aspectjweaver-1.8.8.jar!org/aspectj/weaver/XlintDefault.properties

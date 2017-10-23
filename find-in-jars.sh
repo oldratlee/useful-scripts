@@ -120,7 +120,7 @@ fi
 # find logic
 ################################################################################
 
-[ -c /dev/stdout ] && readonly is_console=true || readonly is_console=false
+[ -t 1 ] && readonly is_console=true || readonly is_console=false
 
 # Getting console width using a bash script
 # https://unix.stackexchange.com/questions/299067

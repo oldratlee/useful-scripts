@@ -15,7 +15,7 @@ colorEcho() {
     local combination="$1"
     shift 1
 
-    [ -c /dev/stdout ] &&
+    [ -t 1 ] &&
     echo "$_ctct_ec[${combination}m$@$_ctct_eend" ||
     echo "$@"
 }
@@ -24,7 +24,7 @@ colorEchoWithoutNewLine() {
     local combination="$1"
     shift 1
 
-    [ -c /dev/stdout ] &&
+    [ -t 1 ] &&
     echo -n "$_ctct_ec[${combination}m$@$_ctct_eend" ||
     echo -n "$@"
 }

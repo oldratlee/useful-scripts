@@ -14,7 +14,7 @@ echoArg() {
     local value=$3
 
     # if stdout is console, turn on color output.
-    [ -c /dev/stdout ] &&
+    [ -t 1 ] &&
         echo "$index/$count: $ebegin[$eend$value$ebegin]$eend" || 
         echo "$index/$count: [$value]"
 }

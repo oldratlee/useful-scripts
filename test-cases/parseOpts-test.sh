@@ -16,7 +16,7 @@ readonly eend=$'\033[0m' # escape end
 colorEcho() {
     local color=$1
     shift
-    if [ -c /dev/stdout ] ; then
+    if [ -t 1 ] ; then
         # if stdout is console, turn on color output.
         echo "$ec[1;${color}m$@$eend"
     else

@@ -29,7 +29,7 @@ readonly _opts_eend=$'\033[0m' # escape end
 _opts_colorEcho() {
     local color=$1
     shift
-    if [ -c /dev/stdout ] ; then
+    if [ -t 1 ] ; then
         # if stdout is console, turn on color output.
         echo "$_opts_ec[1;${color}m$@$_opts_eend"
     else

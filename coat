@@ -1,13 +1,13 @@
 #!/bin/bash
 # @Function
-# cat lines colorfully. colines means COLorful LINES.
+# cat lines colorfully. coat means *CO*lorful c*AT*.
 #
 # @Usage
-#   $ echo -n 'Hello\nWorld' | colines
-#   $ colines /path/to/file1
-#   $ colines /path/to/file1 /path/to/file2
+#   $ echo -n 'Hello\nWorld' | coat
+#   $ coat /path/to/file1
+#   $ coat /path/to/file1 /path/to/file2
 #
-# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/shell.md#beer-colines
+# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/shell.md#beer-coat
 # @author Jerry Lee (oldratlee at gmail dot com)
 
 set -e

@@ -9,7 +9,7 @@
     - [:beer: c](#beer-c)
         - [示例](#%E7%A4%BA%E4%BE%8B)
         - [参考资料](#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99)
-    - [:beer: colines](#beer-colines)
+    - [:beer: coat](#beer-coat)
         - [示例](#%E7%A4%BA%E4%BE%8B-1)
     - [:beer: a2l](#beer-a2l)
         - [示例](#%E7%A4%BA%E4%BE%8B-2)
@@ -80,36 +80,67 @@ ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAz+ETZEgoLeIiC0rjWewdDs0sbo8c...== a@b.com
 
 [拷贝复制命令行输出放在系统剪贴板上](http://oldratlee.com/post/2012-12-23/command-output-to-clip)，给出了不同系统可用命令。
 
-:beer: [colines](../colines)
+:beer: [coat](../coat)
 ----------------------
 
-彩色`cat`出文件行，方便人眼区分不同的行。
-支持`Linux`、`Mac`、`Windows`（`cygwin`、`MSSYS`）。  
-命令支持选项、功能和使用方式与[`cat`命令](https://linux.die.net/man/1/cat)完全一样（实际上在实现上全部代码给`cat`命令）。
+彩色`cat`出文件行，方便人眼区分不同的行。  
+支持`Linux`、`Mac`、`Windows`（`cygwin`、`MSSYS`）。
 
-命令名`colines`意思是`COLorful LINES`。
+命令支持选项、功能和使用方式与[`cat`命令](https://linux.die.net/man/1/cat)完全一样（实际上读流操作在实现上全部代理给`cat`命令）。
+
+命令名`coat`意思是`COlorful cAT`；当然单词`coat`的意思是外套，彩色输入行就像件漂亮的外套～ :satisfied:
 
 ### 示例
 
 ```bash
-$ echo a | colines
+$ echo a | coat
 a
-$ echo -e 'a\nb' | colines
+$ echo -e 'a\nb' | coat
 a
 b
-$ echo -e 'a\nb' | nl | colines
+$ echo -e 'a\nb' | nl | coat
 1   a
 2   b
-$ colines file1 file2.txt
+$ coat file1 file2.txt
 line1 of file1
 line2 of file1
 ...
 line1 of file2
 line2 of file2
 ...
+
+# 帮助信息
+#   可以看到本人机器上实现代理的`cat`命令是GNU的实现。
+$ coat --help
+Usage: cat [OPTION]... [FILE]...
+Concatenate FILE(s) to standard output.
+
+With no FILE, or when FILE is -, read standard input.
+
+  -A, --show-all           equivalent to -vET
+  -b, --number-nonblank    number nonempty output lines, overrides -n
+  -e                       equivalent to -vE
+  -E, --show-ends          display $ at end of each line
+  -n, --number             number all output lines
+  -s, --squeeze-blank      suppress repeated empty output lines
+  -t                       equivalent to -vT
+  -T, --show-tabs          display TAB characters as ^I
+  -u                       (ignored)
+  -v, --show-nonprinting   use ^ and M- notation, except for LFD and TAB
+      --help     display this help and exit
+      --version  output version information and exit
+
+Examples:
+  cat f - g  Output f's contents, then standard input, then g's contents.
+  cat        Copy standard input to standard output.
+
+GNU coreutils online help: <http://www.gnu.org/software/coreutils/>
+Full documentation at: <http://www.gnu.org/software/coreutils/cat>
+or available locally via: info '(coreutils) cat invocation'
 ```
 
-注：上面显示中，没有彩色，在控制台上运行可以看出彩色效果。
+注：上面示例中，没有彩色；在控制台上运行可以看出彩色效果，如下：  
+![](../docs/coat.png)
 
 :beer: [a2l](../a2l)
 ----------------------

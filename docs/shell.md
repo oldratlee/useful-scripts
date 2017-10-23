@@ -203,6 +203,7 @@ $ rp /home /etc/../etc /home/admin
 ../../etc
 ```
 
+<a id="beer-tcp-connection-state-countersh"></a>
 :beer: [tcp-connection-state-counter](../tcp-connection-state-counter)
 ----------------------
 
@@ -276,6 +277,7 @@ xpf /path/to/dir1 /path/to/foo1.txt
 `Shell`开发/测试加强
 ====================================
 
+<a id="beer-echo-argssh"></a>
 :beer: [echo-args](../echo-args)
 ----------------------
 

@@ -1,8 +1,8 @@
 #!/bin/bash
 # @Function
-# print arguments in human and debug friendly style.
+# print arguments in human and debugging friendly style.
 #
-# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/shell.md#beer-echo-argssh
+# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/shell.md#beer-echo-args
 # @author Jerry Lee (oldratlee at gmail dot com)
 
 readonly ebegin=$'\033[1;31m' # escape begin, red color

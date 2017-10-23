@@ -15,7 +15,7 @@
         - [示例](#%E7%A4%BA%E4%BE%8B-2)
     - [:beer: ap and rp](#beer-ap-and-rp)
         - [示例](#%E7%A4%BA%E4%BE%8B-3)
-    - [:beer: tcp-connection-state-counter.sh](#beer-tcp-connection-state-countersh)
+    - [:beer: tcp-connection-state-counter](#beer-tcp-connection-state-counter)
         - [用法](#%E7%94%A8%E6%B3%95)
         - [示例](#%E7%A4%BA%E4%BE%8B-4)
         - [贡献者](#%E8%B4%A1%E7%8C%AE%E8%80%85)
@@ -24,7 +24,7 @@
         - [示例](#%E7%A4%BA%E4%BE%8B-5)
         - [贡献者](#%E8%B4%A1%E7%8C%AE%E8%80%85-1)
 - [`Shell`开发/测试加强](#shell%E5%BC%80%E5%8F%91%E6%B5%8B%E8%AF%95%E5%8A%A0%E5%BC%BA)
-    - [:beer: echo-args.sh](#beer-echo-argssh)
+    - [:beer: echo-args](#beer-echo-args)
         - [示例](#%E7%A4%BA%E4%BE%8B-6)
         - [使用方式](#%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F)
     - [:beer: console-text-color-themes.sh](#beer-console-text-color-themessh)
@@ -162,8 +162,8 @@ B.java
 # zsh支持 **/* 跨目录glob，可以方便搜索，但是输出内容是空格分隔的不方便查看。
 # 把参数按行输出方便查看 或是 grep
 $ a2l **/*.sh
+console-text-color-themes.sh
 swtrunk.sh
-tcp-connection-state-counter.sh
 test-cases/parseOpts-test.sh
 test-cases/self-installer.sh
 ...
@@ -203,7 +203,7 @@ $ rp /home /etc/../etc /home/admin
 ../../etc
 ```
 
-:beer: [tcp-connection-state-counter.sh](../tcp-connection-state-counter.sh)
+:beer: [tcp-connection-state-counter](../tcp-connection-state-counter)
 ----------------------
 
 统计各个`TCP`连接状态的个数。  
@@ -218,13 +218,13 @@ $ rp /home /etc/../etc /home/admin
 ### 用法
 
 ```bash
-tcp-connection-state-counter.sh
+tcp-connection-state-counter
 ```
 
 ### 示例
 
 ```bash
-$ tcp-connection-state-counter.sh
+$ tcp-connection-state-counter
 ESTABLISHED  290
 TIME_WAIT    212
 SYN_SENT     17
@@ -276,7 +276,7 @@ xpf /path/to/dir1 /path/to/foo1.txt
 `Shell`开发/测试加强
 ====================================
 
-:beer: [echo-args.sh](../echo-args.sh)
+:beer: [echo-args](../echo-args)
 ----------------------
 
 在编写脚本时，常常要确认输入参数是否是期望的：参数个数，参数值（可能包含有人眼不容易发现的空格问题）。  
@@ -287,8 +287,8 @@ xpf /path/to/dir1 /path/to/foo1.txt
 ### 示例
 
 ```bash
-$ ./echo-args.sh 1 "  2 foo  " "3        3"
-0/3: [./echo-args.sh]
+$ ./echo-args 1 "  2 foo  " "3        3"
+0/3: [./echo-args]
 1/3: [1]
 2/3: [  2 foo  ]
 3/3: [3        3]
@@ -299,7 +299,7 @@ $ ./echo-args.sh 1 "  2 foo  " "3        3"
 需要查看某个脚本（实际上也可以是其它的可执行程序）输出参数时，可以这么做：
 
 * 把要查看脚本重命名。
-* 建一个`echo-args.sh`脚本的符号链接到要查看参数的脚本的位置，名字和查看脚本一样。
+* 建一个`echo-args`脚本的符号链接到要查看参数的脚本的位置，名字和查看脚本一样。
 
 这样可以不改其它的程序，查看到输入参数的信息。
 

@@ -3,9 +3,9 @@
 # Find out the highest cpu consumed threads of java, and print the stack of these threads.
 #
 # @Usage
-#   $ ./show-busy-java-threads.sh
+#   $ ./show-busy-java-threads
 #
-# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/java.md#beer-show-busy-java-threadssh
+# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/java.md#beer-show-busy-java-threads
 # @author Jerry Lee (oldratlee at gmail dot com)
 # @author superhj1987 (superhj1987 at 126 dot com)
 

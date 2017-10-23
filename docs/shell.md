@@ -83,8 +83,9 @@ ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAz+ETZEgoLeIiC0rjWewdDs0sbo8c...== a@b.com
 :beer: [colines](../colines)
 ----------------------
 
-彩色`cat`出文件行，方便人眼区分不同的行。  
-支持`Linux`、`Mac`、`Windows`（`cygwin`、`MSSYS`）。
+彩色`cat`出文件行，方便人眼区分不同的行。
+支持`Linux`、`Mac`、`Windows`（`cygwin`、`MSSYS`）。  
+命令支持选项、功能和使用方式与[`cat`命令](https://linux.die.net/man/1/cat)完全一样（实际上在实现上全部代码给`cat`命令）。
 
 命令名`colines`意思是`COLorful LINES`。
 
@@ -100,15 +101,9 @@ $ echo -e 'a\nb' | nl | colines
 1   a
 2   b
 $ colines file1 file2.txt
-================================================================================
-file1
-================================================================================
 line1 of file1
 line2 of file1
 ...
-================================================================================
-file2.txt
-================================================================================
 line1 of file2
 line2 of file2
 ...

@@ -10,6 +10,9 @@
 # @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/shell.md#beer-colines
 # @author Jerry Lee (oldratlee at gmail dot com)
 
+set -e
+set -o pipefail
+
 # NOTE: $'foo' is the escape sequence syntax of bash
 readonly ec=$'\033' # escape char
 readonly eend=$'\033[0m' # escape end
@@ -23,22 +26,7 @@ colorEcho() {
     [ -t 1 ] && echo "$ec[1;${color}m$@$eend" || echo "$@"
 }
 
-readonly seperator="================================================================================"
-
-if [ $# -eq 0 ]; then
-    # Bash read line does not read leading spaces https://stackoverflow.com/questions/29689172
-    while IFS= read -r line; do
-        colorEcho "$line"
-    done
-else
-    for a; do
-        [ $# -gt 1 ] && {
-            echo "$seperator"
-            echo "$a"
-            echo "$seperator"
-        }
-        while IFS= read -r line; do
-            colorEcho "$line"
-        done < "$a"
-    done
-fi
+# Bash read line does not read leading spaces https://stackoverflow.com/questions/29689172
+cat "$@" | while IFS= read -r line; do
+    colorEcho "$line"
+done

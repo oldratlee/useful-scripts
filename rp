@@ -24,8 +24,8 @@
     argc=$#
 
     # Get last argument
-    relativeTo="${argv[$((argc - 1))]}"
-    files=( "${argv[@]:0:$((argc - 1))}" )
+    relativeTo="${argv[argc - 1]}"
+    files=( "${argv[@]:0:argc - 1}" )
 }
 
 [ -f "$relativeTo" ] && relativeTo="$(dirname "$relativeTo")"

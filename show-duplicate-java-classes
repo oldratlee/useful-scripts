@@ -72,7 +72,7 @@ def print_class_paths(class_paths):
     print("class paths to find:")
     print("=" * 80)
     for idx, class_path in enumerate(class_paths):
-        print(("%-3d: %s" % (idx + 1, class_path)))
+        print("%-3d: %s" % (idx + 1, class_path))
 
 
 if __name__ == '__main__':

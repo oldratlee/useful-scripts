@@ -84,7 +84,7 @@ ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAz+ETZEgoLeIiC0rjWewdDs0sbo8c...== a@b.com
 ----------------------
 
 彩色`cat`出文件行，方便人眼区分不同的行。  
-全系统支持（`Python`实现，安装`Python`即可），如`Linux`、`Mac`、`Windows`。
+支持`Linux`、`Mac`、`Windows`（`cygwin`、`MSSYS`）。
 
 命令名`colines`意思是`COLorful LINES`。
 
@@ -103,13 +103,15 @@ $ colines file1 file2.txt
 ================================================================================
 file1
 ================================================================================
-file1 line1
-file1 line2
+line1 of file1
+line2 of file1
+...
 ================================================================================
 file2.txt
 ================================================================================
-file2 line1
-file2 line2
+line1 of file2
+line2 of file2
+...
 ```
 
 注：上面显示中，没有彩色，在控制台上运行可以看出彩色效果。

@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+#!/bin/bash
 # @Function
 # cat lines colorfully. colines means COLorful LINES.
 #
@@ -11,38 +10,35 @@
 # @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/shell.md#beer-colines
 # @author Jerry Lee (oldratlee at gmail dot com)
 
-__author__ = 'Jerry Lee'
+# NOTE: $'foo' is the escape sequence syntax of bash
+readonly ec=$'\033' # escape char
+readonly eend=$'\033[0m' # escape end
 
-import sys
+readonly -a ECHO_COLORS=(37 31 32 34 33 35 56)
+COUNT=0
+colorEcho() {
+    local color="${ECHO_COLORS[$((COUNT++ % ${#ECHO_COLORS[@]} + 1))]}"
+    # check isatty in bash https://stackoverflow.com/questions/10022323
+    # if stdout is console, turn on color output.
+    [ -t 1 ] && echo "$ec[1;${color}m$@$eend" || echo "$@"
+}
 
-ECHO_COLORS = (37, 31, 32, 34, 33, 35, 56)
-idx = 0
+readonly seperator="================================================================================"
 
-
-def color_print(*args):
-    _line = " ".join(args)
-    global idx
-    idx += 1
-    color = ECHO_COLORS[idx % len(ECHO_COLORS)]
-    if sys.stdout.isatty():
-        print("""\033[1;%sm%s\033[0m""" % (color, _line))
-    else:
-        print(_line)
-
-
-if __name__ == '__main__':
-    if len(sys.argv) > 1:
-        for arg in sys.argv[1:]:
-            if len(sys.argv) > 2:
-                print('=' * 80)
-                print(arg)
-                print('=' * 80)
-            for line in open(arg).readlines():
-                color_print(line.rstrip('\r\n'))
-    else:
-        # Read from std input
-        while True:
-            line = sys.stdin.readline()
-            if not line:
-                break
-            color_print(line.rstrip('\r\n'))
+if [ $# -eq 0 ]; then
+    # Bash read line does not read leading spaces https://stackoverflow.com/questions/29689172
+    while IFS= read -r line; do
+        colorEcho "$line"
+    done
+else
+    for a; do
+        [ $# -gt 1 ] && {
+            echo "$seperator"
+            echo "$a"
+            echo "$seperator"
+        }
+        while IFS= read -r line; do
+            colorEcho "$line"
+        done < "$a"
+    done
+fi

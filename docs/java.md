@@ -362,6 +362,7 @@ Options:
   -F, --fixed-strings    PATTERN is a set of newline-separated strings
   -G, --basic-regexp     PATTERN is a basic regular expression
   -P, --perl-regexp      PATTERN is a Perl regular expression
+  -i, --ignore-case      ignore case distinctions
   -h, --help             display this help and exit
 ```
 

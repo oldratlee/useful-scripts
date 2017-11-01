@@ -34,6 +34,7 @@ Options:
   -F, --fixed-strings    PATTERN is a set of newline-separated strings
   -G, --basic-regexp     PATTERN is a basic regular expression
   -P, --perl-regexp      PATTERN is a Perl regular expression
+  -i, --ignore-case      ignore case distinctions
   -h, --help             display this help and exit
 EOF
 
@@ -67,6 +68,10 @@ while [ $# -gt 0 ]; do
         ;;
     -P|--perl-regexp)
         regex_mode=-P
+        shift
+        ;;
+    -i|--ignore-case)
+        ignore_case_option=-i
         shift
         ;;
     -h|--help)
@@ -163,7 +168,7 @@ counter=1
 while read jar_file; do
     printResponsiveMessage "finding in jar($((counter++))/$total_count): $jar_file"
 
-    $command_for_list_zip "${jar_file}" | grep $regex_mode "$pattern" | while read file; do
+    $command_for_list_zip "${jar_file}" | grep $regex_mode $ignore_case_option "$pattern" | while read file; do
         clearResponsiveMessage
 
         echo "${jar_file}"\!"${file}"

@@ -237,6 +237,7 @@ for ((i = 0; update_count <= 0 || i < update_count; ++i)); do
     [ -n "$append_file" ] && headInfo >> "$append_file"
     [ "$update_count" -ne 1 ] && headInfo
 
+    # explicit width control for user column, avoid trunk to username_fo+ or $uid alike
     ps -Leo pid,lwp,user:80,comm,pcpu --no-headers | {
         [ -z "${pid}" ] &&
         awk '$4=="java"{print $0}' ||

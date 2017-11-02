@@ -161,6 +161,7 @@ $ show-busy-java-threads
     - 优化性能，通过`read -a`简化反复的`awk`操作。 [#51](https://github.com/oldratlee/useful-scripts/pull/51)
 - [superhj1987](https://github.com/superhj1987) / [lirenzuo](https://github.com/lirenzuo)
     - 提出/实现了多次执行的功能 [superhj1987/awesome-scripts#1](https://github.com/superhj1987/awesome-scripts/issues/1)
+- [xiongchen2012](https://github.com/xiongchen2012) 提出/解决了长用户名截断的Bug [#62](https://github.com/oldratlee/useful-scripts/pull/62)
 
 :beer: [show-duplicate-java-classes](../show-duplicate-java-classes)
 ----------------------

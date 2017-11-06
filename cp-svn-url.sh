@@ -27,7 +27,7 @@ EOF
     exit $1
 }
 
-for a in "$@"; do
+for a; do
     [ -h = "$a" -o  --help = "$1" ] && usage
 done
 
@@ -35,21 +35,17 @@ done
 
 readonly dir="${1:-.}"
 
-readonly url=$(svn info "${dir}" | awk '/^URL: /{print $2}') 
+readonly url="$(svn info "${dir}" | awk '/^URL: /{print $2}')"
 if [ -z "${url}" ]; then
     echo "Fail to get svn url!"  1>&2
     exit 1
 fi
 
 copy() {
-    local name=$(uname | tr A-Z a-z)
-
-    case "${name}" in
-    darwin*)
+    case "`uname`" in
+    Darwin*)
         pbcopy ;;
-    cygwin*)
-        clip ;;
-    mingw*)
+    CYGWIN*|MINGW*)
         clip ;;
     *)
         xsel -b ;;

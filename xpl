@@ -46,17 +46,16 @@ while true; do
     esac
 done
 
-name=$(uname | tr A-Z a-z)
 [ $# == 0 ] && files=( "." ) || files=( "$@" )
 for file in "${files[@]}" ; do
     [ ! -e $file ] && { echo "$file not exsited!"; continue; }
 
-    case "${name}" in 
-    darwin*)
+    case "`uname`" in
+    Darwin*)
         [ -f "${file}" ] && selected=true
         open ${selected:+-R} ${file}
         ;;
-    cygwin*)
+    CYGWIN*)
         [ -f "${file}" ] && selected=true
         explorer ${selected:+/select,} "$(cygpath -w "${file}")"
         ;;
@@ -71,6 +70,6 @@ for file in "${files[@]}" ; do
             fi
         fi
         ;;
-    esac 
+    esac
     echo "$file opened!"
 done

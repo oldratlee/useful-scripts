@@ -180,8 +180,8 @@ printStackOfThreads() {
         local pid=${line[0]}
         local threadId=${line[1]}
         local threadId0x="0x`printf %x ${threadId}`"
-        local user=${line[2]}
-        local pcpu=${line[4]}
+        local pcpu=${line[3]}
+        local user=${line[4]}
 
         ((counter++))
         local jstackFile=/tmp/${uuid}_${pid}
@@ -237,10 +237,10 @@ for ((i = 0; update_count <= 0 || i < update_count; ++i)); do
     [ -n "$append_file" ] && headInfo >> "$append_file"
     [ "$update_count" -ne 1 ] && headInfo
 
-    # explicit width control for user column, avoid trunk to username_fo+ or $uid alike
-    ps -Leo pid,lwp,user:80,comm,pcpu --no-headers | {
+    # use wide output(unlimited width), avoid trunk user column to username_fo+ or $uid alike
+    ps -wwLeo pid,lwp,comm,pcpu,user --no-headers | {
         [ -z "${pid}" ] &&
-        awk '$4=="java"{print $0}' ||
-        awk -v "pid=${pid}" '$1==pid,$4=="java"{print $0}'
-    } | sort -k5 -r -n | head -n "${count}" | printStackOfThreads
+        awk '$3=="java"{print $0}' ||
+        awk -v "pid=${pid}" '$1==pid,$3=="java"{print $0}'
+    } | sort -k4,4 -r -n | head -n "${count}" | printStackOfThreads
 done

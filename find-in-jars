@@ -131,8 +131,9 @@ fi
 # https://unix.stackexchange.com/questions/299067
 $is_console && readonly columns=$(stty size | awk '{print $2}')
 
-readonly ec=$'\033' # escape char
-readonly cr=$'\r'   # carriage return
+readonly ec=$'\033'      # escape char
+readonly eend=$'\033[0m' # escape end
+readonly cr=$'\r'        # carriage return
 
 printResponsiveMessage() {
     $is_console || return
@@ -171,7 +172,9 @@ while read jar_file; do
     $command_for_list_zip "${jar_file}" | grep $regex_mode $ignore_case_option "$pattern" | while read file; do
         clearResponsiveMessage
 
-        echo "${jar_file}"\!"${file}"
+        $is_console &&
+            echo "$ec[1;31m${jar_file}$eend"\!"$ec[1;32m${file}$eend" ||
+            echo "${jar_file}"\!"${file}"
     done
 
     clearResponsiveMessage

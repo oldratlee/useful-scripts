@@ -321,7 +321,7 @@ class paths to find:
 
 ### 贡献者
 
-[tgic](https://github.com/tg123)提供此脚本。友情贡献者的链接[commandlinefu.cn](http://commandlinefu.cn/)|[微博linux命令行精选](http://weibo.com/u/2674868673)
+[tgic](https://github.com/tg123)提供此脚本。友情贡献者的链接 [commandlinefu.cn](http://commandlinefu.cn/) | [微博linux命令行精选](http://weibo.com/u/2674868673)
 
 <a id="find-in-jarssh"></a>
 :beer: [find-in-jars](../find-in-jars)

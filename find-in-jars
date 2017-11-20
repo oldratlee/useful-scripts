@@ -22,10 +22,10 @@ Find file in the jar files under specified directory(recursive, include subdirec
 The pattern default is *extended* regex.
 
 Example:
-    ${PROG} 'log4j\.properties'
-    ${PROG} '^log4j(\.properties|\.xml)$' # search file log4j.properties/log4j.xml at zip root
-    ${PROG} 'log4j\.properties$' -d /path/to/find/directory
-    ${PROG} 'log4j\.properties' -d /path/to/find/dir1 -d /path/to/find/dir2
+  ${PROG} 'log4j\.properties'
+  ${PROG} '^log4j(\.properties|\.xml)$' # search file log4j.properties/log4j.xml at zip root
+  ${PROG} 'log4j\.properties$' -d /path/to/find/directory
+  ${PROG} 'log4j\.properties' -d /path/to/find/dir1 -d /path/to/find/dir2
 
 Options:
   -d, --dir              the directory that find jar files, default is current directory.

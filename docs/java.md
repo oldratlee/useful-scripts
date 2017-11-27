@@ -344,6 +344,10 @@ find-in-jars 'log4j\.properties$' -d /path/to/find/directory
 # 支持多个查找目录
 find-in-jars 'log4j\.properties' -d /path/to/find/directory1 -d /path/to/find/directory2
 
+# -a选项 指定 查找结果中的Jar文件使用绝对路径
+# 分享给别人时，Jar文件路径是完整的，方便别人找到文件
+find-in-jars 'log4j\.properties' -a
+
 # 帮助信息
 $ find-in-jars -h
 Usage: find-in-jars [OPTION]... PATTERN
@@ -358,12 +362,13 @@ Example:
 
 Options:
   -d, --dir              the directory that find jar files, default is current directory.
-                         this option can specify multiply times to find in multiply directory.
+                         this option can specify multiply times to find in multiply directories.
   -E, --extended-regexp  PATTERN is an extended regular expression (*default*)
   -F, --fixed-strings    PATTERN is a set of newline-separated strings
   -G, --basic-regexp     PATTERN is a basic regular expression
   -P, --perl-regexp      PATTERN is a Perl regular expression
   -i, --ignore-case      ignore case distinctions
+  -a, --absolute-path    always print absolute path of jar file
   -h, --help             display this help and exit
 ```
 
@@ -376,23 +381,18 @@ Options:
 $ find-in-jars 'log4j\.properties$'
 ./hadoop-core-0.20.2-cdh3u3.jar!log4j.properties
 
-# 查找出 以Service结尾的类
-$ ./find-in-jars 'Service.class$'
-./WEB-INF/libs/spring-2.5.6.SEC03.jar!org/springframework/stereotype/Service.class
-./rpc-benchmark-0.0.1-SNAPSHOT.jar!com/taobao/rpc/benchmark/service/HelloService.class
+# 查找出 以Service结尾的类，Jar文件路径输出成绝对路径
+$ find-in-jars 'Service.class$' -a
+/home/foo/deploy/app/WEB-INF/libs/spring-2.5.6.SEC03.jar!org/springframework/stereotype/Service.class
+/home/foo/deploy/app/WEB-INF/libs/rpc-hello-0.0.1-SNAPSHOT.jar!com/taobao/biz/HelloService.class
 ......
 
 # 在指定的多个目录的Jar文件中，查找出 properties文件
-$ find-in-jars '\.properties$' -d ../WEB-INF/lib -d ../deploy/lib | grep -v '/pom\.properties$'
-../WEB-INF/lib/aspectjtools-1.6.2.jar!org/aspectj/ajdt/ajc/messages.properties
-../WEB-INF/lib/aspectjtools-1.6.2.jar!org/aspectj/ajdt/internal/compiler/parser/readableNames.properties
-../WEB-INF/lib/aspectjweaver-1.8.8.jar!org/aspectj/weaver/XlintDefault.properties
-../WEB-INF/lib/aspectjweaver-1.8.8.jar!org/aspectj/weaver/weaver-messages.properties
+$ find-in-jars '\.properties$' -d WEB-INF/lib -d ../deploy/lib | grep -v '/pom\.properties$'
+WEB-INF/lib/aspectjtools-1.6.2.jar!org/aspectj/ajdt/ajc/messages.properties
+WEB-INF/lib/aspectjweaver-1.8.8.jar!org/aspectj/weaver/XlintDefault.properties
 ../deploy/lib/groovy-all-1.1-rc-1.jar!groovy/ui/InteractiveShell.properties
-../deploy/lib/groovy-all-1.1-rc-1.jar!org/codehaus/groovy/tools/shell/CommandAlias.properties
 ../deploy/lib/httpcore-4.3.3.jar!org/apache/http/version.properties
-../deploy/lib/httpmime-4.2.2.jar!org/apache/http/entity/mime/version.properties
-../deploy/lib/javax.servlet-api-3.0.1.jar!javax/servlet/LocalStrings_fr.properties
 ../deploy/lib/javax.servlet-api-3.0.1.jar!javax/servlet/http/LocalStrings_es.properties
 ......
 ```

@@ -29,12 +29,13 @@ Example:
 
 Options:
   -d, --dir              the directory that find jar files, default is current directory.
-                         this option can specify multiply times to find in multiply directory.
+                         this option can specify multiply times to find in multiply directories.
   -E, --extended-regexp  PATTERN is an extended regular expression (*default*)
   -F, --fixed-strings    PATTERN is a set of newline-separated strings
   -G, --basic-regexp     PATTERN is a basic regular expression
   -P, --perl-regexp      PATTERN is a Perl regular expression
   -i, --ignore-case      ignore case distinctions
+  -a, --absolute-path    always print absolute path of jar file
   -h, --help             display this help and exit
 EOF
 
@@ -45,9 +46,10 @@ EOF
 # parse options
 ################################################################################
 
-args=()
-dirs=()
+declare -a args=()
+declare -a dirs=()
 regex_mode=-E
+use_absolute_path=false
 while [ $# -gt 0 ]; do
     case "$1" in
     -d|--dir)
@@ -74,6 +76,10 @@ while [ $# -gt 0 ]; do
         ignore_case_option=-i
         shift
         ;;
+    -a|--absolute-path)
+        use_absolute_path=true
+        shift
+        ;;
     -h|--help)
         usage
         ;;
@@ -88,6 +94,17 @@ dirs=${dirs:-.}
 [ "${#args[@]}" -eq 0 ] && { echo "No find file pattern!" 1>&2 ; usage 1; }
 [ "${#args[@]}" -gt 1 ] && { echo "More than 1 file pattern!" 1>&2 ; usage 1; }
 readonly pattern="${args[0]}"
+
+# convert dirs to Absolute Path.
+$use_absolute_path && {
+    declare -a tmp_dirs=()
+
+    for d in "${dirs[@]}"; do
+        tmp_dirs=( "${tmp_dirs[@]}" "$(cd "$d" && pwd)" )
+    done
+
+    dirs=( "${tmp_dirs[@]}" )
+}
 
 ################################################################################
 # Check the existence of command for listing zip entry!

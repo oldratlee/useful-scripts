@@ -19,7 +19,7 @@
 # @author Jerry Lee (oldratlee at gmail dot com)
 
 #####################################################################
-# Utils Methods
+# Utils Funtions
 #####################################################################
 
 # NOTE: $'foo' is the escape sequence syntax of bash
@@ -50,7 +50,7 @@ _opts_convertToVarName() {
 }
 
 #####################################################################
-# Parse Methods
+# Parse Functions
 #
 # Use Globle Variable: 
 # * _OPT_INFO_LIST_INDEX : Option info, data structure.
@@ -315,7 +315,7 @@ parseOpts() {
 }
 
 #####################################################################
-# Show parsed Option Info Methods
+# Show parsed Option Info Functions
 #####################################################################
 
 _opts_showOptDescInfoList() {

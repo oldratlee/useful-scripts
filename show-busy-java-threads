@@ -19,8 +19,8 @@ uname | grep '^Linux' -q || {
 }
 
 # Get corrent current user name via whoami command
-#   See get https://www.lifewire.com/current-linux-user-whoami-command-3867579
-# Because if use `sudo -u` to run command, env var $USER is not rewrited/correct, just inherited from outside!
+#   See https://www.lifewire.com/current-linux-user-whoami-command-3867579
+# Because if run command by `sudo -u`, env var $USER is not rewrited/correct, just inherited from outside!
 readonly USER="`whoami`"
 
 usage() {
@@ -53,6 +53,10 @@ EOF
 
     exit $1
 }
+
+################################################################################
+# parse options
+################################################################################
 
 readonly ARGS=`getopt -n "$PROG" -a -o p:c:a:s:Fmlh -l count:,pid:,append-file:,jstack-path:,force,mix-native-frames,lock-info,help -- "$@"`
 [ $? -ne 0 ] && usage 1
@@ -103,6 +107,10 @@ update_delay=${1:-0}
 [ -z "$1" ] && update_count=1 || update_count=${2:-0}
 [ $update_count -lt 0 ] && update_count=0
 
+################################################################################
+# utils funtions
+################################################################################
+
 # NOTE: $'foo' is the escape sequence syntax of bash
 readonly ec=$'\033' # escape char
 readonly eend=$'\033[0m' # escape end
@@ -110,12 +118,9 @@ readonly eend=$'\033[0m' # escape end
 colorPrint() {
     local color=$1
     shift
-    if [ -t 1 ] ; then
-        # if stdout is console, turn on color output.
-        echo "$ec[1;${color}m$@$eend"
-    else
-        echo "$@"
-    fi
+
+    # if stdout is console, turn on color output.
+    [ -t 1 ] && echo "$ec[1;${color}m$@$eend" || echo "$@"
 
     [ -n "$append_file" ] && echo "$@" >> "$append_file"
 }
@@ -142,13 +147,16 @@ normalPrint() {
     [ -n "$append_file" ] && echo "$@" >> "$append_file"
 }
 
+################################################################################
+# check the existence of jstack command!
+################################################################################
+
 if [ -n "$jstack_path" ]; then
     [ ! -x "$jstack_path" ] && {
         redPrint "Error: $jstack_path is NOT found/executalbe!" 1>&2
         exit 1
     }
 elif which jstack &> /dev/null; then
-    # Check the existence of jstack command!
     jstack_path="`which jstack`"
 else
     [ -z "$JAVA_HOME" ] && {
@@ -165,6 +173,10 @@ else
     }
     jstack_path="$JAVA_HOME/bin/jstack"
 fi
+
+################################################################################
+# biz logic
+################################################################################
 
 readonly uuid=`date +%s`_${RANDOM}_$$
 
@@ -192,14 +204,14 @@ printStackOfThreads() {
                 elif [ $UID == 0 ]; then
                     sudo -u "${user}" "$jstack_path" ${force} $mix_native_frames $more_lock_info ${pid} > ${jstackFile}
                 else
-                    redPrint "[$counter] Fail to jstack Busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user})."
+                    redPrint "[$counter] Fail to jstack busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user})."
                     redPrint "User of java process($user) is not current user($USER), need sudo to run again:"
                     yellowPrint "    sudo ${COMMAND_LINE[@]}"
                     normalPrint
                     continue
                 fi
             } || {
-                redPrint "[$counter] Fail to jstack Busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user})."
+                redPrint "[$counter] Fail to jstack busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user})."
                 normalPrint
                 rm ${jstackFile}
                 continue

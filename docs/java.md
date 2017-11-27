@@ -31,7 +31,7 @@
 用于快速排查`Java`的`CPU`性能问题(`top us`值过高)，自动查出运行的`Java`进程中消耗`CPU`多的线程，并打印出其线程栈，从而确定导致性能问题的方法调用。  
 目前只支持`Linux`。原因是`Mac`、`Windows`的`ps`命令不支持列出线程线程，更多信息参见[#33](https://github.com/oldratlee/useful-scripts/issues/33)，欢迎提供解法。
 
-PS，如何操作可以参见[@bluedavy](http://weibo.com/bluedavy)的《分布式Java应用》的【5.1.1 cpu消耗分析】一节，说得很详细：
+PS，如何操作可以参见[@bluedavy](http://weibo.com/bluedavy)的[《分布式Java应用》](https://book.douban.com/subject/4848587/)的【5.1.1 cpu消耗分析】一节，说得很详细：
 
 1. `top`命令找出有问题`Java`进程及线程`id`：
     1. 开启线程显示模式（`top -H`，或是打开`top`后按`H`）
@@ -42,7 +42,7 @@ PS，如何操作可以参见[@bluedavy](http://weibo.com/bluedavy)的《分布�
 1. 查找十六进制的线程`id`（可以用`vim`的查找功能`/0x1234`，或是`grep 0x1234 -A 20`）
 1. 查看对应的线程栈，以分析问题
 
-查问题时，会要多次这样操作以确定问题，上面过程**太繁琐太慢了**。
+查问题时，会要多次上面的操作以分析确定问题，这个过程**太繁琐太慢了**。
 
 ### 用法
 
@@ -139,7 +139,9 @@ $ show-busy-java-threads
     at com.xxx.foo.services.common.utils.AliTimer$2.run(AliTimer.java:128)
     at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
     at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
-...
+    at java.lang.Thread.run(Thread.java:662)
+
+......
 ```
 
 上面的线程栈可以看出，`CPU`消耗最高的2个线程都在执行`java.text.DateFormat.format`，业务代码对应的方法是`shared.monitor.schedule.AppMonitorDataAvgScheduler.run`。可以基本确定：

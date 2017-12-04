@@ -185,15 +185,17 @@ readonly total_count="$(echo "$jar_files" | wc -l)"
     exit 1
 }
 
+$is_console && readonly grep_color_option='--color=always'
+
 counter=1
 while read jar_file; do
     printResponsiveMessage "finding in jar($((counter++))/$total_count): $jar_file"
 
-    $command_for_list_zip "${jar_file}" | grep $regex_mode $ignore_case_option "$pattern" | while read file; do
+    $command_for_list_zip "${jar_file}" | grep $regex_mode $ignore_case_option $grep_color_option -- "$pattern" | while read file; do
         clearResponsiveMessage
 
         $is_console &&
-            echo "$ec[1;31m${jar_file}$eend"\!"$ec[1;32m${file}$eend" ||
+            echo "$ec[1;31m${jar_file}$eend$ec[1;32m"\!"$eend${file}" ||
             echo "${jar_file}"\!"${file}"
     done
 

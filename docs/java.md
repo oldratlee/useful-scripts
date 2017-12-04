@@ -20,6 +20,7 @@
 - [:beer: find-in-jars](#beer-find-in-jars)
     - [用法](#%E7%94%A8%E6%B3%95-2)
     - [示例](#%E7%A4%BA%E4%BE%8B-2)
+    - [运行效果](#%E8%BF%90%E8%A1%8C%E6%95%88%E6%9E%9C)
     - [参考资料](#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -398,6 +399,12 @@ WEB-INF/lib/aspectjweaver-1.8.8.jar!org/aspectj/weaver/XlintDefault.properties
 ../deploy/lib/javax.servlet-api-3.0.1.jar!javax/servlet/http/LocalStrings_es.properties
 ......
 ```
+
+### 运行效果
+
+支持彩色输出，文件名中的匹配部分以`grep`的高亮方式显示。
+
+![](https://user-images.githubusercontent.com/1063891/33545067-9eb66072-d8a2-11e7-8a77-d815c0979e5e.gif)
 
 ### 参考资料
 

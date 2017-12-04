@@ -10,7 +10,7 @@
 [![GitHub forks](https://img.shields.io/github/forks/oldratlee/useful-scripts.svg?style=social&label=Fork&)](https://github.com/oldratlee/useful-scripts/fork)
 
 
-把平时有用的手动操作做成脚本，这样可以便捷的使用。 :sparkles:
+:point_right: 把平时有用的手动操作做成脚本，这样可以便捷的使用。 :sparkles:
 
 有自己用的好的脚本 或是 平时常用但没有写成脚本的功能，欢迎提供（[提交Issue](https://github.com/oldratlee/useful-scripts/issues))和分享（[Fork后提交代码](https://github.com/oldratlee/useful-scripts/fork)）！ :sparkling_heart:
 

@@ -11,7 +11,7 @@
 # @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/java.md#beer-find-in-jars
 # @author Jerry Lee (oldratlee at gmail dot com)
 
-readonly PROG=`basename $0`
+readonly PROG="`basename "$0"`"
 
 usage() {
     [ -n "$1" -a "$1" != 0 ] && local out=/dev/stderr || local out=/dev/stdout
@@ -183,7 +183,7 @@ clearResponsiveMessage() {
 # find logic
 ################################################################################
 
-readonly jar_files="$(find "${dirs[@]}" -iname '*.jar')"
+readonly jar_files="$(find "${dirs[@]}" -iname '*.jar' -type f)"
 readonly total_count="$(echo "$jar_files" | wc -l)"
 [ -z "$jar_files" ] && {
     echo "No jar found!" 1>&2

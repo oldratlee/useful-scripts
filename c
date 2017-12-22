@@ -24,8 +24,5 @@ teeAndCopy() {
     tee >(content="$(cat)"; echo -n "$content" | copy)
 }
 
-if [ $# -eq 0 ]; then
-    teeAndCopy
-else
-    "$@" | teeAndCopy
-fi
+[ $# -eq 0 ] && teeAndCopy ||
+                "$@" | teeAndCopy

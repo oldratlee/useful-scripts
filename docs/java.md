@@ -90,7 +90,7 @@ Find out the highest cpu consumed threads of java, and print the stack of these 
 
 Example:
   show-busy-java-threads       # show busy java threads info
-  show-busy-java-threads 1     # update every 1 seconds, (stop by eg: CTRL+C)
+  show-busy-java-threads 1     # update every 1 second, (stop by eg: CTRL+C)
   show-busy-java-threads 3 10  # update every 3 seconds, update 10 times
 
 Options:
@@ -106,7 +106,7 @@ Options:
   -h, --help                display this help and exit
   delay                     the delay between updates in seconds
   count                     the number of updates
-                            delay/count arguments imitates style of vmstat command
+                            delay/count arguments imitates the style of vmstat command
 ```
 
 ### 示例

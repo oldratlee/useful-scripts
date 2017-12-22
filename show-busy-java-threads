@@ -18,9 +18,9 @@ uname | grep '^Linux' -q || {
     exit 2
 }
 
-# Get corrent current user name via whoami command
+# Get current user name via whoami command
 #   See https://www.lifewire.com/current-linux-user-whoami-command-3867579
-# Because if run command by `sudo -u`, env var $USER is not rewrited/correct, just inherited from outside!
+# Because if run command by `sudo -u`, env var $USER is not rewritten/correct, just inherited from outside!
 readonly USER="`whoami`"
 
 usage() {
@@ -32,7 +32,7 @@ Find out the highest cpu consumed threads of java, and print the stack of these 
 
 Example:
   ${PROG}       # show busy java threads info
-  ${PROG} 1     # update every 1 seconds, (stop by eg: CTRL+C)
+  ${PROG} 1     # update every 1 second, (stop by eg: CTRL+C)
   ${PROG} 3 10  # update every 3 seconds, update 10 times
 
 Options:
@@ -48,7 +48,7 @@ Options:
   -h, --help                display this help and exit
   delay                     the delay between updates in seconds
   count                     the number of updates
-                            delay/count arguments imitates style of vmstat command
+                            delay/count arguments imitates the style of vmstat command
 EOF
 
     exit $1

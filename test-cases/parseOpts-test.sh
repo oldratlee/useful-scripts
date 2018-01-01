@@ -6,7 +6,7 @@ BASE=`dirname $0`
 
 
 #################################################
-# Utils Functions
+# Util Functions
 #################################################
 
 # NOTE: $'foo' is the escape sequence syntax of bash

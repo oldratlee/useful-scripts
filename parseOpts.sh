@@ -19,7 +19,7 @@
 # @author Jerry Lee (oldratlee at gmail dot com)
 
 #####################################################################
-# Utils Funtions
+# Util Funtions
 #####################################################################
 
 # NOTE: $'foo' is the escape sequence syntax of bash

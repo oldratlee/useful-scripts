@@ -17,7 +17,7 @@ readonly -a COMMAND_LINE=("$0" "$@")
 readonly USER="`whoami`"
 
 ################################################################################
-# utils funtions
+# util funtions
 ################################################################################
 
 # NOTE: $'foo' is the escape sequence syntax of bash
@@ -190,22 +190,20 @@ printStackOfThreads() {
         ((counter++))
         local jstackFile=/tmp/${uuid}_${pid}
         [ -f "${jstackFile}" ] || {
-            {
-                if [ "${user}" == "${USER}" ]; then
-                    # run without sudo, when java process user is current user
-                    "$jstack_path" ${force} $mix_native_frames $more_lock_info ${pid} > ${jstackFile}
-                elif [ $UID == 0 ]; then
-                    # if java process user is not current user, must run jstack with sudo
-                    sudo -u "${user}" "$jstack_path" ${force} $mix_native_frames $more_lock_info ${pid} > ${jstackFile}
-                else
-                    # current user is not root user, so can not run with sudo; print error message and rerun suggestion
-                    redPrint "[$counter] Fail to jstack busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user})."
-                    redPrint "User of java process($user) is not current user($USER), need sudo to rerun:"
-                    yellowPrint "    sudo ${COMMAND_LINE[@]}"
-                    normalPrint
-                    continue
-                fi
-            } || {
+            if [ "${user}" == "${USER}" ]; then
+                # run without sudo, when java process user is current user
+                "$jstack_path" ${force} $mix_native_frames $more_lock_info ${pid} > ${jstackFile}
+            elif [ $UID == 0 ]; then
+                # if java process user is not current user, must run jstack with sudo
+                sudo -u "${user}" "$jstack_path" ${force} $mix_native_frames $more_lock_info ${pid} > ${jstackFile}
+            else
+                # current user is not root user, so can not run with sudo; print error message and rerun suggestion
+                redPrint "[$counter] Fail to jstack busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user})."
+                redPrint "User of java process($user) is not current user($USER), need sudo to rerun:"
+                yellowPrint "    sudo ${COMMAND_LINE[@]}"
+                normalPrint
+                continue
+            fi || {
                 redPrint "[$counter] Fail to jstack busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user})."
                 normalPrint
                 rm ${jstackFile}

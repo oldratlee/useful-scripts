@@ -9,6 +9,9 @@
 # @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/shell.md#beer-c
 # @author Jerry Lee (oldratlee at gmail dot com)
 
+set -e
+set -o pipefail
+
 readonly PROG="`basename "$0"`"
 
 usage() {

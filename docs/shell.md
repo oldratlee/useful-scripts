@@ -51,7 +51,7 @@
 
 更多说明参见[拷贝复制命令行输出放在系统剪贴板上](http://oldratlee.com/post/2012-12-23/command-output-to-clip)。
 
-### 示例
+### 用法/示例
 
 有3种使用风格，根据需要或是你的偏好选取。
 
@@ -72,13 +72,35 @@ $ echo -e 'a\nb' | nl | c
 $ gb | c
 
 # 3. 从标准输入读取内容。拷贝文件内容时这种方式最直接。
-$ c < id_rsa.pub
-ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAz+ETZEgoLeIiC0rjWewdDs0sbo8c...== a@b.com
+$ c < ~/.ssh/id_rsa.pub
+ssh-rsa EAAAABIwAAAQEAz+ETZEgoLeIiC0rjWewdDs0sbo8c...== a@b.com
+
+# -q选项：拷贝但不输出。
+# 当输出内容比较多、又不关心输出内容和命令执行进展时，可以使用这个选项。
+$ c -q < ~/.ssh/id_rsa.pub
+
+# 帮助信息
+$ c --help
+Usage: c [OPTION]... [command [command_args ...]]
+Run command and put output to system clipper.
+If no command is specified, read from stdin(pipe).
+
+Example:
+  c echo "hello world!"
+  c grep -i 'hello world' menu.h main.c
+  set | c
+  c -q < ~/.ssh/id_rsa.pub
+
+Options:
+  -k, --keep-eol  do not trim new line at end of file
+  -q, --quiet     suppress all normal output, default is false
+  -h, --help      display this help and exit
 ```
 
 ### 参考资料
 
-[拷贝复制命令行输出放在系统剪贴板上](http://oldratlee.com/post/2012-12-23/command-output-to-clip)，给出了不同系统可用命令。
+- [拷贝复制命令行输出放在系统剪贴板上](http://oldratlee.com/post/2012-12-23/command-output-to-clip)，给出了不同系统可用命令。
+- 关于文本文件最后的换行，参见[Why should text files end with a newline?](https://stackoverflow.com/questions/729692)
 
 :beer: [coat](../coat)
 ----------------------

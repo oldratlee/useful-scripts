@@ -11,17 +11,54 @@
 
 readonly PROG="`basename $0`"
 readonly -a COMMAND_LINE=("$0" "$@")
-
-# Check os support!
-uname | grep '^Linux' -q || {
-    echo "$PROG only support Linux, not support `uname` yet!" 1>&2
-    exit 2
-}
-
 # Get current user name via whoami command
 #   See https://www.lifewire.com/current-linux-user-whoami-command-3867579
 # Because if run command by `sudo -u`, env var $USER is not rewritten/correct, just inherited from outside!
 readonly USER="`whoami`"
+
+################################################################################
+# utils funtions
+################################################################################
+
+# NOTE: $'foo' is the escape sequence syntax of bash
+readonly ec=$'\033' # escape char
+readonly eend=$'\033[0m' # escape end
+
+colorPrint() {
+    local color=$1
+    shift
+
+    # if stdout is console, turn on color output.
+    [ -t 1 ] && echo "$ec[1;${color}m$@$eend" || echo "$@"
+
+    [ -n "$append_file" ] && echo "$@" >> "$append_file"
+}
+
+redPrint() {
+    colorPrint 31 "$@"
+}
+
+greenPrint() {
+    colorPrint 32 "$@"
+}
+
+yellowPrint() {
+    colorPrint 33 "$@"
+}
+
+bluePrint() {
+    colorPrint 36 "$@"
+}
+
+normalPrint() {
+    echo "$@"
+    [ -n "$append_file" ] && echo "$@" >> "$append_file"
+}
+
+fatal() {
+    redPrint "$@" 1>&2
+    exit 1
+}
 
 usage() {
     [ -n "$1" -a "$1" != 0 ] && local out=/dev/stderr || local out=/dev/stdout
@@ -53,6 +90,12 @@ EOF
 
     exit $1
 }
+
+################################################################################
+# Check os support
+################################################################################
+
+uname | grep '^Linux' -q || fatal "Error: $PROG only support Linux, not support `uname` yet!"
 
 ################################################################################
 # parse options
@@ -108,69 +151,18 @@ update_delay=${1:-0}
 [ $update_count -lt 0 ] && update_count=0
 
 ################################################################################
-# utils funtions
-################################################################################
-
-# NOTE: $'foo' is the escape sequence syntax of bash
-readonly ec=$'\033' # escape char
-readonly eend=$'\033[0m' # escape end
-
-colorPrint() {
-    local color=$1
-    shift
-
-    # if stdout is console, turn on color output.
-    [ -t 1 ] && echo "$ec[1;${color}m$@$eend" || echo "$@"
-
-    [ -n "$append_file" ] && echo "$@" >> "$append_file"
-}
-
-redPrint() {
-    colorPrint 31 "$@"
-}
-
-greenPrint() {
-    colorPrint 32 "$@"
-}
-
-yellowPrint() {
-    colorPrint 33 "$@"
-}
-
-bluePrint() {
-    colorPrint 36 "$@"
-}
-
-normalPrint() {
-    echo "$@"
-
-    [ -n "$append_file" ] && echo "$@" >> "$append_file"
-}
-
-################################################################################
-# check the existence of jstack command!
+# check the existence of jstack command
 ################################################################################
 
 if [ -n "$jstack_path" ]; then
-    [ ! -x "$jstack_path" ] && {
-        redPrint "Error: $jstack_path is NOT found/executalbe!" 1>&2
-        exit 1
-    }
+    [ -f "$jstack_path" ] || fatal "Error: $jstack_path is NOT found!"
+    [ -x "$jstack_path" ] || fatal "Error: $jstack_path is NOT executalbe!"
 elif which jstack &> /dev/null; then
     jstack_path="`which jstack`"
 else
-    [ -z "$JAVA_HOME" ] && {
-        redPrint "Error: jstack not found on PATH! Use -s option set jstack path manually." 1>&2
-        exit 1
-    }
-    [ ! -f "$JAVA_HOME/bin/jstack" ] && {
-        redPrint "Error: jstack not found on PATH and \$JAVA_HOME/bin/jstack($JAVA_HOME/bin/jstack) file does NOT exists! Use -s option set jstack path manually." 1>&2
-        exit 1
-    }
-    [ ! -x "$JAVA_HOME/bin/jstack" ] && {
-        redPrint "Error: jstack not found on PATH and \$JAVA_HOME/bin/jstack($JAVA_HOME/bin/jstack) is NOT executalbe! Use -s option set jstack path manually." 1>&2
-        exit 1
-    }
+    [ -z "$JAVA_HOME" ] && fatal "Error: jstack not found on PATH and No JAVA_HOME setting! Use -s option set jstack path manually."
+    [ -f "$JAVA_HOME/bin/jstack" ] || fatal "Error: jstack not found on PATH and \$JAVA_HOME/bin/jstack($JAVA_HOME/bin/jstack) file does NOT exists! Use -s option set jstack path manually."
+    [ -x "$JAVA_HOME/bin/jstack" ] || fatal "Error: jstack not found on PATH and \$JAVA_HOME/bin/jstack($JAVA_HOME/bin/jstack) is NOT executalbe! Use -s option set jstack path manually."
     jstack_path="$JAVA_HOME/bin/jstack"
 fi
 
@@ -197,15 +189,18 @@ printStackOfThreads() {
 
         ((counter++))
         local jstackFile=/tmp/${uuid}_${pid}
-        [ ! -f "${jstackFile}" ] && {
+        [ -f "${jstackFile}" ] || {
             {
                 if [ "${user}" == "${USER}" ]; then
+                    # run without sudo, when java process user is current user
                     "$jstack_path" ${force} $mix_native_frames $more_lock_info ${pid} > ${jstackFile}
                 elif [ $UID == 0 ]; then
+                    # if java process user is not current user, must run jstack with sudo
                     sudo -u "${user}" "$jstack_path" ${force} $mix_native_frames $more_lock_info ${pid} > ${jstackFile}
                 else
+                    # current user is not root user, so can not run with sudo; print error message and rerun suggestion
                     redPrint "[$counter] Fail to jstack busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user})."
-                    redPrint "User of java process($user) is not current user($USER), need sudo to run again:"
+                    redPrint "User of java process($user) is not current user($USER), need sudo to rerun:"
                     yellowPrint "    sudo ${COMMAND_LINE[@]}"
                     normalPrint
                     continue

@@ -88,6 +88,11 @@ while [ $# -gt 0 ]; do
         args=("${args[@]}" "$@")
         break
         ;;
+    -*)
+        echo "${PROG}: unrecognized option '$1'" 1>&2
+        echo 1>&2
+        usage 2;
+        ;;
     *)
         args=("${args[@]}" "$1")
         shift

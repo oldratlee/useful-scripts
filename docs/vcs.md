@@ -1,12 +1,32 @@
 :snail: `VCS`相关脚本
 ====================================
 
+> 你会发现这些脚本都是`svn`分支相关的操作。
+>
+> 个人在使用`Git`的过程中（7年+），并没有发现有对应脚本的需求（侧面反映出`Git`的优秀）。  
+> 原因：`Git`的概念模型一等公民支持分支，切换分支是件很简单且统一的事，而`svn`不得不涉及仓库的`URL`（不统一简单）。
+>
+> 我已经在自己的开发机上卸载了`svn`，没有需求场景也没理由再用了。 :stuck_out_tongue:
+>
+> 使用更现代的`Git`吧！ :boom:
+
+1. [swtrunk.sh](docs/vcs.md#beer-swtrunksh)  
+    自动`svn`工作目录从分支（`branches`）切换到主干（`trunk`）。  
+    PS： `Git`对应的是`git checkout master`，如果你使用了`oh-my-zsh`，已经有对应的别名加速了：`gcm`。
+1. [svn-merge-stop-on-copy.sh](docs/vcs.md#beer-svn-merge-stop-on-copysh)  
+    把指定的远程分支从刚新建分支以来的修改合并到本地`svn`目录或是另一个远程分支。  
+    PS：`Git`的合并很直接简单，`git merge branch-foo`，也更智能（没有树冲突一说）。
+1. [cp-svn-url.sh](docs/vcs.md#beer-cp-svn-urlsh)  
+    拷贝当前`svn`目录对应的远程分支到系统的粘贴板，省去`CTRL+C`操作。  
+    PS：`Git`分支不需要`URL`来引用，没有这个脚本的需求，直接给个分支名就好了。
+
 :beer: [swtrunk.sh](../swtrunk.sh)
 ----------------------
 
-`svn`工作目录从分支（`branches`）切换到主干（`trunk`）。
+`svn`工作目录从分支（`branches`）切换到主干（`trunk`）。  
+支持`Linux`、`Mac`、`Windows`（`cygwin`、`MSSYS`）。
 
-命令以`SVN`的标准目录命名约定来识别分支和主干。
+命令以`svn`的标准目录命名约定来识别分支和主干。
 即，分支在目录`branches`下，主干在目录`trunk`下。
 示例：
 - 分支： http://www.foo.com/project1/branches/feature1
@@ -15,9 +35,9 @@
 ### 用法
 
 ```bash
-swtrunk.sh # 缺省使用当前目录作为SVN工作目录
+swtrunk.sh # 缺省使用当前目录作为svn工作目录
 cp-svn-url.sh /path/to/svn/work/directory
-cp-svn-url.sh /path/to/svn/work/directory1 /path/to/svn/work/directory2 # SVN工作目录个数不限制
+cp-svn-url.sh /path/to/svn/work/directory1 /path/to/svn/work/directory2 # svn工作目录个数不限制
 ```
 
 ### 示例
@@ -41,7 +61,8 @@ svn work dir /path/to/svn/work/dir2 switch from http://www.foo.com/project2/bran
 :beer: [svn-merge-stop-on-copy.sh](../svn-merge-stop-on-copy.sh)
 ----------------------
 
-把指定的远程分支从刚新建分支以来的修改合并到本地`svn`目录或是另一个远程分支。
+把指定的远程分支从刚新建分支以来的修改合并到本地`svn`目录或是另一个远程分支。  
+支持`Linux`、`Mac`、`Windows`（`cygwin`、`MSSYS`）。
 
 ### 用法
 
@@ -54,24 +75,25 @@ svn-merge-stop-on-copy.sh <来源的远程分支> <目标远程分支>
 ### 示例
 
 ```bash
-svn-merge-stop-on-copy.sh http://www.foo.com/project1/branches/feature1 # 缺省使用当前目录作为SVN工作目录
+svn-merge-stop-on-copy.sh http://www.foo.com/project1/branches/feature1 # 缺省使用当前目录作为svn工作目录
 svn-merge-stop-on-copy.sh http://www.foo.com/project1/branches/feature1 /path/to/svn/work/directory
 svn-merge-stop-on-copy.sh http://www.foo.com/project1/branches/feature1 http://www.foo.com/project1/branches/feature2
 ```
 
 ### 贡献者
 
-[姜太公](https://github.com/jiangjizhong)提供此脚本。
+[姜太公](https://github.com/jzwlqx)提供此脚本。
 
 :beer: [cp-svn-url.sh](../cp-svn-url.sh)
 ----------------------
 
-拷贝当前`svn`目录对应的远程分支到系统的粘贴板，省去`CTRL+C`操作。
+拷贝当前`svn`目录对应的远程分支到系统的粘贴板，省去`CTRL+C`操作。  
+支持`Linux`、`Mac`、`Windows`（`cygwin`、`MSSYS`）。
 
 ### 用法
 
 ```bash
-cp-svn-url.sh # 缺省使用当前目录作为SVN工作目录
+cp-svn-url.sh # 缺省使用当前目录作为svn工作目录
 cp-svn-url.sh /path/to/svn/work/directory
 ```
 

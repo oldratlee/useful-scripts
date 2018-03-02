@@ -358,14 +358,15 @@ Find file in the jar files under specified directory(recursive, include subdirec
 The pattern default is *extended* regex.
 
 Example:
-    find-in-jars 'log4j\.properties'
-    find-in-jars '^log4j(\.properties|\.xml)$' # search file log4j.properties/log4j.xml at zip root
-    find-in-jars 'log4j\.properties$' -d /path/to/find/directory
-    find-in-jars 'log4j\.properties' -d /path/to/find/dir1 -d /path/to/find/dir2
+  find-in-jars 'log4j\.properties'
+  find-in-jars '^log4j(\.properties|\.xml)$' # search file log4j.properties/log4j.xml at zip root
+  find-in-jars 'log4j\.properties$' -d /path/to/find/directory
+  find-in-jars 'log4j\.properties' -d /path/to/find/dir1 -d /path/to/find/dir2
 
 Options:
   -d, --dir              the directory that find jar files, default is current directory.
                          this option can specify multiply times to find in multiply directories.
+  -s, --seperator        seperator for jar file and file entry, default is `!'.
   -E, --extended-regexp  PATTERN is an extended regular expression (*default*)
   -F, --fixed-strings    PATTERN is a set of newline-separated strings
   -G, --basic-regexp     PATTERN is a basic regular expression

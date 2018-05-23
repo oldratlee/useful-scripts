@@ -287,9 +287,15 @@ findBusyJavaThreadsByTop() {
             ((idx++))
             echo "$output_fields"
         fi
-    done < <(HOME="$store_dir" top -H -b -n 1 -o '%CPU' | awk '$NF=="java"{print $1 " " $9}')
+    done < <(HOME="$store_dir" top -H -b -n 1 | awk '$NF=="java"{print $1 " " $9}' | sort -k2,2nr)
     # top output field: thread id, %cpu
+    #
     # 1. sort by %cpu by top option `-o %CPU`
+    #    unfortunately, top version 3.2 not supports -o option(supports from top version 3.3+),
+    #    use
+    #       HOME="$store_dir" top -H -b -n 1 | awk '$NF=="java"{print $1 " " $9}' | sort -k2,2nr
+    #    instead of
+    #       HOME="$store_dir" top -H -b -n 1 -o '%CPU' | awk '$NF=="java"{print $1 " " $9}'
     # 2. change HOME env var for running top,
     #    so as to prevent top command output format being change by .toprc user config file unexpectedly
 }

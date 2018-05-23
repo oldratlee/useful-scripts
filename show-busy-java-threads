@@ -17,7 +17,7 @@ readonly -a COMMAND_LINE=("$0" "$@")
 readonly USER="`whoami`"
 
 ################################################################################
-# util funtions
+# util functions
 ################################################################################
 
 # NOTE: $'foo' is the escape sequence syntax of bash
@@ -189,14 +189,14 @@ cleanupWhenExit() {
 trap "cleanupWhenExit" EXIT
 
 printStackOfThreads() {
-    local line
+    local -a line
     local idx=0
     while IFS=" " read -a line ; do
-        local pid=${line[0]}
-        local threadId=${line[1]}
+        local pid="${line[0]}"
+        local threadId="${line[1]}"
         local threadId0x="0x`printf %x ${threadId}`"
-        local pcpu=${line[2]}
-        local user=${line[3]}
+        local pcpu="${line[2]}"
+        local user="${line[3]}"
 
         ((idx++))
         local jstackFile="$store_dir/${pid}"
@@ -248,60 +248,62 @@ headInfo() {
 
 # output field: pid, thread id(lwp), pcpu, user
 #   order by pcpu(percentage of cpu usage)
-findBusyJavaThreadByPs() {
+findBusyJavaThreadsByPs() {
     if [ -n "${pid}" ]; then
-        local ps_options="-p $pid"
+        local -r ps_options="-p $pid"
     else
-        local ps_options="-C java"
+        local -r ps_options="-C java"
     fi
-    # sort by %cpu(by option `--sort -pcpu`)
-    # use wide output(unlimited width), avoid trunk user column to username_fo+ or $uid alike
+    # 1. sort by %cpu by ps option `--sort -pcpu`
+    # 2. use wide output(unlimited width) by ps option `-ww`
+    #    avoid trunk user column to username_fo+ or $uid alike
     ps $ps_options -wwLo pid,lwp,pcpu,user --sort -pcpu --no-headers | head -n "${count}"
 }
 
-# output is same as function findBusyJavaThreadByPs
-findBusyJavaThreadByTop() {
+# output is same as function findBusyJavaThreadsByPs
+findBusyJavaThreadsByTop() {
     if [ -n "${pid}" ]; then
-        local ps_options="-p $pid"
+        local -r ps_options="-p $pid"
     else
-        local ps_options="-C java"
+        local -r ps_options="-C java"
     fi
     # ps output field: pid, thread id(lwp), user
-    local ps_out="$(ps $ps_options -wwLo pid,lwp,user --no-headers)"
+    local -r ps_out="$(ps $ps_options -wwLo pid,lwp,user --no-headers)"
 
     local idx=0
-    local line
+    local -a line
     while IFS=" " read -a line ; do
         (( idx < count )) || break
 
-        local threadId=${line[0]}
-        local pcpu=${line[1]}
+        local threadId="${line[0]}"
+        local pcpu="${line[1]}"
 
         # output field: pid, threadId, pcpu, user
-        local output_fields="$(echo "$ps_out" |
-            awk -v "threadId=$threadId" -v "pcpu=$pcpu" '$2==threadId{print $1 " " threadId " " pcpu " " $3}')"
+        local output_fields="$( echo "$ps_out" |
+            awk -v "threadId=$threadId" -v "pcpu=$pcpu" '$2==threadId {
+                print $1 " " threadId " " pcpu " " $3; exit
+            }' )"
         if [ -n "$output_fields" ]; then
             ((idx++))
             echo "$output_fields"
         fi
-    done < <(HOME="$store_dir" top -H -b -n1 -o '%CPU' | awk '$NF=="java"{print $1 " " $9}')
+    done < <(HOME="$store_dir" top -H -b -n 1 -o '%CPU' | awk '$NF=="java"{print $1 " " $9}')
     # top output field: thread id, %cpu
-    # sort by %cpu(by option `-o %CPU`)
-    # NOTE:
-    # change HOME env var for running top
-    # so as to avoid .toprc user config file change top command output unexpectedly
+    # 1. sort by %cpu by top option `-o %CPU`
+    # 2. change HOME env var for running top,
+    #    so as to prevent top command output format being change by .toprc user config file unexpectedly
 }
 
-# if update_count <= 0, infinite loop till user interupted (eg: CTRL+C)
-for ((i = 0; update_count <= 0 || i < update_count; ++i)); do
+# if update_count <= 0, infinite loop till user interrupted (eg: CTRL+C)
+for (( i = 0; update_count <= 0 || i < update_count; ++i )); do
     (( i > 0 )) && sleep "$update_delay"
 
     [ -n "$append_file" ] && headInfo >> "$append_file"
     (( update_count != 1 )) && headInfo
 
     if $use_ps; then
-        findBusyJavaThreadByPs
+        findBusyJavaThreadsByPs
     else
-        findBusyJavaThreadByTop
+        findBusyJavaThreadsByTop
     fi | printStackOfThreads
 done

@@ -24,13 +24,19 @@ readonly USER="`whoami`"
 readonly ec=$'\033' # escape char
 readonly eend=$'\033[0m' # escape end
 
-colorPrint() {
+colorEcho() {
     local color=$1
     shift
 
     # if stdout is console, turn on color output.
     [ -t 1 ] && echo "$ec[1;${color}m$@$eend" || echo "$@"
+}
 
+colorPrint() {
+    local color=$1
+    shift
+
+    colorEcho "$color" "$@"
     [ -n "$append_file" ] && echo "$@" >> "$append_file"
 }
 
@@ -240,9 +246,9 @@ printStackOfThreads() {
 }
 
 headInfo() {
-    echo ================================================================================
+    colorEcho "0;34;42" ================================================================================
     echo "$(date "+%Y-%m-%d %H:%M:%S.%N") [$((i+1))/$update_count]: ${COMMAND_LINE[@]}"
-    echo ================================================================================
+    colorEcho "0;34;42" ================================================================================
     echo
 }
 

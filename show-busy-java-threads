@@ -78,6 +78,10 @@ Options:
   -c, --count <num>         set the thread count to show, default is 5
   -a, --append-file <file>  specify the file to append output as log
   -s, --jstack-path <path>  specify the path of jstack command
+  -P, --use-ps              use ps command to find busy thead(cpu usage) instead of top command,
+                            default use top command, because cpu usage of ps command is expressed as
+                            the percentage of time spent running during the entire lifetime of a process,
+                            this is not ideal.
   -F, --force               set jstack to force a thread dump
                             use when jstack <pid> does not respond (process is hung)
   -m, --mix-native-frames   set jstack to print both java and native frames (mixed mode)
@@ -101,7 +105,7 @@ uname | grep '^Linux' -q || fatal "Error: $PROG only support Linux, not support 
 # parse options
 ################################################################################
 
-readonly ARGS=`getopt -n "$PROG" -a -o p:c:a:s:Fmlh -l count:,pid:,append-file:,jstack-path:,force,mix-native-frames,lock-info,help -- "$@"`
+readonly ARGS=`getopt -n "$PROG" -a -o p:c:a:s:PFmlh -l count:,pid:,append-file:,jstack-path:,use-ps,force,mix-native-frames,lock-info,help -- "$@"`
 [ $? -ne 0 ] && usage 1
 eval set -- "${ARGS}"
 
@@ -123,17 +127,21 @@ while true; do
         jstack_path="$2"
         shift 2
         ;;
+    -P|--use-ps)
+        use_ps=true
+        shift
+        ;;
     -F|--force)
         force=-F
-        shift 1
+        shift
         ;;
     -m|--mix-native-frames)
         mix_native_frames=-m
-        shift 1
+        shift
         ;;
     -l|--lock-info)
         more_lock_info=-l
-        shift 1
+        shift
         ;;
     -h|--help)
         usage
@@ -145,10 +153,11 @@ while true; do
     esac
 done
 count=${count:-5}
+use_ps=${use_ps:-false}
 
 update_delay=${1:-0}
 [ -z "$1" ] && update_count=1 || update_count=${2:-0}
-[ $update_count -lt 0 ] && update_count=0
+(( update_count < 0 )) && update_count=0
 
 ################################################################################
 # check the existence of jstack command
@@ -237,7 +246,21 @@ headInfo() {
     echo
 }
 
-find_top_java_thread() {
+# output field: pid, thread id(lwp), pcpu, user
+#   order by pcpu(percentage of cpu usage)
+findBusyJavaThreadByPs() {
+    if [ -n "${pid}" ]; then
+        local ps_options="-p $pid"
+    else
+        local ps_options="-C java"
+    fi
+    # sort by %cpu(by option `--sort -pcpu`)
+    # use wide output(unlimited width), avoid trunk user column to username_fo+ or $uid alike
+    ps $ps_options -wwLo pid,lwp,pcpu,user --sort -pcpu --no-headers | head -n "${count}"
+}
+
+# output is same as function findBusyJavaThreadByPs
+findBusyJavaThreadByTop() {
     if [ -n "${pid}" ]; then
         local ps_options="-p $pid"
     else
@@ -273,6 +296,9 @@ for ((i = 0; update_count <= 0 || i < update_count; ++i)); do
     [ -n "$append_file" ] && headInfo >> "$append_file"
     (( update_count != 1 )) && headInfo
 
-    # use wide output(unlimited width), avoid trunk user column to username_fo+ or $uid alike
-    find_top_java_thread | printStackOfThreads
+    if $use_ps; then
+        findBusyJavaThreadByPs
+    else
+        findBusyJavaThreadByTop
+    fi | printStackOfThreads
 done

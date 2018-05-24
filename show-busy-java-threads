@@ -181,15 +181,15 @@ trap "cleanupWhenExit" EXIT
 
 printStackOfThreads() {
     local line
-    local counter=0
+    local idx=0
     while IFS=" " read -a line ; do
         local pid=${line[0]}
         local threadId=${line[1]}
         local threadId0x="0x`printf %x ${threadId}`"
-        local pcpu=${line[3]}
-        local user=${line[4]}
+        local pcpu=${line[2]}
+        local user=${line[3]}
 
-        ((counter++))
+        ((idx++))
         local jstackFile="$store_dir/${pid}"
         [ -f "${jstackFile}" ] || {
             if [ "${user}" == "${USER}" ]; then
@@ -200,20 +200,20 @@ printStackOfThreads() {
                 sudo -u "${user}" "$jstack_path" ${force} $mix_native_frames $more_lock_info ${pid} > ${jstackFile}
             else
                 # current user is not root user, so can not run with sudo; print error message and rerun suggestion
-                redPrint "[$counter] Fail to jstack busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user})."
+                redPrint "[$idx] Fail to jstack busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user})."
                 redPrint "User of java process($user) is not current user($USER), need sudo to rerun:"
                 yellowPrint "    sudo ${COMMAND_LINE[@]}"
                 normalPrint
                 continue
             fi || {
-                redPrint "[$counter] Fail to jstack busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user})."
+                redPrint "[$idx] Fail to jstack busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user})."
                 normalPrint
                 rm ${jstackFile}
                 continue
             }
         }
 
-        bluePrint "[$counter] Busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user}):"
+        bluePrint "[$idx] Busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user}):"
 
         if [ -n "$mix_native_frames" ]; then
             local sed_script="/--------------- $threadId ---------------/,/^---------------/ {
@@ -243,16 +243,35 @@ find_top_java_thread() {
     else
         local ps_options="-C java"
     fi
+    # ps output field: pid, thread id(lwp), user
+    local ps_out="$(ps $ps_options -wwLo pid,lwp,user --no-headers)"
 
-    ps $ps_options -wwLo pid,lwp,comm,pcpu,user --sort -pcpu --no-headers | head -n "${count}"
+    local idx=0
+    local line
+    while IFS=" " read -a line ; do
+        (( idx < count )) || break
+
+        local threadId=${line[0]}
+        local pcpu=${line[1]}
+
+        # output field: pid, threadId, pcpu, user
+        local output_fields="$(echo "$ps_out" |
+            awk -v "threadId=$threadId" -v "pcpu=$pcpu" '$2==threadId{print $1 " " threadId " " pcpu " " $3}')"
+        if [ -n "$output_fields" ]; then
+            ((idx++))
+            echo "$output_fields"
+        fi
+    done < <(top -H -b -n1 -o '%CPU' | awk '$NF=="java"{print $1 " " $9}')
+    # top output field: thread id, %cpu
+    # sort by %cpu(by option `-o %CPU`)
 }
 
 # if update_count <= 0, infinite loop till user interupted (eg: CTRL+C)
 for ((i = 0; update_count <= 0 || i < update_count; ++i)); do
-    [ "$i" -gt 0 ] && sleep "$update_delay"
+    (( i > 0 )) && sleep "$update_delay"
 
     [ -n "$append_file" ] && headInfo >> "$append_file"
-    [ "$update_count" -ne 1 ] && headInfo
+    (( update_count != 1 )) && headInfo
 
     # use wide output(unlimited width), avoid trunk user column to username_fo+ or $uid alike
     find_top_java_thread | printStackOfThreads

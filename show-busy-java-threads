@@ -237,6 +237,16 @@ headInfo() {
     echo
 }
 
+find_top_java_thread() {
+    if [ -n "${pid}" ]; then
+        local ps_options="-p $pid"
+    else
+        local ps_options="-C java"
+    fi
+
+    ps $ps_options -wwLo pid,lwp,comm,pcpu,user --sort -pcpu --no-headers | head -n "${count}"
+}
+
 # if update_count <= 0, infinite loop till user interupted (eg: CTRL+C)
 for ((i = 0; update_count <= 0 || i < update_count; ++i)); do
     [ "$i" -gt 0 ] && sleep "$update_delay"
@@ -245,9 +255,5 @@ for ((i = 0; update_count <= 0 || i < update_count; ++i)); do
     [ "$update_count" -ne 1 ] && headInfo
 
     # use wide output(unlimited width), avoid trunk user column to username_fo+ or $uid alike
-    ps -wwLeo pid,lwp,comm,pcpu,user --no-headers | {
-        [ -z "${pid}" ] &&
-        awk '$3=="java"{print $0}' ||
-        awk -v "pid=${pid}" '$1==pid,$3=="java"{print $0}'
-    } | sort -k4,4 -r -n | head -n "${count}" | printStackOfThreads
+    find_top_java_thread | printStackOfThreads
 done

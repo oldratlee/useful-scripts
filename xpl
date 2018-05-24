@@ -3,7 +3,7 @@
 # Open file in file explorer.
 #
 # @Usage
-#   $ ./xpf file
+#   $ ./xpf [file [file ...] ]
 #
 # @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/shell.md#beer-xpl-and-xpf
 # @author Jerry Lee (oldratlee at gmail dot com)
@@ -11,6 +11,10 @@
 PROG=`basename $0`
 
 usage() {
+    [ -n "$1" -a "$1" != 0 ] && local out=/dev/stderr || local out=/dev/stdout
+
+    [ $# -gt 1 ] && { echo "$2"; echo; } > $out
+
     cat <<EOF
 Usage: ${PROG} [OPTION] [FILE]...
 Open file in file explorer.
@@ -26,11 +30,8 @@ EOF
 # if program name is xpf, set option selected!
 [ "xpf" == "${PROG}" ] && selected=true
 
-ARGS=`getopt -a -o sh -l selected,help -- "$@"`
-[ $? -ne 0 ] && usage 1
-eval set -- "${ARGS}"
-
-while true; do
+declare -a args=()
+while [ $# -gt 0 ]; do
     case "$1" in
     -s|--selected)
         selected=true
@@ -41,19 +42,27 @@ while true; do
         ;;
     --)
         shift
+        args=("${args[@]}" "$@")
         break
+        ;;
+    -*)
+        usage 2 "${PROG}: unrecognized option '$1'"
+        ;;
+    *)
+        args=("${args[@]}" "$1")
+        shift
         ;;
     esac
 done
 
-[ $# == 0 ] && files=( "." ) || files=( "$@" )
+[ "${#args[@]}"  == 0 ] && files=( "." ) || files=( "${args[@]}" )
 for file in "${files[@]}" ; do
-    [ ! -e $file ] && { echo "$file not exsited!"; continue; }
+    [ ! -e "$file" ] && { echo "$file not exsited!"; continue; }
 
-    case "`uname`" in
+    case "$(uname)" in
     Darwin*)
         [ -f "${file}" ] && selected=true
-        open ${selected:+-R} ${file}
+        open ${selected:+-R} "$file"
         ;;
     CYGWIN*)
         [ -f "${file}" ] && selected=true
@@ -71,5 +80,5 @@ for file in "${files[@]}" ; do
         fi
         ;;
     esac
-    echo "$file opened!"
+    echo "$file opened${selected:+ with selection}!"
 done

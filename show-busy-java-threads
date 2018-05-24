@@ -284,9 +284,12 @@ findBusyJavaThreadByTop() {
             ((idx++))
             echo "$output_fields"
         fi
-    done < <(top -H -b -n1 -o '%CPU' | awk '$NF=="java"{print $1 " " $9}')
+    done < <(HOME="$store_dir" top -H -b -n1 -o '%CPU' | awk '$NF=="java"{print $1 " " $9}')
     # top output field: thread id, %cpu
     # sort by %cpu(by option `-o %CPU`)
+    # NOTE:
+    # change HOME env var for running top
+    # so as to avoid .toprc user config file change top command output unexpectedly
 }
 
 # if update_count <= 0, infinite loop till user interupted (eg: CTRL+C)

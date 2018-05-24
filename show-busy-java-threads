@@ -170,10 +170,12 @@ fi
 # biz logic
 ################################################################################
 
-readonly uuid=`date +%s`_${RANDOM}_$$
+readonly uuid="${PROG}_`date +%s`_${RANDOM}_$$"
+readonly store_dir="/tmp/${uuid}"
+mkdir -p "$store_dir"
 
 cleanupWhenExit() {
-    rm /tmp/${uuid}_* &> /dev/null
+    rm -rf "$store_dir" &> /dev/null
 }
 trap "cleanupWhenExit" EXIT
 
@@ -188,7 +190,7 @@ printStackOfThreads() {
         local user=${line[4]}
 
         ((counter++))
-        local jstackFile=/tmp/${uuid}_${pid}
+        local jstackFile="$store_dir/${pid}"
         [ -f "${jstackFile}" ] || {
             if [ "${user}" == "${USER}" ]; then
                 # run without sudo, when java process user is current user

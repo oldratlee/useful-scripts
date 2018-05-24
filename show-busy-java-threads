@@ -188,6 +188,7 @@ fi
 readonly uuid="${PROG}_`date +%s`_${RANDOM}_$$"
 readonly store_dir="/tmp/${uuid}"
 mkdir -p "$store_dir"
+readonly jstack_file_path_prefix="$store_dir/jstack_"
 
 cleanupWhenExit() {
     rm -rf "$store_dir" &> /dev/null
@@ -204,8 +205,8 @@ printStackOfThreads() {
         local pcpu="${line[2]}"
         local user="${line[3]}"
 
-        ((idx++))
-        local jstackFile="$store_dir/${pid}"
+        (( idx++ ))
+        local jstackFile="$jstack_file_path_prefix${pid}"
         [ -f "${jstackFile}" ] || {
             if [ "${user}" == "${USER}" ]; then
                 # run without sudo, when java process user is current user
@@ -243,11 +244,14 @@ printStackOfThreads() {
         fi
         sed "$sed_script" -n ${jstackFile} | tee ${append_file:+-a "$append_file"}
     done
+
+    # rm stack files, so as to re-jstack at next update
+    rm "$jstack_file_path_prefix"* &> /dev/null
 }
 
 headInfo() {
     colorEcho "0;34;42" ================================================================================
-    echo "$(date "+%Y-%m-%d %H:%M:%S.%N") [$((i+1))/$update_count]: ${COMMAND_LINE[@]}"
+    echo "$(date "+%Y-%m-%d %H:%M:%S.%N") [$(( i + 1 ))/$update_count]: ${COMMAND_LINE[@]}"
     colorEcho "0;34;42" ================================================================================
     echo
 }
@@ -290,19 +294,19 @@ findBusyJavaThreadsByTop() {
                 print $1 " " threadId " " pcpu " " $3; exit
             }' )"
         if [ -n "$output_fields" ]; then
-            ((idx++))
+            (( idx++ ))
             echo "$output_fields"
         fi
     done < <(HOME="$store_dir" top -H -b -n 1 | awk '$NF=="java"{print $1 " " $9}' | sort -k2,2nr)
     # top output field: thread id, %cpu
     #
     # 1. sort by %cpu by top option `-o %CPU`
-    #    unfortunately, top version 3.2 not supports -o option(supports from top version 3.3+),
+    #    unfortunately, top version 3.2 does not support -o option(supports from top version 3.3+),
     #    use
     #       HOME="$store_dir" top -H -b -n 1 | awk '$NF=="java"{print $1 " " $9}' | sort -k2,2nr
     #    instead of
     #       HOME="$store_dir" top -H -b -n 1 -o '%CPU' | awk '$NF=="java"{print $1 " " $9}'
-    # 2. change HOME env var for running top,
+    # 2. change HOME env var when run top,
     #    so as to prevent top command output format being change by .toprc user config file unexpectedly
 }
 

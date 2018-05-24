@@ -371,7 +371,7 @@ Example:
   find-in-jars 'log4j\.properties'
   find-in-jars '^log4j\.(properties|xml)$' # search file log4j.properties/log4j.xml at zip root
   find-in-jars 'log4j\.properties$' -d /path/to/find/directory
-  find-in-jars 'log4j\.properties' -d /path/to/find/dir1 -d /path/to/find/dir2
+  find-in-jars 'log4j\.properties' -d /path/to/find/dir1 -d path/to/find/dir2
   find-in-jars 'log4j\.properties' -e jar -e zip
   find-in-jars 'log4j\.properties' -s ' <-> '
 

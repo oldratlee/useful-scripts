@@ -16,6 +16,8 @@ readonly PROG="`basename "$0"`"
 usage() {
     [ -n "$1" -a "$1" != 0 ] && local out=/dev/stderr || local out=/dev/stdout
 
+    [ $# -gt 1 ] && { echo "$2"; echo; } > $out
+
     > $out cat <<EOF
 Usage: ${PROG} [OPTION]... PATTERN
 Find file in the jar files under specified directory(recursive, include subdirectory).
@@ -25,7 +27,7 @@ Example:
   ${PROG} 'log4j\.properties'
   ${PROG} '^log4j\.(properties|xml)$' # search file log4j.properties/log4j.xml at zip root
   ${PROG} 'log4j\.properties$' -d /path/to/find/directory
-  ${PROG} 'log4j\.properties' -d /path/to/find/dir1 -d /path/to/find/dir2
+  ${PROG} 'log4j\.properties' -d /path/to/find/dir1 -d path/to/find/dir2
   ${PROG} 'log4j\.properties' -e jar -e zip
   ${PROG} 'log4j\.properties' -s ' <-> '
 
@@ -106,9 +108,7 @@ while [ $# -gt 0 ]; do
         break
         ;;
     -*)
-        echo "${PROG}: unrecognized option '$1'" 1>&2
-        echo 1>&2
-        usage 2;
+        usage 2 "${PROG}: unrecognized option '$1'"
         ;;
     *)
         args=("${args[@]}" "$1")
@@ -120,8 +120,8 @@ dirs=${dirs:-.}
 extension=${extension:-jar}
 seperator="${seperator:-!}"
 
-[ "${#args[@]}" -eq 0 ] && { echo "No find file pattern!" 1>&2 ; usage 1; }
-[ "${#args[@]}" -gt 1 ] && { echo "More than 1 file pattern!" 1>&2 ; usage 1; }
+[ "${#args[@]}" -eq 0 ] && usage 1 "No find file pattern!"
+[ "${#args[@]}" -gt 1 ] && usage 1 "More than 1 file pattern!"
 readonly pattern="${args[0]}"
 
 # convert dirs to Absolute Path.

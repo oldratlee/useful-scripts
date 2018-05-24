@@ -17,6 +17,8 @@ readonly PROG="`basename "$0"`"
 usage() {
     [ -n "$1" -a "$1" != 0 ] && local out=/dev/stderr || local out=/dev/stdout
 
+    [ $# -gt 1 ] && { echo "$2"; echo; } > $out
+
     > $out cat <<EOF
 Usage: ${PROG} [OPTION]... [command [command_args ...]]
 Run command and put output to system clipper.
@@ -62,9 +64,7 @@ while [ $# -gt 0 ]; do
         break
         ;;
     -*)
-        echo "${PROG}: unrecognized option '$1'" 1>&2
-        echo 1>&2
-        usage 2;
+        usage 2 "${PROG}: unrecognized option '$1'"
         ;;
     *)
         # if not option, treat all follow args as command

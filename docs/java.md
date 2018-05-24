@@ -340,16 +340,26 @@ class paths to find:
 find-in-jars 'log4j\.properties'
 find-in-jars 'log4j\.xml$'
 find-in-jars log4j\\.xml$ # 和上面命令一样，Shell转义的不同写法而已
-find-in-jars 'log4j(\.properties|\.xml)$'
+find-in-jars 'log4j\.(properties|xml)$'
 
 # -d选项 指定 查找目录（覆盖缺省的当前目录）
 find-in-jars 'log4j\.properties$' -d /path/to/find/directory
-# 支持多个查找目录
+# 支持多个查找目录，多次指定这个选项即可
 find-in-jars 'log4j\.properties' -d /path/to/find/directory1 -d /path/to/find/directory2
+
+# -e选项 指定 查找`zip`文件的扩展名，缺省是`jar`
+find-in-jars 'log4j\.properties' -e zip
+# 支持多种查找扩展名，多次指定这个选项即可
+find-in-jars 'log4j\.properties' -e jar -e zip
 
 # -a选项 指定 查找结果中的Jar文件使用绝对路径
 # 分享给别人时，Jar文件路径是完整的，方便别人找到文件
 find-in-jars 'log4j\.properties' -a
+
+# -s选项 指定 查找结果中的Jar文件和Jar文件里的查找Entry间分隔符，缺省是『!』
+# 方便你喜欢的人眼查看，或是与工具脚本如`awk`的处理
+find-in-jars 'log4j\.properties' -s ' <-> '
+find-in-jars 'log4j\.properties' -s ' ' | awk '{print $2}'
 
 # 帮助信息
 $ find-in-jars -h
@@ -359,20 +369,28 @@ The pattern default is *extended* regex.
 
 Example:
   find-in-jars 'log4j\.properties'
-  find-in-jars '^log4j(\.properties|\.xml)$' # search file log4j.properties/log4j.xml at zip root
+  find-in-jars '^log4j\.(properties|xml)$' # search file log4j.properties/log4j.xml at zip root
   find-in-jars 'log4j\.properties$' -d /path/to/find/directory
   find-in-jars 'log4j\.properties' -d /path/to/find/dir1 -d /path/to/find/dir2
+  find-in-jars 'log4j\.properties' -e jar -e zip
+  find-in-jars 'log4j\.properties' -s ' <-> '
 
-Options:
+Find control:
   -d, --dir              the directory that find jar files, default is current directory.
                          this option can specify multiply times to find in multiply directories.
-  -s, --seperator        seperator for jar file and file entry, default is `!'.
+  -e, --extension        set find file extension, default is jar.
+                         this option can specify multiply times to find in multiply extension.
   -E, --extended-regexp  PATTERN is an extended regular expression (*default*)
   -F, --fixed-strings    PATTERN is a set of newline-separated strings
   -G, --basic-regexp     PATTERN is a basic regular expression
   -P, --perl-regexp      PATTERN is a Perl regular expression
   -i, --ignore-case      ignore case distinctions
+
+Output control:
   -a, --absolute-path    always print absolute path of jar file
+  -s, --seperator        seperator for jar file and file entry, default is `!'.
+
+Miscellaneous:
   -h, --help             display this help and exit
 ```
 

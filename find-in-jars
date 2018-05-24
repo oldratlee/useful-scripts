@@ -23,20 +23,28 @@ The pattern default is *extended* regex.
 
 Example:
   ${PROG} 'log4j\.properties'
-  ${PROG} '^log4j(\.properties|\.xml)$' # search file log4j.properties/log4j.xml at zip root
+  ${PROG} '^log4j\.(properties|xml)$' # search file log4j.properties/log4j.xml at zip root
   ${PROG} 'log4j\.properties$' -d /path/to/find/directory
   ${PROG} 'log4j\.properties' -d /path/to/find/dir1 -d /path/to/find/dir2
+  ${PROG} 'log4j\.properties' -e jar -e zip
+  ${PROG} 'log4j\.properties' -s ' <-> '
 
-Options:
+Find control:
   -d, --dir              the directory that find jar files, default is current directory.
                          this option can specify multiply times to find in multiply directories.
-  -s, --seperator        seperator for jar file and file entry, default is \`!'.
+  -e, --extension        set find file extension, default is jar.
+                         this option can specify multiply times to find in multiply extension.
   -E, --extended-regexp  PATTERN is an extended regular expression (*default*)
   -F, --fixed-strings    PATTERN is a set of newline-separated strings
   -G, --basic-regexp     PATTERN is a basic regular expression
   -P, --perl-regexp      PATTERN is a Perl regular expression
   -i, --ignore-case      ignore case distinctions
+
+Output control:
   -a, --absolute-path    always print absolute path of jar file
+  -s, --seperator        seperator for jar file and file entry, default is \`!'.
+
+Miscellaneous:
   -h, --help             display this help and exit
 EOF
 
@@ -55,6 +63,10 @@ while [ $# -gt 0 ]; do
     case "$1" in
     -d|--dir)
         dirs=("${dirs[@]}" "$2")
+        shift 2
+        ;;
+    -e|--extension)
+        extension=("${extension[@]}" "$2")
         shift 2
         ;;
     -s|--seperator)
@@ -105,6 +117,7 @@ while [ $# -gt 0 ]; do
     esac
 done
 dirs=${dirs:-.}
+extension=${extension:-jar}
 seperator="${seperator:-!}"
 
 [ "${#args[@]}" -eq 0 ] && { echo "No find file pattern!" 1>&2 ; usage 1; }
@@ -121,6 +134,14 @@ $use_absolute_path && {
 
     dirs=( "${tmp_dirs[@]}" )
 }
+
+# convert to find -iname options
+for e in "${extension[@]}"; do
+    [ 0 -eq "${#find_iname_options[@]}" ] &&
+        find_iname_options=( -iname "*.$e" ) ||
+        find_iname_options=( "${find_iname_options[@]}" -o -iname "*.$e" )
+done
+
 
 ################################################################################
 # Check the existence of command for listing zip entry!
@@ -194,7 +215,7 @@ clearResponsiveMessage() {
 # find logic
 ################################################################################
 
-readonly jar_files="$(find "${dirs[@]}" -iname '*.jar' -type f)"
+readonly jar_files="$(find "${dirs[@]}" "${find_iname_options[@]}" -type f)"
 readonly total_count="$(echo "$jar_files" | wc -l)"
 [ -z "$jar_files" ] && {
     echo "No jar found!" 1>&2

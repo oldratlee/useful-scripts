@@ -97,5 +97,8 @@ teeAndCopy() {
     ) > $out
 }
 
-[ ${#args[@]} -eq 0 ] && teeAndCopy ||
-                "${args[@]}" | teeAndCopy
+if [ ${#args[@]} -eq 0 ]; then
+    teeAndCopy
+else
+    "${args[@]}" | teeAndCopy
+fi

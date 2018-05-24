@@ -98,6 +98,10 @@ Options:
                             default from all java process.
   -c, --count <num>         set the thread count to show, default is 5
   -a, --append-file <file>  specify the file to append output as log
+  -P, --use-ps              use ps command to find busy thead(cpu usage) instead of top command,
+                            default use top command, because cpu usage of ps command is expressed as
+                            the percentage of time spent running during the entire lifetime of a process,
+                            this is not ideal.
   -s, --jstack-path <path>  specify the path of jstack command
   -F, --force               set jstack to force a thread dump
                             use when jstack <pid> does not respond (process is hung)

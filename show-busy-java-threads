@@ -185,7 +185,8 @@ fi
 # biz logic
 ################################################################################
 
-readonly uuid="${PROG}_`date +%s`_${RANDOM}_$$"
+readonly run_timestamp="`date "+%Y-%m-%d_%H:%M:%S.%N"`"
+readonly uuid="${PROG}_${run_timestamp}_${RANDOM}_$$"
 readonly store_dir="/tmp/${uuid}"
 mkdir -p "$store_dir"
 readonly jstack_file_path_prefix="$store_dir/jstack_"
@@ -196,6 +197,8 @@ cleanupWhenExit() {
 trap "cleanupWhenExit" EXIT
 
 printStackOfThreads() {
+    local update_round_num="$1"
+
     local -a line
     local idx=0
     while IFS=" " read -a line ; do
@@ -206,7 +209,7 @@ printStackOfThreads() {
         local user="${line[3]}"
 
         (( idx++ ))
-        local jstackFile="$jstack_file_path_prefix${pid}"
+        local jstackFile="$jstack_file_path_prefix${update_round_num}_${pid}"
         [ -f "${jstackFile}" ] || {
             if [ "${user}" == "${USER}" ]; then
                 # run without sudo, when java process user is current user
@@ -244,9 +247,6 @@ printStackOfThreads() {
         fi
         sed "$sed_script" -n ${jstackFile} | tee ${append_file:+-a "$append_file"}
     done
-
-    # rm stack files, so as to re-jstack at next update
-    rm "$jstack_file_path_prefix"* &> /dev/null
 }
 
 headInfo() {
@@ -321,5 +321,5 @@ for (( i = 0; update_count <= 0 || i < update_count; ++i )); do
         findBusyJavaThreadsByPs
     else
         findBusyJavaThreadsByTop
-    fi | printStackOfThreads
+    fi | printStackOfThreads $(( i + 1 ))
 done

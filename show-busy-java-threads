@@ -67,7 +67,11 @@ fatal() {
 }
 
 usage() {
-    [ -n "$1" -a "$1" != 0 ] && local out=/dev/stderr || local out=/dev/stdout
+    local -r exit_code="$1"
+    shift
+    [ -n "$exit_code" -a "$exit_code" != 0 ] && local -r out=/dev/stderr || local -r out=/dev/stdout
+
+    (( $# > 0 )) && { echo "$@"; echo; } > $out
 
     > $out cat <<EOF
 Usage: ${PROG} [OPTION]... [delay [count]]
@@ -88,6 +92,9 @@ Options:
                             the percentage of time spent running during the entire lifetime of a process,
                             this is not ideal.
   -s, --jstack-path <path>  specify the path of jstack command
+  -S, --jstack-file-dir <path>  specify the dir for storing jstack output files, and keep files.
+                            default store jstack output files at tmp dir, and auto remove after run.
+                            use this option to keep files so as to review jstack later.
   -F, --force               set jstack to force a thread dump
                             use when jstack <pid> does not respond (process is hung)
   -m, --mix-native-frames   set jstack to print both java and native frames (mixed mode)
@@ -98,7 +105,7 @@ Options:
                             delay/count arguments imitates the style of vmstat command
 EOF
 
-    exit $1
+    exit $exit_code
 }
 
 ################################################################################
@@ -111,7 +118,7 @@ uname | grep '^Linux' -q || fatal "Error: $PROG only support Linux, not support 
 # parse options
 ################################################################################
 
-readonly ARGS=`getopt -n "$PROG" -a -o p:c:a:s:PFmlh -l count:,pid:,append-file:,jstack-path:,use-ps,force,mix-native-frames,lock-info,help -- "$@"`
+readonly ARGS=`getopt -n "$PROG" -a -o p:c:a:s:S:PFmlh -l count:,pid:,append-file:,jstack-path:,jstack-file-dir:,use-ps,force,mix-native-frames,lock-info,help -- "$@"`
 [ $? -ne 0 ] && usage 1
 eval set -- "${ARGS}"
 
@@ -131,6 +138,10 @@ while true; do
         ;;
     -s|--jstack-path)
         jstack_path="$2"
+        shift 2
+        ;;
+    -S|--jstack-file-dir)
+        jstack_file_dir="$2"
         shift 2
         ;;
     -P|--use-ps)
@@ -161,6 +172,15 @@ done
 count=${count:-5}
 use_ps=${use_ps:-false}
 
+if [ -n "$jstack_file_dir" -a -e "$jstack_file_dir" ]; then
+    if [ ! -d "$jstack_file_dir" ]; then
+        usage 1 "$jstack_file_dir exists but is not a directory!"
+    fi
+    if [ ! -w "$jstack_file_dir" ]; then
+        usage 1 "$jstack_file_dir directory exists but is not writable!"
+    fi
+fi
+
 update_delay=${1:-0}
 [ -z "$1" ] && update_count=1 || update_count=${2:-0}
 (( update_count < 0 )) && update_count=0
@@ -187,12 +207,18 @@ fi
 
 readonly run_timestamp="`date "+%Y-%m-%d_%H:%M:%S.%N"`"
 readonly uuid="${PROG}_${run_timestamp}_${RANDOM}_$$"
-readonly store_dir="/tmp/${uuid}"
-mkdir -p "$store_dir"
-readonly jstack_file_path_prefix="$store_dir/jstack_"
+readonly tmp_store_dir="/tmp/${uuid}"
+mkdir -p "$tmp_store_dir"
+
+if [ -n "$jstack_file_dir" ]; then
+    mkdir -p "$jstack_file_dir"
+    readonly jstack_file_path_prefix="$jstack_file_dir/jstack_${run_timestamp}_"
+else
+    readonly jstack_file_path_prefix="$tmp_store_dir/jstack_${run_timestamp}_"
+fi
 
 cleanupWhenExit() {
-    rm -rf "$store_dir" &> /dev/null
+    rm -rf "$tmp_store_dir" &> /dev/null
 }
 trap "cleanupWhenExit" EXIT
 
@@ -227,7 +253,7 @@ printStackOfThreads() {
             fi || {
                 redPrint "[$idx] Fail to jstack busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user})."
                 normalPrint
-                rm ${jstackFile}
+                rm "${jstackFile}" &> /dev/null
                 continue
             }
         }
@@ -297,15 +323,15 @@ findBusyJavaThreadsByTop() {
             (( idx++ ))
             echo "$output_fields"
         fi
-    done < <(HOME="$store_dir" top -H -b -n 1 | awk '$NF=="java"{print $1 " " $9}' | sort -k2,2nr)
+    done < <(HOME="$tmp_store_dir" top -H -b -n 1 | awk '$NF=="java"{print $1 " " $9}' | sort -k2,2nr)
     # top output field: thread id, %cpu
     #
     # 1. sort by %cpu by top option `-o %CPU`
     #    unfortunately, top version 3.2 does not support -o option(supports from top version 3.3+),
     #    use
-    #       HOME="$store_dir" top -H -b -n 1 | awk '$NF=="java"{print $1 " " $9}' | sort -k2,2nr
+    #       HOME="$tmp_store_dir" top -H -b -n 1 | awk '$NF=="java"{print $1 " " $9}' | sort -k2,2nr
     #    instead of
-    #       HOME="$store_dir" top -H -b -n 1 -o '%CPU' | awk '$NF=="java"{print $1 " " $9}'
+    #       HOME="$tmp_store_dir" top -H -b -n 1 -o '%CPU' | awk '$NF=="java"{print $1 " " $9}'
     # 2. change HOME env var when run top,
     #    so as to prevent top command output format being change by .toprc user config file unexpectedly
 }

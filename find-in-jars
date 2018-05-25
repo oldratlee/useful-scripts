@@ -14,9 +14,11 @@
 readonly PROG="`basename "$0"`"
 
 usage() {
-    [ -n "$1" -a "$1" != 0 ] && local out=/dev/stderr || local out=/dev/stdout
+    local -r exit_code="$1"
+    shift
+    [ -n "$exit_code" -a "$exit_code" != 0 ] && local -r out=/dev/stderr || local -r out=/dev/stdout
 
-    [ $# -gt 1 ] && { echo "$2"; echo; } > $out
+    (( $# > 0 )) && { echo "$@"; echo; } > $out
 
     > $out cat <<EOF
 Usage: ${PROG} [OPTION]... PATTERN

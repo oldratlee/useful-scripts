@@ -301,12 +301,25 @@ __top_threadId_cpu() {
     # 1. sort by %cpu by top option `-o %CPU`
     #    unfortunately, top version 3.2 does not support -o option(supports from top version 3.3+),
     #    use
-    #       HOME="$tmp_store_dir" top -H -b -n 1 | awk '$NF=="java"{print $1 " " $9}' | sort -k2,2nr
+    #       HOME="$tmp_store_dir" top -H -b -n 1
+    #    combined
+    #       sort
     #    instead of
-    #       HOME="$tmp_store_dir" top -H -b -n 1 -o '%CPU' | awk '$NF=="java"{print $1 " " $9}'
+    #       HOME="$tmp_store_dir" top -H -b -n 1 -o '%CPU'
     # 2. change HOME env var when run top,
     #    so as to prevent top command output format being change by .toprc user config file unexpectedly
-    HOME="$tmp_store_dir" top -H -b -n 1 | awk '$NF=="java"{print $1 " " $9}' | sort -k2,2nr
+    # 3. use option `-d 0.1`(interval 0.1 second) and `-n 2`(show 2 times), and use second time update data
+    #    to get cpu percentage of thread in 0.1 second interval
+    HOME="$tmp_store_dir" top -H -b -d 0.1 -n 2 |
+        awk '{
+                if (idx == 3 && $0 != "")
+                    # only print 4th text block
+                    # aka. process info of second top update
+                    print
+                if($0 == "")
+                    idx++
+            }' |
+        awk '$NF=="java"{print $1 " " $9}' | sort -k2,2nr
 }
 
 # output is same as function findBusyJavaThreadsByPs

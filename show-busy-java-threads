@@ -87,7 +87,7 @@ Options:
                             default from all java process.
   -c, --count <num>         set the thread count to show, default is 5
   -a, --append-file <file>  specify the file to append output as log
-  -P, --use-ps              use ps command to find busy thead(cpu usage) instead of top command,
+  -P, --use-ps              use ps command to find busy thread(cpu usage) instead of top command,
                             default use top command, because cpu usage of ps command is expressed as
                             the percentage of time spent running during the entire lifetime of a process,
                             this is not ideal.
@@ -296,6 +296,19 @@ findBusyJavaThreadsByPs() {
     ps $ps_options -wwLo pid,lwp,pcpu,user --sort -pcpu --no-headers | head -n "${count}"
 }
 
+# top with output field: thread id, %cpu
+__top_threadId_cpu() {
+    # 1. sort by %cpu by top option `-o %CPU`
+    #    unfortunately, top version 3.2 does not support -o option(supports from top version 3.3+),
+    #    use
+    #       HOME="$tmp_store_dir" top -H -b -n 1 | awk '$NF=="java"{print $1 " " $9}' | sort -k2,2nr
+    #    instead of
+    #       HOME="$tmp_store_dir" top -H -b -n 1 -o '%CPU' | awk '$NF=="java"{print $1 " " $9}'
+    # 2. change HOME env var when run top,
+    #    so as to prevent top command output format being change by .toprc user config file unexpectedly
+    HOME="$tmp_store_dir" top -H -b -n 1 | awk '$NF=="java"{print $1 " " $9}' | sort -k2,2nr
+}
+
 # output is same as function findBusyJavaThreadsByPs
 findBusyJavaThreadsByTop() {
     if [ -n "${pid}" ]; then
@@ -323,17 +336,7 @@ findBusyJavaThreadsByTop() {
             (( idx++ ))
             echo "$output_fields"
         fi
-    done < <(HOME="$tmp_store_dir" top -H -b -n 1 | awk '$NF=="java"{print $1 " " $9}' | sort -k2,2nr)
-    # top output field: thread id, %cpu
-    #
-    # 1. sort by %cpu by top option `-o %CPU`
-    #    unfortunately, top version 3.2 does not support -o option(supports from top version 3.3+),
-    #    use
-    #       HOME="$tmp_store_dir" top -H -b -n 1 | awk '$NF=="java"{print $1 " " $9}' | sort -k2,2nr
-    #    instead of
-    #       HOME="$tmp_store_dir" top -H -b -n 1 -o '%CPU' | awk '$NF=="java"{print $1 " " $9}'
-    # 2. change HOME env var when run top,
-    #    so as to prevent top command output format being change by .toprc user config file unexpectedly
+    done < <( __top_threadId_cpu )
 }
 
 # if update_count <= 0, infinite loop till user interrupted (eg: CTRL+C)

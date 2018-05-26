@@ -127,8 +127,11 @@ uname | grep '^Linux' -q || fatal "Error: $PROG only support Linux, not support 
 # parse options
 ################################################################################
 
-readonly ARGS=`getopt -n "$PROG" -a -o p:c:a:s:S:Pd:Fmlh -l count:,pid:,append-file:,jstack-path:,jstack-file-dir:,use-ps,top-delay:,force,mix-native-frames,lock-info,help -- "$@"`
-[ $? -ne 0 ] && usage 1
+# NOTE: ARGS can not be declared as readonly!!
+# readonly declaration make exit code of assignment to be always 0, aka. the exit code of `getopt` in subshell is discarded.
+#   tested on bash 4.2.46
+ARGS=`getopt -n "$PROG" -a -o p:c:a:s:S:Pd:Fmlh -l count:,pid:,append-file:,jstack-path:,jstack-file-dir:,use-ps,top-delay:,force,mix-native-frames,lock-info,help -- "$@"`
+[ $? -ne 0 ] && { echo; usage 1; }
 eval set -- "${ARGS}"
 
 while true; do
@@ -275,8 +278,7 @@ __top_threadId_cpu() {
     HOME="$tmp_store_dir" top -H -b -d $top_delay -n 2 |
         awk '{
                 if (idx == 3 && $NF == "java")    # $NF is command
-                    # only print 4th text block(idx == 3)
-                    #   aka. process info of second top update
+                    # only print 4th text block(idx == 3), aka. process info of second top update
                     print $1 " " $9    # $1 is thread id, $9 is %cpu
                 if ($0 == "")
                     idx++

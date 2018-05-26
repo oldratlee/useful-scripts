@@ -101,7 +101,7 @@ Output control:
                             default from all java process.
   -c, --count <num>         set the thread count to show, default is 5.
   -a, --append-file <file>  specifies the file to append output as log.
-  -S, --jstack-file-dir <path>  specifies the dir for storing jstack output files, and keep files.
+  -S, --jstack-file-dir <path>  specifies the directory for storing jstack output files, and keep files.
                             default store jstack output files at tmp dir, and auto remove after run.
                             use this option to keep files so as to review jstack later.
   delay                     the delay between updates in seconds.

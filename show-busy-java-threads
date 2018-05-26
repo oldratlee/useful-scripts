@@ -87,7 +87,7 @@ Output control:
                             default from all java process.
   -c, --count <num>         set the thread count to show, default is 5.
   -a, --append-file <file>  specifies the file to append output as log.
-  -S, --jstack-file-dir <path>  specifies the dir for storing jstack output files, and keep files.
+  -S, --jstack-file-dir <path>  specifies the directory for storing jstack output files, and keep files.
                             default store jstack output files at tmp dir, and auto remove after run.
                             use this option to keep files so as to review jstack later.
   delay                     the delay between updates in seconds.
@@ -189,9 +189,13 @@ count=${count:-5}
 use_ps=${use_ps:-false}
 top_delay=${top_delay:-0.5}
 
-if [ -n "$jstack_file_dir" -a -e "$jstack_file_dir" ]; then
-    [ ! -d "$jstack_file_dir" ] && fatal "Error: $jstack_file_dir(specified by option -S, the dir for storing jstack output files) exists but is not a directory!"
-    [ ! -w "$jstack_file_dir" ] && fatal "Error: directory $jstack_file_dir(specified by option -S, the dir for storing jstack output files) exists but is not writable!"
+if [ -n "$jstack_file_dir" ]; then
+    if [ -e "$jstack_file_dir" ]; then
+        [ ! -d "$jstack_file_dir" ] && fatal "Error: $jstack_file_dir(specified by option -S, for storing jstack output files) exists but is not a directory!"
+        [ ! -w "$jstack_file_dir" ] && fatal "Error: directory $jstack_file_dir(specified by option -S, for storing jstack output files) exists but is not writable!"
+    else
+        mkdir -p "$jstack_file_dir" && fatal "Error: fail to create directory $jstack_file_dir(specified by option -S, for storing jstack output files)!"
+    fi
 fi
 
 update_delay=${1:-0}
@@ -224,7 +228,6 @@ readonly tmp_store_dir="/tmp/${uuid}"
 mkdir -p "$tmp_store_dir"
 
 if [ -n "$jstack_file_dir" ]; then
-    mkdir -p "$jstack_file_dir"
     readonly jstack_file_path_prefix="$jstack_file_dir/jstack_${run_timestamp}_"
 else
     readonly jstack_file_path_prefix="$tmp_store_dir/jstack_${run_timestamp}_"

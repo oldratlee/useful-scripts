@@ -52,7 +52,7 @@ show-busy-java-threads
 # 从所有运行的Java进程中找出最消耗CPU的线程（缺省5个），打印出其线程栈
 
 # 缺省会自动从所有的Java进程中找出最消耗CPU的线程，这样用更方便
-# 当然你可以手动指定要分析的Java进程Id，以保证只会显示出那个你关心的Java进程的信息
+# 当然你可以手动指定要分析的Java进程Id，以保证只会显示出那个你关心的那个Java进程的信息
 show-busy-java-threads -p <指定的Java进程Id>
 
 show-busy-java-threads -c <要显示的线程栈数>
@@ -60,8 +60,11 @@ show-busy-java-threads -c <要显示的线程栈数>
 show-busy-java-threads <重复执行的间隔秒数> [<重复执行的次数>]
 # 多次执行；这2个参数的使用方式类似vmstat命令
 
-show-busy-java-threads -a <输出记录到的文件>
+show-busy-java-threads -a <运行输出的记录到的文件>
 # 记录到文件以方便回溯查看
+
+show-duplicate-java-classes -S <存储jstack输出文件的目录>
+# 指定jstack输出文件的存储目录，方便记录以后续分析
 
 ##############################
 # 注意：
@@ -93,30 +96,36 @@ Example:
   show-busy-java-threads 1     # update every 1 second, (stop by eg: CTRL+C)
   show-busy-java-threads 3 10  # update every 3 seconds, update 10 times
 
-Options:
+Output control:
   -p, --pid <java pid>      find out the highest cpu consumed threads from the specified java process,
                             default from all java process.
   -c, --count <num>         set the thread count to show, default is 5.
   -a, --append-file <file>  specifies the file to append output as log.
-  -P, --use-ps              use ps command to find busy thread(cpu usage) instead of top command,
-                            default use top command, because cpu usage of ps command is expressed as
-                            the percentage of time spent running during the entire lifetime of a process,
-                            this is not ideal.
-  -d, --top-delay           specifies the delay between top samples, default is 0.5 (second).
-                            get thread cpu percentage during this delay interval.
-                            more info see top -d option. eg: -d 1 (1 second).
-  -s, --jstack-path <path>  specifies the path of jstack command.
   -S, --jstack-file-dir <path>  specifies the dir for storing jstack output files, and keep files.
                             default store jstack output files at tmp dir, and auto remove after run.
                             use this option to keep files so as to review jstack later.
+  delay                     the delay between updates in seconds.
+  count                     the number of updates.
+                            delay/count arguments imitates the style of vmstat command.
+
+jstack control:
+  -s, --jstack-path <path>  specifies the path of jstack command.
   -F, --force               set jstack to force a thread dump.
                             use when jstack <pid> does not respond (process is hung).
   -m, --mix-native-frames   set jstack to print both java and native frames (mixed mode).
   -l, --lock-info           set jstack with long listing. Prints additional information about locks.
+
+cpu usage calculation control:
+  -d, --top-delay           specifies the delay between top samples, default is 0.5 (second).
+                            get thread cpu percentage during this delay interval.
+                            more info see top -d option. eg: -d 1 (1 second).
+  -P, --use-ps              use ps command to find busy thread(cpu usage) instead of top command,
+                            default use top command, because cpu usage of ps command is expressed as
+                            the percentage of time spent running during the entire lifetime of a process,
+                            this is not ideal.
+
+Miscellaneous:
   -h, --help                display this help and exit.
-  delay                     the delay between updates in seconds.
-  count                     the number of updates.
-                            delay/count arguments imitates the style of vmstat command.
 ```
 
 ### 示例

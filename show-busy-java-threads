@@ -230,6 +230,7 @@ cleanupWhenExit() {
 }
 trap "cleanupWhenExit" EXIT
 
+
 headInfo() {
     colorEcho "0;34;42" ================================================================================
     echo "$(date "+%Y-%m-%d %H:%M:%S.%N") [$(( i + 1 ))/$update_count]: ${COMMAND_LINE[@]}"
@@ -271,7 +272,7 @@ __top_threadId_cpu() {
                     # only print 4th text block(idx == 3)
                     #   aka. process info of second top update
                     print $1 " " $9    # $1 is thread id, $9 is %cpu
-                if($0 == "")
+                if ($0 == "")
                     idx++
         }' | sort -k2,2nr
 }
@@ -359,16 +360,25 @@ printStackOfThreads() {
     done
 }
 
-# if update_count <= 0, infinite loop till user interrupted (eg: CTRL+C)
-for (( i = 0; update_count <= 0 || i < update_count; ++i )); do
-    (( i > 0 )) && sleep "$update_delay"
+################################################################################
+# Main
+################################################################################
 
-    [ -n "$append_file" ] && headInfo >> "$append_file"
-    (( update_count != 1 )) && headInfo
+main() {
+    local i
+    # if update_count <= 0, infinite loop till user interrupted (eg: CTRL+C)
+    for (( i = 0; update_count <= 0 || i < update_count; ++i )); do
+        (( i > 0 )) && sleep "$update_delay"
 
-    if $use_ps; then
-        findBusyJavaThreadsByPs
-    else
-        findBusyJavaThreadsByTop
-    fi | printStackOfThreads $(( i + 1 ))
-done
+        [ -n "$append_file" ] && headInfo >> "$append_file"
+        (( update_count != 1 )) && headInfo
+
+        if $use_ps; then
+            findBusyJavaThreadsByPs
+        else
+            findBusyJavaThreadsByTop
+        fi | printStackOfThreads $(( i + 1 ))
+    done
+}
+
+main

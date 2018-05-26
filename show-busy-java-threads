@@ -190,12 +190,8 @@ use_ps=${use_ps:-false}
 top_delay=${top_delay:-0.5}
 
 if [ -n "$jstack_file_dir" -a -e "$jstack_file_dir" ]; then
-    if [ ! -d "$jstack_file_dir" ]; then
-        usage 1 "$jstack_file_dir exists but is not a directory!"
-    fi
-    if [ ! -w "$jstack_file_dir" ]; then
-        usage 1 "$jstack_file_dir directory exists but is not writable!"
-    fi
+    [ ! -d "$jstack_file_dir" ] && fatal "Error: $jstack_file_dir(specified by option -S, the dir for storing jstack output files) exists but is not a directory!"
+    [ ! -w "$jstack_file_dir" ] && fatal "Error: directory $jstack_file_dir(specified by option -S, the dir for storing jstack output files) exists but is not writable!"
 fi
 
 update_delay=${1:-0}

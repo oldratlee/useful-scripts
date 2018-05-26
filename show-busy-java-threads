@@ -316,21 +316,20 @@ __top_threadId_cpu() {
     #       HOME="$tmp_store_dir" top -H -b -n 1 -o '%CPU'
     # 2. change HOME env var when run top,
     #    so as to prevent top command output format being change by .toprc user config file unexpectedly
-    # 3. use option `-d 0.1`(interval 0.1 second) and `-n 2`(show 2 times), and use second time update data
-    #    to get cpu percentage of thread in 0.1 second interval
+    # 3. use option `-d 0.5`(interval 0.5 second) and `-n 2`(show 2 times), and use second time update data
+    #    to get cpu percentage of thread in 0.5 second interval
     HOME="$tmp_store_dir" top -H -b -d $top_delay -n 2 |
         awk '{
-                if (idx == 3 && $0 != "")
-                    # only print 4th text block
-                    # aka. process info of second top update
-                    print
+                if (idx == 3 && $NF == "java")    # $NF is command
+                    # only print 4th text block(idx == 3)
+                    #   aka. process info of second top update
+                    print $1 " " $9    # $1 is thread id, $9 is %cpu
                 if($0 == "")
                     idx++
-            }' |
-        awk '$NF=="java"{print $1 " " $9}' | sort -k2,2nr
+        }' | sort -k2,2nr
 }
 
-# output is same as function findBusyJavaThreadsByPs
+# output format is same as function findBusyJavaThreadsByPs
 findBusyJavaThreadsByTop() {
     if [ -n "${pid}" ]; then
         local -r ps_options="-p $pid"

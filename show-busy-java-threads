@@ -37,7 +37,9 @@ colorPrint() {
     shift
 
     colorEcho "$color" "$@"
-    [ -n "$append_file" ] && echo "$@" >> "$append_file"
+    # use "{} &> /dev/null" to discard bash error message:
+    #    line 42: xxx.log: Permission denied
+    { [ -n "$append_file" ] && echo "$@" >> "$append_file"; } &> /dev/null
 }
 
 redPrint() {
@@ -189,6 +191,23 @@ count=${count:-5}
 use_ps=${use_ps:-false}
 top_delay=${top_delay:-0.5}
 
+# check the directory of append-file(-a) mode, create if not exsit.
+if [ -n "$append_file" ]; then
+    if [ -e "$append_file" ]; then
+        [ ! -f "$append_file" ] && fatal "Error: $append_file(specified by option -a, for storing run output files) exists but is not a file!"
+        [ ! -w "$append_file" ] && fatal "Error: file $append_file(specified by option -a, for storing run output files) exists but is not writable!"
+    else
+        append_file_dir="$(dirname "$append_file")"
+        if [ -e "$append_file_dir" ]; then
+            [ ! -d "$append_file_dir" ] && fatal "Error: directory $append_file_dir(specified by option -a, for storing run output files) exists but is not a directory!"
+            [ ! -w "$append_file_dir" ] && fatal "Error: directory $append_file_dir(specified by option -a, for storing run output files) exists but is not writable!"
+        else
+            mkdir -p "$append_file_dir" && fatal "Error: fail to create directory $append_file_dir(specified by option -a, for storing run output files)!"
+        fi
+    fi
+fi
+
+# check jstack-file directory(-S) mode, create directory if not exsit.
 if [ -n "$jstack_file_dir" ]; then
     if [ -e "$jstack_file_dir" ]; then
         [ ! -d "$jstack_file_dir" ] && fatal "Error: $jstack_file_dir(specified by option -S, for storing jstack output files) exists but is not a directory!"

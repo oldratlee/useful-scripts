@@ -1,11 +1,13 @@
 #!/bin/bash
 # @Function
-# Open file in file explorer.
-# same as xpl --selected [FILE]
+# Open file in file explorer, file is selected.
+# same as xpl --selected [file [file ...] ]
 #
 # @Usage
 #   $ ./xpf file
 #
-# @author Jerry Lee
-BASE=`dirname $0`
-. $BASE/xpl "$@"
+# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/shell.md#beer-xpl-and-xpf
+# @author Jerry Lee (oldratlee at gmail dot com)
+
+BASE="$(dirname "$0")"
+source "$BASE/xpl" "$@"

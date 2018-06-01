@@ -52,19 +52,19 @@ unzip release.zip
 下载和运行单个文件
 -------------------
 
-以[`show-busy-java-threads.sh`](https://raw.github.com/oldratlee/useful-scripts/release/show-busy-java-threads.sh)为例。
+以[`show-busy-java-threads`](https://raw.github.com/oldratlee/useful-scripts/release/show-busy-java-threads)为例。
 
 ### `curl`文件直接用`bash`运行
 
 ```bash
-curl -sLk 'https://raw.github.com/oldratlee/useful-scripts/release/show-busy-java-threads.sh' | bash
+curl -sLk 'https://raw.github.com/oldratlee/useful-scripts/release/show-busy-java-threads' | bash
 ```
 
 ### 下载单个文件
 
 ```bash
-wget --no-check-certificate https://raw.github.com/oldratlee/useful-scripts/release/show-busy-java-threads.sh
-chmod +x show-busy-java-threads.sh
+wget --no-check-certificate https://raw.github.com/oldratlee/useful-scripts/release/show-busy-java-threads
+chmod +x show-busy-java-threads
 
-./show-busy-java-threads.sh
+./show-busy-java-threads
 ```

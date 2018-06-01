@@ -8,7 +8,8 @@
 #   # if more than 1 argument, print relative path to last argument.
 #   $ ./rp a.txt ../b.txt /etc/passwd /etc/apache2
 #
-# @author Jerry Lee
+# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/shell.md#beer-ap-and-rp
+# @author Jerry Lee (oldratlee at gmail dot com)
 
 [ $# -eq 0 ] && {
     echo "ERROR: NO argument!"
@@ -23,8 +24,8 @@
     argc=$#
 
     # Get last argument
-    relativeTo="${argv[$((argc - 1))]}"
-    files=( "${argv[@]:0:$((argc - 1))}" )
+    relativeTo="${argv[argc - 1]}"
+    files=( "${argv[@]:0:argc - 1}" )
 }
 
 [ -f "$relativeTo" ] && relativeTo="$(dirname "$relativeTo")"

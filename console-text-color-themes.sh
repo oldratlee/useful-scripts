@@ -1,28 +1,28 @@
 #!/bin/bash
 # @Function
 # show all console text color themes.
+#
+# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/shell.md#beer-console-text-color-themessh
+# @author Jerry Lee (oldratlee at gmail dot com)
 
 readonly _ctct_PROG="$(basename "$(readlink -f "$0")")"
 [ "$_ctct_PROG" == 'console-text-color-themes.sh'  ] && readonly _ctct_is_direct_run=true
 
+readonly _ctct_ec=$'\033' # escape char
+readonly _ctct_eend=$'\033[0m' # escape end
+
 colorEcho() {
     local combination="$1"
     shift 1
-    [ -c /dev/stdout ] && {
-        echo -e -n "\033[${combination}m"
-        echo -e -n "$@"
-        echo -e "\033[0m"
-    } || echo "$@"
+
+    [ -t 1 ] && echo "$_ctct_ec[${combination}m$@$_ctct_eend" || echo "$@"
 }
 
 colorEchoWithoutNewLine() {
     local combination="$1"
     shift 1
-    [ -c /dev/stdout ] && {
-        echo -e -n "\033[${combination}m"
-        echo -e -n "$@"
-        echo -e -n "\033[0m"
-    } || echo -n "$@"
+
+    [ -t 1 ] && echo -n "$_ctct_ec[${combination}m$@$_ctct_eend" || echo -n "$@"
 }
 
 # if not directly run this script(use as lib), just export 2 helper functions,
@@ -41,13 +41,22 @@ colorEchoWithoutNewLine() {
     done
 
     echo "Code sample to print color text:"
+
     echo -n '    echo -e "\033['
     colorEchoWithoutNewLine "3;35;40" "1;36;41"
     echo -n "m"
     colorEchoWithoutNewLine "0;32;40" "Sample Text"
     echo "\033[0m\""
+
+    echo -n "    echo \$'\033["
+    colorEchoWithoutNewLine "3;35;40" "1;36;41"
+    echo -n "m'\""
+    colorEchoWithoutNewLine "0;32;40" "Sample Text"
+    echo "\"$'\033[0m'"
+    echo "      # NOTE: $'foo' is the escape sequence syntax of bash, safer escape"
+
     echo "Output of above code:"
-    echo -e "    \033[1;36;41mSample Text\033[0m"
+    echo "    $_ctct_ec[1;36;41mSample Text$_ctct_eend"
     echo
     echo "If you are going crazy to write text in escapes string like me,"
     echo "you can use colorEcho and colorEchoWithoutNewLine function in this script."

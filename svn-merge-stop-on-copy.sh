@@ -7,8 +7,9 @@
 #   $ ./svnmerge.sh <source branch> [target branch]
 #   if no target branch, merge to current svn direcotry
 #
+# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/vcs.md#beer-svn-merge-stop-on-copysh
 # @author jiangjizhong(@jzwlqx)
-# @author Jerry Lee
+# @author Jerry Lee (oldratlee at gmail dot com)
 
 PROG=`basename $0`
 

@@ -15,23 +15,22 @@
 #           _OPT_VALUE_c_long = (c.sh -p pv -q qv arg1) # Array type
 #           _OPT_ARGS = (aa bb cc) # Array type
 #
-# @author Jerry Lee
+# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/shell.md#beer-parseoptssh
+# @author Jerry Lee (oldratlee at gmail dot com)
 
 #####################################################################
-# Utils Methods
+# Util Funtions
 #####################################################################
+
+# NOTE: $'foo' is the escape sequence syntax of bash
+readonly _opts_ec=$'\033' # escape char
+readonly _opts_eend=$'\033[0m' # escape end
 
 _opts_colorEcho() {
     local color=$1
     shift
-    if [ -c /dev/stdout ] ; then
-        # if stdout is console, turn on color output.
-        echo -ne "\033[1;${color}m"
-        echo -n "$@"
-        echo -e "\033[0m"
-    else
-        echo "$@"
-    fi
+    # if stdout is console, turn on color output.
+    [ -t 1 ] && echo "$_opts_ec[1;${color}m$@$_opts_eend" || echo "$@"
 }
 
 _opts_redEcho() {
@@ -47,7 +46,7 @@ _opts_convertToVarName() {
 }
 
 #####################################################################
-# Parse Methods
+# Parse Functions
 #
 # Use Globle Variable: 
 # * _OPT_INFO_LIST_INDEX : Option info, data structure.
@@ -312,7 +311,7 @@ parseOpts() {
 }
 
 #####################################################################
-# Show parsed Option Info Methods
+# Show parsed Option Info Functions
 #####################################################################
 
 _opts_showOptDescInfoList() {

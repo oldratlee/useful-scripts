@@ -5,19 +5,18 @@
 # @Usage
 #   $ ./swtrunk.sh [<svn work dir>...]
 #
-# @author Jerry Lee
+# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/vcs.md#beer-swtrunksh
+# @author Jerry Lee (oldratlee at gmail dot com)
+
+# NOTE: $'foo' is the escape sequence syntax of bash
+readonly ec=$'\033' # escape char
+readonly eend=$'\033[0m' # escape end
 
 colorEcho() {
     local color=$1
     shift
-    if [ -c /dev/stdout ] ; then
-        # if stdout is console, turn on color output.
-        echo -ne "\033[1;${color}m"
-        echo -n "$@"
-        echo -e "\033[0m"
-    else
-        echo "$@"
-    fi
+    # if stdout is console, turn on color output.
+    [ -t 1 ] && echo "$ec[1;${color}m$@$eend" || echo "$@"
 }
 
 redEcho() {

@@ -218,7 +218,7 @@ clearResponsiveMessage() {
 ################################################################################
 
 readonly jar_files="$(find "${dirs[@]}" "${find_iname_options[@]}" -type f)"
-readonly total_count="$(echo "$jar_files" | wc -l)"
+readonly total_count="$(echo $(echo "$jar_files" | wc -l))"
 [ -z "$jar_files" ] && {
     echo "No jar found!" 1>&2
     exit 1

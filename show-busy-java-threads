@@ -187,9 +187,15 @@ while true; do
         ;;
     esac
 done
+
 count=${count:-5}
-use_ps=${use_ps:-false}
+
+update_delay=${1:-0}
+[ -z "$1" ] && update_count=1 || update_count=${2:-0}
+(( update_count < 0 )) && update_count=0
+
 top_delay=${top_delay:-0.5}
+use_ps=${use_ps:-false}
 
 # check the directory of append-file(-a) mode, create if not exsit.
 if [ -n "$append_file" ]; then
@@ -216,10 +222,6 @@ if [ -n "$jstack_file_dir" ]; then
         mkdir -p "$jstack_file_dir" && fatal "Error: fail to create directory $jstack_file_dir(specified by option -S, for storing jstack output files)!"
     fi
 fi
-
-update_delay=${1:-0}
-[ -z "$1" ] && update_count=1 || update_count=${2:-0}
-(( update_count < 0 )) && update_count=0
 
 ################################################################################
 # check the existence of jstack command
@@ -291,13 +293,13 @@ __top_threadId_cpu() {
     #       HOME="$tmp_store_dir" top -H -b -n 1 -o '%CPU'
     # 2. change HOME env var when run top,
     #    so as to prevent top command output format being change by .toprc user config file unexpectedly
-    # 3. use option `-d 0.5`(interval 0.5 second) and `-n 2`(show 2 times), and use second time update data
-    #    to get cpu percentage of thread in 0.5 second interval
+    # 3. use option `-d 0.5`(update interval 0.5 second) and `-n 2`(update 2 times),
+    #    and use second time update data to get cpu percentage of thread in 0.5 second interval
     HOME="$tmp_store_dir" top -H -b -d $top_delay -n 2 |
         awk '{
-                if (idx == 3 && $NF == "java")    # $NF is command
+                if (idx == 3 && $NF == "java")    # $NF(last field) is command field
                     # only print 4th text block(idx == 3), aka. process info of second top update
-                    print $1 " " $9    # $1 is thread id, $9 is %cpu
+                    print $1 " " $9    # $1 is thread id field, $9 is %cpu field
                 if ($0 == "")
                     idx++
         }' | sort -k2,2nr

@@ -259,7 +259,6 @@ cleanupWhenExit() {
 }
 trap "cleanupWhenExit" EXIT
 
-
 headInfo() {
     colorEcho "0;34;42" ================================================================================
     echo "$(date "+%Y-%m-%d %H:%M:%S.%N") [$(( i + 1 ))/$update_count]: ${COMMAND_LINE[@]}"
@@ -267,18 +266,19 @@ headInfo() {
     echo
 }
 
+if [ -n "${pid}" ]; then
+    readonly ps_process_select_options="-p $pid"
+else
+    readonly ps_process_select_options="-C java"
+fi
+
 # output field: pid, thread id(lwp), pcpu, user
 #   order by pcpu(percentage of cpu usage)
 findBusyJavaThreadsByPs() {
-    if [ -n "${pid}" ]; then
-        local -r ps_options="-p $pid"
-    else
-        local -r ps_options="-C java"
-    fi
     # 1. sort by %cpu by ps option `--sort -pcpu`
     # 2. use wide output(unlimited width) by ps option `-ww`
     #    avoid trunk user column to username_fo+ or $uid alike
-    ps $ps_options -wwLo pid,lwp,pcpu,user --sort -pcpu --no-headers | head -n "${count}"
+    ps $ps_process_select_options -wwLo pid,lwp,pcpu,user --sort -pcpu --no-headers | head -n "${count}"
 }
 
 # top with output field: thread id, %cpu
@@ -313,13 +313,8 @@ __top_threadId_cpu() {
 
 # output format is same as function findBusyJavaThreadsByPs
 findBusyJavaThreadsByTop() {
-    if [ -n "${pid}" ]; then
-        local -r ps_options="-p $pid"
-    else
-        local -r ps_options="-C java"
-    fi
     # ps output field: pid, thread id(lwp), user
-    local -r ps_out="$(ps $ps_options -wwLo pid,lwp,user --no-headers)"
+    local -r ps_out="$(ps $ps_process_select_options -wwLo pid,lwp,user --no-headers)"
 
     local idx=0
     local -a line

@@ -332,7 +332,7 @@ findBusyJavaThreadsByTop() {
         # output field: pid, threadId, pcpu, user
         local output_fields="$( echo "$ps_out" |
             awk -v "threadId=$threadId" -v "pcpu=$pcpu" '$2==threadId {
-                print $1 " " threadId " " pcpu " " $3; exit
+                printf "%s %s %s %s\n", $1, threadId, pcpu, $3; exit
             }' )"
         if [ -n "$output_fields" ]; then
             (( idx++ ))

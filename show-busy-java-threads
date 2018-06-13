@@ -269,7 +269,7 @@ headInfo() {
 if [ -n "${pid}" ]; then
     readonly ps_process_select_options="-p $pid"
 else
-    readonly ps_process_select_options="-C java"
+    readonly ps_process_select_options="-C java -C jsvc"
 fi
 
 # output field: pid, thread id(lwp), pcpu, user
@@ -303,7 +303,7 @@ __top_threadId_cpu() {
             if (prevLineHasText && !currentLineHasText)
                 blockIndex++    # from text line to empty line, increase block index
 
-            if (blockIndex == 3 && $NF == "java")   # $NF(last field) is command field
+            if (blockIndex == 3 && ($NF == "java" || $NF == "jsvc"))   # $NF(last field) is command field
                 # only print 4th text block(blockIndex == 3), aka. process info of second top update
                 print $1 " " $9     # $1 is thread id field, $9 is %cpu field
 

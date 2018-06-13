@@ -295,13 +295,19 @@ __top_threadId_cpu() {
     #    so as to prevent top command output format being change by .toprc user config file unexpectedly
     # 3. use option `-d 0.5`(update interval 0.5 second) and `-n 2`(update 2 times),
     #    and use second time update data to get cpu percentage of thread in 0.5 second interval
+    # 4. top v3.3, there is 1 black line between 2 update;
+    #    but top v3.2, there is 2 blank lines between 2 update!
     HOME="$tmp_store_dir" top -H -b -d $top_delay -n 2 |
-        awk '{
-                if (idx == 3 && $NF == "java")    # $NF(last field) is command field
-                    # only print 4th text block(idx == 3), aka. process info of second top update
-                    print $1 " " $9    # $1 is thread id field, $9 is %cpu field
-                if ($0 == "")
-                    idx++
+        awk 'BEGIN { blockIndex = 0; currentLineHasText = 0; prevLineHasText = 0; } {
+            currentLineHasText = ($0 != "")
+            if (prevLineHasText && !currentLineHasText)
+                blockIndex++    # from text line to empty line, increase block index
+
+            if (blockIndex == 3 && $NF == "java")   # $NF(last field) is command field
+                # only print 4th text block(blockIndex == 3), aka. process info of second top update
+                print $1 " " $9     # $1 is thread id field, $9 is %cpu field
+
+            prevLineHasText = currentLineHasText    # update prevLineHasText
         }' | sort -k2,2nr
 }
 

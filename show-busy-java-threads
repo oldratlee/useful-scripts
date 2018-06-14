@@ -311,8 +311,7 @@ __top_threadId_cpu() {
         }' | sort -k2,2nr
 }
 
-# output format is same as function findBusyJavaThreadsByPs
-findBusyJavaThreadsByTop() {
+__complete_pid_user_by_ps() {
     # ps output field: pid, thread id(lwp), user
     local -r ps_out="$(ps $ps_process_select_options -wwLo pid,lwp,user --no-headers)"
 
@@ -333,7 +332,12 @@ findBusyJavaThreadsByTop() {
             (( idx++ ))
             echo "$output_fields"
         fi
-    done < <( __top_threadId_cpu )
+    done
+}
+
+# output format is same as function findBusyJavaThreadsByPs
+findBusyJavaThreadsByTop() {
+    __top_threadId_cpu | __complete_pid_user_by_ps
 }
 
 printStackOfThreads() {

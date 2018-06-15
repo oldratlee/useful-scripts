@@ -39,7 +39,10 @@ colorPrint() {
     colorEcho "$color" "$@"
     # use "{} &> /dev/null" to discard bash error message:
     #    line 42: xxx.log: Permission denied
-    { [ -n "$append_file" ] && echo "$@" >> "$append_file"; } &> /dev/null
+    {
+        [ -n "$append_file" ] && echo "$@" >> "$append_file"
+        [ -n "$store_dir" ] && echo "$@" >> "${store_file_prefix}$PROG"
+    } &> /dev/null
 }
 
 redPrint() {
@@ -61,6 +64,7 @@ bluePrint() {
 normalPrint() {
     echo "$@"
     [ -n "$append_file" ] && echo "$@" >> "$append_file"
+    [ -n "$store_dir" ] && echo "$@" >> "${store_file_prefix}$PROG"
 }
 
 fatal() {
@@ -89,9 +93,9 @@ Output control:
                             default from all java process.
   -c, --count <num>         set the thread count to show, default is 5.
   -a, --append-file <file>  specifies the file to append output as log.
-  -S, --jstack-file-dir <path>  specifies the directory for storing jstack output files, and keep files.
-                            default store jstack output files at tmp dir, and auto remove after run.
-                            use this option to keep files so as to review jstack later.
+  -S, --store-dir <dir>     specifies the directory for storing intermediate files, and keep files.
+                            default store intermediate files at tmp dir, and auto remove after run.
+                            use this option to keep files so as to review jstack/top/ps output later.
   delay                     the delay between updates in seconds.
   count                     the number of updates.
                             delay/count arguments imitates the style of vmstat command.
@@ -132,7 +136,7 @@ uname | grep '^Linux' -q || fatal "Error: $PROG only support Linux, not support 
 # NOTE: ARGS can not be declared as readonly!!
 # readonly declaration make exit code of assignment to be always 0, aka. the exit code of `getopt` in subshell is discarded.
 #   tested on bash 4.2.46
-ARGS=`getopt -n "$PROG" -a -o p:c:a:s:S:Pd:Fmlh -l count:,pid:,append-file:,jstack-path:,jstack-file-dir:,use-ps,top-delay:,force,mix-native-frames,lock-info,help -- "$@"`
+ARGS=`getopt -n "$PROG" -a -o p:c:a:s:S:Pd:Fmlh -l count:,pid:,append-file:,jstack-path:,store-dir:,use-ps,top-delay:,force,mix-native-frames,lock-info,help -- "$@"`
 [ $? -ne 0 ] && { echo; usage 1; }
 eval set -- "${ARGS}"
 
@@ -154,8 +158,8 @@ while true; do
         jstack_path="$2"
         shift 2
         ;;
-    -S|--jstack-file-dir)
-        jstack_file_dir="$2"
+    -S|--store-dir)
+        store_dir="$2"
         shift 2
         ;;
     -P|--use-ps)
@@ -208,18 +212,18 @@ if [ -n "$append_file" ]; then
             [ ! -d "$append_file_dir" ] && fatal "Error: directory $append_file_dir(specified by option -a, for storing run output files) exists but is not a directory!"
             [ ! -w "$append_file_dir" ] && fatal "Error: directory $append_file_dir(specified by option -a, for storing run output files) exists but is not writable!"
         else
-            mkdir -p "$append_file_dir" && fatal "Error: fail to create directory $append_file_dir(specified by option -a, for storing run output files)!"
+            mkdir -p "$append_file_dir" || fatal "Error: fail to create directory $append_file_dir(specified by option -a, for storing run output files)!"
         fi
     fi
 fi
 
-# check jstack-file directory(-S) mode, create directory if not exsit.
-if [ -n "$jstack_file_dir" ]; then
-    if [ -e "$jstack_file_dir" ]; then
-        [ ! -d "$jstack_file_dir" ] && fatal "Error: $jstack_file_dir(specified by option -S, for storing jstack output files) exists but is not a directory!"
-        [ ! -w "$jstack_file_dir" ] && fatal "Error: directory $jstack_file_dir(specified by option -S, for storing jstack output files) exists but is not writable!"
+# check store directory(-S) mode, create directory if not exsit.
+if [ -n "$store_dir" ]; then
+    if [ -e "$store_dir" ]; then
+        [ ! -d "$store_dir" ] && fatal "Error: $store_dir(specified by option -S, for storing output files) exists but is not a directory!"
+        [ ! -w "$store_dir" ] && fatal "Error: directory $store_dir(specified by option -S, for storing output files) exists but is not writable!"
     else
-        mkdir -p "$jstack_file_dir" && fatal "Error: fail to create directory $jstack_file_dir(specified by option -S, for storing jstack output files)!"
+        mkdir -p "$store_dir" || fatal "Error: fail to create directory $store_dir(specified by option -S, for storing output files)!"
     fi
 fi
 
@@ -245,14 +249,14 @@ fi
 
 readonly run_timestamp="`date "+%Y-%m-%d_%H:%M:%S.%N"`"
 readonly uuid="${PROG}_${run_timestamp}_${RANDOM}_$$"
-readonly tmp_store_dir="/tmp/${uuid}"
-mkdir -p "$tmp_store_dir"
 
-if [ -n "$jstack_file_dir" ]; then
-    readonly jstack_file_path_prefix="$jstack_file_dir/jstack_${run_timestamp}_"
+readonly tmp_store_dir="/tmp/${uuid}"
+if [ -n "$store_dir" ]; then
+    readonly store_file_prefix="$store_dir/${run_timestamp}_"
 else
-    readonly jstack_file_path_prefix="$tmp_store_dir/jstack_${run_timestamp}_"
+    readonly store_file_prefix="$tmp_store_dir/${run_timestamp}_"
 fi
+mkdir -p "$tmp_store_dir"
 
 cleanupWhenExit() {
     rm -rf "$tmp_store_dir" &> /dev/null
@@ -278,7 +282,17 @@ findBusyJavaThreadsByPs() {
     # 1. sort by %cpu by ps option `--sort -pcpu`
     # 2. use wide output(unlimited width) by ps option `-ww`
     #    avoid trunk user column to username_fo+ or $uid alike
-    ps $ps_process_select_options -wwLo pid,lwp,pcpu,user --sort -pcpu --no-headers | head -n "${count}"
+    local -a ps_cmd_line=(ps $ps_process_select_options -wwLo pid,lwp,pcpu,user --sort -pcpu --no-headers)
+    local -r ps_out="$("${ps_cmd_line[@]}")"
+    if [ -n "$store_dir" ]; then
+        {
+            echo "${ps_cmd_line[@]}"
+            echo
+            echo "$ps_out"
+        } > "${store_file_prefix}$(( i + 1 ))_ps"
+    fi
+
+    echo "$ps_out" | head -n "${count}"
 }
 
 # top with output field: thread id, %cpu
@@ -297,7 +311,17 @@ __top_threadId_cpu() {
     #    and use second time update data to get cpu percentage of thread in 0.5 second interval
     # 4. top v3.3, there is 1 black line between 2 update;
     #    but top v3.2, there is 2 blank lines between 2 update!
-    HOME="$tmp_store_dir" top -H -b -d $top_delay -n 2 |
+    local -a top_cmd_line=(top -H -b -d $top_delay -n 2)
+    local -r top_out=$(HOME="$tmp_store_dir" "${top_cmd_line[@]}")
+    if [ -n "$store_dir" ]; then
+        {
+            echo "${top_cmd_line[@]}"
+            echo
+            echo "$top_out"
+        } > "${store_file_prefix}$(( i + 1 ))_top"
+    fi
+
+    echo "$top_out" |
         awk 'BEGIN { blockIndex = 0; currentLineHasText = 0; prevLineHasText = 0; } {
             currentLineHasText = ($0 != "")
             if (prevLineHasText && !currentLineHasText)
@@ -313,7 +337,15 @@ __top_threadId_cpu() {
 
 __complete_pid_user_by_ps() {
     # ps output field: pid, thread id(lwp), user
-    local -r ps_out="$(ps $ps_process_select_options -wwLo pid,lwp,user --no-headers)"
+    local -a ps_cmd_line=(ps $ps_process_select_options -wwLo pid,lwp,user --no-headers)
+    local -r ps_out="$("${ps_cmd_line[@]}")"
+    if [ -n "$store_dir" ]; then
+        {
+            echo "${ps_cmd_line[@]}"
+            echo
+            echo "$ps_out"
+        } > "${store_file_prefix}$(( i + 1 ))_ps"
+    fi
 
     local idx=0
     local -a line
@@ -341,8 +373,6 @@ findBusyJavaThreadsByTop() {
 }
 
 printStackOfThreads() {
-    local update_round_num="$1"
-
     local -a line
     local idx=0
     while IFS=" " read -a line ; do
@@ -353,14 +383,23 @@ printStackOfThreads() {
         local user="${line[3]}"
 
         (( idx++ ))
-        local jstackFile="$jstack_file_path_prefix${update_round_num}_${pid}"
+        local jstackFile="${store_file_prefix}$(( i + 1 ))_jstack_${pid}"
         [ -f "${jstackFile}" ] || {
+            local -a jstack_cmd_line=( "$jstack_path" ${force} $mix_native_frames $more_lock_info ${pid} )
             if [ "${user}" == "${USER}" ]; then
                 # run without sudo, when java process user is current user
-                "$jstack_path" ${force} $mix_native_frames $more_lock_info ${pid} > ${jstackFile}
+                {
+                    echo "${jstack_cmd_line[@]}"
+                    echo
+                    "${jstack_cmd_line[@]}"
+                } > ${jstackFile}
             elif [ $UID == 0 ]; then
                 # if java process user is not current user, must run jstack with sudo
-                sudo -u "${user}" "$jstack_path" ${force} $mix_native_frames $more_lock_info ${pid} > ${jstackFile}
+                {
+                    echo sudo -u "${user}" "${jstack_cmd_line[@]}"
+                    echo
+                    sudo -u "${user}" "${jstack_cmd_line[@]}"
+                } > ${jstackFile}
             else
                 # current user is not root user, so can not run with sudo; print error message and rerun suggestion
                 redPrint "[$idx] Fail to jstack busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user})."
@@ -389,7 +428,7 @@ printStackOfThreads() {
         else
             local sed_script="/nid=${threadId0x} /,/^$/p"
         fi
-        sed "$sed_script" -n ${jstackFile} | tee ${append_file:+-a "$append_file"}
+        sed "$sed_script" -n ${jstackFile} | tee ${append_file:+-a "$append_file"} ${store_dir:+-a "${store_file_prefix}$PROG"}
     done
 }
 
@@ -403,14 +442,14 @@ main() {
     for (( i = 0; update_count <= 0 || i < update_count; ++i )); do
         (( i > 0 )) && sleep "$update_delay"
 
-        [ -n "$append_file" ] && headInfo >> "$append_file"
+        [ -n "$append_file" -o -n "$store_dir" ] && headInfo | tee ${append_file:+-a "$append_file"} ${store_dir:+-a "${store_file_prefix}$PROG"} > /dev/null
         (( update_count != 1 )) && headInfo
 
         if $use_ps; then
             findBusyJavaThreadsByPs
         else
             findBusyJavaThreadsByTop
-        fi | printStackOfThreads $(( i + 1 ))
+        fi | printStackOfThreads
     done
 }
 

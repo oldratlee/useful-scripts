@@ -15,7 +15,7 @@
 #           _OPT_VALUE_c_long = (c.sh -p pv -q qv arg1) # Array type
 #           _OPT_ARGS = (aa bb cc) # Array type
 #
-# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/shell.md#beer-parseoptssh
+# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/shell.md#-parseoptssh
 # @author Jerry Lee (oldratlee at gmail dot com)
 
 #####################################################################

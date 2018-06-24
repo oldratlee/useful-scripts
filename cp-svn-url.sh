@@ -6,7 +6,7 @@
 #   $ ./cp-svn-url.sh
 #   $ ./cp-svn-url.sh /path/to/svn/work/dir
 #
-# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/vcs.md#beer-cp-svn-urlsh
+# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/vcs.md#-cp-svn-urlsh
 # @author ivanzhangwb (ivanzhangwb at gmail dot com)
 
 readonly PROG=`basename $0`

@@ -5,7 +5,7 @@
 # @Usage
 #   $ ./xpf [file [file ...] ]
 #
-# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/shell.md#beer-xpl-and-xpf
+# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/shell.md#-xpl-and-xpf
 # @author Jerry Lee (oldratlee at gmail dot com)
 
 PROG=`basename $0`

@@ -1,15 +1,15 @@
-:snail: `Java`相关脚本
+🐌 `Java`相关脚本 
 ====================================
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 
-- [:beer: show-busy-java-threads](#beer-show-busy-java-threads)
+- [🍺 show-busy-java-threads](#-show-busy-java-threads)
     - [用法](#%E7%94%A8%E6%B3%95)
     - [示例](#%E7%A4%BA%E4%BE%8B)
     - [贡献者](#%E8%B4%A1%E7%8C%AE%E8%80%85)
-- [:beer: show-duplicate-java-classes](#beer-show-duplicate-java-classes)
+- [🍺 show-duplicate-java-classes](#-show-duplicate-java-classes)
     - [用法](#%E7%94%A8%E6%B3%95-1)
         - [`JDK`开发场景使用说明](#jdk%E5%BC%80%E5%8F%91%E5%9C%BA%E6%99%AF%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E)
             - [对于一般的工程](#%E5%AF%B9%E4%BA%8E%E4%B8%80%E8%88%AC%E7%9A%84%E5%B7%A5%E7%A8%8B)
@@ -17,7 +17,7 @@
         - [`Android`开发场景使用说明](#android%E5%BC%80%E5%8F%91%E5%9C%BA%E6%99%AF%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E)
     - [示例](#%E7%A4%BA%E4%BE%8B-1)
     - [贡献者](#%E8%B4%A1%E7%8C%AE%E8%80%85-1)
-- [:beer: find-in-jars](#beer-find-in-jars)
+- [🍺 find-in-jars](#-find-in-jars)
     - [用法](#%E7%94%A8%E6%B3%95-2)
     - [示例](#%E7%A4%BA%E4%BE%8B-2)
     - [运行效果](#%E8%BF%90%E8%A1%8C%E6%95%88%E6%9E%9C)
@@ -26,7 +26,7 @@
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 <a id="beer-show-busy-java-threadssh"></a>
-:beer: [show-busy-java-threads](../show-busy-java-threads)
+🍺 [show-busy-java-threads](../show-busy-java-threads) 
 ----------------------
 
 用于快速排查`Java`的`CPU`性能问题(`top us`值过高)，自动查出运行的`Java`进程中消耗`CPU`多的线程，并打印出其线程栈，从而确定导致性能问题的方法调用。  
@@ -185,7 +185,7 @@ $ show-busy-java-threads
     - 提出/实现了多次执行的功能 [superhj1987/awesome-scripts#1](https://github.com/superhj1987/awesome-scripts/issues/1)
 - [xiongchen2012](https://github.com/xiongchen2012) 提出/解决了长用户名截断的Bug [#62](https://github.com/oldratlee/useful-scripts/pull/62)
 
-:beer: [show-duplicate-java-classes](../show-duplicate-java-classes)
+🍺 [show-duplicate-java-classes](../show-duplicate-java-classes) 
 ----------------------
 
 找出`Java Lib`（`Java`库，即`Jar`文件）或`Class`目录（类目录）中的重复类。  
@@ -346,7 +346,7 @@ class paths to find:
 [tgic](https://github.com/tg123)提供此脚本。友情贡献者的链接 [commandlinefu.cn](http://commandlinefu.cn/) | [微博linux命令行精选](http://weibo.com/u/2674868673)
 
 <a id="find-in-jarssh"></a>
-:beer: [find-in-jars](../find-in-jars)
+🍺 [find-in-jars](../find-in-jars) 
 ----------------------
 
 在当前目录下所有`jar`文件里，查找类或资源文件。  

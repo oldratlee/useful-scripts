@@ -8,7 +8,7 @@
 #   $ show-duplicate-java-classes path/to/lib_dir1 /path/to/lib_dir2
 #   $ show-duplicate-java-classes -c path/to/class_dir1 -c /path/to/class_dir2
 #
-# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/java.md#beer-show-duplicate-java-classes
+# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/java.md#-show-duplicate-java-classes
 # @author tg123 (farmer1992 at gmail dot com)
 # @author Jerry Lee (oldratlee at gmail dot com)
 

@@ -2,7 +2,7 @@
 # @Function
 # print arguments in human and debugging friendly style.
 #
-# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/shell.md#beer-echo-args
+# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/shell.md#-echo-args
 # @author Jerry Lee (oldratlee at gmail dot com)
 
 readonly ec=$'\033'      # escape char

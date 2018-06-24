@@ -1,4 +1,4 @@
-:snail: useful-scripts
+🐌 useful-scripts 
 ====================================
 
 <img src="docs/script-logo.png" width="20%" align="right" />
@@ -10,16 +10,16 @@
 [![GitHub forks](https://img.shields.io/github/forks/oldratlee/useful-scripts.svg?style=social&label=Fork&)](https://github.com/oldratlee/useful-scripts/fork)
 
 
-:point_right: 把平时有用的手动操作做成脚本，这样可以便捷的使用。 :sparkles:
+👉 把平时有用的手动操作做成脚本，这样可以便捷的使用。 ✨ 
 
-有自己用的好的脚本 或是 平时常用但没有写成脚本的功能，欢迎提供（[提交Issue](https://github.com/oldratlee/useful-scripts/issues))和分享（[Fork后提交代码](https://github.com/oldratlee/useful-scripts/fork)）！ :sparkling_heart:
+有自己用的好的脚本 或是 平时常用但没有写成脚本的功能，欢迎提供（[提交Issue](https://github.com/oldratlee/useful-scripts/issues))和分享（[Fork后提交代码](https://github.com/oldratlee/useful-scripts/fork)）！ 💖 
 
 PS：
 
 本仓库的脚本（如`Java`相关脚本）在阿里等公司（如随身云，见[`awesome-scripts`仓库](https://github.com/Suishenyun/awesome-scripts)说明）的线上生产环境部署使用。  
-如果你的公司有部署使用，欢迎使用通过[提交Issue](https://github.com/oldratlee/useful-scripts/issues)告知，方便互相交流反馈～ :cupid:
+如果你的公司有部署使用，欢迎使用通过[提交Issue](https://github.com/oldratlee/useful-scripts/issues)告知，方便互相交流反馈～ 💘 
 
-:beginner: 快速下载&使用
+🔰 快速下载&使用 
 ----------------------
 
 ```bash
@@ -28,10 +28,10 @@ source <(curl -fsSL https://raw.githubusercontent.com/oldratlee/useful-scripts/m
 
 更多下载&使用方式，参见[下载使用](docs/install.md)。
 
-:books: 使用文档
+📚 使用文档 
 ----------------------
 
-### :coffee: [`Java`相关脚本](docs/java.md)
+### ☕ [`Java`相关脚本](docs/java.md) 
 
 1. [show-busy-java-threads](docs/java.md#beer-show-busy-java-threads)  
     用于快速排查`Java`的`CPU`性能问题(`top us`值过高)，自动查出运行的`Java`进程中消耗`CPU`多的线程，并打印出其线程栈，从而确定导致性能问题的方法调用。
@@ -40,7 +40,7 @@ source <(curl -fsSL https://raw.githubusercontent.com/oldratlee/useful-scripts/m
 1. [find-in-jars](docs/java.md#beer-find-in-jars)  
     在目录下所有`jar`文件里，查找类或资源文件。
 
-### :shell: [`Shell`相关脚本](docs/shell.md)
+### 🐚 [`Shell`相关脚本](docs/shell.md) 
 
 `Shell`使用加强：
 
@@ -66,8 +66,8 @@ source <(curl -fsSL https://raw.githubusercontent.com/oldratlee/useful-scripts/m
 1. [parseOpts.sh](docs/shell.md#beer-parseoptssh)  
     命令行选项解析库，加强支持选项有多个值（即数组）。
 
-### :watch: [`VCS`相关脚本](docs/vcs.md)
+### ⌚ [`VCS`相关脚本](docs/vcs.md) 
 
-目前`VCS`的脚本都是`svn`分支相关的操作。使用更现代的`Git`吧！ :boom:
+目前`VCS`的脚本都是`svn`分支相关的操作。使用更现代的`Git`吧！ 💥 
 
 因为不推荐使用`svn`，这里不再列出有哪些脚本了，如果你有兴趣可以点上面链接去看。

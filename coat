@@ -7,7 +7,7 @@
 #   $ coat /path/to/file1
 #   $ coat /path/to/file1 /path/to/file2
 #
-# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/shell.md#beer-coat
+# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/shell.md#-coat
 # @author Jerry Lee (oldratlee at gmail dot com)
 
 set -e

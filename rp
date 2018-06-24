@@ -8,7 +8,7 @@
 #   # if more than 1 argument, print relative path to last argument.
 #   $ ./rp a.txt ../b.txt /etc/passwd /etc/apache2
 #
-# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/shell.md#beer-ap-and-rp
+# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/shell.md#-ap-and-rp
 # @author Jerry Lee (oldratlee at gmail dot com)
 
 [ $# -eq 0 ] && {

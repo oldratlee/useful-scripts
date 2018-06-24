@@ -6,7 +6,7 @@
 #   $ c echo "hello world!"
 #   $ echo "hello world!" | c
 #
-# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/shell.md#beer-c
+# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/shell.md#-c
 # @author Jerry Lee (oldratlee at gmail dot com)
 
 set -e

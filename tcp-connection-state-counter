@@ -5,7 +5,7 @@
 # @Usage
 #   $ ./tcp-connection-state-counter
 #
-# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/shell.md#beer-tcp-connection-state-counter
+# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/shell.md#-tcp-connection-state-counter
 # @author Jerry Lee (oldratlee at gmail dot com)
 # @author @sunuslee (sunuslee at gmail dot com)
 

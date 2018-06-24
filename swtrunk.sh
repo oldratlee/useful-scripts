@@ -5,7 +5,7 @@
 # @Usage
 #   $ ./swtrunk.sh [<svn work dir>...]
 #
-# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/vcs.md#beer-swtrunksh
+# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/vcs.md#-swtrunksh
 # @author Jerry Lee (oldratlee at gmail dot com)
 
 # NOTE: $'foo' is the escape sequence syntax of bash

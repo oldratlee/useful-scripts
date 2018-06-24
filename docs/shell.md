@@ -1,4 +1,4 @@
-:snail: `Shell`相关脚本
+🐌 `Shell`相关脚本 
 ====================================
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
@@ -6,33 +6,33 @@
 
 
 - [`Shell`使用加强](#shell%E4%BD%BF%E7%94%A8%E5%8A%A0%E5%BC%BA)
-    - [:beer: c](#beer-c)
-        - [示例](#%E7%A4%BA%E4%BE%8B)
+    - [🍺 c](#-c)
+        - [用法/示例](#%E7%94%A8%E6%B3%95%E7%A4%BA%E4%BE%8B)
         - [参考资料](#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99)
-    - [:beer: coat](#beer-coat)
+    - [🍺 coat](#-coat)
+        - [示例](#%E7%A4%BA%E4%BE%8B)
+    - [🍺 a2l](#-a2l)
         - [示例](#%E7%A4%BA%E4%BE%8B-1)
-    - [:beer: a2l](#beer-a2l)
+    - [🍺 ap and rp](#-ap-and-rp)
         - [示例](#%E7%A4%BA%E4%BE%8B-2)
-    - [:beer: ap and rp](#beer-ap-and-rp)
-        - [示例](#%E7%A4%BA%E4%BE%8B-3)
-    - [:beer: tcp-connection-state-counter](#beer-tcp-connection-state-counter)
+    - [🍺 tcp-connection-state-counter](#-tcp-connection-state-counter)
         - [用法](#%E7%94%A8%E6%B3%95)
-        - [示例](#%E7%A4%BA%E4%BE%8B-4)
+        - [示例](#%E7%A4%BA%E4%BE%8B-3)
         - [贡献者](#%E8%B4%A1%E7%8C%AE%E8%80%85)
-    - [:beer: xpl and xpf](#beer-xpl-and-xpf)
+    - [🍺 xpl and xpf](#-xpl-and-xpf)
         - [用法](#%E7%94%A8%E6%B3%95-1)
-        - [示例](#%E7%A4%BA%E4%BE%8B-5)
+        - [示例](#%E7%A4%BA%E4%BE%8B-4)
         - [贡献者](#%E8%B4%A1%E7%8C%AE%E8%80%85-1)
 - [`Shell`开发/测试加强](#shell%E5%BC%80%E5%8F%91%E6%B5%8B%E8%AF%95%E5%8A%A0%E5%BC%BA)
-    - [:beer: echo-args](#beer-echo-args)
-        - [示例](#%E7%A4%BA%E4%BE%8B-6)
+    - [🍺 echo-args](#-echo-args)
+        - [示例](#%E7%A4%BA%E4%BE%8B-5)
         - [使用方式](#%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F)
-    - [:beer: console-text-color-themes.sh](#beer-console-text-color-themessh)
+    - [🍺 console-text-color-themes.sh](#-console-text-color-themessh)
         - [贡献者](#%E8%B4%A1%E7%8C%AE%E8%80%85-2)
         - [参考资料](#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99-1)
-    - [:beer: parseOpts.sh](#beer-parseoptssh)
+    - [🍺 parseOpts.sh](#-parseoptssh)
         - [用法](#%E7%94%A8%E6%B3%95-2)
-        - [示例](#%E7%A4%BA%E4%BE%8B-7)
+        - [示例](#%E7%A4%BA%E4%BE%8B-6)
         - [兼容性](#%E5%85%BC%E5%AE%B9%E6%80%A7)
         - [贡献者](#%E8%B4%A1%E7%8C%AE%E8%80%85-3)
 
@@ -41,7 +41,7 @@
 `Shell`使用加强
 ====================================
 
-:beer: [c](../c)
+🍺 [c](../c) 
 ----------------------
 
 原样命令行输出，并拷贝标准输出到系统剪贴板，省去`CTRL+C`操作，优化命令行与其它应用之间的操作流。  
@@ -102,7 +102,7 @@ Options:
 - [拷贝复制命令行输出放在系统剪贴板上](http://oldratlee.com/post/2012-12-23/command-output-to-clip)，给出了不同系统可用命令。
 - 关于文本文件最后的换行，参见[Why should text files end with a newline?](https://stackoverflow.com/questions/729692)
 
-:beer: [coat](../coat)
+🍺 [coat](../coat) 
 ----------------------
 
 彩色`cat`出文件行，方便人眼区分不同的行。  
@@ -110,7 +110,7 @@ Options:
 
 命令支持选项、功能和使用方式与[`cat`命令](https://linux.die.net/man/1/cat)完全一样（实际上读流操作在实现上全部代理给`cat`命令）。
 
-命令名`coat`意思是`COlorful cAT`；当然单词`coat`的意思是外套，彩色输入行就像件漂亮的外套～ :satisfied:  
+命令名`coat`意思是`COlorful cAT`；当然单词`coat`的意思是外套，彩色输入行就像件漂亮的外套～ 😆 
 注：之前命名是`colines`（意思是`COLorful LINES`）。
 
 ### 示例
@@ -165,7 +165,7 @@ or available locally via: info '(coreutils) cat invocation'
 注：上面示例中，没有彩色；在控制台上运行可以看出彩色效果，如下：  
 ![](../docs/coat.png)
 
-:beer: [a2l](../a2l)
+🍺 [a2l](../a2l) 
 ----------------------
 
 按行彩色输出参数，方便人眼查看。  
@@ -193,7 +193,7 @@ test-cases/self-installer.sh
 
 注：上面示例中，没有彩色；在控制台上运行可以看出彩色效果，和上面的`coat`命令一样。
 
-:beer: [ap](../ap) and [rp](../rp)
+🍺 [ap](../ap) and [rp](../rp) 
 ----------------------
 
 批量转换文件路径为绝对路径/相对路径，会自动跟踪链接并规范化路径。  
@@ -226,7 +226,7 @@ $ rp /home /etc/../etc /home/admin
 ```
 
 <a id="beer-tcp-connection-state-countersh"></a>
-:beer: [tcp-connection-state-counter](../tcp-connection-state-counter)
+🍺 [tcp-connection-state-counter](../tcp-connection-state-counter) 
 ----------------------
 
 统计各个`TCP`连接状态的个数。  
@@ -257,7 +257,7 @@ SYN_SENT     17
 
 [sunuslee](https://github.com/sunuslee)改进此脚本，增加对`MacOS`的支持。 [#56](https://github.com/oldratlee/useful-scripts/pull/56)
 
-:beer: [xpl](../xpl) and [xpf](../xpf)
+🍺 [xpl](../xpl) and [xpf](../xpf) 
 ----------------------
 
 在命令行中快速完成 在文件浏览器中 打开/选中 指定的文件或文件夹的操作，优化命令行与其它应用之间的操作流。  
@@ -300,7 +300,7 @@ xpf /path/to/dir1 /path/to/foo1.txt
 ====================================
 
 <a id="beer-echo-argssh"></a>
-:beer: [echo-args](../echo-args)
+🍺 [echo-args](../echo-args) 
 ----------------------
 
 在编写脚本时，常常要确认输入参数是否是期望的：参数个数，参数值（可能包含有人眼不容易发现的空格问题）。  
@@ -327,7 +327,7 @@ $ ./echo-args 1 "  2 foo  " "3        3"
 
 这样可以不改其它的程序，查看到输入参数的信息。
 
-:beer: [console-text-color-themes.sh](../console-text-color-themes.sh)
+🍺 [console-text-color-themes.sh](../console-text-color-themes.sh) 
 ----------------------
 
 显示`Terminator`的全部文字彩色组合的效果及其打印方式。  
@@ -358,7 +358,7 @@ colorEchoWithoutNewLine "4;33;40" "Hello world!" "Hello Hell!"
 
 - [utensil](https://github.com/utensil)的[在Bash下输出彩色的文本](http://utensil.github.io/tech/2007/09/10/colorful-bash.html)，这是篇很有信息量很钻研的文章！
 
-:beer: [parseOpts.sh](../parseOpts.sh)
+🍺 [parseOpts.sh](../parseOpts.sh) 
 ----------------------
 
 命令行选项解析库，加强支持选项有多个值（即数组）。  
@@ -445,15 +445,15 @@ parseOpts "a,a-long|b,b-long:|c,c-long+" -a -b bv -- --c-long c.sh -p pv -q qv a
 1. `bash --version`  
 `GNU bash, version 4.1.5(1)-release (x86_64-pc-linux-gnu)`  
 `uname -a`  
-`Linux foo-host 2.6.32-41-generic #94-Ubuntu SMP Fri Jul 6 18:00:34 UTC 2012 x86_64 GNU/Linux`
+`Linux foo-host 2.6.32-41-generic #94-Ubuntu SMP Fri Jul 6 18:00:34 UTC 2012 x86_64 GNU/Linux` 
 1. `bash --version`  
 `GNU bash, version 3.2.53(1)-release (x86_64-apple-darwin14)`  
 `uname -a`   
-`Darwin foo-host 14.0.0 Darwin Kernel Version 14.0.0: Fri Sep 19 00:26:44 PDT 2014; root:xnu-2782.1.97~2/RELEASE_X86_64 x86_64 i386 MacBookPro10,1 Darwin`
+`Darwin foo-host 14.0.0 Darwin Kernel Version 14.0.0: Fri Sep 19 00:26:44 PDT 2014; root:xnu-2782.1.97~2/RELEASE_X86_64 x86_64 i386 MacBookPro10,1 Darwin` 
 1. `bash --version`  
 `GNU bash, version 3.00.15(1)-release (i386-redhat-linux-gnu)`  
 `uname -a`   
-`Linux foo-host 2.6.9-103.ELxenU #1 SMP Wed Mar 14 16:31:15 CST 2012 i686 i686 i386 GNU/Linux`
+`Linux foo-host 2.6.9-103.ELxenU #1 SMP Wed Mar 14 16:31:15 CST 2012 i686 i686 i386 GNU/Linux` 
 
 ### 贡献者
 

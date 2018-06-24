@@ -6,7 +6,7 @@
 #   $ ./a2l arg1 arg2
 #   $ ./a2l *.txt
 #
-# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/shell.md#beer-a2l
+# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/shell.md#-a2l
 # @author Jerry Lee (oldratlee at gmail dot com)
 
 

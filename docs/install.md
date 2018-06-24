@@ -1,4 +1,4 @@
-🐌 下载使用 
+🐌 下载使用
 ====================================
 
 下载整个工程的脚本
@@ -36,7 +36,7 @@ cd useful-scripts
 svn up
 ```
 
-PS：     
+PS：  
 我的做法是把`useful-scripts` checkout到`$HOME/bin/useful-scripts`目录下，再把`$HOME/bin/useful-scripts`配置到`PATH`变量上，这样方便我本地使用所有的脚本。
 
 ### 打包下载

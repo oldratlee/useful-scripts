@@ -1,4 +1,4 @@
-🐌 `Java`相关脚本 
+🐌 `Java`相关脚本
 ====================================
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
@@ -26,7 +26,9 @@
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 <a id="beer-show-busy-java-threadssh"></a>
-🍺 [show-busy-java-threads](../show-busy-java-threads) 
+<a id="beer-show-busy-java-threads"></a>
+
+🍺 [show-busy-java-threads](../show-busy-java-threads)
 ----------------------
 
 用于快速排查`Java`的`CPU`性能问题(`top us`值过高)，自动查出运行的`Java`进程中消耗`CPU`多的线程，并打印出其线程栈，从而确定导致性能问题的方法调用。  
@@ -185,7 +187,7 @@ $ show-busy-java-threads
     - 提出/实现了多次执行的功能 [superhj1987/awesome-scripts#1](https://github.com/superhj1987/awesome-scripts/issues/1)
 - [xiongchen2012](https://github.com/xiongchen2012) 提出/解决了长用户名截断的Bug [#62](https://github.com/oldratlee/useful-scripts/pull/62)
 
-🍺 [show-duplicate-java-classes](../show-duplicate-java-classes) 
+🍺 [show-duplicate-java-classes](../show-duplicate-java-classes)
 ----------------------
 
 找出`Java Lib`（`Java`库，即`Jar`文件）或`Class`目录（类目录）中的重复类。  
@@ -345,8 +347,10 @@ class paths to find:
 
 [tgic](https://github.com/tg123)提供此脚本。友情贡献者的链接 [commandlinefu.cn](http://commandlinefu.cn/) | [微博linux命令行精选](http://weibo.com/u/2674868673)
 
-<a id="find-in-jarssh"></a>
-🍺 [find-in-jars](../find-in-jars) 
+<a id="beer-find-in-jarssh"></a>
+<a id="beer-find-in-jars"></a>
+
+🍺 [find-in-jars](../find-in-jars)
 ----------------------
 
 在当前目录下所有`jar`文件里，查找类或资源文件。  
@@ -442,7 +446,7 @@ WEB-INF/lib/aspectjweaver-1.8.8.jar!org/aspectj/weaver/XlintDefault.properties
 
 支持彩色输出，文件名中的匹配部分以`grep`的高亮方式显示。
 
-![](https://user-images.githubusercontent.com/1063891/33545067-9eb66072-d8a2-11e7-8a77-d815c0979e5e.gif)
+![find-in-jar screenshot](https://user-images.githubusercontent.com/1063891/33545067-9eb66072-d8a2-11e7-8a77-d815c0979e5e.gif)
 
 ### 参考资料
 

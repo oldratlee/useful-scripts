@@ -107,7 +107,7 @@ EOF
 
 declare -a args=()
 declare -a dirs=()
-while [ $# -gt 0 ]; do
+while (( $# > 0 )); do
     case "$1" in
     -d|--dir)
         dirs=("${dirs[@]}" "$2")
@@ -170,24 +170,24 @@ regex_mode=${regex_mode:--E}
 use_absolute_path=${use_absolute_path:-false}
 seperator="${seperator:-!}"
 
-[ "${#args[@]}" -eq 0 ] && usage 1 "No find file pattern!"
-[ "${#args[@]}" -gt 1 ] && usage 1 "More than 1 file pattern!"
+(( "${#args[@]}" == 0 )) && usage 1 "No find file pattern!"
+(( "${#args[@]}" > 1 )) && usage 1 "More than 1 file pattern: ${args[@]}"
 readonly pattern="${args[0]}"
 
-# convert dirs to Absolute Path.
-$use_absolute_path && {
-    declare -a tmp_dirs=()
+declare -a tmp_dirs=()
+for d in "${dirs[@]}"; do
+    [ -e "$d" ] || die "file $d(specified by option -d) does not exist!"
+    [ -d "$d" ] || die "file $d(specified by option -d) exists but is not a directory!"
+    [ -r "$d" ] || die "directory $d(specified by option -d) exists but is not readable!"
+    # convert dirs to Absolute Path
+    $use_absolute_path && tmp_dirs=( "${tmp_dirs[@]}" "$(cd "$d" && pwd)" )
+done
+# set dirs to Absolute Path
+$use_absolute_path && dirs=( "${tmp_dirs[@]}" )
 
-    for d in "${dirs[@]}"; do
-        tmp_dirs=( "${tmp_dirs[@]}" "$(cd "$d" && pwd)" )
-    done
-
-    dirs=( "${tmp_dirs[@]}" )
-}
-
-# convert to find -iname options
+# convert extensions to find -iname options
 for e in "${extension[@]}"; do
-    [ 0 -eq "${#find_iname_options[@]}" ] &&
+    (( "${#find_iname_options[@]}" == 0 )) &&
         find_iname_options=( -iname "*.$e" ) ||
         find_iname_options=( "${find_iname_options[@]}" -o -iname "*.$e" )
 done

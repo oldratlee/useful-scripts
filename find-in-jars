@@ -13,6 +13,52 @@
 
 readonly PROG="`basename "$0"`"
 
+################################################################################
+# util functions
+################################################################################
+
+[ -t 1 ] && readonly is_console=true || readonly is_console=false
+
+# NOTE: $'foo' is the escape sequence syntax of bash
+readonly ec=$'\033'      # escape char
+readonly eend=$'\033[0m' # escape end
+readonly cr=$'\r'        # carriage return
+
+redEcho() {
+    $is_console && echo "$ec[1;31m$@$eend" || echo "$@"
+}
+
+die() {
+    redEcho "Error: $@" 1>&2
+    exit 1
+}
+
+# Getting console width using a bash script
+# https://unix.stackexchange.com/questions/299067
+$is_console && readonly columns=$(stty size | awk '{print $2}')
+
+printResponsiveMessage() {
+    $is_console || return
+
+    local message="$*"
+    # http://www.linuxforums.org/forum/red-hat-fedora-linux/142825-how-truncate-string-bash-script.html
+    echo -n "${message:0:columns}"
+}
+
+clearResponsiveMessage() {
+    $is_console || return
+
+    # How to delete line with echo?
+    # https://unix.stackexchange.com/questions/26576
+    #
+    # terminal escapes: http://ascii-table.com/ansi-escape-sequences.php
+    # In particular, to clear from the cursor position to the beginning of the line:
+    # echo -e "\033[1K"
+    # Or everything on the line, regardless of cursor position:
+    # echo -e "\033[2K"
+    echo -n "$ec[2K$cr"
+}
+
 usage() {
     local -r exit_code="$1"
     shift
@@ -61,8 +107,6 @@ EOF
 
 declare -a args=()
 declare -a dirs=()
-regex_mode=-E
-use_absolute_path=false
 while [ $# -gt 0 ]; do
     case "$1" in
     -d|--dir)
@@ -118,8 +162,12 @@ while [ $# -gt 0 ]; do
         ;;
     esac
 done
+
 dirs=${dirs:-.}
 extension=${extension:-jar}
+regex_mode=${regex_mode:--E}
+
+use_absolute_path=${use_absolute_path:-false}
 seperator="${seperator:-!}"
 
 [ "${#args[@]}" -eq 0 ] && usage 1 "No find file pattern!"
@@ -144,7 +192,6 @@ for e in "${extension[@]}"; do
         find_iname_options=( "${find_iname_options[@]}" -o -iname "*.$e" )
 done
 
-
 ################################################################################
 # Check the existence of command for listing zip entry!
 ################################################################################
@@ -159,59 +206,13 @@ elif which unzip &> /dev/null; then
     readonly command_for_list_zip='unzip -Z1'
 else
     if ! which jar &> /dev/null; then
-        [ -z "$JAVA_HOME" ] && {
-            echo "Error: jar not found on PATH!" 1>&2
-            exit 1
-        }
-        ! [ -f "$JAVA_HOME/bin/jar" ] && {
-            echo "Error: jar not found on PATH and \$JAVA_HOME/bin/jar($JAVA_HOME/bin/jar) file does NOT exists!" 1>&2
-            exit 1
-        }
-        ! [ -x "$JAVA_HOME/bin/jar" ] && {
-            echo "Error: jar not found on PATH and \$JAVA_HOME/bin/jar($JAVA_HOME/bin/jar) is NOT executalbe!" 1>&2
-            exit 1
-        }
+        [ -n "$JAVA_HOME" ] || die "jar not found on PATH and JAVA_HOME env var is blank!"
+        [ -f "$JAVA_HOME/bin/jar" ] || die "jar not found on PATH and \$JAVA_HOME/bin/jar($JAVA_HOME/bin/jar) file does NOT exists!"
+        [ -x "$JAVA_HOME/bin/jar" ] || die "jar not found on PATH and \$JAVA_HOME/bin/jar($JAVA_HOME/bin/jar) is NOT executalbe!"
         export PATH="$JAVA_HOME/bin:$PATH"
     fi
-
     readonly command_for_list_zip='jar tf'
 fi
-
-################################################################################
-# util funtions
-################################################################################
-
-[ -t 1 ] && readonly is_console=true || readonly is_console=false
-
-# Getting console width using a bash script
-# https://unix.stackexchange.com/questions/299067
-$is_console && readonly columns=$(stty size | awk '{print $2}')
-
-readonly ec=$'\033'      # escape char
-readonly eend=$'\033[0m' # escape end
-readonly cr=$'\r'        # carriage return
-
-printResponsiveMessage() {
-    $is_console || return
-
-    local message="$*"
-    # http://www.linuxforums.org/forum/red-hat-fedora-linux/142825-how-truncate-string-bash-script.html
-    echo -n "${message:0:columns}"
-}
-
-clearResponsiveMessage() {
-    $is_console || return
-
-    # How to delete line with echo?
-    # https://unix.stackexchange.com/questions/26576
-    #
-    # terminal escapes: http://ascii-table.com/ansi-escape-sequences.php
-    # In particular, to clear from the cursor position to the beginning of the line:
-    # echo -e "\033[1K"
-    # Or everything on the line, regardless of cursor position:
-    # echo -e "\033[2K"
-    echo -n "$ec[2K$cr"
-}
 
 ################################################################################
 # find logic
@@ -219,10 +220,7 @@ clearResponsiveMessage() {
 
 readonly jar_files="$(find "${dirs[@]}" "${find_iname_options[@]}" -type f)"
 readonly total_count="$(echo $(echo "$jar_files" | wc -l))"
-[ -z "$jar_files" ] && {
-    echo "No jar found!" 1>&2
-    exit 1
-}
+[ -n "$jar_files" ] || die "No ${extension[@]} file found!"
 
 findInJarFiles() {
     $is_console && local -r grep_color_option='--color=always'
@@ -238,7 +236,7 @@ findInJarFiles() {
                 clearResponsiveMessage
 
                 $is_console &&
-                    echo "$ec[1;31m${jar_file}${eend}${ec}[1;32m${seperator}${eend}${file}" ||
+                    echo "$ec[1;35m${jar_file}${eend}${ec}[1;32m${seperator}${eend}${file}" ||
                     echo "${jar_file}${seperator}${file}"
             done
 

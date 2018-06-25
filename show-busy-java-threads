@@ -67,8 +67,8 @@ normalPrint() {
     [ -n "$store_dir" ] && echo "$@" >> "${store_file_prefix}$PROG"
 }
 
-fatal() {
-    redPrint "$@" 1>&2
+die() {
+    redPrint "Error: $@" 1>&2
     exit 1
 }
 
@@ -127,7 +127,7 @@ EOF
 # Check os support
 ################################################################################
 
-uname | grep '^Linux' -q || fatal "Error: $PROG only support Linux, not support `uname` yet!"
+uname | grep '^Linux' -q || die "$PROG only support Linux, not support `uname` yet!"
 
 ################################################################################
 # parse options
@@ -204,15 +204,15 @@ use_ps=${use_ps:-false}
 # check the directory of append-file(-a) mode, create if not exsit.
 if [ -n "$append_file" ]; then
     if [ -e "$append_file" ]; then
-        [ ! -f "$append_file" ] && fatal "Error: $append_file(specified by option -a, for storing run output files) exists but is not a file!"
-        [ ! -w "$append_file" ] && fatal "Error: file $append_file(specified by option -a, for storing run output files) exists but is not writable!"
+        [ -f "$append_file" ] || die "$append_file(specified by option -a, for storing run output files) exists but is not a file!"
+        [ -w "$append_file" ] || die "file $append_file(specified by option -a, for storing run output files) exists but is not writable!"
     else
         append_file_dir="$(dirname "$append_file")"
         if [ -e "$append_file_dir" ]; then
-            [ ! -d "$append_file_dir" ] && fatal "Error: directory $append_file_dir(specified by option -a, for storing run output files) exists but is not a directory!"
-            [ ! -w "$append_file_dir" ] && fatal "Error: directory $append_file_dir(specified by option -a, for storing run output files) exists but is not writable!"
+            [ -d "$append_file_dir" ] || die "directory $append_file_dir(specified by option -a, for storing run output files) exists but is not a directory!"
+            [ -w "$append_file_dir" ] || die "directory $append_file_dir(specified by option -a, for storing run output files) exists but is not writable!"
         else
-            mkdir -p "$append_file_dir" || fatal "Error: fail to create directory $append_file_dir(specified by option -a, for storing run output files)!"
+            mkdir -p "$append_file_dir" || die "fail to create directory $append_file_dir(specified by option -a, for storing run output files)!"
         fi
     fi
 fi
@@ -220,10 +220,10 @@ fi
 # check store directory(-S) mode, create directory if not exsit.
 if [ -n "$store_dir" ]; then
     if [ -e "$store_dir" ]; then
-        [ ! -d "$store_dir" ] && fatal "Error: $store_dir(specified by option -S, for storing output files) exists but is not a directory!"
-        [ ! -w "$store_dir" ] && fatal "Error: directory $store_dir(specified by option -S, for storing output files) exists but is not writable!"
+        [ -d "$store_dir" ] || die "$store_dir(specified by option -S, for storing output files) exists but is not a directory!"
+        [ -w "$store_dir" ] || die "directory $store_dir(specified by option -S, for storing output files) exists but is not writable!"
     else
-        mkdir -p "$store_dir" || fatal "Error: fail to create directory $store_dir(specified by option -S, for storing output files)!"
+        mkdir -p "$store_dir" || die "fail to create directory $store_dir(specified by option -S, for storing output files)!"
     fi
 fi
 
@@ -232,14 +232,14 @@ fi
 ################################################################################
 
 if [ -n "$jstack_path" ]; then
-    [ -f "$jstack_path" ] || fatal "Error: $jstack_path is NOT found!"
-    [ -x "$jstack_path" ] || fatal "Error: $jstack_path is NOT executalbe!"
+    [ -f "$jstack_path" ] || die "$jstack_path is NOT found!"
+    [ -x "$jstack_path" ] || die "$jstack_path is NOT executalbe!"
 elif which jstack &> /dev/null; then
     jstack_path="`which jstack`"
 else
-    [ -z "$JAVA_HOME" ] && fatal "Error: jstack not found on PATH and No JAVA_HOME setting! Use -s option set jstack path manually."
-    [ -f "$JAVA_HOME/bin/jstack" ] || fatal "Error: jstack not found on PATH and \$JAVA_HOME/bin/jstack($JAVA_HOME/bin/jstack) file does NOT exists! Use -s option set jstack path manually."
-    [ -x "$JAVA_HOME/bin/jstack" ] || fatal "Error: jstack not found on PATH and \$JAVA_HOME/bin/jstack($JAVA_HOME/bin/jstack) is NOT executalbe! Use -s option set jstack path manually."
+    [ -n "$JAVA_HOME" ] || die "jstack not found on PATH and No JAVA_HOME setting! Use -s option set jstack path manually."
+    [ -f "$JAVA_HOME/bin/jstack" ] || die "jstack not found on PATH and \$JAVA_HOME/bin/jstack($JAVA_HOME/bin/jstack) file does NOT exists! Use -s option set jstack path manually."
+    [ -x "$JAVA_HOME/bin/jstack" ] || die "jstack not found on PATH and \$JAVA_HOME/bin/jstack($JAVA_HOME/bin/jstack) is NOT executalbe! Use -s option set jstack path manually."
     jstack_path="$JAVA_HOME/bin/jstack"
 fi
 

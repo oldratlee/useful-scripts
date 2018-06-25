@@ -68,6 +68,18 @@ die() {
     exit 1
 }
 
+logAndRun() {
+    echo "$@"
+    echo
+    "$@"
+}
+
+logAndCat() {
+    echo "$@"
+    echo
+    cat
+}
+
 usage() {
     local -r exit_code="$1"
     shift
@@ -281,11 +293,7 @@ findBusyJavaThreadsByPs() {
     local -a ps_cmd_line=(ps $ps_process_select_options -wwLo pid,lwp,pcpu,user --sort -pcpu --no-headers)
     local -r ps_out="$("${ps_cmd_line[@]}")"
     if [ -n "$store_dir" ]; then
-        {
-            echo "${ps_cmd_line[@]}"
-            echo
-            echo "$ps_out"
-        } > "${store_file_prefix}$(( i + 1 ))_ps"
+        echo "$ps_out" | logAndCat "${ps_cmd_line[@]}" > "${store_file_prefix}$(( i + 1 ))_ps"
     fi
 
     echo "$ps_out" | head -n "${count}"
@@ -310,11 +318,7 @@ __top_threadId_cpu() {
     local -a top_cmd_line=(top -H -b -d $top_delay -n 2)
     local -r top_out=$(HOME="$tmp_store_dir" "${top_cmd_line[@]}")
     if [ -n "$store_dir" ]; then
-        {
-            echo "${top_cmd_line[@]}"
-            echo
-            echo "$top_out"
-        } > "${store_file_prefix}$(( i + 1 ))_top"
+        echo "$top_out" | logAndCat "${top_cmd_line[@]}" > "${store_file_prefix}$(( i + 1 ))_top"
     fi
 
     echo "$top_out" |
@@ -336,11 +340,7 @@ __complete_pid_user_by_ps() {
     local -a ps_cmd_line=(ps $ps_process_select_options -wwLo pid,lwp,user --no-headers)
     local -r ps_out="$("${ps_cmd_line[@]}")"
     if [ -n "$store_dir" ]; then
-        {
-            echo "${ps_cmd_line[@]}"
-            echo
-            echo "$ps_out"
-        } > "${store_file_prefix}$(( i + 1 ))_ps"
+        echo "$ps_out" | logAndCat "${ps_cmd_line[@]}" > "${store_file_prefix}$(( i + 1 ))_ps"
     fi
 
     local idx=0
@@ -384,18 +384,10 @@ printStackOfThreads() {
             local -a jstack_cmd_line=( "$jstack_path" ${force} $mix_native_frames $more_lock_info ${pid} )
             if [ "${user}" == "${USER}" ]; then
                 # run without sudo, when java process user is current user
-                {
-                    echo "${jstack_cmd_line[@]}"
-                    echo
-                    "${jstack_cmd_line[@]}"
-                } > ${jstackFile}
+                logAndRun "${jstack_cmd_line[@]}" > ${jstackFile}
             elif [ $UID == 0 ]; then
                 # if java process user is not current user, must run jstack with sudo
-                {
-                    echo sudo -u "${user}" "${jstack_cmd_line[@]}"
-                    echo
-                    sudo -u "${user}" "${jstack_cmd_line[@]}"
-                } > ${jstackFile}
+                logAndRun sudo -u "${user}" "${jstack_cmd_line[@]}" > ${jstackFile}
             else
                 # current user is not root user, so can not run with sudo; print error message and rerun suggestion
                 redPrint "[$idx] Fail to jstack busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user})."

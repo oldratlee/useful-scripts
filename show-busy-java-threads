@@ -37,12 +37,14 @@ colorPrint() {
     shift
 
     colorEcho "$color" "$@"
-    # use "{} &> /dev/null" to discard bash error message:
-    #    line 42: xxx.log: Permission denied
-    {
-        [ -n "$append_file" ] && echo "$@" >> "$append_file"
-        [ -n "$store_dir" ] && echo "$@" >> "${store_file_prefix}$PROG"
-    } &> /dev/null
+    [ -n "$append_file" -a -w "$append_file" ] && echo "$@" >> "$append_file"
+    [ -n "$store_dir" -a -w "$store_dir" ] && echo "$@" >> "${store_file_prefix}$PROG"
+}
+
+normalPrint() {
+    echo "$@"
+    [ -n "$append_file" -a -w "$append_file" ] && echo "$@" >> "$append_file"
+    [ -n "$store_dir" -a -w "$store_dir" ] && echo "$@" >> "${store_file_prefix}$PROG"
 }
 
 redPrint() {
@@ -59,12 +61,6 @@ yellowPrint() {
 
 bluePrint() {
     colorPrint 36 "$@"
-}
-
-normalPrint() {
-    echo "$@"
-    [ -n "$append_file" ] && echo "$@" >> "$append_file"
-    [ -n "$store_dir" ] && echo "$@" >> "${store_file_prefix}$PROG"
 }
 
 die() {

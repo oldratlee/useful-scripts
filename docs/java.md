@@ -25,6 +25,25 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+-------------------------------
+
+关于`Java`排错与诊断，力荐️`Arthas` ❤️
+
+- [alibaba/arthas: Alibaba Java诊断利器 - github.com](https://github.com/alibaba/arthas)
+- `Arthas`用户文档 https://alibaba.github.io/arthas/
+
+`Arthas`功能异常(😜)强劲，且在阿里巴巴线上支持使用多年。我自己也常用，一定要看看用用！
+
+因为`Arthas`是通过`Agent`方式来连接运行的`Java`进程、主要通过交互式来完成功能，与之对应的脚本方式也有脚本方式的好处，如：
+
+1. 可以在进程不能启动的情况下完成诊断（如依赖中的重复类分析、`ClassPath`上的资源或类查找）
+1. 开销少；简单少依赖（就纯文本的一个脚本文件）
+1. 方便与（已有的）工具（如`awk`、`sed`、`cron`）、流程或设施集成，进一步编程/自动化
+
+请按需按场景选用。
+
+-------------------------------
+
 <a id="beer-show-busy-java-threadssh"></a>
 <a id="beer-show-busy-java-threads"></a>
 

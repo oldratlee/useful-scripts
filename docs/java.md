@@ -118,8 +118,8 @@ Example:
   show-busy-java-threads 3 10  # update every 3 seconds, update 10 times
 
 Output control:
-  -p, --pid <java pid>      find out the highest cpu consumed threads from the specified java process,
-                            default from all java process.
+  -p, --pid <java pid>      find out the highest cpu consumed threads from
+                            the specified java process, default from all java process.
   -c, --count <num>         set the thread count to show, default is 5.
   -a, --append-file <file>  specifies the file to append output as log.
   -S, --store-dir <dir>     specifies the directory for storing intermediate files, and keep files.
@@ -142,8 +142,8 @@ cpu usage calculation control:
                             more info see top -d option. eg: -d 1 (1 second).
   -P, --use-ps              use ps command to find busy thread(cpu usage) instead of top command,
                             default use top command, because cpu usage of ps command is expressed as
-                            the percentage of time spent running during the entire lifetime of a process,
-                            this is not ideal.
+                            the percentage of time spent running during the *entire lifetime*
+                            of a process, this is not ideal in general.
 
 Miscellaneous:
   -h, --help                display this help and exit.

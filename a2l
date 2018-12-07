@@ -22,7 +22,7 @@ colorEcho() {
     [ -t 1 ] && echo "$ec[1;${color}m$@$eend" || echo "$@"
 }
 
-readonly -a ECHO_COLORS=(31 32 37 34 33 35 36)
+readonly -a ECHO_COLORS=(33 35 36 31 32 37 34)
 COUNT=0
 
 for a; do

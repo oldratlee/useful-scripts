@@ -21,7 +21,7 @@ set -o pipefail
 readonly ec=$'\033' # escape char
 readonly eend=$'\033[0m' # escape end
 
-readonly -a ECHO_COLORS=(31 32 37 34 33 35 36)
+readonly -a ECHO_COLORS=(33 35 36 31 32 37 34)
 COUNT=0
 colorEcho() {
     local color="${ECHO_COLORS[COUNT++ % ${#ECHO_COLORS[@]}]}"

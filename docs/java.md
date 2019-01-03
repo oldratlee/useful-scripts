@@ -55,14 +55,15 @@
 
 PS，如何操作可以参见[@bluedavy](http://weibo.com/bluedavy)的[《分布式Java应用》](https://book.douban.com/subject/4848587/)的【5.1.1 `CPU`消耗分析】一节，说得很详细：
 
-1. `top`命令找出有问题`Java`进程及线程`id`：
+1. `top`命令找出消耗`CPU`高的`Java`进程及其线程`id`：
     1. 开启线程显示模式（`top -H`，或是打开`top`后按`H`）
     1. 按`CPU`使用率排序（`top`缺省是按`CPU`使用降序，已经合要求；打开`top`后按`P`可以显式指定按`CPU`使用降序）
     1. 记下`Java`进程`id`及其`CPU`高的线程`id`
-1. 用进程`id`作为参数，`jstack`有问题的`Java`进程
-1. 手动转换线程`id`成十六进制（可以用`printf %x 1234`）
-1. 查找十六进制的线程`id`（可以用`vim`的查找功能`/0x1234`，或是`grep 0x1234 -A 20`）
-1. 查看对应的线程栈，以分析问题
+1. 查看消耗`CPU`高的线程栈：
+    1. 用进程`id`作为参数，`jstack`出有问题的`Java`进程
+    1. 手动转换线程`id`成十六进制（可以用`printf %x 1234`）
+    1. 在`jstack`输出中查找十六进制的线程`id`（可以用`vim`的查找功能`/0x1234`，或是`grep 0x1234 -A 20`）
+1. 查看对应的线程栈，分析问题
 
 查问题时，会要多次上面的操作以分析确定问题，这个过程**太繁琐太慢了**。
 
@@ -204,7 +205,12 @@ $ show-busy-java-threads
     - 优化性能，通过`read -a`简化反复的`awk`操作。 [#51](https://github.com/oldratlee/useful-scripts/pull/51)
 - [superhj1987](https://github.com/superhj1987) / [lirenzuo](https://github.com/lirenzuo)
     - 提出/实现了多次执行的功能 [superhj1987/awesome-scripts#1](https://github.com/superhj1987/awesome-scripts/issues/1)
-- [xiongchen2012](https://github.com/xiongchen2012) 提出/解决了长用户名截断的Bug [#62](https://github.com/oldratlee/useful-scripts/pull/62)
+- [xiongchen2012](https://github.com/xiongchen2012) 提出并解决了长用户名截断的Bug [#62](https://github.com/oldratlee/useful-scripts/pull/62)
+- [qsLI](https://github.com/qsLI) / [sdslnmd](https://github.com/sdslnmd)
+    - 发现并提交Issue：show-busy-java-threads支持top来获取cpu占用率，ps的cpu占用率非实时 [#67](https://github.com/oldratlee/useful-scripts/issues/67)
+- [geekMessi](https://github.com/geekMessi)
+    - 发现并提交Issue：在`top v3.2`下提取不正确的Bug [#71](https://github.com/oldratlee/useful-scripts/issues/71)
+    - 发现并提交Issue：support command name jsvc to find java process [#72](https://github.com/oldratlee/useful-scripts/issues/72)
 
 🍺 [show-duplicate-java-classes](../show-duplicate-java-classes)
 ----------------------

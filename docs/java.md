@@ -85,7 +85,7 @@ show-busy-java-threads <重复执行的间隔秒数> [<重复执行的次数>]
 show-busy-java-threads -a <运行输出的记录到的文件>
 # 记录到文件以方便回溯查看
 
-show-duplicate-java-classes -S <存储jstack输出文件的目录>
+show-busy-java-threads -S <存储jstack输出文件的目录>
 # 指定jstack输出文件的存储目录，方便记录以后续分析
 
 ##############################

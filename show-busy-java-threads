@@ -416,7 +416,7 @@ printStackOfThreads() {
                 /^$/d; p # delete end seperator line
             }"
         else
-            local sed_script="/nid=${threadId0x} /,/^$/ {
+            local sed_script="/ nid=${threadId0x} /,/^$/ {
                 /^$/d; p # delete end seperator line
             }"
         fi

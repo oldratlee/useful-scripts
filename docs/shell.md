@@ -110,7 +110,7 @@ Options:
 
 命令支持选项、功能和使用方式与[`cat`命令](https://linux.die.net/man/1/cat)完全一样（实际上读流操作在实现上全部代理给`cat`命令）。
 
-命令名`coat`意思是`COlorful cAT`；当然单词`coat`的意思是外套，彩色输入行就像件漂亮的外套～ 😆
+命令名`coat`意思是`COlorful cAT`；当然单词`coat`的意思是外套，彩色输入行就像件漂亮的外套～ 😆  
 注：之前命名是`colines`（意思是`COLorful LINES`）。
 
 ### 示例

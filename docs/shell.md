@@ -116,14 +116,14 @@ Options:
 ### 示例
 
 ```bash
-$ echo a | coat
-a
-$ echo -e 'a\nb' | coat
-a
-b
-$ echo -e 'a\nb' | nl | coat
-1   a
-2   b
+$ echo Hello world | coat
+Hello world
+$ echo -e 'Hello\nWorld' | coat
+Hello
+World
+$ echo -e 'Hello\nWorld' | nl | coat
+     1	Hello
+     2	World
 $ coat file1 file2.txt
 line1 of file1
 line2 of file1

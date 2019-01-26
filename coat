@@ -3,7 +3,7 @@
 # cat lines colorfully. coat means *CO*lorful c*AT*.
 #
 # @Usage
-#   $ echo -n 'Hello\nWorld' | coat
+#   $ echo -e 'Hello\nWorld' | coat
 #   $ coat /path/to/file1
 #   $ coat /path/to/file1 /path/to/file2
 #

@@ -74,7 +74,7 @@ show-busy-java-threads
 # 从所有运行的Java进程中找出最消耗CPU的线程（缺省5个），打印出其线程栈
 
 # 缺省会自动从所有的Java进程中找出最消耗CPU的线程，这样用更方便
-# 当然你可以手动指定要分析的Java进程Id，以保证只会显示出那个你关心的那个Java进程的信息
+# 当然你可以手动指定要分析的Java进程Id，以保证只会显示你关心的那个Java进程的信息
 show-busy-java-threads -p <指定的Java进程Id>
 
 show-busy-java-threads -c <要显示的线程栈数>

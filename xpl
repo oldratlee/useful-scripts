@@ -30,6 +30,10 @@ EOF
 # if program name is xpf, set option selected!
 [ "xpf" == "${PROG}" ] && selected=true
 
+################################################################################
+# parse options
+################################################################################
+
 declare -a args=()
 while [ $# -gt 0 ]; do
     case "$1" in
@@ -55,9 +59,13 @@ while [ $# -gt 0 ]; do
     esac
 done
 
-[ "${#args[@]}"  == 0 ] && files=( "." ) || files=( "${args[@]}" )
-for file in "${files[@]}" ; do
-    [ ! -e "$file" ] && { echo "$file not exsited!"; continue; }
+################################################################################
+# biz options
+################################################################################
+
+# open one file
+openOneFile() {
+    local file="$1"
 
     case "$(uname)" in
     Darwin*)
@@ -80,5 +88,12 @@ for file in "${files[@]}" ; do
         fi
         ;;
     esac
+}
+
+[ "${#args[@]}"  == 0 ] && files=( . ) || files=( "${args[@]}" )
+for file in "${files[@]}" ; do
+    [ ! -e "$file" ] && { echo "$file not exsited!"; continue; }
+
+    openOneFile "$file"
     echo "$file opened${selected:+ with selection}!"
 done

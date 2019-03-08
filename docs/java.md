@@ -34,7 +34,7 @@
 
 `Arthas`功能异常(😜)强劲，且在阿里巴巴线上支持使用多年。我自己也常用，一定要看看用用！
 
-因为`Arthas`是通过`Agent`方式来连接运行的`Java`进程、主要通过交互式来完成功能，与之对应的脚本方式也有脚本方式的好处，如：
+`Arthas`是通过`Agent`方式来连接运行的`Java`进程、主要通过交互式来完成功能，与之对应的脚本方式也有其优势，如：
 
 1. 可以在进程不能启动的情况下完成诊断（如依赖中的重复类分析、`ClassPath`上的资源或类查找）
 1. 开销少；简单少依赖（就纯文本的一个脚本文件）
@@ -137,7 +137,7 @@ jstack control:
   -m, --mix-native-frames   set jstack to print both java and native frames (mixed mode).
   -l, --lock-info           set jstack with long listing. Prints additional information about locks.
 
-cpu usage calculation control:
+CPU usage calculation control:
   -d, --top-delay           specifies the delay between top samples, default is 0.5 (second).
                             get thread cpu percentage during this delay interval.
                             more info see top -d option. eg: -d 1 (1 second).

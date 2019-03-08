@@ -115,7 +115,7 @@ jstack control:
   -m, --mix-native-frames   set jstack to print both java and native frames (mixed mode).
   -l, --lock-info           set jstack with long listing. Prints additional information about locks.
 
-cpu usage calculation control:
+CPU usage calculation control:
   -d, --top-delay           specifies the delay between top samples, default is 0.5 (second).
                             get thread cpu percentage during this delay interval.
                             more info see top -d option. eg: -d 1 (1 second).

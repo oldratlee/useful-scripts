@@ -417,17 +417,17 @@ printStackOfThreads() {
 
         if [ -n "$mix_native_frames" ]; then
             local sed_script="/--------------- $threadId ---------------/,/^---------------/ {
-                /--------------- $threadId ---------------/b # skip first seperator line
-                /^---------------/d # delete second seperator line
+                /--------------- $threadId ---------------/b # skip first separator line
+                /^---------------/d # delete second separator line
                 p
             }"
         elif [ -n "$force" ]; then
             local sed_script="/^Thread ${threadId}:/,/^$/ {
-                /^$/d; p # delete end seperator line
+                /^$/d; p # delete end separator line
             }"
         else
             local sed_script="/ nid=${threadId0x} /,/^$/ {
-                /^$/d; p # delete end seperator line
+                /^$/d; p # delete end separator line
             }"
         fi
         {

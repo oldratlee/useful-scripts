@@ -449,7 +449,7 @@ Find control:
 
 Output control:
   -a, --absolute-path    always print absolute path of jar file
-  -s, --seperator        specify the seperator between jar file and zip entry.
+  -s, --separator        specify the separator between jar file and zip entry.
                          default is `!'.
 
 Miscellaneous:

@@ -98,7 +98,7 @@ Find control:
 
 Output control:
   -a, --absolute-path    always print absolute path of jar file
-  -s, --seperator        specify the seperator between jar file and zip entry.
+  -s, --separator        specify the separator between jar file and zip entry.
                          default is \`!'.
 
 Miscellaneous:
@@ -124,8 +124,9 @@ while (( $# > 0 )); do
         extension=("${extension[@]}" "$2")
         shift 2
         ;;
-    -s|--seperator)
-        seperator="$2"
+    # support the typo option --seperator for compatibility
+    -s|--separator|--seperator)
+        separator="$2"
         shift 2
         ;;
     -E|--extended-regexp)
@@ -175,7 +176,7 @@ extension=${extension:-jar}
 regex_mode=${regex_mode:--E}
 
 use_absolute_path=${use_absolute_path:-false}
-seperator="${seperator:-!}"
+separator="${separator:-!}"
 
 (( "${#args[@]}" == 0 )) && usage 1 "No find file pattern!"
 (( "${#args[@]}" > 1 )) && usage 1 "More than 1 file pattern: ${args[@]}"
@@ -243,8 +244,8 @@ findInJarFiles() {
                 clearResponsiveMessage
 
                 $is_console &&
-                    echo "$ec[1;35m${jar_file}${eend}${ec}[1;32m${seperator}${eend}${file}" ||
-                    echo "${jar_file}${seperator}${file}"
+                    echo "$ec[1;35m${jar_file}${eend}${ec}[1;32m${separator}${eend}${file}" ||
+                    echo "${jar_file}${separator}${file}"
             done
 
         clearResponsiveMessage

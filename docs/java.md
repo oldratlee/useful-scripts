@@ -111,7 +111,8 @@ show-busy-java-threads -l
 # 帮助信息
 $ show-busy-java-threads -h
 Usage: show-busy-java-threads [OPTION]... [delay [count]]
-Find out the highest cpu consumed threads of java, and print the stack of these threads.
+Find out the highest cpu consumed threads of java processes,
+and print the stack of these threads.
 
 Example:
   show-busy-java-threads       # show busy java threads info
@@ -120,30 +121,39 @@ Example:
 
 Output control:
   -p, --pid <java pid>      find out the highest cpu consumed threads from
-                            the specified java process, default from all java process.
+                            the specified java process.
+                            default from all java process.
   -c, --count <num>         set the thread count to show, default is 5.
   -a, --append-file <file>  specifies the file to append output as log.
-  -S, --store-dir <dir>     specifies the directory for storing intermediate files, and keep files.
-                            default store intermediate files at tmp dir, and auto remove after run.
-                            use this option to keep files so as to review jstack/top/ps output later.
+  -S, --store-dir <dir>     specifies the directory for storing
+                            the intermediate files, and keep files.
+                            default store intermediate files at tmp dir,
+                            and auto remove after run. use this option to keep
+                            files so as to review jstack/top/ps output later.
   delay                     the delay between updates in seconds.
   count                     the number of updates.
-                            delay/count arguments imitates the style of vmstat command.
+                            delay/count arguments imitates the style of
+                            vmstat command.
 
 jstack control:
   -s, --jstack-path <path>  specifies the path of jstack command.
-  -F, --force               set jstack to force a thread dump.
-                            use when jstack <pid> does not respond (process is hung).
-  -m, --mix-native-frames   set jstack to print both java and native frames (mixed mode).
-  -l, --lock-info           set jstack with long listing. Prints additional information about locks.
+  -F, --force               set jstack to force a thread dump. use when jstack
+                            does not respond (process is hung).
+  -m, --mix-native-frames   set jstack to print both java and native frames
+                            (mixed mode).
+  -l, --lock-info           set jstack with long listing.
+                            prints additional information about locks.
 
 CPU usage calculation control:
-  -d, --top-delay           specifies the delay between top samples, default is 0.5 (second).
-                            get thread cpu percentage during this delay interval.
+  -d, --top-delay           specifies the delay between top samples.
+                            default is 0.5 (second). get thread cpu percentage
+                            during this delay interval.
                             more info see top -d option. eg: -d 1 (1 second).
-  -P, --use-ps              use ps command to find busy thread(cpu usage) instead of top command,
-                            default use top command, because cpu usage of ps command is expressed as
-                            the percentage of time spent running during the *entire lifetime*
+  -P, --use-ps              use ps command to find busy thread(cpu usage)
+                            instead of top command.
+                            default use top command, because cpu usage of
+                            ps command is expressed as the percentage of
+                            time spent running during the *entire lifetime*
                             of a process, this is not ideal in general.
 
 Miscellaneous:
@@ -412,22 +422,25 @@ find-in-jars 'log4j\.properties' -s ' ' | awk '{print $2}'
 # 帮助信息
 $ find-in-jars -h
 Usage: find-in-jars [OPTION]... PATTERN
-Find file in the jar files under specified directory(recursive, include subdirectory).
+Find files in the jar files under specified directory,
+search jar files recursively(include subdirectory).
 The pattern default is *extended* regex.
 
 Example:
   find-in-jars 'log4j\.properties'
-  find-in-jars '^log4j\.(properties|xml)$' # search file log4j.properties/log4j.xml at zip root
+  # search file log4j.properties/log4j.xml at zip root
+  find-in-jars '^log4j\.(properties|xml)$'
   find-in-jars 'log4j\.properties$' -d /path/to/find/directory
   find-in-jars '\.properties$' -d /path/to/find/dir1 -d path/to/find/dir2
   find-in-jars 'Service\.class$' -e jar -e zip
   find-in-jars 'Mon[^$/]*Service\.class$' -s ' <-> '
 
 Find control:
-  -d, --dir              the directory that find jar files, default is current directory.
-                         this option can specify multiply times to find in multiply directories.
-  -e, --extension        set find file extension, default is jar.
-                         this option can specify multiply times to find in multiply extension.
+  -d, --dir              the directory that find jar files.
+                         default is current directory. this option can specify
+                         multiply times to find in multiply directories.
+  -e, --extension        set find file extension, default is jar. this option
+                         can specify multiply times to find multiply extension.
   -E, --extended-regexp  PATTERN is an extended regular expression (*default*)
   -F, --fixed-strings    PATTERN is a set of newline-separated strings
   -G, --basic-regexp     PATTERN is a basic regular expression
@@ -436,7 +449,8 @@ Find control:
 
 Output control:
   -a, --absolute-path    always print absolute path of jar file
-  -s, --seperator        seperator for jar file and file entry, default is `!'.
+  -s, --seperator        specify the seperator between jar file and zip entry.
+                         default is `!'.
 
 Miscellaneous:
   -h, --help             display this help and exit

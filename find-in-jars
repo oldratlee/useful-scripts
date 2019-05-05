@@ -1,10 +1,11 @@
 #!/bin/bash
 # @Function
-# Find file in the jar files under current directory
+# Find files in the jar files under specified directory, search jar files recursively(include subdirectory).
 #
 # @Usage
 #   $ find-in-jars 'log4j\.properties'
-#   $ find-in-jars '^log4j\.(properties|xml)$' # search file log4j.properties/log4j.xml at zip root
+#   # search file log4j.properties/log4j.xml at zip root
+#   $ find-in-jars '^log4j\.(properties|xml)$'
 #   $ find-in-jars 'log4j\.properties$' -d /path/to/find/directory
 #   $ find-in-jars '\.properties$' -d /path/to/find/dir1 -d path/to/find/dir2
 #   $ find-in-jars 'Service\.class$' -e jar -e zip
@@ -70,22 +71,25 @@ usage() {
 
     > $out cat <<EOF
 Usage: ${PROG} [OPTION]... PATTERN
-Find file in the jar files under specified directory(recursive, include subdirectory).
+Find files in the jar files under specified directory,
+search jar files recursively(include subdirectory).
 The pattern default is *extended* regex.
 
 Example:
   ${PROG} 'log4j\.properties'
-  ${PROG} '^log4j\.(properties|xml)$' # search file log4j.properties/log4j.xml at zip root
+  # search file log4j.properties/log4j.xml at zip root
+  ${PROG} '^log4j\.(properties|xml)$'
   ${PROG} 'log4j\.properties$' -d /path/to/find/directory
   ${PROG} '\.properties$' -d /path/to/find/dir1 -d path/to/find/dir2
   ${PROG} 'Service\.class$' -e jar -e zip
   ${PROG} 'Mon[^$/]*Service\.class$' -s ' <-> '
 
 Find control:
-  -d, --dir              the directory that find jar files, default is current directory.
-                         this option can specify multiply times to find in multiply directories.
-  -e, --extension        set find file extension, default is jar.
-                         this option can specify multiply times to find in multiply extension.
+  -d, --dir              the directory that find jar files.
+                         default is current directory. this option can specify
+                         multiply times to find in multiply directories.
+  -e, --extension        set find file extension, default is jar. this option
+                         can specify multiply times to find multiply extension.
   -E, --extended-regexp  PATTERN is an extended regular expression (*default*)
   -F, --fixed-strings    PATTERN is a set of newline-separated strings
   -G, --basic-regexp     PATTERN is a basic regular expression
@@ -94,7 +98,8 @@ Find control:
 
 Output control:
   -a, --absolute-path    always print absolute path of jar file
-  -s, --seperator        seperator for jar file and file entry, default is \`!'.
+  -s, --seperator        specify the seperator between jar file and zip entry.
+                         default is \`!'.
 
 Miscellaneous:
   -h, --help             display this help and exit

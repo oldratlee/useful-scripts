@@ -310,19 +310,33 @@ if [ -n "$store_dir" ]; then
 fi
 
 ################################################################################
-# check the existence of jstack command
+# search/check the existence of jstack command
+#
+# search order/priority:
+#    1. from -s option
+#    2. from under env var JAVA_HOME
+#    3. from under env var PATH
 ################################################################################
 
 if [ -n "$jstack_path" ]; then
-    [ -f "$jstack_path" ] || die "$jstack_path is NOT found!"
-    [ -x "$jstack_path" ] || die "$jstack_path is NOT executable!"
+    # 1. check jstack_path set by -s option
+    [ -f "$jstack_path" ] || die "$jstack_path (set by -s option) is NOT found!"
+    [ -x "$jstack_path" ] || die "$jstack_path (set by -s option) is NOT executable!"
+elif [ -n "$JAVA_HOME" ]; then
+    # 2. search jstack under JAVA_HOME
+    if [ -f "$JAVA_HOME/bin/jstack" ]; then
+        [ -x "$JAVA_HOME/bin/jstack" ] || die "found \$JAVA_HOME/bin/jstack($JAVA_HOME/bin/jstack) is NOT executable!${nl}Use -s option set jstack path manually."
+        jstack_path="$JAVA_HOME/bin/jstack"
+    elif [ -f "$JAVA_HOME/../bin/jstack" ]; then
+        [ -x "$JAVA_HOME/../bin/jstack" ] || die "found \$JAVA_HOME/../bin/jstack($JAVA_HOME/../bin/jstack) is NOT executable!${nl}Use -s option set jstack path manually."
+        jstack_path="$JAVA_HOME/../bin/jstack"
+    fi
 elif command -v jstack &>/dev/null; then
+    # 3. search jstack under PATH
     jstack_path="$(command -v jstack)"
+    [ -x "$jstack_path" ] || die "found $jstack_path from PATH is NOT executable!${nl}Use -s option set jstack path manually."
 else
-    [ -n "$JAVA_HOME" ] || die "jstack not found on PATH and No JAVA_HOME setting! Use -s option set jstack path manually."
-    [ -f "$JAVA_HOME/bin/jstack" ] || die "jstack not found on PATH and \$JAVA_HOME/bin/jstack($JAVA_HOME/bin/jstack) file does NOT exists! Use -s option set jstack path manually."
-    [ -x "$JAVA_HOME/bin/jstack" ] || die "jstack not found on PATH and \$JAVA_HOME/bin/jstack($JAVA_HOME/bin/jstack) is NOT executable! Use -s option set jstack path manually."
-    jstack_path="$JAVA_HOME/bin/jstack"
+    die "jstack NOT found by JAVA_HOME(${JAVA_HOME:-not set}) setting and PATH!${nl}Use -s option set jstack path manually."
 fi
 
 ################################################################################

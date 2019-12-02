@@ -2,7 +2,7 @@
 # @Function
 # show all console text color themes.
 #
-# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/shell.md#-console-text-color-themessh
+# @online-doc https://github.com/oldratlee/useful-scripts/blob/dev-2.x/docs/shell.md#-console-text-color-themessh
 # @author Jerry Lee (oldratlee at gmail dot com)
 
 readonly _ctct_PROG="$(basename "$(readlink -f "$0")")"

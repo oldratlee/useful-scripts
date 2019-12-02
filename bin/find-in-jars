@@ -11,7 +11,7 @@
 #   $ find-in-jars 'Service\.class$' -e jar -e zip
 #   $ find-in-jars 'Mon[^$/]*Service\.class$' -s ' <-> '
 #
-# @online-doc https://github.com/oldratlee/useful-scripts/blob/master/docs/java.md#-find-in-jars
+# @online-doc https://github.com/oldratlee/useful-scripts/blob/dev-2.x/docs/java.md#-find-in-jars
 # @author Jerry Lee (oldratlee at gmail dot com)
 
 readonly PROG="`basename "$0"`"

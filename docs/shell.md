@@ -44,7 +44,7 @@
 `Shell`使用加强
 ====================================
 
-🍺 [c](../c)
+🍺 [c](../bin/c)
 ----------------------
 
 原样命令行输出，并拷贝标准输出到系统剪贴板，省去`CTRL+C`操作，优化命令行与其它应用之间的操作流。  
@@ -113,7 +113,7 @@ Options:
 - [拷贝复制命令行输出放在系统剪贴板上](http://oldratlee.com/post/2012-12-23/command-output-to-clip)，给出了不同系统可用命令。
 - 关于文本文件最后的换行，参见[Why should text files end with a newline?](https://stackoverflow.com/questions/729692)
 
-🍺 [coat](../coat)
+🍺 [coat](../bin/coat)
 ----------------------
 
 彩色`cat`出文件行，方便人眼区分不同的行。  
@@ -121,8 +121,7 @@ Options:
 
 命令支持选项、功能和使用方式与[`cat`命令](https://linux.die.net/man/1/cat)完全一样（实际上读流操作在实现上全部代理给`cat`命令）。
 
-命令名`coat`意思是`COlorful cAT`；当然单词`coat`的意思是外套，彩色输入行就像件漂亮的外套～ 😆  
-注：之前命名是`colines`（意思是`COLorful LINES`）。
+命令名`coat`意思是`COlorful cAT`；当然单词`coat`的意思是外套，彩色输入行就像件漂亮的外套～ 😆
 
 ### 示例
 
@@ -176,7 +175,7 @@ or available locally via: info '(coreutils) cat invocation'
 注：上面示例中，没有彩色；在控制台上运行可以看出彩色效果，如下：  
 ![coat screenshot](../docs/coat.png)
 
-🍺 [a2l](../a2l)
+🍺 [a2l](../bin/a2l)
 ----------------------
 
 按行彩色输出参数，方便人眼查看。  
@@ -195,8 +194,7 @@ B.java
 # zsh支持 **/* 跨目录glob，可以方便搜索，但是输出内容是空格分隔的不方便查看。
 # 把参数按行输出方便查看 或是 grep
 $ a2l **/*.sh
-console-text-color-themes.sh
-swtrunk.sh
+lib/console-text-color-themes.sh
 test-cases/parseOpts-test.sh
 test-cases/self-installer.sh
 ...
@@ -204,7 +202,7 @@ test-cases/self-installer.sh
 
 注：上面示例中，没有彩色；在控制台上运行可以看出彩色效果，和上面的`coat`命令一样。
 
-🍺 [ap](../ap) and [rp](../rp)
+🍺 [ap](../bin/ap) and [rp](../bin/rp)
 ----------------------
 
 批量转换文件路径为绝对路径/相对路径，会自动跟踪链接并规范化路径。  
@@ -239,7 +237,7 @@ $ rp /home /etc/../etc /home/admin
 <a id="beer-tcp-connection-state-countersh"></a>
 <a id="beer-tcp-connection-state-counter"></a>
 
-🍺 [tcp-connection-state-counter](../tcp-connection-state-counter)
+🍺 [tcp-connection-state-counter](../bin/tcp-connection-state-counter)
 ----------------------
 
 统计各个`TCP`连接状态的个数。  
@@ -270,7 +268,7 @@ SYN_SENT     17
 
 [sunuslee](https://github.com/sunuslee)改进此脚本，增加对`MacOS`的支持。 [#56](https://github.com/oldratlee/useful-scripts/pull/56)
 
-🍺 [xpl](../xpl) and [xpf](../xpf)
+🍺 [xpl](../bin/xpl) and [xpf](../bin/xpf)
 ----------------------
 
 在命令行中快速完成 在文件浏览器中 打开/选中 指定的文件或文件夹的操作，优化命令行与其它应用之间的操作流。  
@@ -315,7 +313,7 @@ xpf /path/to/dir1 /path/to/foo1.txt
 <a id="beer-echo-argssh"></a>
 <a id="beer-echo-args"></a>
 
-🍺 [echo-args](../echo-args)
+🍺 [echo-args](../bin/echo-args)
 ----------------------
 
 在编写脚本时，常常要确认输入参数是否是期望的：参数个数，参数值（可能包含有人眼不容易发现的空格问题）。  
@@ -342,7 +340,7 @@ $ ./echo-args 1 "  2 foo  " "3        3"
 
 这样可以不改其它的程序，查看到输入参数的信息。
 
-🍺 [console-text-color-themes.sh](../console-text-color-themes.sh)
+🍺 [console-text-color-themes.sh](../lib/console-text-color-themes.sh)
 ----------------------
 
 显示`Terminator`的全部文字彩色组合的效果及其打印方式。  
@@ -380,7 +378,7 @@ colorEchoWithoutNewLine "4;33;40" "Hello world!" "Hello Hell!"
 
 - [utensil](https://github.com/utensil)的[在Bash下输出彩色的文本](http://utensil.github.io/tech/2007/09/10/colorful-bash.html)，这是篇很有信息量很钻研的文章！
 
-🍺 [parseOpts.sh](../parseOpts.sh)
+🍺 [parseOpts.sh](../lib/parseOpts.sh)
 ----------------------
 
 命令行选项解析库，加强支持选项有多个值（即数组）。  

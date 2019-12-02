@@ -47,7 +47,7 @@
 <a id="beer-show-busy-java-threadssh"></a>
 <a id="beer-show-busy-java-threads"></a>
 
-🍺 [show-busy-java-threads](../show-busy-java-threads)
+🍺 [show-busy-java-threads](../bin/show-busy-java-threads)
 ----------------------
 
 用于快速排查`Java`的`CPU`性能问题(`top us`值过高)，自动查出运行的`Java`进程中消耗`CPU`多的线程，并打印出其线程栈，从而确定导致性能问题的方法调用。  
@@ -222,7 +222,7 @@ $ show-busy-java-threads
     - 发现并提交Issue：在`top v3.2`下提取不正确的Bug [#71](https://github.com/oldratlee/useful-scripts/issues/71)
     - 发现并提交Issue：support command name jsvc to find java process [#72](https://github.com/oldratlee/useful-scripts/issues/72)
 
-🍺 [show-duplicate-java-classes](../show-duplicate-java-classes)
+🍺 [show-duplicate-java-classes](../bin/show-duplicate-java-classes)
 ----------------------
 
 找出`Java Lib`（`Java`库，即`Jar`文件）或`Class`目录（类目录）中的重复类。  
@@ -385,7 +385,7 @@ class paths to find:
 <a id="beer-find-in-jarssh"></a>
 <a id="beer-find-in-jars"></a>
 
-🍺 [find-in-jars](../find-in-jars)
+🍺 [find-in-jars](../bin/find-in-jars)
 ----------------------
 
 在当前目录下所有`jar`文件里，查找类或资源文件。  

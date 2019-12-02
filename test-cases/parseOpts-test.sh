@@ -2,7 +2,7 @@
 
 BASE=`dirname $0`
 
-. $BASE/../parseOpts.sh
+. $BASE/../lib/parseOpts.sh
 
 
 #################################################

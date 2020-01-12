@@ -124,6 +124,7 @@ Output control:
                             the specified java process.
                             default from all java process.
   -c, --count <num>         set the thread count to show, default is 5.
+                            set count 0 to show all threads.
   -a, --append-file <file>  specifies the file to append output as log.
   -S, --store-dir <dir>     specifies the directory for storing
                             the intermediate files, and keep files.

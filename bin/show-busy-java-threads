@@ -102,6 +102,7 @@ Output control:
                             the specified java process.
                             default from all java process.
   -c, --count <num>         set the thread count to show, default is 5.
+                            set count 0 to show all threads.
   -a, --append-file <file>  specifies the file to append output as log.
   -S, --store-dir <dir>     specifies the directory for storing
                             the intermediate files, and keep files.
@@ -306,7 +307,11 @@ findBusyJavaThreadsByPs() {
         echo "$ps_out" | logAndCat "${ps_cmd_line[@]}" > "${store_file_prefix}$(( i + 1 ))_ps"
     fi
 
-    echo "$ps_out" | head -n "${count}"
+    if (( count > 0 )); then
+        echo "$ps_out" | head -n "${count}"
+    else
+        echo "$ps_out"
+    fi
 }
 
 # top with output field: thread id, %cpu
@@ -355,7 +360,7 @@ __complete_pid_user_by_ps() {
 
     local idx=0 threadId pcpu
     while read threadId pcpu ; do
-        (( idx < count )) || break
+        (( count <= 0 || idx < count )) || break
 
         # output field: pid, threadId, pcpu, user
         local output_fields="$( echo "$ps_out" |

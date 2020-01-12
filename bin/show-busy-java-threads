@@ -353,13 +353,9 @@ __complete_pid_user_by_ps() {
         echo "$ps_out" | logAndCat "${ps_cmd_line[@]}" > "${store_file_prefix}$(( i + 1 ))_ps"
     fi
 
-    local idx=0
-    local -a line
-    while IFS=" " read -a line ; do
+    local idx=0 threadId pcpu
+    while read threadId pcpu ; do
         (( idx < count )) || break
-
-        local threadId="${line[0]}"
-        local pcpu="${line[1]}"
 
         # output field: pid, threadId, pcpu, user
         local output_fields="$( echo "$ps_out" |
@@ -379,14 +375,9 @@ findBusyJavaThreadsByTop() {
 }
 
 printStackOfThreads() {
-    local -a line
-    local idx=0
-    while IFS=" " read -a line ; do
-        local pid="${line[0]}"
-        local threadId="${line[1]}"
+    local idx=0 pid threadId pcpu user
+    while read pid threadId pcpu user ; do
         local threadId0x="0x`printf %x ${threadId}`"
-        local pcpu="${line[2]}"
-        local user="${line[3]}"
 
         (( idx++ ))
         local jstackFile="${store_file_prefix}$(( i + 1 ))_jstack_${pid}"

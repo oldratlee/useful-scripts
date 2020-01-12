@@ -9,9 +9,7 @@ readonly ec=$'\033'      # escape char
 readonly eend=$'\033[0m' # escape end
 
 echoArg() {
-    local index=$1
-    local count=$2
-    local value=$3
+    local index="$1" count="$2" value="$3"
 
     # if stdout is console, turn on color output.
     [ -t 1 ] &&

@@ -233,8 +233,7 @@ readonly total_count="$(echo $(echo "$jar_files" | wc -l))"
 findInJarFiles() {
     $is_console && local -r grep_color_option='--color=always'
 
-    local counter=1
-    local jar_file
+    local counter=1 jar_file
     while read jar_file; do
         printResponsiveMessage "finding in jar($((counter++))/$total_count): $jar_file"
 

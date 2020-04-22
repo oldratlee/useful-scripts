@@ -8,9 +8,7 @@
 #
 # @online-doc https://github.com/oldratlee/useful-scripts/blob/dev-2.x/docs/shell.md#-c
 # @author Jerry Lee (oldratlee at gmail dot com)
-
-set -e
-set -o pipefail
+set -eEuo pipefail
 
 readonly PROG="`basename "$0"`"
 
@@ -47,6 +45,7 @@ EOF
 
 quiet=false
 eol=-n
+declare -a args=()
 while [ $# -gt 0 ]; do
     case "$1" in
     -k|--keep-eol)
@@ -62,7 +61,7 @@ while [ $# -gt 0 ]; do
         ;;
     --)
         shift
-        args=("${args[@]}" "$@")
+        args=(${args[@]:+"${args[@]}"} "$@")
         break
         ;;
     -*)
@@ -70,7 +69,7 @@ while [ $# -gt 0 ]; do
         ;;
     *)
         # if not option, treat all follow args as command
-        args=("${args[@]}" "$@")
+        args=(${args[@]:+"${args[@]}"} "$@")
         break
         ;;
     esac

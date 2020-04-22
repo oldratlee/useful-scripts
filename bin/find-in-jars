@@ -13,26 +13,29 @@
 #
 # @online-doc https://github.com/oldratlee/useful-scripts/blob/dev-2.x/docs/java.md#-find-in-jars
 # @author Jerry Lee (oldratlee at gmail dot com)
+set -eEuo pipefail
 
-readonly PROG="`basename "$0"`"
+readonly PROG="$(basename "$0")"
 
 ################################################################################
 # util functions
 ################################################################################
 
+# shellcheck disable=SC2015
 [ -t 1 ] && readonly is_console=true || readonly is_console=false
 
 # NOTE: $'foo' is the escape sequence syntax of bash
 readonly ec=$'\033'      # escape char
 readonly eend=$'\033[0m' # escape end
 readonly cr=$'\r'        # carriage return
+readonly nl=$'\n'        # new line
 
 redEcho() {
-    $is_console && echo "$ec[1;31m$@$eend" || echo "$@"
+    $is_console && echo "${ec}[1;31m$*$eend" || echo "$*"
 }
 
 die() {
-    redEcho "Error: $@" 1>&2
+    redEcho "Error: $*" 1>&2
     exit 1
 }
 
@@ -41,7 +44,7 @@ die() {
 $is_console && readonly columns=$(stty size | awk '{print $2}')
 
 printResponsiveMessage() {
-    $is_console || return
+    $is_console || return 0
 
     local message="$*"
     # http://www.linuxforums.org/forum/red-hat-fedora-linux/142825-how-truncate-string-bash-script.html
@@ -49,7 +52,7 @@ printResponsiveMessage() {
 }
 
 clearResponsiveMessage() {
-    $is_console || return
+    $is_console || return 0
 
     # How to delete line with echo?
     # https://unix.stackexchange.com/questions/26576
@@ -59,17 +62,18 @@ clearResponsiveMessage() {
     # echo -e "\033[1K"
     # Or everything on the line, regardless of cursor position:
     # echo -e "\033[2K"
-    echo -n "$ec[2K$cr"
+    echo -n "${ec}[2K$cr"
 }
 
 usage() {
-    local -r exit_code="$1"
-    shift
-    [ -n "$exit_code" -a "$exit_code" != 0 ] && local -r out=/dev/stderr || local -r out=/dev/stdout
+    local -r exit_code="${1:-0}"
+    (($# > 0)) && shift
+    # shellcheck disable=SC2015
+    [ "$exit_code" != 0 ] && local -r out=/dev/stderr || local -r out=/dev/stdout
 
-    (( $# > 0 )) && { echo "$@"; echo; } > $out
+    (($# > 0)) && redEcho "$*$nl" >$out
 
-    > $out cat <<EOF
+    cat >$out <<EOF
 Usage: ${PROG} [OPTION]... PATTERN
 Find files in the jar files under specified directory,
 search jar files recursively(include subdirectory).
@@ -105,81 +109,85 @@ Miscellaneous:
   -h, --help             display this help and exit
 EOF
 
-    exit $1
+    exit "$exit_code"
 }
 
 ################################################################################
 # parse options
 ################################################################################
 
-declare -a args=()
 declare -a dirs=()
-while (( $# > 0 )); do
+declare -a extensions=()
+declare -a args=()
+
+separator='!'
+regex_mode=-E
+use_absolute_path=false
+
+while (($# > 0)); do
     case "$1" in
-    -d|--dir)
-        dirs=("${dirs[@]}" "$2")
+    -d | --dir)
+        dirs=(${dirs[@]:+"${dirs[@]}"} "$2")
         shift 2
         ;;
-    -e|--extension)
-        extension=("${extension[@]}" "$2")
+    -e | --extension)
+        extensions=(${extensions[@]:+"${extensions[@]}"} "$2")
         shift 2
         ;;
     # support the typo option --seperator for compatibility
-    -s|--separator|--seperator)
+    -s | --separator | --seperator)
         separator="$2"
         shift 2
         ;;
-    -E|--extended-regexp)
+    -E | --extended-regexp)
         regex_mode=-E
         shift
         ;;
-    -F|--fixed-strings)
+    -F | --fixed-strings)
         regex_mode=-F
         shift
         ;;
-    -G|--basic-regexp)
+    -G | --basic-regexp)
         regex_mode=-G
         shift
         ;;
-    -P|--perl-regexp)
+    -P | --perl-regexp)
         regex_mode=-P
         shift
         ;;
-    -i|--ignore-case)
+    -i | --ignore-case)
         ignore_case_option=-i
         shift
         ;;
-    -a|--absolute-path)
+    -a | --absolute-path)
         use_absolute_path=true
         shift
         ;;
-    -h|--help)
+    -h | --help)
         usage
         ;;
     --)
         shift
-        args=("${args[@]}" "$@")
+        args=(${args[@]:+"${args[@]}"} "$@")
         break
         ;;
     -*)
         usage 2 "${PROG}: unrecognized option '$1'"
         ;;
     *)
-        args=("${args[@]}" "$1")
+        args=(${args[@]:+"${args[@]}"} "$1")
         shift
         ;;
     esac
 done
 
+# shellcheck disable=SC2178
 dirs=${dirs:-.}
-extension=${extension:-jar}
-regex_mode=${regex_mode:--E}
+# shellcheck disable=SC2178
+extensions=${extensions:-jar}
 
-use_absolute_path=${use_absolute_path:-false}
-separator="${separator:-!}"
-
-(( "${#args[@]}" == 0 )) && usage 1 "No find file pattern!"
-(( "${#args[@]}" > 1 )) && usage 1 "More than 1 file pattern: ${args[@]}"
+(("${#args[@]}" == 0)) && usage 1 "No find file pattern!"
+(("${#args[@]}" > 1)) && usage 1 "More than 1 file pattern: ${args[*]}"
 readonly pattern="${args[0]}"
 
 declare -a tmp_dirs=()
@@ -187,17 +195,19 @@ for d in "${dirs[@]}"; do
     [ -e "$d" ] || die "file $d(specified by option -d) does not exist!"
     [ -d "$d" ] || die "file $d(specified by option -d) exists but is not a directory!"
     [ -r "$d" ] || die "directory $d(specified by option -d) exists but is not readable!"
-    # convert dirs to Absolute Path
-    $use_absolute_path && tmp_dirs=( "${tmp_dirs[@]}" "$(cd "$d" && pwd)" )
+
+    # convert dirs to Absolute Path if has option -a, --absolute-path
+    $use_absolute_path && tmp_dirs=(${tmp_dirs[@]:+"${tmp_dirs[@]}"} "$(cd "$d" && pwd)")
 done
 # set dirs to Absolute Path
-$use_absolute_path && dirs=( "${tmp_dirs[@]}" )
+$use_absolute_path && dirs=("${tmp_dirs[@]}")
 
 # convert extensions to find -iname options
-for e in "${extension[@]}"; do
-    (( "${#find_iname_options[@]}" == 0 )) &&
-        find_iname_options=( -iname "*.$e" ) ||
-        find_iname_options=( "${find_iname_options[@]}" -o -iname "*.$e" )
+find_iname_options=()
+for e in "${extensions[@]}"; do
+    (("${#find_iname_options[@]}" == 0)) &&
+        find_iname_options=(-iname "*.$e") ||
+        find_iname_options=("${find_iname_options[@]}" -o -iname "*.$e")
 done
 
 ################################################################################
@@ -208,12 +218,12 @@ done
 #
 # How to list files in a zip without extra information in command line
 # https://unix.stackexchange.com/a/128304/136953
-if which zipinfo &> /dev/null; then
+if which zipinfo &>/dev/null; then
     readonly command_for_list_zip='zipinfo -1'
-elif which unzip &> /dev/null; then
+elif which unzip &>/dev/null; then
     readonly command_for_list_zip='unzip -Z1'
 else
-    if ! which jar &> /dev/null; then
+    if ! which jar &>/dev/null; then
         [ -n "$JAVA_HOME" ] || die "jar not found on PATH and JAVA_HOME env var is blank!"
         [ -f "$JAVA_HOME/bin/jar" ] || die "jar not found on PATH and \$JAVA_HOME/bin/jar($JAVA_HOME/bin/jar) file does NOT exists!"
         [ -x "$JAVA_HOME/bin/jar" ] || die "jar not found on PATH and \$JAVA_HOME/bin/jar($JAVA_HOME/bin/jar) is NOT executalbe!"
@@ -226,26 +236,30 @@ fi
 # find logic
 ################################################################################
 
-readonly jar_files="$(find "${dirs[@]}" "${find_iname_options[@]}" -type f)"
-readonly total_count="$(echo $(echo "$jar_files" | wc -l))"
-[ -n "$jar_files" ] || die "No ${extension[@]} file found!"
+jar_files="$(find "${dirs[@]}" "${find_iname_options[@]}" -type f)"
+[ -n "$jar_files" ] || die "No ${extensions[*]} file found!"
+
+total_count="$(echo "$jar_files" | wc -l)"
+total_count="${total_count//[[:space:]]/}" # delete white space
 
 findInJarFiles() {
     $is_console && local -r grep_color_option='--color=always'
 
     local counter=1 jar_file
-    while read jar_file; do
+    while read -r jar_file; do
         printResponsiveMessage "finding in jar($((counter++))/$total_count): $jar_file"
 
-        $command_for_list_zip "${jar_file}" |
-            grep $regex_mode $ignore_case_option $grep_color_option -- "$pattern" |
-            while read file; do
-                clearResponsiveMessage
+        $command_for_list_zip "${jar_file}" | {
+            # Prevent grep from exiting in case of nomatch
+            # https://unix.stackexchange.com/questions/330660
+            grep $regex_mode ${ignore_case_option:-} ${grep_color_option:-} -- "$pattern" || true
+        } | while read -r file; do
+            clearResponsiveMessage
 
-                $is_console &&
-                    echo "$ec[1;35m${jar_file}${eend}${ec}[1;32m${separator}${eend}${file}" ||
-                    echo "${jar_file}${separator}${file}"
-            done
+            $is_console &&
+                echo "${ec}[1;35m${jar_file}${eend}${ec}[1;32m${separator}${eend}${file}" ||
+                echo "${jar_file}${separator}${file}"
+        done
 
         clearResponsiveMessage
     done

@@ -4,6 +4,7 @@
 #
 # @online-doc https://github.com/oldratlee/useful-scripts/blob/dev-2.x/docs/shell.md#-echo-args
 # @author Jerry Lee (oldratlee at gmail dot com)
+set -eEuo pipefail
 
 readonly ec=$'\033'      # escape char
 readonly eend=$'\033[0m' # escape end
@@ -13,13 +14,12 @@ echoArg() {
 
     # if stdout is console, turn on color output.
     [ -t 1 ] &&
-        echo "$index/$count: $ec[1;31m[$eend$ec[0;34;42m$value$eend$ec[1;31m]$eend" ||
-        echo "$index/$count: [$value]"
+        echo "${index}/${count}: ${ec}[1;31m[$eend${ec}[0;34;42m$value$eend${ec}[1;31m]$eend" ||
+        echo "${index}/${count}: [${value}]"
 }
-
 
 echoArg 0 $# "$0"
 idx=1
-for a ; do
+for a; do
     echoArg $((idx++)) $# "$a"
 done

@@ -8,11 +8,12 @@
 # @online-doc https://github.com/oldratlee/useful-scripts/blob/dev-2.x/docs/shell.md#-tcp-connection-state-counter
 # @author Jerry Lee (oldratlee at gmail dot com)
 # @author @sunuslee (sunuslee at gmail dot com)
+set -eEuo pipefail
 
 # On MacOS, netstat need to using -p tcp to get only tcp output.
 uname | grep Darwin -q && option_for_mac="-ptcp"
 
-netstat -tna $option_for_mac | awk 'NR > 2 {
+netstat -tna ${option_for_mac:-} | awk 'NR > 2 {
     s[$NF]++
 }
 

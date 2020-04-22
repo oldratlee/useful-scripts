@@ -7,13 +7,19 @@
 #
 # @online-doc https://github.com/oldratlee/useful-scripts/blob/dev-2.x/docs/shell.md#-xpl-and-xpf
 # @author Jerry Lee (oldratlee at gmail dot com)
+set -eEuo pipefail
 
-PROG=`basename $0`
+readonly PROG="$(basename "$0")"
+
+readonly nl=$'\n' # new line
 
 usage() {
-    [ -n "$1" -a "$1" != 0 ] && local out=/dev/stderr || local out=/dev/stdout
+    local -r exit_code="${1:-0}"
+    (($# > 0)) && shift
+    # shellcheck disable=SC2015
+    [ "$exit_code" != 0 ] && local -r out=/dev/stderr || local -r out=/dev/stdout
 
-    [ $# -gt 1 ] && { echo "$2"; echo; } > $out
+    (($# > 0)) && echo "$*$nl" >$out
 
     cat <<EOF
 Usage: ${PROG} [OPTION] [FILE]...
@@ -24,7 +30,9 @@ Options:
     -s, --selected  select the file or dir
     -h, --help      display this help and exit
 EOF
-    exit $1
+
+    # shellcheck disable=SC2086
+    exit "$exit_code"
 }
 
 # if program name is xpf, set option selected!
@@ -37,11 +45,11 @@ EOF
 declare -a args=()
 while [ $# -gt 0 ]; do
     case "$1" in
-    -s|--selected)
+    -s | --selected)
         selected=true
         shift
         ;;
-    -h|--help)
+    -h | --help)
         usage
         ;;
     --)
@@ -77,10 +85,10 @@ openOneFile() {
         explorer ${selected:+/select,} "$(cygpath -w "${file}")"
         ;;
     *)
-        if [ -d "${file}" ] ; then
+        if [ -d "${file}" ]; then
             nautilus "$(dirname "${file}")"
         else
-            if [ -z "${selected}" ] ; then
+            if [ -z "${selected}" ]; then
                 nautilus "$(dirname "${file}")"
             else
                 nautilus "${file}"
@@ -90,9 +98,12 @@ openOneFile() {
     esac
 }
 
-[ "${#args[@]}"  == 0 ] && files=( . ) || files=( "${args[@]}" )
-for file in "${files[@]}" ; do
-    [ ! -e "$file" ] && { echo "$file not exsited!"; continue; }
+[ "${#args[@]}" == 0 ] && files=(.) || files=("${args[@]}")
+for file in "${files[@]}"; do
+    [ ! -e "$file" ] && {
+        echo "$file not existed!"
+        continue
+    }
 
     openOneFile "$file"
     echo "$file opened${selected:+ with selection}!"

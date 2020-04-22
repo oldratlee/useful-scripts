@@ -10,10 +10,11 @@
 #
 # @online-doc https://github.com/oldratlee/useful-scripts/blob/dev-2.x/docs/shell.md#-ap-and-rp
 # @author Jerry Lee (oldratlee at gmail dot com)
+set -eEuo pipefail
 
 [ $# -eq 0 ] && files=(.) || files=("$@")
 
-for f in "${files[@]}" ; do
+for f in "${files[@]}"; do
     ! [ -e "$f" ] && {
         echo "$f does not exists!"
         continue

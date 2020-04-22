@@ -8,6 +8,7 @@
 #
 # @online-doc https://github.com/oldratlee/useful-scripts/blob/dev-2.x/docs/shell.md#-xpl-and-xpf
 # @author Jerry Lee (oldratlee at gmail dot com)
+set -eEuo pipefail
 
 BASE="$(dirname "$0")"
 source "$BASE/xpl" "$@"

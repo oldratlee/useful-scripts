@@ -9,27 +9,28 @@
 # @author Jerry Lee (oldratlee at gmail dot com)
 # @author superhj1987 (superhj1987 at 126 dot com)
 
-readonly PROG="`basename $0`"
+readonly PROG="$(basename "$0")"
 readonly -a COMMAND_LINE=("$0" "$@")
 # Get current user name via whoami command
 #   See https://www.lifewire.com/current-linux-user-whoami-command-3867579
 # Because if run command by `sudo -u`, env var $USER is not rewritten/correct, just inherited from outside!
-readonly USER="`whoami`"
+readonly USER="$(whoami)"
 
 ################################################################################
 # util functions
 ################################################################################
 
 # NOTE: $'foo' is the escape sequence syntax of bash
-readonly ec=$'\033' # escape char
+readonly ec=$'\033'      # escape char
 readonly eend=$'\033[0m' # escape end
+readonly nl=$'\n'        # new line
 
 colorEcho() {
     local color=$1
     shift
 
     # if stdout is console, turn on color output.
-    [ -t 1 ] && echo "$ec[1;${color}m$@$eend" || echo "$@"
+    [ -t 1 ] && echo "${ec}[1;${color}m$*$eend" || echo "$@"
 }
 
 colorPrint() {
@@ -37,14 +38,15 @@ colorPrint() {
     shift
 
     colorEcho "$color" "$@"
-    [ -n "$append_file" -a -w "$append_file" ] && echo "$@" >> "$append_file"
-    [ -n "$store_dir" -a -w "$store_dir" ] && echo "$@" >> "${store_file_prefix}$PROG"
+    [[ -n "$append_file" && -w "$append_file" ]] && echo "$@" >>"$append_file"
+    [[ -n "$store_dir" && -w "$store_dir" ]] && echo "$@" >>"${store_file_prefix}$PROG"
 }
 
+# shellcheck disable=SC2120
 normalPrint() {
     echo "$@"
-    [ -n "$append_file" -a -w "$append_file" ] && echo "$@" >> "$append_file"
-    [ -n "$store_dir" -a -w "$store_dir" ] && echo "$@" >> "${store_file_prefix}$PROG"
+    [[ -n "$append_file" && -w "$append_file" ]] && echo "$@" >>"$append_file"
+    [[ -n "$store_dir" && -w "$store_dir" ]] && echo "$@" >>"${store_file_prefix}$PROG"
 }
 
 redPrint() {
@@ -64,7 +66,7 @@ bluePrint() {
 }
 
 die() {
-    redPrint "Error: $@" 1>&2
+    redPrint "Error: $*" 1>&2
     exit 1
 }
 
@@ -81,13 +83,14 @@ logAndCat() {
 }
 
 usage() {
-    local -r exit_code="$1"
-    shift
-    [ -n "$exit_code" -a "$exit_code" != 0 ] && local -r out=/dev/stderr || local -r out=/dev/stdout
+    local -r exit_code="${1:-0}"
+    (($# > 0)) && shift
+    # shellcheck disable=SC2015
+    [ "$exit_code" != 0 ] && local -r out=/dev/stderr || local -r out=/dev/stdout
 
-    (( $# > 0 )) && { echo "$@"; echo; } > $out
+    (($# > 0)) && colorEcho 31 "$*$nl" >$out
 
-    > $out cat <<EOF
+    cat >$out <<EOF
 Usage: ${PROG} [OPTION]... [delay [count]]
 Find out the highest cpu consumed threads of java processes,
 and print the stack of these threads.
@@ -139,14 +142,14 @@ Miscellaneous:
   -h, --help                display this help and exit.
 EOF
 
-    exit $exit_code
+    exit "$exit_code"
 }
 
 ################################################################################
 # Check os support
 ################################################################################
 
-uname | grep '^Linux' -q || die "$PROG only support Linux, not support `uname` yet!"
+uname | grep '^Linux' -q || die "$PROG only support Linux, not support $(uname) yet!"
 
 ################################################################################
 # parse options
@@ -155,53 +158,62 @@ uname | grep '^Linux' -q || die "$PROG only support Linux, not support `uname` y
 # NOTE: ARGS can not be declared as readonly!!
 # readonly declaration make exit code of assignment to be always 0, aka. the exit code of `getopt` in subshell is discarded.
 #   tested on bash 4.2.46
-ARGS=`getopt -n "$PROG" -a -o p:c:a:s:S:Pd:Fmlh -l count:,pid:,append-file:,jstack-path:,store-dir:,use-ps,top-delay:,force,mix-native-frames,lock-info,help -- "$@"`
-[ $? -ne 0 ] && { echo; usage 1; }
+ARGS=$(
+    getopt -n "$PROG" -a -o p:c:a:s:S:Pd:Fmlh \
+        -l count:,pid:,append-file:,jstack-path:,store-dir:,use-ps,top-delay:,force,mix-native-frames,lock-info,help \
+        -- "$@"
+) || {
+    echo
+    usage 1
+}
 eval set -- "${ARGS}"
+
+top_delay=0.5
+count=5
 
 while true; do
     case "$1" in
-    -c|--count)
+    -c | --count)
         count="$2"
         shift 2
         ;;
-    -p|--pid)
+    -p | --pid)
         pid="$2"
         shift 2
         ;;
-    -a|--append-file)
+    -a | --append-file)
         append_file="$2"
         shift 2
         ;;
-    -s|--jstack-path)
+    -s | --jstack-path)
         jstack_path="$2"
         shift 2
         ;;
-    -S|--store-dir)
+    -S | --store-dir)
         store_dir="$2"
         shift 2
         ;;
-    -P|--use-ps)
+    -P | --use-ps)
         use_ps=true
         shift
         ;;
-    -d|--top-delay)
+    -d | --top-delay)
         top_delay="$2"
         shift 2
         ;;
-    -F|--force)
+    -F | --force)
         force=-F
         shift
         ;;
-    -m|--mix-native-frames)
+    -m | --mix-native-frames)
         mix_native_frames=-m
         shift
         ;;
-    -l|--lock-info)
+    -l | --lock-info)
         more_lock_info=-l
         shift
         ;;
-    -h|--help)
+    -h | --help)
         usage
         ;;
     --)
@@ -211,16 +223,13 @@ while true; do
     esac
 done
 
-count=${count:-5}
-
 update_delay=${1:-0}
 [ -z "$1" ] && update_count=1 || update_count=${2:-0}
-(( update_count < 0 )) && update_count=0
+((update_count < 0)) && update_count=0
 
-top_delay=${top_delay:-0.5}
 use_ps=${use_ps:-false}
 
-# check the directory of append-file(-a) mode, create if not exsit.
+# check the directory of append-file(-a) mode, create if not exist.
 if [ -n "$append_file" ]; then
     if [ -e "$append_file" ]; then
         [ -f "$append_file" ] || die "$append_file(specified by option -a, for storing run output files) exists but is not a file!"
@@ -236,7 +245,7 @@ if [ -n "$append_file" ]; then
     fi
 fi
 
-# check store directory(-S) mode, create directory if not exsit.
+# check store directory(-S) mode, create directory if not exist.
 if [ -n "$store_dir" ]; then
     if [ -e "$store_dir" ]; then
         [ -d "$store_dir" ] || die "$store_dir(specified by option -S, for storing output files) exists but is not a directory!"
@@ -252,13 +261,13 @@ fi
 
 if [ -n "$jstack_path" ]; then
     [ -f "$jstack_path" ] || die "$jstack_path is NOT found!"
-    [ -x "$jstack_path" ] || die "$jstack_path is NOT executalbe!"
-elif which jstack &> /dev/null; then
-    jstack_path="`which jstack`"
+    [ -x "$jstack_path" ] || die "$jstack_path is NOT executable!"
+elif which jstack &>/dev/null; then
+    jstack_path="$(which jstack)"
 else
     [ -n "$JAVA_HOME" ] || die "jstack not found on PATH and No JAVA_HOME setting! Use -s option set jstack path manually."
     [ -f "$JAVA_HOME/bin/jstack" ] || die "jstack not found on PATH and \$JAVA_HOME/bin/jstack($JAVA_HOME/bin/jstack) file does NOT exists! Use -s option set jstack path manually."
-    [ -x "$JAVA_HOME/bin/jstack" ] || die "jstack not found on PATH and \$JAVA_HOME/bin/jstack($JAVA_HOME/bin/jstack) is NOT executalbe! Use -s option set jstack path manually."
+    [ -x "$JAVA_HOME/bin/jstack" ] || die "jstack not found on PATH and \$JAVA_HOME/bin/jstack($JAVA_HOME/bin/jstack) is NOT executable! Use -s option set jstack path manually."
     jstack_path="$JAVA_HOME/bin/jstack"
 fi
 
@@ -266,7 +275,7 @@ fi
 # biz logic
 ################################################################################
 
-readonly run_timestamp="`date "+%Y-%m-%d_%H:%M:%S.%N"`"
+readonly run_timestamp="$(date "+%Y-%m-%d_%H:%M:%S.%N")"
 readonly uuid="${PROG}_${run_timestamp}_${RANDOM}_$$"
 
 readonly tmp_store_dir="/tmp/${uuid}"
@@ -278,13 +287,13 @@ fi
 mkdir -p "$tmp_store_dir"
 
 cleanupWhenExit() {
-    rm -rf "$tmp_store_dir" &> /dev/null
+    rm -rf "$tmp_store_dir" &>/dev/null
 }
 trap "cleanupWhenExit" EXIT
 
 headInfo() {
     colorEcho "0;34;42" ================================================================================
-    echo "$(date "+%Y-%m-%d %H:%M:%S.%N") [$(( i + 1 ))/$update_count]: ${COMMAND_LINE[@]}"
+    echo "$(date "+%Y-%m-%d %H:%M:%S.%N") [$((i + 1))/$update_count]: ${COMMAND_LINE[*]}"
     colorEcho "0;34;42" ================================================================================
     echo
 }
@@ -301,13 +310,15 @@ findBusyJavaThreadsByPs() {
     # 1. sort by %cpu by ps option `--sort -pcpu`
     # 2. use wide output(unlimited width) by ps option `-ww`
     #    avoid trunk user column to username_fo+ or $uid alike
-    local -a ps_cmd_line=(ps $ps_process_select_options -wwLo pid,lwp,pcpu,user --sort -pcpu --no-headers)
+
+    # shellcheck disable=SC2206
+    local -a ps_cmd_line=(ps $ps_process_select_options -wwLo 'pid,lwp,pcpu,user' --sort -pcpu --no-headers)
     local -r ps_out="$("${ps_cmd_line[@]}")"
     if [ -n "$store_dir" ]; then
-        echo "$ps_out" | logAndCat "${ps_cmd_line[@]}" > "${store_file_prefix}$(( i + 1 ))_ps"
+        echo "$ps_out" | logAndCat "${ps_cmd_line[@]}" >"${store_file_prefix}$((i + 1))_ps"
     fi
 
-    if (( count > 0 )); then
+    if ((count > 0)); then
         echo "$ps_out" | head -n "${count}"
     else
         echo "$ps_out"
@@ -330,10 +341,10 @@ __top_threadId_cpu() {
     #    and use second time update data to get cpu percentage of thread in 0.5 second interval
     # 4. top v3.3, there is 1 black line between 2 update;
     #    but top v3.2, there is 2 blank lines between 2 update!
-    local -a top_cmd_line=(top -H -b -d $top_delay -n 2)
+    local -a top_cmd_line=(top -H -b -d "$top_delay" -n 2)
     local -r top_out=$(HOME="$tmp_store_dir" "${top_cmd_line[@]}")
     if [ -n "$store_dir" ]; then
-        echo "$top_out" | logAndCat "${top_cmd_line[@]}" > "${store_file_prefix}$(( i + 1 ))_top"
+        echo "$top_out" | logAndCat "${top_cmd_line[@]}" >"${store_file_prefix}$((i + 1))_top"
     fi
 
     echo "$top_out" |
@@ -352,23 +363,24 @@ __top_threadId_cpu() {
 
 __complete_pid_user_by_ps() {
     # ps output field: pid, thread id(lwp), user
-    local -a ps_cmd_line=(ps $ps_process_select_options -wwLo pid,lwp,user --no-headers)
+    # shellcheck disable=SC2206
+    local -a ps_cmd_line=(ps $ps_process_select_options -wwLo 'pid,lwp,user' --no-headers)
     local -r ps_out="$("${ps_cmd_line[@]}")"
     if [ -n "$store_dir" ]; then
-        echo "$ps_out" | logAndCat "${ps_cmd_line[@]}" > "${store_file_prefix}$(( i + 1 ))_ps"
+        echo "$ps_out" | logAndCat "${ps_cmd_line[@]}" >"${store_file_prefix}$((i + 1))_ps"
     fi
 
-    local idx=0 threadId pcpu
-    while read threadId pcpu ; do
-        (( count <= 0 || idx < count )) || break
+    local idx=0 threadId pcpu output_fields
+    while read -r threadId pcpu; do
+        ((count <= 0 || idx < count)) || break
 
         # output field: pid, threadId, pcpu, user
-        local output_fields="$( echo "$ps_out" |
+        output_fields="$(echo "$ps_out" |
             awk -v "threadId=$threadId" -v "pcpu=$pcpu" '$2==threadId {
                 printf "%s %s %s %s\n", $1, threadId, pcpu, $3; exit
-            }' )"
+            }')"
         if [ -n "$output_fields" ]; then
-            (( idx++ ))
+            ((idx++))
             echo "$output_fields"
         fi
     done
@@ -380,31 +392,32 @@ findBusyJavaThreadsByTop() {
 }
 
 printStackOfThreads() {
-    local idx=0 pid threadId pcpu user
-    while read pid threadId pcpu user ; do
-        local threadId0x="0x`printf %x ${threadId}`"
+    local idx=0 pid threadId pcpu user threadId0x
+    while read -r pid threadId pcpu user; do
+        threadId0x="0x$(printf %x "${threadId}")"
 
-        (( idx++ ))
-        local jstackFile="${store_file_prefix}$(( i + 1 ))_jstack_${pid}"
+        ((idx++))
+        local jstackFile="${store_file_prefix}$((i + 1))_jstack_${pid}"
         [ -f "${jstackFile}" ] || {
-            local -a jstack_cmd_line=( "$jstack_path" ${force} $mix_native_frames $more_lock_info ${pid} )
+            # shellcheck disable=SC2206
+            local -a jstack_cmd_line=("$jstack_path" ${force} $mix_native_frames $more_lock_info ${pid})
             if [ "${user}" == "${USER}" ]; then
                 # run without sudo, when java process user is current user
-                logAndRun "${jstack_cmd_line[@]}" > ${jstackFile}
+                logAndRun "${jstack_cmd_line[@]}" >"${jstackFile}"
             elif [ $UID == 0 ]; then
                 # if java process user is not current user, must run jstack with sudo
-                logAndRun sudo -u "${user}" "${jstack_cmd_line[@]}" > ${jstackFile}
+                logAndRun sudo -u "${user}" "${jstack_cmd_line[@]}" >"${jstackFile}"
             else
                 # current user is not root user, so can not run with sudo; print error message and rerun suggestion
                 redPrint "[$idx] Fail to jstack busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user})."
                 redPrint "User of java process($user) is not current user($USER), need sudo to rerun:"
-                yellowPrint "    sudo ${COMMAND_LINE[@]}"
+                yellowPrint "    sudo ${COMMAND_LINE[*]}"
                 normalPrint
                 continue
             fi || {
                 redPrint "[$idx] Fail to jstack busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user})."
                 normalPrint
-                rm "${jstackFile}" &> /dev/null
+                rm "${jstackFile}" &>/dev/null
                 continue
             }
         }
@@ -427,7 +440,7 @@ printStackOfThreads() {
             }"
         fi
         {
-            sed "$sed_script" -n ${jstackFile}
+            sed "$sed_script" -n "${jstackFile}"
             echo
         } | tee ${append_file:+-a "$append_file"} ${store_dir:+-a "${store_file_prefix}$PROG"}
     done
@@ -440,11 +453,12 @@ printStackOfThreads() {
 main() {
     local i
     # if update_count <= 0, infinite loop till user interrupted (eg: CTRL+C)
-    for (( i = 0; update_count <= 0 || i < update_count; ++i )); do
-        (( i > 0 )) && sleep "$update_delay"
+    for ((i = 0; update_count <= 0 || i < update_count; ++i)); do
+        ((i > 0)) && sleep "$update_delay"
 
-        [ -n "$append_file" -o -n "$store_dir" ] && headInfo | tee ${append_file:+-a "$append_file"} ${store_dir:+-a "${store_file_prefix}$PROG"} > /dev/null
-        (( update_count != 1 )) && headInfo
+        [[ -n "$append_file" || -n "$store_dir" ]] && headInfo |
+            tee ${append_file:+-a "$append_file"} ${store_dir:+-a "${store_file_prefix}$PROG"} >/dev/null
+        ((update_count != 1)) && headInfo
 
         if $use_ps; then
             findBusyJavaThreadsByPs

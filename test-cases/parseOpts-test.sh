@@ -17,7 +17,7 @@ colorEcho() {
     local color=$1
     shift
     # if stdout is console, turn on color output.
-    [ -t 1 ] && echo "$ec[1;${color}m$@$eend" || echo "$@"
+    [ -t 1 ] && echo "${ec}[1;${color}m$*$eend" || echo "$*"
 }
 
 redEcho() {
@@ -61,7 +61,7 @@ compareAllVarsExcludeOptVars() {
 }
 
 fail() {
-    redEcho "TEST FAIL: $@"
+    redEcho "TEST FAIL: $*"
     exit 1
 }
 

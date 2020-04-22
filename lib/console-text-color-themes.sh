@@ -6,23 +6,23 @@
 # @author Jerry Lee (oldratlee at gmail dot com)
 
 readonly _ctct_PROG="$(basename "$(readlink -f "$0")")"
-[ "$_ctct_PROG" == 'console-text-color-themes.sh'  ] && readonly _ctct_is_direct_run=true
+[ "$_ctct_PROG" == 'console-text-color-themes.sh' ] && readonly _ctct_is_direct_run=true
 
-readonly _ctct_ec=$'\033' # escape char
+readonly _ctct_ec=$'\033'      # escape char
 readonly _ctct_eend=$'\033[0m' # escape end
 
 colorEcho() {
     local combination="$1"
     shift 1
 
-    [ -t 1 ] && echo "$_ctct_ec[${combination}m$@$_ctct_eend" || echo "$@"
+    [ -t 1 ] && echo "${_ctct_ec}[${combination}m$*$_ctct_eend" || echo "$*"
 }
 
 colorEchoWithoutNewLine() {
     local combination="$1"
     shift 1
 
-    [ -t 1 ] && echo -n "$_ctct_ec[${combination}m$@$_ctct_eend" || echo -n "$@"
+    [ -t 1 ] && echo -n "${_ctct_ec}[${combination}m$*$_ctct_eend" || echo -n "$*"
 }
 
 # if not directly run this script(use as lib), just export 2 helper functions,
@@ -56,7 +56,7 @@ colorEchoWithoutNewLine() {
     echo "      # NOTE: $'foo' is the escape sequence syntax of bash, safer escape"
 
     echo "Output of above code:"
-    echo "    $_ctct_ec[1;36;41mSample Text$_ctct_eend"
+    echo "    ${_ctct_ec}[1;36;41mSample Text${_ctct_eend}"
     echo
     echo "If you are going crazy to write text in escapes string like me,"
     echo "you can use colorEcho and colorEchoWithoutNewLine function in this script."

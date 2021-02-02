@@ -1,0 +1,19 @@
+#!/bin/bash
+# @Function
+# print uniq line keep order, no sorting required
+
+outputUniqLines() {
+  awk '{
+    s[$0]++
+  }
+
+  END {
+    for(v in s) {
+      if (s[v] == 1) {
+        print v
+      }
+    }
+  }'
+}
+
+cat "$@" | outputUniqLines

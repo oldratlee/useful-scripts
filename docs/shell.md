@@ -13,29 +13,31 @@
         - [示例](#%E7%A4%BA%E4%BE%8B)
     - [🍺 a2l](#-a2l)
         - [示例](#%E7%A4%BA%E4%BE%8B-1)
-    - [🍺 ap and rp](#-ap-and-rp)
+    - [🍺 uq](#-uq)
         - [示例](#%E7%A4%BA%E4%BE%8B-2)
+    - [🍺 ap and rp](#-ap-and-rp)
+        - [示例](#%E7%A4%BA%E4%BE%8B-3)
     - [🍺 tcp-connection-state-counter](#-tcp-connection-state-counter)
         - [用法](#%E7%94%A8%E6%B3%95)
-        - [示例](#%E7%A4%BA%E4%BE%8B-3)
+        - [示例](#%E7%A4%BA%E4%BE%8B-4)
         - [贡献者](#%E8%B4%A1%E7%8C%AE%E8%80%85)
     - [🍺 xpl and xpf](#-xpl-and-xpf)
         - [用法](#%E7%94%A8%E6%B3%95-1)
-        - [示例](#%E7%A4%BA%E4%BE%8B-4)
+        - [示例](#%E7%A4%BA%E4%BE%8B-5)
         - [贡献者](#%E8%B4%A1%E7%8C%AE%E8%80%85-1)
 - [`Shell`开发/测试加强](#shell%E5%BC%80%E5%8F%91%E6%B5%8B%E8%AF%95%E5%8A%A0%E5%BC%BA)
     - [🍺 echo-args](#-echo-args)
-        - [示例](#%E7%A4%BA%E4%BE%8B-5)
+        - [示例](#%E7%A4%BA%E4%BE%8B-6)
         - [使用方式](#%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F)
     - [🍺 console-text-color-themes.sh](#-console-text-color-themessh)
         - [用法](#%E7%94%A8%E6%B3%95-2)
-        - [示例](#%E7%A4%BA%E4%BE%8B-6)
+        - [示例](#%E7%A4%BA%E4%BE%8B-7)
         - [运行效果](#%E8%BF%90%E8%A1%8C%E6%95%88%E6%9E%9C)
         - [贡献者](#%E8%B4%A1%E7%8C%AE%E8%80%85-2)
         - [参考资料](#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99-1)
     - [🍺 parseOpts.sh](#-parseoptssh)
         - [用法](#%E7%94%A8%E6%B3%95-3)
-        - [示例](#%E7%A4%BA%E4%BE%8B-7)
+        - [示例](#%E7%A4%BA%E4%BE%8B-8)
         - [兼容性](#%E5%85%BC%E5%AE%B9%E6%80%A7)
         - [贡献者](#%E8%B4%A1%E7%8C%AE%E8%80%85-3)
 
@@ -201,6 +203,123 @@ test-cases/self-installer.sh
 ```
 
 注：上面示例中，没有彩色；在控制台上运行可以看出彩色效果，和上面的`coat`命令一样。
+
+🍺 [uq](../bin/uq)
+----------------------
+
+不重排序输入完成整个输入行的去重。相比系统的`uniq`命令加强的是可以跨行去重，不需要排序输入。  
+使用方式与支持的选项 模仿系统的`uniq`命令。支持`Linux`、`Mac`、`Windows`（`cygwin`、`MSSYS`）。
+
+> ‼️ **_注意_**： 去重过程会在内存持有整个输入（因为全局去重）！  
+> 对于输入大小较大的场景（如输入有几百M甚至几G），需谨慎使用；往往需要结合业务场景开发对应的优化实现。
+>
+> 虽然平时的大部分场景输入量非常有限（如几M），一个简单没有充分优化的实现是快速够用的。
+
+因为`uniq`命令完成是相邻行的去重，需要通过或是组合`sort`命令来完成整输入的去重，会有下面的问题：
+
+```bash
+# 示例输入
+$ cat foo.txt
+c
+c
+b
+a
+a
+c
+c
+
+$ uniq foo.txt
+c
+b
+a
+c
+# c输出了2次，原因是第二个c与第一个c不是相邻的重复行
+
+# 可以通过 sort -u 来完成整个输入去重，但这样操作，顺序与输入行不一致
+$ sort -u foo.txt
+a
+b
+c
+# 输入行重排序了！
+
+# 另外一个经典的用法 sort 与 uniq -c，输出重复次数
+$ sort foo.txt | uniq -c
+      2 a
+      1 b
+      4 c
+# 输入行重排序了！
+```
+
+### 示例
+
+```bash
+$ uq foo.txt # 输入是文件
+$ cat foo.txt | uq # 或是 标准输入/管道
+c
+b
+a
+# 对整个输入行去重，且顺序与输入行一致（保留第一次出现的位置）
+
+# -c 选项：输出重复次数
+$ uq -c foo.txt
+      4 c
+      1 b
+      2 a
+
+# -d, --repeated 选项：只输出 重复行
+$ uq -d foo.txt
+c
+a
+# -u, --unique 选项：只输出 唯一行（即不重复的行）
+$ uq -u foo.txt
+b
+
+# -D 选项：重复行都输出，即重复了几次就输出几次
+$ uq -D -c foo.txt
+      4 c
+      4 c
+      1 b
+      2 a
+      2 a
+      4 c
+      4 c
+
+# 有多个文件参数时，最后一个参数 是 输出文件
+$ uq in1.txt in2.txt out.txt
+# 当有多个输入文件时，但要输出到控制台时，指定输出文件（最后一个文件参数）为 `-` 即可
+$ uq in1.txt in2.txt -
+
+# 帮助信息
+$ uq -h
+Usage: uq [OPTION]... [INPUT [OUTPUT]]
+Filter lines from INPUT (or standard input), writing to OUTPUT (or standard output).
+Same as `uniq` command in core utils,
+but detect repeated lines that are not adjacent, no sorting required.
+
+Example:
+  # only one file, output to stdout
+  uq in.txt
+  # more than 1 file, last file argument is output file
+  uq in.txt out.txt
+  # when use - as output file, output to stdout
+  uq in1.txt in2.txt -
+
+Options:
+  -c, --count           prefix lines by the number of occurrences
+  -d, --repeated        only print duplicate lines, one for each group
+  -D                    print all duplicate lines
+                        combined with -c/-d option usually
+  --all-repeated[=METHOD]  like -D, but allow separating groups
+                           with an empty line;
+                           METHOD={none(default),prepend,separate}
+  -u, --unique          Only output unique lines
+                          that are not repeated in the input
+  -i, --ignore-case     ignore differences in case when comparing
+  -z, --zero-terminated line delimiter is NUL, not newline
+
+Miscellaneous:
+  -h, --help            display this help and exit
+```
 
 🍺 [ap](../bin/ap) and [rp](../bin/rp)
 ----------------------

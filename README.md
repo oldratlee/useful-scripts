@@ -50,6 +50,8 @@ source <(curl -fsSL https://raw.githubusercontent.com/oldratlee/useful-scripts/r
     彩色`cat`出文件行，方便人眼区分不同的行。
 1. [a2l](docs/shell.md#-a2l)  
     按行彩色输出参数，方便人眼查看。
+1. [uq](docs/shell.md#-uq)  
+    不重排序输入完成整个输入行的去重。相比系统的`uniq`命令加强的是可以跨行去重，不需要排序输入。
 1. [ap and rp](docs/shell.md#-ap-and-rp)  
     批量转换文件路径为绝对路径/相对路径，会自动跟踪链接并规范化路径。
 1. [tcp-connection-state-counter](docs/shell.md#-tcp-connection-state-counter)  

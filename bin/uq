@@ -1,6 +1,8 @@
 #!/bin/bash
 # @Function
 # print uniq line keep order, no sorting required
+#
+# @author Zava Xu (zava.kid at gmail dot com)
 
 outputUniqLines() {
   awk '{

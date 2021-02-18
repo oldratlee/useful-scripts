@@ -107,4 +107,5 @@ test_ignore_case__count() {
 #################################################
 # Load and run shUnit2.
 #################################################
+
 source "$BASE/shunit2-lib/shunit2"

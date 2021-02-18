@@ -193,7 +193,7 @@ awk \
     -v "uq_opt_all_repeated=$uq_opt_all_repeated" \
     -v "uq_opt_repeated_method=$uq_opt_repeated_method" \
     -v "uq_opt_only_unique=$uq_opt_only_unique" \
-    -v "uq_opt_ignore_case=$uq_opt_ignore_case" \
+    -v "IGNORECASE=$uq_opt_ignore_case" \
     -v "uq_opt_zero_terminated=$uq_opt_zero_terminated" \
     -f "$PROG_DIR/helper/uq.awk" \
     -- ${input_files[@]:+"${input_files[@]}"} \

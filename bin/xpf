@@ -10,5 +10,6 @@
 # @author Jerry Lee (oldratlee at gmail dot com)
 set -eEuo pipefail
 
+# BASE="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 BASE="$(dirname "$0")"
 source "$BASE/xpl" "$@"

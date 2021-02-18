@@ -3,12 +3,14 @@
 
 <img src="docs/script-logo.png" width="20%" align="right" />
 
-[![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
-[![Join the chat at https://gitter.im/oldratlee/useful-scripts](https://badges.gitter.im/oldratlee/useful-scripts.svg)](https://gitter.im/oldratlee/useful-scripts?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Build Status](https://img.shields.io/travis/oldratlee/useful-scripts/dev-2.x?logo=travis-ci&logoColor=white)](https://travis-ci.org/oldratlee/useful-scripts)
 [![GitHub release](https://img.shields.io/github/release/oldratlee/useful-scripts.svg)](https://github.com/oldratlee/useful-scripts/releases)
-[![GitHub stars](https://img.shields.io/github/stars/oldratlee/useful-scripts.svg?style=social&label=Star&)](https://github.com/oldratlee/useful-scripts/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/oldratlee/useful-scripts.svg?style=social&label=Fork&)](https://github.com/oldratlee/useful-scripts/fork)
-
+[![License](https://img.shields.io/github/license/oldratlee/useful-scripts?color=4D7A97)](https://www.apache.org/licenses/LICENSE-2.0.html)
+[![Chat at gitter.im](https://img.shields.io/gitter/room/oldratlee/useful-scripts?color=46BC99&logo=gitter&logoColor=white)](https://gitter.im/oldratlee/useful-scripts?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)  
+[![GitHub Stars](https://img.shields.io/github/stars/oldratlee/useful-scripts)](https://github.com/oldratlee/useful-scripts/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/oldratlee/useful-scripts)](https://github.com/oldratlee/useful-scripts/fork)
+[![GitHub issues](https://img.shields.io/github/issues/oldratlee/useful-scripts)](https://github.com/oldratlee/useful-scripts/issues)
+[![GitHub Contributors](https://img.shields.io/github/contributors/oldratlee/useful-scripts)](https://github.com/oldratlee/useful-scripts/graphs/contributors)
 
 👉 把平时有用的手动操作做成脚本，这样可以便捷的使用。 ✨
 

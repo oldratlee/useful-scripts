@@ -1,0 +1,12 @@
+language: bash
+# https://github.com/caarlos0-graveyard/shell-ci-build
+
+# The Ubuntu Linux Build Environments
+#   https://docs.travis-ci.com/user/reference/linux/
+dist: precise
+
+script:
+  - test-cases/integration-test.sh
+
+after_script:
+  - git status --ignored

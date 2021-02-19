@@ -6,6 +6,8 @@ language: bash
 #   https://docs.travis-ci.com/user/reference/linux/
 # The macOS Build Environment
 #   https://docs.travis-ci.com/user/reference/osx/
+# Installing Dependencies
+#   https://docs.travis-ci.com/user/installing-dependencies/#installing-packages-on-macos
 matrix:
   include:
     - os: linux
@@ -19,6 +21,10 @@ matrix:
     - os: linux
       dist: focal
     - os: osx
+      osx_image: xcode11.3
+      install:
+        - HOMEBREW_NO_AUTO_UPDATE=1 brew install coreutils
+        - HOMEBREW_NO_AUTO_UPDATE=1 brew install gnu-sed
 
 script:
   - test-cases/integration-test.sh

@@ -12,6 +12,11 @@
 # @author Jerry Lee (oldratlee at gmail dot com)
 set -eEuo pipefail
 
+READLINK_CMD=readlink
+if command -v greadlink > /dev/null; then
+    READLINK_CMD=greadlink
+fi
+
 [ $# -eq 0 ] && files=(.) || files=("$@")
 
 for f in "${files[@]}"; do
@@ -19,5 +24,5 @@ for f in "${files[@]}"; do
         echo "$f does not exists!"
         continue
     }
-    readlink -f "$f"
+    $READLINK_CMD -f "$f"
 done

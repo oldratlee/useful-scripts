@@ -26,6 +26,11 @@
 readonly _opts_ec=$'\033' # escape char
 readonly _opts_eend=$'\033[0m' # escape end
 
+_opts_SED_CMD=sed
+if command -v gsed &> /dev/null; then
+    _opts_SED_CMD=gsed
+fi
+
 _opts_colorEcho() {
     local color=$1
     shift
@@ -42,7 +47,7 @@ _opts_convertToVarName() {
         _opts_redEcho "NOT 1 arguemnts when call _opts_convertToVarName: $@"
         return 1
     }
-    echo "$1" | sed 's/-/_/g'
+    echo "$1" | $_opts_SED_CMD 's/-/_/g'
 }
 
 #####################################################################
@@ -177,7 +182,7 @@ parseOpts() {
     
     local optDescLines=`echo "$optsDescription" | 
         # cut head and tail space
-        sed -r 's/^\s+//;s/\s+$//' |
+        $_opts_SED_CMD -r 's/^\s+//;s/\s+$//' |
         awk -F '[\t ]*\\\\|[\t ]*' '{for(i=1; i<=NF; i++) print $i}'`
     
     local optDesc
@@ -258,7 +263,7 @@ parseOpts() {
             ;;
         -*) # short & long option(-a, -a-long), use same read-in logic.
             local opt="$1"
-            local optName=`echo "$1" | sed -r 's/^--?//'`
+            local optName=`echo "$1" | $_opts_SED_CMD -r 's/^--?//'`
             local mode=`_opts_findOptMode "$optName"`
             case "$mode" in
             -)

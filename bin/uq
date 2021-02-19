@@ -12,8 +12,13 @@
 # @author Jerry Lee (oldratlee at gmail dot com)
 set -eEuo pipefail
 
+READLINK_CMD=readlink
+if command -v greadlink > /dev/null; then
+    READLINK_CMD=greadlink
+fi
+
 PROG="$(basename "$0")"
-PROG_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
+PROG_PATH="$($READLINK_CMD -f "${BASH_SOURCE[0]}")"
 PROG_DIR="$(dirname "$PROG_PATH")"
 
 ################################################################################

@@ -5,7 +5,12 @@
 # @online-doc https://github.com/oldratlee/useful-scripts/blob/dev-2.x/docs/shell.md#-console-text-color-themessh
 # @author Jerry Lee (oldratlee at gmail dot com)
 
-readonly _ctct_PROG="$(basename "$(readlink -f "${BASH_SOURCE[0]}")")"
+_ctct_READLINK_CMD=readlink
+if command -v greadlink > /dev/null; then
+    _ctct_READLINK_CMD=greadlink
+fi
+
+readonly _ctct_PROG="$(basename "$($_ctct_READLINK_CMD -f "${BASH_SOURCE[0]}")")"
 [ "$_ctct_PROG" == 'console-text-color-themes.sh' ] && readonly _ctct_is_direct_run=true
 
 readonly _ctct_ec=$'\033'      # escape char

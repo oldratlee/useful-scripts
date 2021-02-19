@@ -1,6 +1,12 @@
 #!/bin/bash
 set -eEuo pipefail
-cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+
+READLINK_CMD=readlink
+if command -v greadlink &> /dev/null; then
+    READLINK_CMD=greadlink
+fi
+
+cd "$(dirname "$($READLINK_CMD -f "${BASH_SOURCE[0]}")")"
 
 ################################################################################
 # constants

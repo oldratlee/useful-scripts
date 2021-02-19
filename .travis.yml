@@ -1,9 +1,21 @@
-language: bash
 # https://github.com/caarlos0-graveyard/shell-ci-build
+# https://github.com/kward/shunit2/blob/master/.travis.yml
+language: bash
 
 # The Ubuntu Linux Build Environments
 #   https://docs.travis-ci.com/user/reference/linux/
-dist: precise
+matrix:
+  include:
+    - os: linux
+      dist: precise
+    - os: linux
+      dist: trusty
+    - os: linux
+      dist: xenial
+    - os: linux
+      dist: bionic
+    - os: linux
+      dist: focal
 
 script:
   - test-cases/integration-test.sh

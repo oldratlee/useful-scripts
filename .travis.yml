@@ -4,6 +4,8 @@ language: bash
 
 # The Ubuntu Linux Build Environments
 #   https://docs.travis-ci.com/user/reference/linux/
+# The macOS Build Environment
+#   https://docs.travis-ci.com/user/reference/osx/
 matrix:
   include:
     - os: linux
@@ -16,6 +18,7 @@ matrix:
       dist: bionic
     - os: linux
       dist: focal
+    - os: osx
 
 script:
   - test-cases/integration-test.sh

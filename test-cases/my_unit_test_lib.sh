@@ -77,13 +77,16 @@ assertEquals() {
     [ "$1" = "$2" ] || fail "assertEqual fail [$1] != [$2]${failMsg:+: $failMsg}"
 }
 
+readonly __ut_exclude_vars_builtin='^BASH_|^_=|^COLUMNS=|LINES='
+readonly __ut_exclude_vars_ut_functions='^FUNCNAME=|^test_'
+
 assertAllVarsSame() {
     local test_afterVars
     test_afterVars=$(declare)
 
     diff \
-        <(echo "$test_beforeVars" | grep -v '^BASH_\|^_=') \
-        <(echo "$test_afterVars" | grep -v '^BASH_\|^_=\|^FUNCNAME=\|^test_') ||
+        <(echo "$test_beforeVars" | grep -Ev "$__ut_exclude_vars_builtin") \
+        <(echo "$test_afterVars" | grep -Ev "$__ut_exclude_vars_builtin|$__ut_exclude_vars_ut_functions") ||
         fail "assertAllVarsSame: Unexpected extra global vars!"
 }
 
@@ -92,8 +95,8 @@ assertAllVarsExcludeOptVarsSame() {
     test_afterVars=$(declare)
 
     diff \
-        <(echo "$test_beforeVars" | grep -v '^BASH_\|^_=') \
-        <(echo "$test_afterVars" | grep -v '^BASH_\|^_=\|^FUNCNAME=\|^test_\|^_OPT_\|^_opts_index_name_') ||
+        <(echo "$test_beforeVars" | grep -Ev "$__ut_exclude_vars_builtin") \
+        <(echo "$test_afterVars" | grep -Ev "$__ut_exclude_vars_builtin|$__ut_exclude_vars_ut_functions"'|^_OPT_|^_opts_index_name_') ||
         fail "assertAllVarsExcludeOptVarsSame: Unexpected extra global vars!"
 }
 

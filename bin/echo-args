@@ -14,7 +14,7 @@ echoArg() {
 
     # if stdout is console, turn on color output.
     [ -t 1 ] &&
-        echo "${index}/${count}: ${ec}[1;31m[$eend${ec}[0;34;42m$value$eend${ec}[1;31m]$eend" ||
+        echo "${index}/${count}: ${ec}[1;31m[$eend${ec}[1;36;40m$value$eend${ec}[1;31m]$eend" ||
         echo "${index}/${count}: [${value}]"
 }
 

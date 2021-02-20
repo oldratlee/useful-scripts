@@ -12,14 +12,7 @@
 # @author Jerry Lee (oldratlee at gmail dot com)
 set -eEuo pipefail
 
-READLINK_CMD=readlink
-if command -v greadlink > /dev/null; then
-    READLINK_CMD=greadlink
-fi
-
 PROG="$(basename "$0")"
-PROG_PATH="$($READLINK_CMD -f "${BASH_SOURCE[0]}")"
-PROG_DIR="$(dirname "$PROG_PATH")"
 
 ################################################################################
 # util functions
@@ -158,7 +151,7 @@ done
 [[ $uq_opt_all_repeated == 1 && $uq_opt_only_unique == 1 ]] &&
     usage 2 "printing all duplicate lines(-D, --all-repeated) and unique lines(-u, --unique) is meaningless"
 
-[[ $uq_opt_all_repeated == 1 && $uq_opt_repeated_method == none && ( $uq_opt_count == 0 && $uq_opt_only_repeated == 0 ) ]] &&
+[[ $uq_opt_all_repeated == 1 && $uq_opt_repeated_method == none && ($uq_opt_count == 0 && $uq_opt_only_repeated == 0) ]] &&
     yellowEcho "[$PROG] WARN: -D/--all-repeated=none option without -c/-d option, just cat input simply!" >&2
 
 argc=${#argv[@]}
@@ -192,6 +185,68 @@ done
 # biz logic
 ################################################################################
 
+# uq awk script
+#
+# edit in a separated file(eg: uq.awk) then copy here,
+# maybe more convenient(like good syntax highlight)
+
+# shellcheck disable=SC2016
+readonly uq_awk_script='
+
+function printResult(for_lines) {
+    for (idx = 0; idx < length(for_lines); idx++) {
+        line = for_lines[idx]
+        count = line_count_array[caseAwareLine(line)]
+        #printf "DEBUG: %s %s, index: %s, uq_opt_only_repeated: %s\n", count, line, idx, uq_opt_only_repeated
+
+        if (uq_opt_only_unique) {
+            if (count == 1) printLine(count, line)
+        } else {
+            if (uq_opt_only_repeated && count <= 1) continue
+
+            if (uq_opt_repeated_method == "prepend" || uq_opt_repeated_method == "separate" && previous_output) {
+                if (line != previous_output) print ""
+            }
+
+            printLine(count, line)
+            previous_output = line
+        }
+    }
+}
+
+function printLine(count, line) {
+    if (uq_opt_count) printf "%7s %s%s", count, line, ORS
+    else print line
+}
+
+function caseAwareLine(line) {
+    if (IGNORECASE) return tolower(line)
+    else return line
+}
+
+BEGIN {
+    if (uq_opt_zero_terminated) ORS = RS = "\0"
+}
+
+{
+    # use index to keep lines order
+    original_lines[line_index++] = $0
+
+    case_aware_line = caseAwareLine($0)
+    # line_count_array: line content -> count
+    if (++line_count_array[case_aware_line] == 1) {
+        # use index to keep lines order
+        deduplicated_lines[deduplicated_line_index++] = case_aware_line
+    }
+}
+
+END {
+    if (uq_opt_all_repeated) printResult(original_lines)
+    else printResult(deduplicated_lines)
+}
+
+'
+
 awk \
     -v "uq_opt_count=$uq_opt_count" \
     -v "uq_opt_only_repeated=$uq_opt_only_repeated" \
@@ -200,6 +255,6 @@ awk \
     -v "uq_opt_only_unique=$uq_opt_only_unique" \
     -v "IGNORECASE=$uq_opt_ignore_case" \
     -v "uq_opt_zero_terminated=$uq_opt_zero_terminated" \
-    -f "$PROG_DIR/helper/uq.awk" \
+    -f <(printf "%s" "$uq_awk_script") \
     -- ${input_files[@]:+"${input_files[@]}"} \
     >"$output_file"

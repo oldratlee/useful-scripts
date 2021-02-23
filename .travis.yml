@@ -1,6 +1,12 @@
 # https://github.com/caarlos0-graveyard/shell-ci-build
 # https://github.com/kward/shunit2/blob/master/.travis.yml
-language: bash
+language: shell
+
+addons:
+  homebrew:
+    packages:
+    - coreutils
+    - gnu-sed
 
 # The Ubuntu Linux Build Environments
 #   https://docs.travis-ci.com/user/reference/linux/
@@ -8,7 +14,7 @@ language: bash
 #   https://docs.travis-ci.com/user/reference/osx/
 # Installing Dependencies
 #   https://docs.travis-ci.com/user/installing-dependencies/#installing-packages-on-macos
-matrix:
+jobs:
   include:
     - os: linux
       dist: precise
@@ -22,9 +28,6 @@ matrix:
       dist: focal
     - os: osx
       osx_image: xcode11.3
-      install:
-        - HOMEBREW_NO_AUTO_UPDATE=1 brew install coreutils
-        - HOMEBREW_NO_AUTO_UPDATE=1 brew install gnu-sed
 
 script:
   - test-cases/integration-test.sh

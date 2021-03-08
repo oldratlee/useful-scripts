@@ -12,7 +12,17 @@ set -eEuo pipefail
 
 readonly PROG="$(basename "$0")"
 
-readonly nl=$'\n' # new line
+################################################################################
+# util functions
+################################################################################
+
+readonly ec=$'\033'      # escape char
+readonly eend=$'\033[0m' # escape end
+readonly nl=$'\n'        # new line
+
+redEcho() {
+    [ -t 1 ] && echo "${ec}[1;31m$*$eend" || echo "$*"
+}
 
 usage() {
     local -r exit_code="${1:-0}"

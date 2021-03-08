@@ -218,15 +218,15 @@ done
 #
 # How to list files in a zip without extra information in command line
 # https://unix.stackexchange.com/a/128304/136953
-if which zipinfo &>/dev/null; then
+if command -v zipinfo &>/dev/null; then
     readonly command_for_list_zip='zipinfo -1'
-elif which unzip &>/dev/null; then
+elif command -v unzip &>/dev/null; then
     readonly command_for_list_zip='unzip -Z1'
 else
-    if ! which jar &>/dev/null; then
+    if ! command -v jar &>/dev/null; then
         [ -n "$JAVA_HOME" ] || die "jar not found on PATH and JAVA_HOME env var is blank!"
         [ -f "$JAVA_HOME/bin/jar" ] || die "jar not found on PATH and \$JAVA_HOME/bin/jar($JAVA_HOME/bin/jar) file does NOT exists!"
-        [ -x "$JAVA_HOME/bin/jar" ] || die "jar not found on PATH and \$JAVA_HOME/bin/jar($JAVA_HOME/bin/jar) is NOT executalbe!"
+        [ -x "$JAVA_HOME/bin/jar" ] || die "jar not found on PATH and \$JAVA_HOME/bin/jar($JAVA_HOME/bin/jar) is NOT executable!"
         export PATH="$JAVA_HOME/bin:$PATH"
     fi
     readonly command_for_list_zip='jar tf'
@@ -250,7 +250,7 @@ findInJarFiles() {
         printResponsiveMessage "finding in jar($((counter++))/$total_count): $jar_file"
 
         $command_for_list_zip "${jar_file}" | {
-            # Prevent grep from exiting in case of nomatch
+            # Prevent grep from exiting in case of no match
             # https://unix.stackexchange.com/questions/330660
             grep $regex_mode ${ignore_case_option:-} ${grep_color_option:-} -- "$pattern" || true
         } | while read -r file; do

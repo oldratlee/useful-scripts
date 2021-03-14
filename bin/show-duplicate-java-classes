@@ -36,7 +36,7 @@ def list_class_under_jar_file(jar_file):
 
 
 def list_class_under_class_dir(class_dir):
-    return {relpath(dir_path + "/" + filename, class_dir)
+    return {relpath(dir_path + '/' + filename, class_dir)
             for dir_path, _, file_names in walk(class_dir)
             for filename in file_names if filename.lower().endswith('.class')}
 
@@ -67,20 +67,20 @@ def find_duplicate_classes(java_class_2_class_paths):
 
 
 def print_class_paths(class_paths):
-    print()
-    print("=" * 80)
-    print("class paths to find:")
-    print("=" * 80)
+    print('')
+    print('=' * 80)
+    print('class paths to find:')
+    print('=' * 80)
     for idx, class_path in enumerate(class_paths):
-        print("%-3d: %s" % (idx + 1, class_path))
+        print('%-3d: %s' % (idx + 1, class_path))
 
 
-if __name__ == '__main__':
-    optionParser = OptionParser('usage: %prog '
-                                '[-c class-dir1 [-c class-dir2] ...] '
-                                '[lib-dir1|jar-file1 [lib-dir2|jar-file2] ...]')
-    optionParser.add_option("-c", "--class-dir", dest="class_dirs", default=[], action="append", help="add class dir")
-    options, libs = optionParser.parse_args()
+def main():
+    option_parser = OptionParser('usage: %prog '
+                                 '[-c class-dir1 [-c class-dir2] ...] '
+                                 '[lib-dir1|jar-file1 [lib-dir2|jar-file2] ...]')
+    option_parser.add_option('-c', '--class-dir', dest='class_dirs', default=[], action='append', help='add class dir')
+    options, libs = option_parser.parse_args()
 
     if not options.class_dirs and not libs:
         libs = ['.']
@@ -91,22 +91,26 @@ if __name__ == '__main__':
     class_path_2_duplicate_classes = find_duplicate_classes(java_class_2_class_paths)
 
     if not class_path_2_duplicate_classes:
-        print("COOL! No duplicate classes found!")
+        print('COOL! No duplicate classes found!')
         print_class_paths(class_paths)
         exit()
 
-    print("Found duplicate classes in below class path:")
+    print('Found duplicate classes in below class path:')
     for idx, jars in enumerate(class_path_2_duplicate_classes):
-        print("%-3d(%d@%d): %s" % (idx + 1, len(class_path_2_duplicate_classes[jars]), len(jars), " ".join(jars)))
+        print('%-3d(%d@%d): %s' % (idx + 1, len(class_path_2_duplicate_classes[jars]), len(jars), ' '.join(jars)))
 
-    print()
-    print("=" * 80)
-    print("Duplicate classes detail info:")
-    print("=" * 80)
+    print('')
+    print('=' * 80)
+    print('Duplicate classes detail info:')
+    print('=' * 80)
     for idx, (jars, classes) in enumerate(class_path_2_duplicate_classes.items()):
-        print("%-3d(%d@%d): %s" % (idx + 1, len(class_path_2_duplicate_classes[jars]), len(jars), " ".join(jars)))
+        print('%-3d(%d@%d): %s' % (idx + 1, len(class_path_2_duplicate_classes[jars]), len(jars), ' '.join(jars)))
         for i, c in enumerate(classes):
-            print("\t%-3d %s" % (i + 1, c))
+            print('\t%-3d %s' % (i + 1, c))
 
     print_class_paths(class_paths)
     exit(1)
+
+
+if __name__ == '__main__':
+    main()

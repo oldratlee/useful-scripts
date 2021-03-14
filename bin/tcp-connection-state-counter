@@ -14,11 +14,20 @@ set -eEuo pipefail
 uname | grep Darwin -q && option_for_mac="-ptcp"
 
 netstat -tna ${option_for_mac:-} | awk 'NR > 2 {
-    s[$NF]++
+    ++s[$NF]
 }
 
 END {
+    # get max length of stat and count
     for(v in s) {
-        printf "%-11s %s\n", v, s[v]
+        stat_len = length(v)
+        if(stat_len > max_stat_len) max_stat_len = stat_len
+
+        count_len = length(s[v])
+        if (count_len > max_count_len) max_count_len = count_len
+    }
+
+    for(v in s) {
+        printf "%-" max_stat_len "s %" max_count_len "s\n", v, s[v]
     }
 }' | sort -nr -k2,2

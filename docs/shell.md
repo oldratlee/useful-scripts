@@ -378,9 +378,11 @@ tcp-connection-state-counter
 
 ```bash
 $ tcp-connection-state-counter
-ESTABLISHED  290
-TIME_WAIT    212
-SYN_SENT     17
+CLOSE_WAIT  584
+ESTABLISHED 493
+TIME_WAIT   112
+LISTEN       27
+SYN_SENT      7
 ```
 
 ### 贡献者

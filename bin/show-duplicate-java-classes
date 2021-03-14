@@ -59,6 +59,9 @@ def find_duplicate_classes(java_class_2_class_paths):
     class_path_2_duplicate_classes = {}
 
     for java_class, class_paths in list(java_class_2_class_paths.items()):
+        # skip java 9 module-info files
+        if java_class.endswith('/module-info.class'):
+            continue
         if len(class_paths) > 1:
             classes = class_path_2_duplicate_classes.setdefault(frozenset(class_paths), set())
             classes.add(java_class)

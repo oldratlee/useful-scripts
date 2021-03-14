@@ -503,7 +503,7 @@ colorEchoWithoutNewLine "4;33;40" "Hello world!" "Hello Hell!"
 命令行选项解析库，加强支持选项有多个值（即数组）。  
 支持`Linux`、`Mac`、`Windows`（`cygwin`、`MSSYS`）。
 
-自己写一个命令行选项解析函数，是因为[`bash`](http://linux.die.net/man/1/bash)的`buildin`命令[`getopts`](http://linux.die.net/man/1/getopts)和加强版本命令[`getopt`](http://linux.die.net/man/1/getopt)都不支持数组的值。
+自己写一个命令行选项解析函数，是因为[`bash`](http://linux.die.net/man/1/bash)的`builtin`命令[`getopts`](http://linux.die.net/man/1/getopts)和加强版本命令[`getopt`](http://linux.die.net/man/1/getopt)都不支持数组的值。
 
 指定选项的多个值（即数组）的风格模仿[`find`](http://linux.die.net/man/1/find)命令的`-exec`选项：
 

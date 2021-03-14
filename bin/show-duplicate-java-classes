@@ -14,6 +14,7 @@
 
 __author__ = 'tg123'
 
+import sys
 from glob import glob
 from os import walk
 from zipfile import ZipFile
@@ -115,5 +116,15 @@ def main():
     exit(1)
 
 
+def check_python_version():
+    python_version = sys.version_info
+    if python_version.major > 2:
+        return
+    if python_version.minor < 7:
+        exit('Using python 2 and its version lower than 2.7, not support!\n'
+             'Please use python 3 instead!\nPython version: ' + sys.version)
+
+
 if __name__ == '__main__':
+    check_python_version()
     main()

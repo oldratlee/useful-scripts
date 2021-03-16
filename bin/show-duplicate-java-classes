@@ -16,12 +16,13 @@ from __future__ import print_function
 
 __author__ = 'tg123'
 
+import re
 import sys
 from glob import glob
-from os import walk
-from zipfile import ZipFile, BadZipfile
-from os.path import relpath, isdir
 from optparse import OptionParser
+from os import walk
+from os.path import relpath, isdir
+from zipfile import ZipFile, BadZipfile
 
 
 ################################################################################
@@ -85,12 +86,15 @@ def build_index__class_to_class_paths(jar_files, class_dirs):
     return class_to_class_paths, jar_files | set(class_dirs)
 
 
+_java9_module_file_pattern = re.compile(r'(^|.*/)module-info\.class$')
+
+
 def find_duplicate_classes(class_to_class_paths):
     class_paths_to_duplicate_classes = {}
 
     for clazz, class_paths in class_to_class_paths.items():
         # skip java 9 module-info files
-        if clazz.endswith('/module-info.class'):
+        if _java9_module_file_pattern.match(clazz):
             continue
         if len(class_paths) > 1:
             classes = class_paths_to_duplicate_classes.setdefault(frozenset(class_paths), set())

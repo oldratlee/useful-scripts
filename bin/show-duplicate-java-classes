@@ -100,21 +100,42 @@ def find_duplicate_classes(class_to_class_paths):
 
 
 def print_duplicate_classes_info(class_paths_to_duplicate_classes):
-    print('Found duplicate classes in below class paths:')
-    for idx, jars in enumerate(class_paths_to_duplicate_classes, start=1):
-        print('%-3d(%d@%d): %s' % (idx, len(class_paths_to_duplicate_classes[jars]), len(jars), ' '.join(jars)))
+    # sort kv pairs
+    class_paths_to_duplicate_classes = sorted(class_paths_to_duplicate_classes.items(), reverse=True,
+                                              key=lambda item: (len(item[0]), len(item[1])))
+    # sort key(class_paths) and value(duplicate_classes)
+    class_paths_to_duplicate_classes = [(sorted(list(cps)), sorted(list(dcs)))
+                                        for cps, dcs in class_paths_to_duplicate_classes]
+
+    print('Found duplicate classes in below %s class paths:' % len(class_paths_to_duplicate_classes))
+
+    idx_str_max_len = len(str(len(class_paths_to_duplicate_classes)))
+    for idx, (class_paths, classes) in enumerate(class_paths_to_duplicate_classes, start=1):
+        print('[%*d] found %d duplicate classes in %d class paths:\n    %s' % (
+            idx_str_max_len, idx,
+            len(classes), len(class_paths),
+            '\n    '.join(class_paths)
+        ))
 
     print_box_message('Duplicate classes detail info:')
-    for idx, (jars, classes) in enumerate(class_paths_to_duplicate_classes.items(), start=1):
-        print('%-3d(%d@%d): %s' % (idx, len(class_paths_to_duplicate_classes[jars]), len(jars), ' '.join(jars)))
+    for idx, (class_paths, classes) in enumerate(class_paths_to_duplicate_classes, start=1):
+        print('[%*d] found %d duplicate classes in %d class paths %s :' % (
+            idx_str_max_len, idx,
+            len(classes), len(class_paths), ' '.join(class_paths)
+        ))
+        class_idx_str_max_len = len(str(len(classes)))
         for i, c in enumerate(classes, start=1):
-            print('%7d %s' % (i, c))
+            print('    %*d: %s' % (class_idx_str_max_len, i, c))
 
 
 def print_class_paths_info(class_paths):
-    print_box_message('class paths to find:')
+    class_paths = sorted(list(class_paths))
+
+    print_box_message('Find in %s class paths:' % len(class_paths))
+
+    idx_str_max_len = len(str(len(class_paths)))
     for idx, class_path in enumerate(class_paths, start=1):
-        print('%-3d: %s' % (idx, class_path))
+        print('%*d: %s' % (idx_str_max_len, idx, class_path))
 
 
 def main():

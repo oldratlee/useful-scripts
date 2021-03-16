@@ -227,7 +227,7 @@ $ show-busy-java-threads
 ----------------------
 
 找出`Java Lib`（`Java`库，即`Jar`文件）或`Class`目录（类目录）中的重复类。  
-全系统支持（`Python`实现，安装`Python`即可），如`Linux`、`Mac`、`Windows`。
+全系统支持（`Python 3`实现，安装`Python 3`即可），如`Linux`、`Mac`、`Windows`。
 
 `Java`开发的一个麻烦的问题是`Jar`冲突（即多个版本的`Jar`），或者说重复类。会出`NoSuchMethod`等的问题，还不见得当时出问题。找出有重复类的`Jar`，可以防患未然。
 
@@ -330,52 +330,58 @@ $ show-duplicate-java-classes WEB-INF/lib
 COOL! No duplicate classes found!
 
 ================================================================================
-class paths to find:
+Find in 150 class paths:
 ================================================================================
-1  : WEB-INF/lib/sourceforge.spring.modules.context-2.5.6.SEC02.jar
-2  : WEB-INF/lib/misc.htmlparser-0.0.0.jar
-3  : WEB-INF/lib/normandy.client-1.0.2.jar
+  1: WEB-INF/lib/aopalliance-1.0.jar
+  2: WEB-INF/lib/asm-3.2.jar
+  3: WEB-INF/lib/aspectjrt-1.6.1.jar
+  4: WEB-INF/lib/aspectjweaver-1.6.6.jar
 ...
 
 $ show-duplicate-java-classes -c WEB-INF/classes WEB-INF/lib
-Found duplicate classes in below class path:
-1  (293@2): WEB-INF/lib/sourceforge.spring-2.5.6.SEC02.jar WEB-INF/lib/sourceforge.spring.modules.orm-2.5.6.SEC02.jar
-2  (2@3): WEB-INF/lib/servlet-api-3.0-alpha-1.jar WEB-INF/lib/jsp-api-2.1-rev-1.jar WEB-INF/lib/jstl-api-1.2-rev-1.jar
-3  (104@2): WEB-INF/lib/commons-io-2.2.jar WEB-INF/lib/jakarta.commons.io-2.0.jar
-4  (6@3): WEB-INF/lib/jakarta.commons.logging-1.1.jar WEB-INF/lib/commons-logging-1.1.1.jar WEB-INF/lib/org.slf4j.jcl104-over-slf4j-1.5.6.jar
-5  (344@2): WEB-INF/lib/sourceforge.spring-2.5.6.SEC02.jar WEB-INF/lib/sourceforge.spring.modules.context-2.5.6.SEC02.jar
+Found duplicate classes in below 9 class paths:
+[1] found 188 duplicate classes in 2 class paths:
+    WEB-INF/lib/jdom-2.0.2.jar
+    WEB-INF/lib/jdom2-2.0.6.jar
+[2] found 150 duplicate classes in 2 class paths:
+    WEB-INF/lib/netty-all-4.0.35.Final.jar
+    WEB-INF/lib/netty-common-4.1.31.Final.jar
+[3] found 148 duplicate classes in 2 class paths:
+    WEB-INF/lib/netty-all-4.0.35.Final.jar
+    WEB-INF/lib/netty-handler-4.1.31.Final.jar
+[4] found 103 duplicate classes in 2 class paths:
+    WEB-INF/lib/hessian-3.0.14.bugfix-tae3.jar
+    WEB-INF/lib/hessian-4.0.38.jar
 ...
 
 ================================================================================
 Duplicate classes detail info:
 ================================================================================
-1  (293@2): WEB-INF/lib/sourceforge.spring-2.5.6.SEC02.jar WEB-INF/lib/sourceforge.spring.modules.orm-2.5.6.SEC02.jar
-    1   org/springframework/orm/toplink/TopLinkTemplate$13.class
-    2   org/springframework/orm/hibernate3/HibernateTemplate$24.class
-    3   org/springframework/orm/jpa/vendor/HibernateJpaDialect.class
-    4   org/springframework/orm/hibernate3/TypeDefinitionBean.class
-    5   org/springframework/orm/hibernate3/SessionHolder.class
-    ...
-2  (2@3): WEB-INF/lib/servlet-api-3.0-alpha-1.jar WEB-INF/lib/jsp-api-2.1-rev-1.jar WEB-INF/lib/jstl-api-1.2-rev-1.jar
-    1   javax/servlet/ServletException.class
-    2   javax/servlet/ServletContext.class
-3  (104@2): WEB-INF/lib/commons-io-2.2.jar WEB-INF/lib/jakarta.commons.io-2.0.jar
-    1   org/apache/commons/io/input/ProxyReader.class
-    2   org/apache/commons/io/output/FileWriterWithEncoding.class
-    3   org/apache/commons/io/output/TaggedOutputStream.class
-    4   org/apache/commons/io/filefilter/NotFileFilter.class
-    5   org/apache/commons/io/filefilter/TrueFileFilter.class
-    ...
+[1] found 188 duplicate classes in 2 class paths WEB-INF/lib/jdom-2.0.2.jar WEB-INF/lib/jdom2-2.0.6.jar :
+      1: org/jdom2/Attribute.class
+      2: org/jdom2/AttributeList$1.class
+      3: org/jdom2/AttributeList$ALIterator.class
+      4: org/jdom2/AttributeList.class
+      5: org/jdom2/AttributeType.class
+      ...
+[2] found 150 duplicate classes in 2 class paths WEB-INF/lib/netty-all-4.0.35.Final.jar WEB-INF/lib/netty-common-4.1.31.Final.jar :
+      1: io/netty/util/AbstractReferenceCounted.class
+      2: io/netty/util/Attribute.class
+      3: io/netty/util/AttributeKey.class
+      4: io/netty/util/AttributeMap.class
+      5: io/netty/util/CharsetUtil.class
+      ...
 ...
 
 ================================================================================
-class paths to find:
+Find in 232 class paths:
 ================================================================================
-1  : WEB-INF/lib/sourceforge.spring.modules.context-2.5.6.SEC02.jar
-2  : WEB-INF/lib/misc.htmlparser-0.0.0.jar
-3  : WEB-INF/lib/normandy.client-1.0.2.jar
-4  : WEB-INF/lib/xml.xmlgraphics__batik-css-1.7.jar-1.7.jar
-5  : WEB-INF/lib/jakarta.ecs-1.4.2.jar
+  1: WEB-INF/classes
+  2: WEB-INF/lib/HikariCP-2.7.8.jar
+  3: WEB-INF/lib/accessors-smart-1.2.jar
+  4: WEB-INF/lib/alimonitor-jmonitor-1.1.3.jar
+  5: WEB-INF/lib/aopalliance-1.0.jar
+  6: WEB-INF/lib/asm-5.0.4.jar
 ...
 ```
 

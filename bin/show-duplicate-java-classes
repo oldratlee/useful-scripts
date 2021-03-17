@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # @Function
 # Find duplicate class among java libs.
@@ -11,8 +11,6 @@
 # @online-doc https://github.com/oldratlee/useful-scripts/blob/dev-2.x/docs/java.md#-show-duplicate-java-classes
 # @author tg123 (farmer1992 at gmail dot com)
 # @author Jerry Lee (oldratlee at gmail dot com)
-
-from __future__ import print_function
 
 __author__ = 'tg123'
 
@@ -28,12 +26,6 @@ from zipfile import ZipFile, BadZipfile
 ################################################################################
 # utils functions
 ################################################################################
-
-def check_python_version():
-    if sys.version_info < (2, 7):
-        exit('Using python 2 and its version lower than 2.7, not supported!\n'
-             'Please use python 3 instead!\nPython version: ' + sys.version)
-
 
 def print_box_message(msg):
     print()
@@ -168,6 +160,4 @@ def main():
 
 
 if __name__ == '__main__':
-    check_python_version()
-
     exit(main())

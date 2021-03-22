@@ -46,7 +46,8 @@ def list_jar_file_under_lib_dirs(lib_dirs):
 
 def list_class_under_jar_file(jar_file):
     try:
-        return {f for f in ZipFile(jar_file).namelist() if f.lower().endswith('.class')}
+        with ZipFile(jar_file) as zf:
+            return {f for f in zf.namelist() if f.lower().endswith('.class')}
     except BadZipfile:
         print('WARN: %s is bad zip file, ignored!' % jar_file, file=sys.stderr)
         return set()

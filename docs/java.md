@@ -243,6 +243,10 @@ show-duplicate-java-classes
 
 # 查找多个指定目录下所有Jar中的重复类
 show-duplicate-java-classes path/to/lib_dir1 /path/to/lib_dir2
+# 通过 -L 选项，查找子目录中的Jar文件
+show-duplicate-java-classes -L path/to/lib_dir1
+# 通过 -J 选项，查找Jar文件中的Jar文件（即查找FatJar中包含的Jar）
+show-duplicate-java-classes -J path/to/lib_dir1
 
 # 查找多个指定Class目录下的重复类。 Class目录 通过 -c 选项指定
 show-duplicate-java-classes -c path/to/class_dir1 -c /path/to/class_dir2
@@ -252,10 +256,18 @@ show-duplicate-java-classes path/to/lib_dir1 /path/to/lib_dir2 -c path/to/class_
 
 # 帮助信息
 $ show-duplicate-java-classes -h
-Usage: show-duplicate-java-classes [-c class-dir1 [-c class-dir2] ...] [lib-dir1|jar-file1 [lib-dir2|jar-file2] ...]
+Usage: show-duplicate-java-classes [OPTION]... [-c class-dir1 [-c class-dir2] ...] [lib-dir1|jar-file1 [lib-dir2|jar-file2] ...]
+Find duplicate classes among java lib dirs and class dirs.
+
+Examples:
+  show-duplicate-java-classes  # find jars from current dir
+  show-duplicate-java-classes path/to/lib_dir1 /path/to/lib_dir2
+  show-duplicate-java-classes -c path/to/class_dir1 -c /path/to/class_dir2
 
 Options:
   -h, --help            show this help message and exit
+  -L, --recursive-lib   find jars in the sub-directories of lib dir
+  -J, --recursive-jar   find jars in the jar file
   -c CLASS_DIRS, --class-dir=CLASS_DIRS
                         add class dir
 ```

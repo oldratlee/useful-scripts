@@ -21,9 +21,6 @@ readonly PROG="$(basename "$0")"
 # util functions
 ################################################################################
 
-# shellcheck disable=SC2015
-[ -t 1 ] && readonly is_console=true || readonly is_console=false
-
 # NOTE: $'foo' is the escape sequence syntax of bash
 readonly ec=$'\033'      # escape char
 readonly eend=$'\033[0m' # escape end
@@ -31,7 +28,8 @@ readonly cr=$'\r'        # carriage return
 readonly nl=$'\n'        # new line
 
 redEcho() {
-    $is_console && echo "${ec}[1;31m$*$eend" || echo "$*"
+    # -t check: is a terminal device?
+    [ -t 1 ] && echo "${ec}[1;31m$*$eend" || echo "$*"
 }
 
 die() {
@@ -41,18 +39,17 @@ die() {
 
 # Getting console width using a bash script
 # https://unix.stackexchange.com/questions/299067
-$is_console && readonly columns=$(stty size | awk '{print $2}')
-
+[ -t 2 ] && readonly columns=$(stty size | awk '{print $2}')
 printResponsiveMessage() {
-    $is_console || return 0
+    [ -t 2 ] || return 0
 
     local message="$*"
     # http://www.linuxforums.org/forum/red-hat-fedora-linux/142825-how-truncate-string-bash-script.html
-    echo -n "${message:0:columns}"
+    echo -n "${message:0:columns}" >&2
 }
 
 clearResponsiveMessage() {
-    $is_console || return 0
+    [ -t 2 ] || return 0
 
     # How to delete line with echo?
     # https://unix.stackexchange.com/questions/26576
@@ -62,7 +59,7 @@ clearResponsiveMessage() {
     # echo -e "\033[1K"
     # Or everything on the line, regardless of cursor position:
     # echo -e "\033[2K"
-    echo -n "${ec}[2K$cr"
+    echo -n "${ec}[2K$cr" >&2
 }
 
 usage() {
@@ -75,6 +72,7 @@ usage() {
 
     cat >$out <<EOF
 Usage: ${PROG} [OPTION]... PATTERN
+
 Find files in the jar files under specified directory,
 search jar files recursively(include subdirectory).
 The pattern default is *extended* regex.
@@ -243,7 +241,7 @@ total_count="$(echo "$jar_files" | wc -l)"
 total_count="${total_count//[[:space:]]/}" # delete white space
 
 findInJarFiles() {
-    $is_console && local -r grep_color_option='--color=always'
+    [ -t 1 ] && local -r grep_color_option='--color=always'
 
     local counter=1 jar_file
     while read -r jar_file; do
@@ -256,7 +254,7 @@ findInJarFiles() {
         } | while read -r file; do
             clearResponsiveMessage
 
-            $is_console &&
+            [ -t 1 ] &&
                 echo "${ec}[1;35m${jar_file}${eend}${ec}[1;32m${separator}${eend}${file}" ||
                 echo "${jar_file}${separator}${file}"
         done

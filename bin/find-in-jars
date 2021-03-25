@@ -24,8 +24,16 @@ readonly PROG="$(basename "$0")"
 # NOTE: $'foo' is the escape sequence syntax of bash
 readonly ec=$'\033'      # escape char
 readonly eend=$'\033[0m' # escape end
-readonly cr=$'\r'        # carriage return
 readonly nl=$'\n'        # new line
+# How to delete line with echo?
+# https://unix.stackexchange.com/questions/26576
+#
+# terminal escapes: http://ascii-table.com/ansi-escape-sequences.php
+# In particular, to clear from the cursor position to the beginning of the line:
+# echo -e "\033[1K"
+# Or everything on the line, regardless of cursor position:
+# echo -e "\033[2K"
+readonly clear_line=$'\033[2K\r'
 
 redEcho() {
     # -t check: is a terminal device?
@@ -45,21 +53,13 @@ printResponsiveMessage() {
 
     local message="$*"
     # http://www.linuxforums.org/forum/red-hat-fedora-linux/142825-how-truncate-string-bash-script.html
-    echo -n "${message:0:columns}" >&2
+    echo -n "$clear_line${message:0:columns}" >&2
 }
 
 clearResponsiveMessage() {
     [ -t 2 ] || return 0
 
-    # How to delete line with echo?
-    # https://unix.stackexchange.com/questions/26576
-    #
-    # terminal escapes: http://ascii-table.com/ansi-escape-sequences.php
-    # In particular, to clear from the cursor position to the beginning of the line:
-    # echo -e "\033[1K"
-    # Or everything on the line, regardless of cursor position:
-    # echo -e "\033[2K"
-    echo -n "${ec}[2K$cr" >&2
+    echo -n "$clear_line" >&2
 }
 
 usage() {
@@ -234,6 +234,8 @@ fi
 # find logic
 ################################################################################
 
+printResponsiveMessage "searching jars under dir ${dirs[*]} , ..."
+
 jar_files="$(find "${dirs[@]}" "${find_iname_options[@]}" -type f)"
 [ -n "$jar_files" ] || die "No ${extensions[*]} file found!"
 
@@ -258,9 +260,9 @@ findInJarFiles() {
                 echo "${ec}[1;35m${jar_file}${eend}${ec}[1;32m${separator}${eend}${file}" ||
                 echo "${jar_file}${separator}${file}"
         done
-
-        clearResponsiveMessage
     done
+
+    clearResponsiveMessage
 }
 
 echo "$jar_files" | findInJarFiles

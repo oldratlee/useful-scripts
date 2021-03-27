@@ -138,7 +138,7 @@ def print_duplicate_classes_info(class_paths_to_duplicate_classes):
     class_paths_to_duplicate_classes = [(sorted(list(cps)), sorted(list(dcs)))
                                         for cps, dcs in class_paths_to_duplicate_classes]
 
-    print('Found duplicate classes in below %s class paths:' % len(class_paths_to_duplicate_classes))
+    print('Found duplicate classes in below %s class path set:' % len(class_paths_to_duplicate_classes))
 
     idx_str_max_len = len(str(len(class_paths_to_duplicate_classes)))
     for idx, (class_paths, classes) in enumerate(class_paths_to_duplicate_classes, start=1):

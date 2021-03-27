@@ -233,9 +233,14 @@ $ show-busy-java-threads
 
 ### 用法
 
-- 通过脚本参数指定`Libs`目录，查找目录下`Jar`文件，收集`Jar`文件中`Class`文件以分析重复类。可以指定多个`Libs`目录。  
-    注意，只会查找这个目录下`Jar`文件，不会查找子目录下`Jar`文件。因为`Libs`目录一般不会用子目录再放`Jar`，这样也避免把去查找不期望`Jar`。
-- 通过`-c`选项指定`Class`目录，直接收集这个目录下的`Class`文件以分析重复类。可以指定多个`Class`目录。
+- 通过脚本参数 指定 `Libs`目录，查找目录下`Jar`文件，收集`Jar`文件中`Class`文件以分析重复类。可以指定多个`Libs`目录。
+    - 缺省只会查找指定`Lib`目录下`Jar`文件，不会收集`Lib`目录的子目录下`Jar`文件。
+        - 因为`Libs`目录一般不会用子目录再放`Jar`，也避免把去查找不期望的`Jar`文件。
+        - 可以通过 `-L`选项 设置 收集`Lib`子目录下的`Jar`文件；这样可以简化`Lib`目录的设置，不需要指定完整的`Lib`目录路径。
+    - 对于找到的`Jar`文件，缺省不会进一步收集包含在`Jar`文件中的`Jar`。
+        - 即`FatJar`/`UberJar`的场景，随着像`SpringBoot`的广泛使用，`FatJar`/`UberJar`也比较常见。
+        - 可以通过 `-J`选项 设置 收集包含在`Jar`文件中的`Jar`。
+- 通过`-c`选项 指定 `Class`目录，直接收集这个目录下的`Class`文件以分析重复类。可以多次指定多个`Class`目录。
 
 ```bash
 # 查找当前目录下所有Jar中的重复类
@@ -243,9 +248,9 @@ show-duplicate-java-classes
 
 # 查找多个指定目录下所有Jar中的重复类
 show-duplicate-java-classes path/to/lib_dir1 /path/to/lib_dir2
-# 通过 -L 选项，查找子目录中的Jar文件
+# 通过 -L 选项，收集子目录中的Jar文件
 show-duplicate-java-classes -L path/to/lib_dir1
-# 通过 -J 选项，查找Jar文件中的Jar文件（即查找FatJar中包含的Jar）
+# 通过 -J 选项，收集包含在Jar文件中的Jar文件（即 收集包含在FatJar/UberJar中的Jar）
 show-duplicate-java-classes -J path/to/lib_dir1
 
 # 查找多个指定Class目录下的重复类。 Class目录 通过 -c 选项指定
@@ -351,7 +356,7 @@ Find in 150 class paths:
 ...
 
 $ show-duplicate-java-classes -c WEB-INF/classes WEB-INF/lib
-Found duplicate classes in below 9 class paths:
+Found duplicate classes in below 9 class path set:
 [1] found 188 duplicate classes in 2 class paths:
     WEB-INF/lib/jdom-2.0.2.jar
     WEB-INF/lib/jdom2-2.0.6.jar

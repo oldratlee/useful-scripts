@@ -244,20 +244,32 @@ fi
 # find logic
 ################################################################################
 
-printResponsiveMessage "searching jars under dir ${dirs[*]} , ..."
+searchJarFiles() {
+    printResponsiveMessage "searching jars under dir ${dirs[*]} , ..."
 
-jar_files="$(find "${dirs[@]}" "${find_iname_options[@]}" -type f)"
-[ -n "$jar_files" ] || die "No ${extensions[*]} file found!"
+    local jar_files total_jar_count
 
-total_count="$(echo "$jar_files" | wc -l)"
-total_count="${total_count//[[:space:]]/}" # delete white space
+    jar_files="$(find "${dirs[@]}" "${find_iname_options[@]}" -type f)"
+    [ -n "$jar_files" ] || die "No ${extensions[*]} file found!"
+
+    total_jar_count="$(echo "$jar_files" | wc -l)"
+    # delete white space
+    # because the output of mac system command `wc -l` contains white space!
+    total_jar_count="${total_jar_count//[[:space:]]/}"
+
+    echo "$total_jar_count"
+    echo "$jar_files"
+}
 
 findInJarFiles() {
     [ -t 1 ] && local -r grep_color_option='--color=always'
 
-    local counter=1 jar_file
+    local counter=1 total_jar_count jar_file file
+
+    read -r total_jar_count
+
     while read -r jar_file; do
-        printResponsiveMessage "finding in jar($((counter++))/$total_count): $jar_file"
+        printResponsiveMessage "finding in jar($((counter++))/$total_jar_count): $jar_file"
 
         $command_for_list_zip "${jar_file}" | {
             # Prevent grep from exiting in case of no match
@@ -275,4 +287,4 @@ findInJarFiles() {
     clearResponsiveMessage
 }
 
-echo "$jar_files" | findInJarFiles
+searchJarFiles | findInJarFiles

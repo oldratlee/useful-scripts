@@ -49,7 +49,9 @@ die() {
 # https://unix.stackexchange.com/questions/299067
 [ -t 2 ] && readonly columns=$(stty size | awk '{print $2}')
 printResponsiveMessage() {
-    [ -t 2 ] || return 0
+    if ! $show_responsive || [ ! -t 2 ]; then
+        return
+    fi
 
     local message="$*"
     # http://www.linuxforums.org/forum/red-hat-fedora-linux/142825-how-truncate-string-bash-script.html
@@ -57,7 +59,9 @@ printResponsiveMessage() {
 }
 
 clearResponsiveMessage() {
-    [ -t 2 ] || return 0
+    if ! $show_responsive || [ ! -t 2 ]; then
+        return
+    fi
 
     echo -n "$clear_line" >&2
 }
@@ -102,6 +106,7 @@ Output control:
   -a, --absolute-path    always print absolute path of jar file
   -s, --separator        specify the separator between jar file and zip entry.
                          default is \`!'.
+  -R, --no-find-progress do not display responsive find progress
 
 Miscellaneous:
   -h, --help             display this help and exit
@@ -121,6 +126,7 @@ declare -a args=()
 separator='!'
 regex_mode=-E
 use_absolute_path=false
+show_responsive=true
 
 while (($# > 0)); do
     case "$1" in
@@ -130,11 +136,6 @@ while (($# > 0)); do
         ;;
     -e | --extension)
         extensions=(${extensions[@]:+"${extensions[@]}"} "$2")
-        shift 2
-        ;;
-    # support the typo option --seperator for compatibility
-    -s | --separator | --seperator)
-        separator="$2"
         shift 2
         ;;
     -E | --extended-regexp)
@@ -159,6 +160,15 @@ while (($# > 0)); do
         ;;
     -a | --absolute-path)
         use_absolute_path=true
+        shift
+        ;;
+    # support the typo option name --seperator for compatibility
+    -s | --separator | --seperator)
+        separator="$2"
+        shift 2
+        ;;
+    -R | --no-find-progress)
+        show_responsive=false
         shift
         ;;
     -h | --help)

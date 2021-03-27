@@ -441,6 +441,7 @@ find-in-jars 'log4j\.properties' -s ' ' | awk '{print $2}'
 # 帮助信息
 $ find-in-jars -h
 Usage: find-in-jars [OPTION]... PATTERN
+
 Find files in the jar files under specified directory,
 search jar files recursively(include subdirectory).
 The pattern default is *extended* regex.
@@ -470,6 +471,7 @@ Output control:
   -a, --absolute-path    always print absolute path of jar file
   -s, --separator        specify the separator between jar file and zip entry.
                          default is `!'.
+  -R, --no-find-progress do not display responsive find progress
 
 Miscellaneous:
   -h, --help             display this help and exit

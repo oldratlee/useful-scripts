@@ -38,17 +38,20 @@ def print_box_message(msg):
 def list_jar_file_under_lib_dirs(lib_dirs, recursive):
     jar_files = set()
     for lib_dir in lib_dirs:
-        if isdir(lib_dir):
-            if recursive:
-                jar_files |= {
-                    dir_path + '/' + filename
-                    for dir_path, _, file_names in walk(lib_dir)
-                    for filename in file_names if filename.lower().endswith('.jar')
-                }
-            else:
-                jar_files |= {f for f in glob(lib_dir + '/*.jar')}
-        else:
+        if not isdir(lib_dir):
             jar_files.add(lib_dir)
+            continue
+
+        if not recursive:
+            jar_files |= {p for p in glob(lib_dir + '/*.jar')}
+            continue
+
+        jar_files |= {
+            dir_path + '/' + filename
+            for dir_path, _, file_names in walk(lib_dir)
+            for filename in file_names if filename.lower().endswith('.jar')
+        }
+
     return jar_files
 
 
@@ -57,21 +60,21 @@ def list_class_under_jar_file(jar_file, recursive):
     :return: map: jar_jar_path('a.jar!b.jar!c.jar') -> classes
     """
 
-    def list_zip_in_zip(jar_paths, zf):
+    def list_zip_in_zip(jar_jar_path, zf):
         ret = {}
         classes = {f for f in zf.namelist() if f.lower().endswith('.class')}
-        ret[jar_paths] = classes
+        ret[jar_jar_path] = classes
         if not recursive:
             return ret
 
         jars_in_jar = {f for f in zf.namelist() if f.lower().endswith('.jar')}
         for jar in jars_in_jar:
-            zip_paths = jar_paths + '!' + jar
+            next_jar_jar_path = jar_jar_path + '!' + jar
             try:
                 with ZipFile(BytesIO(zf.read(jar))) as f:
-                    ret.update(list_zip_in_zip(zip_paths, f))
+                    ret.update(list_zip_in_zip(next_jar_jar_path, f))
             except BadZipfile as e:
-                print('WARN: %s is bad zip file(%s), ignored!' % (zip_paths, e), file=sys.stderr)
+                print('WARN: %s is bad zip file(%s), ignored!' % (next_jar_jar_path, e), file=sys.stderr)
 
         return ret
 
@@ -135,7 +138,7 @@ def print_duplicate_classes_info(class_paths_to_duplicate_classes):
     class_paths_to_duplicate_classes = sorted(class_paths_to_duplicate_classes.items(), reverse=True,
                                               key=lambda item: (len(item[0]), len(item[1])))
     # sort key(class_paths) and value(duplicate_classes)
-    class_paths_to_duplicate_classes = [(sorted(list(cps)), sorted(list(dcs)))
+    class_paths_to_duplicate_classes = [(sorted(cps), sorted(dcs))
                                         for cps, dcs in class_paths_to_duplicate_classes]
 
     print('Found duplicate classes in below %s class path set:' % len(class_paths_to_duplicate_classes))
@@ -160,7 +163,7 @@ def print_duplicate_classes_info(class_paths_to_duplicate_classes):
 
 
 def print_class_paths_info(class_paths):
-    class_paths = sorted(list(class_paths))
+    class_paths = sorted(class_paths)
 
     print_box_message('Find in %s class paths:' % len(class_paths))
 

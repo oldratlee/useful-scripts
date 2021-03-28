@@ -133,6 +133,7 @@ def find_duplicate_classes(class_to_class_paths):
 
 
 def print_duplicate_classes_info(class_paths_to_duplicate_classes):
+    duplicate_classes_total_count = sum(len(dcs) for dcs in class_paths_to_duplicate_classes.values())
     # sort kv pairs
     class_paths_to_duplicate_classes = sorted(class_paths_to_duplicate_classes.items(), reverse=True,
                                               key=lambda item: (len(item[0]), len(item[1])))
@@ -140,7 +141,8 @@ def print_duplicate_classes_info(class_paths_to_duplicate_classes):
     class_paths_to_duplicate_classes = [(sorted(cps), sorted(dcs))
                                         for cps, dcs in class_paths_to_duplicate_classes]
 
-    print('Found duplicate classes in below %s class path set:' % len(class_paths_to_duplicate_classes))
+    print('Found %s duplicate classes in %s class path set:' %
+          (duplicate_classes_total_count, len(class_paths_to_duplicate_classes)))
 
     idx_str_max_len = len(str(len(class_paths_to_duplicate_classes)))
     for idx, (class_paths, classes) in enumerate(class_paths_to_duplicate_classes, start=1):

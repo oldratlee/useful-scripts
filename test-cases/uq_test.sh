@@ -2,7 +2,7 @@
 set -eEuo pipefail
 
 READLINK_CMD=readlink
-if command -v greadlink &> /dev/null; then
+if command -v greadlink &>/dev/null; then
     READLINK_CMD=greadlink
 fi
 
@@ -107,6 +107,41 @@ test_ignore_case__count() {
 
     assertEquals "      2 a${nl}      1 b${nl}      2 A" \
         "$(echo "$input" | "$uq" -i -D -c)"
+}
+
+test_max_input_check() {
+    # shellcheck disable=SC2016
+    assertTrue 'echo 123 | "$uq"'
+    # shellcheck disable=SC2016
+    assertTrue 'echo 123 | "$uq" -XM 4'
+    # shellcheck disable=SC2016
+    assertTrue 'echo 123 | "$uq" -XM 1k'
+    # shellcheck disable=SC2016
+    assertTrue 'echo 123 | "$uq" --max-input 1042k'
+    # shellcheck disable=SC2016
+    assertTrue 'echo 123 | "$uq" --max-input 1m'
+    # shellcheck disable=SC2016
+    assertTrue 'echo 123 | "$uq" --max-input 10420g'
+    # shellcheck disable=SC2016
+    assertTrue '"$uq" uq_test_input'
+    # shellcheck disable=SC2016
+    assertTrue '"$uq" uq_test_input -XM 42m'
+    # shellcheck disable=SC2016
+    assertTrue '"$uq" uq_test_input --max-input 1024000g'
+    # shellcheck disable=SC2016
+    assertTrue '"$uq" uq_test_input --max-input 1234567890g'
+
+    # shellcheck disable=SC2016
+    assertFalse 'should fail by -XM' 'echo -e 123 | "$uq" -XM 1'
+    # shellcheck disable=SC2016
+    assertFalse 'should fail by -XM' 'echo -e 123 | "$uq" -XM 3'
+    # shellcheck disable=SC2016
+    assertFalse 'should fail by --max-input' 'echo -e 123 | "$uq" --max-input 2'
+    # shellcheck disable=SC2016
+    assertFalse 'should fail by --max-input' '"$uq" --max-input 2 uq_test_input'
+
+    # shellcheck disable=SC2016
+    assertFalse 'should fail, number overflow!' '"$uq" uq_test_input --max-input 12345678901g'
 }
 
 #################################################

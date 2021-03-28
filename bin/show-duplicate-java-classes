@@ -92,29 +92,28 @@ def list_class_under_class_dir(class_dir):
             for filename in file_names if filename.lower().endswith('.class')}
 
 
+def collect_class_path_to_classes(jar_files, class_dirs, recursive_jar):
+    class_path_to_classes = {}
+    # list all classes in jar files
+    for jar_file in jar_files:
+        class_path_to_classes.update(list_class_under_jar_file(jar_file, recursive=recursive_jar))
+    # list all classes in class dirs
+    for class_dir in class_dirs:
+        class_path_to_classes[class_dir] = list_class_under_class_dir(class_dir)
+    return class_path_to_classes
+
+
+def invert_as_class_to_class_paths(class_path_to_classes):
+    class_to_class_paths = {}
+    for class_path, classes in class_path_to_classes.items():
+        for clazz in classes:
+            class_to_class_paths.setdefault(clazz, set()).add(class_path)
+    return class_to_class_paths
+
+
 ################################################################################
 # biz functions
 ################################################################################
-
-def build_index__class_to_class_paths(jar_files, class_dirs, recursive_jar):
-    class_to_class_paths = {}
-    class_paths = set()
-
-    # list all classes in jar files
-    for jar_file in jar_files:
-        for jar_jar_path, classes in list_class_under_jar_file(jar_file, recursive=recursive_jar).items():
-            class_paths.add(jar_jar_path)
-            for clazz in classes:
-                class_to_class_paths.setdefault(clazz, set()).add(jar_jar_path)
-
-    # list all classes in class dirs
-    for class_dir in class_dirs:
-        class_paths.add(class_dir)
-        for class_file in list_class_under_class_dir(class_dir):
-            class_to_class_paths.setdefault(class_file, set()).add(class_dir)
-
-    return class_to_class_paths, class_paths
-
 
 _java9_module_file_pattern = re.compile(r'(^|.*/)module-info\.class$')
 
@@ -124,11 +123,11 @@ def find_duplicate_classes(class_to_class_paths):
 
     for clazz, class_paths in class_to_class_paths.items():
         # skip java 9 module-info files
-        if _java9_module_file_pattern.match(clazz):
+        if len(class_paths) == 1 or _java9_module_file_pattern.match(clazz):
             continue
-        if len(class_paths) > 1:
-            classes = class_paths_to_duplicate_classes.setdefault(frozenset(class_paths), set())
-            classes.add(clazz)
+
+        classes = class_paths_to_duplicate_classes.setdefault(frozenset(class_paths), set())
+        classes.add(clazz)
 
     return class_paths_to_duplicate_classes
 
@@ -190,24 +189,22 @@ def main():
     option_parser.add_option('-c', '--class-dir', dest='class_dirs', default=[],
                              action='append', help='add class dir')
     options, lib_dirs = option_parser.parse_args()
-    recursive_lib = options.recursive_lib
-    recursive_jar = options.recursive_jar
     if not options.class_dirs and not lib_dirs:
         lib_dirs = ['.']
 
-    class_to_class_paths, class_paths = build_index__class_to_class_paths(
-        list_jar_file_under_lib_dirs(lib_dirs, recursive=recursive_lib),
-        options.class_dirs, recursive_jar=recursive_jar)
+    class_path_to_classes = collect_class_path_to_classes(
+        list_jar_file_under_lib_dirs(lib_dirs, recursive=options.recursive_lib),
+        options.class_dirs, recursive_jar=options.recursive_jar)
+    class_to_class_paths = invert_as_class_to_class_paths(class_path_to_classes)
 
     class_paths_to_duplicate_classes = find_duplicate_classes(class_to_class_paths)
-
     have_duplicate_classes = bool(class_paths_to_duplicate_classes)
     if have_duplicate_classes:
         print_duplicate_classes_info(class_paths_to_duplicate_classes)
     else:
         print('COOL! No duplicate classes found!')
 
-    print_class_paths_info(class_paths)
+    print_class_paths_info(class_path_to_classes.keys())
 
     return int(have_duplicate_classes)
 

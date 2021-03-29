@@ -8,13 +8,26 @@
 # @online-doc https://github.com/oldratlee/useful-scripts/blob/dev-2.x/docs/java.md#-show-busy-java-threads
 # @author Jerry Lee (oldratlee at gmail dot com)
 # @author superhj1987 (superhj1987 at 126 dot com)
+#
+# NOTE about Bash Traps and Pitfalls:
+#
+# 1. DO NOT combine var declaration and assignment which value supplied by subshell!
+#    for example: readonly var1=$(echo value1)
+#                 local var1=$(echo value1)
+#
+#    declaration make exit code of assignment to be always 0,
+#      aka. the exit code of command in subshell is discarded.
+#      tested on bash 3.2.57/4.2.46
 
-readonly PROG="$(basename "$0")"
+# NOTE: DO NOT declare var PROG as readonly, because its value is supplied by subshell.
+PROG="$(basename "$0")"
 readonly -a COMMAND_LINE=("$0" "$@")
 # Get current user name via whoami command
 #   See https://www.lifewire.com/current-linux-user-whoami-command-3867579
 # Because if run command by `sudo -u`, env var $USER is not rewritten/correct, just inherited from outside!
-readonly USER="$(whoami)"
+#
+# NOTE: DO NOT declare var USER as readonly, because its value is supplied by subshell.
+USER="$(whoami)"
 
 ################################################################################
 # util functions
@@ -275,7 +288,8 @@ fi
 # biz logic
 ################################################################################
 
-readonly run_timestamp="$(date "+%Y-%m-%d_%H:%M:%S.%N")"
+# NOTE: DO NOT declare var run_timestamp as readonly, because its value is supplied by subshell.
+run_timestamp="$(date "+%Y-%m-%d_%H:%M:%S.%N")"
 readonly uuid="${PROG}_${run_timestamp}_${RANDOM}_$$"
 
 readonly tmp_store_dir="/tmp/${uuid}"
@@ -313,7 +327,9 @@ findBusyJavaThreadsByPs() {
 
     # shellcheck disable=SC2206
     local -a ps_cmd_line=(ps $ps_process_select_options -wwLo 'pid,lwp,pcpu,user' --sort -pcpu --no-headers)
-    local -r ps_out="$("${ps_cmd_line[@]}")"
+    # DO NOT combine var ps_out declaration and assignment, because its value is supplied by subshell.
+    local ps_out
+    ps_out="$("${ps_cmd_line[@]}")"
     if [ -n "$store_dir" ]; then
         echo "$ps_out" | logAndCat "${ps_cmd_line[@]}" >"${store_file_prefix}$((i + 1))_ps"
     fi
@@ -342,7 +358,9 @@ __top_threadId_cpu() {
     # 4. top v3.3, there is 1 black line between 2 update;
     #    but top v3.2, there is 2 blank lines between 2 update!
     local -a top_cmd_line=(top -H -b -d "$top_delay" -n 2)
-    local -r top_out=$(HOME="$tmp_store_dir" "${top_cmd_line[@]}")
+    # DO NOT combine var ps_out declaration and assignment, because its value is supplied by subshell.
+    local top_out
+    top_out=$(HOME="$tmp_store_dir" "${top_cmd_line[@]}")
     if [ -n "$store_dir" ]; then
         echo "$top_out" | logAndCat "${top_cmd_line[@]}" >"${store_file_prefix}$((i + 1))_top"
     fi
@@ -365,7 +383,9 @@ __complete_pid_user_by_ps() {
     # ps output field: pid, thread id(lwp), user
     # shellcheck disable=SC2206
     local -a ps_cmd_line=(ps $ps_process_select_options -wwLo 'pid,lwp,user' --no-headers)
-    local -r ps_out="$("${ps_cmd_line[@]}")"
+    # DO NOT combine var ps_out declaration and assignment, because its value is supplied by subshell.
+    local ps_out
+    ps_out="$("${ps_cmd_line[@]}")"
     if [ -n "$store_dir" ]; then
         echo "$ps_out" | logAndCat "${ps_cmd_line[@]}" >"${store_file_prefix}$((i + 1))_ps"
     fi

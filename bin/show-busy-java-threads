@@ -275,8 +275,8 @@ fi
 if [ -n "$jstack_path" ]; then
     [ -f "$jstack_path" ] || die "$jstack_path is NOT found!"
     [ -x "$jstack_path" ] || die "$jstack_path is NOT executable!"
-elif which jstack &>/dev/null; then
-    jstack_path="$(which jstack)"
+elif command -v jstack &>/dev/null; then
+    jstack_path="$(command -v jstack)"
 else
     [ -n "$JAVA_HOME" ] || die "jstack not found on PATH and No JAVA_HOME setting! Use -s option set jstack path manually."
     [ -f "$JAVA_HOME/bin/jstack" ] || die "jstack not found on PATH and \$JAVA_HOME/bin/jstack($JAVA_HOME/bin/jstack) file does NOT exists! Use -s option set jstack path manually."

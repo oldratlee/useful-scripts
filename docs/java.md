@@ -446,6 +446,10 @@ find-in-jars 'log4j\.properties' -a
 find-in-jars 'log4j\.properties' -s ' <-> '
 find-in-jars 'log4j\.properties' -s ' ' | awk '{print $2}'
 
+# -l选项 指定 只列出Jar文件，不显示Jar文件内匹配的文件列表
+# 列出 包含log4j.xml文件的Jar文件：
+find-in-jars -l 'log4j\.xml$'
+
 # 帮助信息
 $ find-in-jars -h
 Usage: find-in-jars [OPTION]... PATTERN
@@ -479,6 +483,10 @@ Output control:
   -a, --absolute-path    always print absolute path of jar file
   -s, --separator        specify the separator between jar file and zip entry.
                          default is `!'.
+  -L, --files-not-contained-found
+                         print only names of JAR FILEs NOT contained found
+  -l, --files-contained-found
+                         print only names of JAR FILEs contained found
   -R, --no-find-progress do not display responsive find progress
 
 Miscellaneous:
@@ -493,6 +501,7 @@ Miscellaneous:
 # 在当前目录下的所有Jar文件中，查找出 log4j.properties文件
 $ find-in-jars 'log4j\.properties$'
 ./hadoop-core-0.20.2-cdh3u3.jar!log4j.properties
+......
 
 # 查找出 以Service结尾的类，Jar文件路径输出成绝对路径
 $ find-in-jars 'Service.class$' -a
@@ -507,6 +516,13 @@ WEB-INF/lib/aspectjweaver-1.8.8.jar!org/aspectj/weaver/XlintDefault.properties
 ../deploy/lib/groovy-all-1.1-rc-1.jar!groovy/ui/InteractiveShell.properties
 ../deploy/lib/httpcore-4.3.3.jar!org/apache/http/version.properties
 ../deploy/lib/javax.servlet-api-3.0.1.jar!javax/servlet/http/LocalStrings_es.properties
+......
+
+# 列出 包含properties文件的Jar文件
+$ find-in-jars '\.properties$' -l -d WEB-INF/lib
+WEB-INF/lib/aspectjtools-1.6.2.jar
+WEB-INF/lib/aspectjweaver-1.8.8.jar
+WEB-INF/lib/javax.servlet-api-3.0.1.jar
 ......
 ```
 

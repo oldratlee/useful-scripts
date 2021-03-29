@@ -40,11 +40,6 @@ redEcho() {
     [ -t 1 ] && echo "${ec}[1;31m$*$eend" || echo "$*"
 }
 
-die() {
-    redEcho "Error: $*" 1>&2
-    exit 1
-}
-
 # Getting console width using a bash script
 # https://unix.stackexchange.com/questions/299067
 [ -t 2 ] && readonly columns=$(stty size | awk '{print $2}')
@@ -64,6 +59,12 @@ clearResponsiveMessage() {
     fi
 
     echo -n "$clear_line" >&2
+}
+
+die() {
+    clearResponsiveMessage
+    redEcho "Error: $*" 1>&2
+    exit 1
 }
 
 usage() {
@@ -106,6 +107,10 @@ Output control:
   -a, --absolute-path    always print absolute path of jar file
   -s, --separator        specify the separator between jar file and zip entry.
                          default is \`!'.
+  -L, --files-not-contained-found
+                         print only names of JAR FILEs NOT contained found
+  -l, --files-contained-found
+                         print only names of JAR FILEs contained found
   -R, --no-find-progress do not display responsive find progress
 
 Miscellaneous:
@@ -127,6 +132,7 @@ separator='!'
 regex_mode=-E
 use_absolute_path=false
 show_responsive=true
+only_print_file_name=false
 
 while (($# > 0)); do
     case "$1" in
@@ -166,6 +172,16 @@ while (($# > 0)); do
     -s | --separator | --seperator)
         separator="$2"
         shift 2
+        ;;
+    -L | --files-not-contained-found)
+        only_print_file_name=true
+        print_matched_files=false
+        shift
+        ;;
+    -l | --files-contained-found)
+        only_print_file_name=true
+        print_matched_files=true
+        shift
         ;;
     -R | --no-find-progress)
         show_responsive=false
@@ -261,27 +277,54 @@ searchJarFiles() {
     echo "$jar_files"
 }
 
+__outputResultOfJarFile() {
+    local jar_file="$1" file
+
+    if $only_print_file_name; then
+        local matched=false
+        # NOTE: Do NOT use -q flag with grep:
+        #   With the -q flag the grep program will stop immediately when the first line of data matches.
+        #   Normally you shouldn't use -q in a pipeline like this
+        #   unless you are sure the program at the other end can handle SIGPIPE.
+        # more info see:
+        # - https://stackoverflow.com/questions/19120263/why-exit-code-141-with-grep-q
+        # - https://unix.stackexchange.com/questions/305547/broken-pipe-when-grepping-output-but-only-with-i-flag
+        # - http://www.pixelbeat.org/programming/sigpipe_handling.html
+        if grep $regex_mode ${ignore_case_option:-} -- "$pattern" &>/dev/null; then
+            matched=true
+        fi
+
+        if [ $print_matched_files != $matched ]; then
+            return
+        fi
+
+        clearResponsiveMessage
+        [ -t 1 ] && echo "${ec}[1;35m${jar_file}${eend}" || echo "${jar_file}"
+    else
+        {
+            # Prevent grep from exiting in case of no match
+            # https://unix.stackexchange.com/questions/330660
+            # shellcheck disable=SC2086
+            grep $regex_mode ${ignore_case_option:-} ${grep_color_option:-} -- "$pattern" || true
+        } | while read -r file; do
+            clearResponsiveMessage
+            [ -t 1 ] &&
+                echo "${ec}[1;35m${jar_file}${eend}${ec}[1;32m${separator}${eend}${file}" ||
+                echo "${jar_file}${separator}${file}"
+        done
+    fi
+}
+
 findInJarFiles() {
     [ -t 1 ] && local -r grep_color_option='--color=always'
 
-    local counter=1 total_jar_count jar_file file
+    local counter=1 total_jar_count jar_file
 
     read -r total_jar_count
 
     while read -r jar_file; do
         printResponsiveMessage "finding in jar($((counter++))/$total_jar_count): $jar_file"
-
-        $command_for_list_zip "${jar_file}" | {
-            # Prevent grep from exiting in case of no match
-            # https://unix.stackexchange.com/questions/330660
-            grep $regex_mode ${ignore_case_option:-} ${grep_color_option:-} -- "$pattern" || true
-        } | while read -r file; do
-            clearResponsiveMessage
-
-            [ -t 1 ] &&
-                echo "${ec}[1;35m${jar_file}${eend}${ec}[1;32m${separator}${eend}${file}" ||
-                echo "${jar_file}${separator}${file}"
-        done
+        $command_for_list_zip "${jar_file}" | __outputResultOfJarFile "${jar_file}"
     done
 
     clearResponsiveMessage

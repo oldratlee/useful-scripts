@@ -13,7 +13,7 @@
 set -eEuo pipefail
 
 [ $# -eq 0 ] && {
-    echo "ERROR: NO argument!"
+    echo "ERROR: NO argument!" 1>&2
     exit 1
 }
 

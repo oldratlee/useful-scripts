@@ -136,6 +136,10 @@ def find_duplicate_classes(class_to_class_paths):
 
 
 def print_duplicate_classes_info(class_paths_to_duplicate_classes):
+    if not class_paths_to_duplicate_classes:
+        print('COOL! No duplicate classes found!')
+        return
+
     duplicate_classes_total_count = sum(len(dcs) for dcs in class_paths_to_duplicate_classes.values())
     # sort kv pairs
     class_paths_to_duplicate_classes = sorted(class_paths_to_duplicate_classes.items(), reverse=True,
@@ -206,15 +210,10 @@ def main():
     class_to_class_paths = invert_as_class_to_class_paths(class_path_to_classes)
 
     class_paths_to_duplicate_classes = find_duplicate_classes(class_to_class_paths)
-    have_duplicate_classes = bool(class_paths_to_duplicate_classes)
-    if have_duplicate_classes:
-        print_duplicate_classes_info(class_paths_to_duplicate_classes)
-    else:
-        print('COOL! No duplicate classes found!')
-
+    print_duplicate_classes_info(class_paths_to_duplicate_classes)
     print_class_paths_info(class_path_to_classes.keys())
 
-    return int(have_duplicate_classes)
+    return int(bool(class_paths_to_duplicate_classes))
 
 
 if __name__ == '__main__':

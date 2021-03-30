@@ -22,14 +22,37 @@ import sys
 from glob import glob
 from io import BytesIO
 from optparse import OptionParser
-from os import walk
+from os import walk, get_terminal_size
 from os.path import relpath, isdir
 from zipfile import ZipFile, BadZipfile
-
 
 ################################################################################
 # utils functions
 ################################################################################
+
+# How to delete line with echo?
+# https://unix.stackexchange.com/questions/26576
+#
+# terminal escapes: http://ascii-table.com/ansi-escape-sequences.php
+# In particular, to clear from the cursor position to the beginning of the line:
+# echo -e "\033[1K"
+# Or everything on the line, regardless of cursor position:
+# echo -e "\033[2K"
+__clear_line = '\033[2K\r'
+
+
+def print_responsive_message(msg):
+    if not sys.stderr.isatty():
+        return
+    columns, _ = get_terminal_size(sys.stderr.fileno())
+    print(__clear_line + msg[:columns], end='', file=sys.stderr)
+
+
+def clear_responsive_message():
+    if not sys.stderr.isatty():
+        return
+    print(__clear_line, end='', file=sys.stderr)
+
 
 def print_box_message(msg):
     print()
@@ -40,7 +63,12 @@ def print_box_message(msg):
 
 def list_jar_file_under_lib_dirs(lib_dirs, recursive):
     jar_files = set()
-    for lib_dir in lib_dirs:
+
+    idx_str_max_len = len(str(len(lib_dirs)))
+    for idx, lib_dir in enumerate(lib_dirs, start=1):
+        print_responsive_message('list jar file under lib dir(%*s/%s): %s' %
+                                 (idx_str_max_len, idx, len(lib_dirs), lib_dir))
+
         if not isdir(lib_dir):
             jar_files.add(lib_dir)
             continue
@@ -58,12 +86,18 @@ def list_jar_file_under_lib_dirs(lib_dirs, recursive):
     return jar_files
 
 
-def list_class_under_jar_file(jar_file, recursive):
+def list_class_under_jar_file(jar_file, recursive, progress):
     """
     :return: map: jar_jar_path('a.jar!b.jar!c.jar') -> classes
     """
+    index = 0
 
     def list_zip_in_zip(jar_jar_path, zf):
+        nonlocal index
+        index += 1
+        print_responsive_message('list class under jar file(%*s/%s%s): %s' % (
+            len(str(progress[1])), progress[0], progress[1], ' #' + str(index) if recursive else '', jar_jar_path))
+
         ret = {}
         classes = {f for f in zf.namelist() if f.lower().endswith('.class')}
         ret[jar_jar_path] = classes
@@ -89,7 +123,10 @@ def list_class_under_jar_file(jar_file, recursive):
         return {}
 
 
-def list_class_under_class_dir(class_dir):
+def list_class_under_class_dir(class_dir, progress):
+    print_responsive_message('list class under class dir(%*s/%s): %s' %
+                             (len(str(progress[1])), progress[0], progress[1], class_dir))
+
     return {relpath(dir_path + '/' + filename, class_dir)
             for dir_path, _, file_names in walk(class_dir)
             for filename in file_names if filename.lower().endswith('.class')}
@@ -97,12 +134,18 @@ def list_class_under_class_dir(class_dir):
 
 def collect_class_path_to_classes(jar_files, class_dirs, recursive_jar):
     class_path_to_classes = {}
+    total_count = len(jar_files) + len(class_dirs)
+    index = 0
+
     # list all classes in jar files
     for jar_file in jar_files:
-        class_path_to_classes.update(list_class_under_jar_file(jar_file, recursive=recursive_jar))
+        index += 1
+        class_path_to_classes.update(
+            list_class_under_jar_file(jar_file, recursive=recursive_jar, progress=(index, total_count)))
     # list all classes in class dirs
     for class_dir in class_dirs:
-        class_path_to_classes[class_dir] = list_class_under_class_dir(class_dir)
+        index += 1
+        class_path_to_classes[class_dir] = list_class_under_class_dir(class_dir, progress=(index, total_count))
     return class_path_to_classes
 
 
@@ -153,7 +196,7 @@ def print_duplicate_classes_info(class_paths_to_duplicate_classes):
 
     idx_str_max_len = len(str(len(class_paths_to_duplicate_classes)))
     for idx, (class_paths, classes) in enumerate(class_paths_to_duplicate_classes, start=1):
-        print('[%*d] found %d duplicate classes in %d class paths:\n    %s' % (
+        print('[%*s] found %s duplicate classes in %s class paths:\n    %s' % (
             idx_str_max_len, idx,
             len(classes), len(class_paths),
             '\n    '.join(class_paths)
@@ -161,7 +204,7 @@ def print_duplicate_classes_info(class_paths_to_duplicate_classes):
 
     print_box_message('Duplicate classes detail info:')
     for idx, (class_paths, classes) in enumerate(class_paths_to_duplicate_classes, start=1):
-        print('[%*d] found %d duplicate classes in %d class paths %s :' % (
+        print('[%*s] found %s duplicate classes in %s class paths %s :' % (
             idx_str_max_len, idx,
             len(classes), len(class_paths), ' '.join(class_paths)
         ))
@@ -207,9 +250,12 @@ def main():
     class_path_to_classes = collect_class_path_to_classes(
         list_jar_file_under_lib_dirs(lib_dirs, recursive=options.recursive_lib),
         options.class_dirs, recursive_jar=options.recursive_jar)
-    class_to_class_paths = invert_as_class_to_class_paths(class_path_to_classes)
 
+    print_responsive_message('find duplicate classes...')
+    class_to_class_paths = invert_as_class_to_class_paths(class_path_to_classes)
     class_paths_to_duplicate_classes = find_duplicate_classes(class_to_class_paths)
+
+    clear_responsive_message()
     print_duplicate_classes_info(class_paths_to_duplicate_classes)
     print_class_paths_info(class_path_to_classes.keys())
 

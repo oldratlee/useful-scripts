@@ -39,23 +39,25 @@ from zipfile import ZipFile, BadZipfile
 # Or everything on the line, regardless of cursor position:
 # echo -e "\033[2K"
 __clear_line = '\033[2K\r'
+__show_responsive = True
 
 
 def print_responsive_message(msg):
-    if not sys.stderr.isatty():
+    if not __show_responsive or not sys.stderr.isatty():
         return
     columns, _ = get_terminal_size(sys.stderr.fileno())
     print(__clear_line + msg[:columns], end='', file=sys.stderr)
 
 
 def clear_responsive_message():
-    if not sys.stderr.isatty():
+    if not __show_responsive or not sys.stderr.isatty():
         return
     print(__clear_line, end='', file=sys.stderr)
 
 
 def print_error(msg):
-    print(__clear_line + msg, file=sys.stderr)
+    clear_responsive_message()
+    print(msg, file=sys.stderr)
 
 
 def print_box_message(msg):
@@ -258,7 +260,11 @@ def main():
                              action='store_true', help='search jars in the jar file')
     option_parser.add_option('-c', '--class-dir', dest='class_dirs', default=[],
                              action='append', help='add class dir')
+    option_parser.add_option('-R', '--no-find-progress', dest='show_responsive', default=True,
+                             action='store_false', help='do not display responsive find progress')
     options, lib_dirs = option_parser.parse_args()
+    global __show_responsive
+    __show_responsive = options.show_responsive
     if not options.class_dirs and not lib_dirs:
         lib_dirs = ['.']
 

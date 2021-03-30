@@ -278,6 +278,8 @@ Options:
   -J, --recursive-jar   search jars in the jar file
   -c CLASS_DIRS, --class-dir=CLASS_DIRS
                         add class dir
+  -R, --no-find-progress
+                        do not display responsive find progress
 ```
 
 #### `JDK`开发场景使用说明

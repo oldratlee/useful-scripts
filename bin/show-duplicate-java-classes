@@ -23,7 +23,7 @@ from glob import glob
 from io import BytesIO
 from optparse import OptionParser
 from os import walk, get_terminal_size
-from os.path import relpath, isdir
+from os.path import relpath, isdir, exists
 from zipfile import ZipFile, BadZipfile
 
 ################################################################################
@@ -54,6 +54,10 @@ def clear_responsive_message():
     print(__clear_line, end='', file=sys.stderr)
 
 
+def print_error(msg):
+    print(__clear_line + msg, file=sys.stderr)
+
+
 def print_box_message(msg):
     print()
     print('=' * 80)
@@ -68,6 +72,10 @@ def list_jar_file_under_lib_dirs(lib_dirs, recursive):
     for idx, lib_dir in enumerate(lib_dirs, start=1):
         print_responsive_message('list jar file under lib dir(%*s/%s): %s' %
                                  (idx_str_max_len, idx, len(lib_dirs), lib_dir))
+
+        if not exists(lib_dir):
+            print_error('WARN: lib dir %s not exists, ignored!' % lib_dir)
+            continue
 
         if not isdir(lib_dir):
             jar_files.add(lib_dir)
@@ -111,7 +119,7 @@ def list_class_under_jar_file(jar_file, recursive, progress):
                 with ZipFile(BytesIO(zf.read(jar))) as f:
                     ret.update(list_zip_in_zip(next_jar_jar_path, f))
             except BadZipfile as e:
-                print('WARN: %s is bad zip file(%s), ignored!' % (next_jar_jar_path, e), file=sys.stderr)
+                print_error('WARN: %s is bad zip file(%s), ignored!' % (next_jar_jar_path, e))
 
         return ret
 
@@ -119,13 +127,20 @@ def list_class_under_jar_file(jar_file, recursive, progress):
         with ZipFile(jar_file) as zip_file:
             return list_zip_in_zip(jar_file, zip_file)
     except BadZipfile as error:
-        print('WARN: %s is bad zip file(%s), ignored!' % (jar_file, error), file=sys.stderr)
+        print_error('WARN: %s is bad zip file(%s), ignored!' % (jar_file, error))
         return {}
 
 
 def list_class_under_class_dir(class_dir, progress):
     print_responsive_message('list class under class dir(%*s/%s): %s' %
                              (len(str(progress[1])), progress[0], progress[1], class_dir))
+
+    if not exists(class_dir):
+        print_error('WARN: class dir %s not exists, ignored!' % class_dir)
+        return {}
+    if not isdir(class_dir):
+        print_error('WARN: class dir %s is not dir, ignored!' % class_dir)
+        return {}
 
     return {relpath(dir_path + '/' + filename, class_dir)
             for dir_path, _, file_names in walk(class_dir)

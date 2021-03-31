@@ -366,16 +366,13 @@ __top_threadId_cpu() {
     fi
 
     echo "$top_out" |
-        awk 'BEGIN { blockIndex = 0; currentLineHasText = 0; prevLineHasText = 0; } {
-            currentLineHasText = ($0 != "")
-            if (prevLineHasText && !currentLineHasText)
-                blockIndex++    # from text line to empty line, increase block index
-
-            if (blockIndex == 3 && ($NF == "java" || $NF == "jsvc"))   # $NF(last field) is command field
-                # only print 4th text block(blockIndex == 3), aka. process info of second top update
-                print $1 " " $9     # $1 is thread id field, $9 is %cpu field
-
-            prevLineHasText = currentLineHasText    # update prevLineHasText
+        awk '{
+            # from text line to empty line, increase block index
+            if (previousLine && !$0) blockIndex++
+            # only print 4th text block(blockIndex == 3), aka. process info of second top update
+            if (blockIndex == 3 && ($NF == "java" || $NF == "jsvc"))  # $NF(last field) is command field
+                print $1, $9  # $1 is thread id field, $9 is %cpu field
+            previousLine = $0
         }' | sort -k2,2nr
 }
 
@@ -397,7 +394,7 @@ __complete_pid_user_by_ps() {
         # output field: pid, threadId, pcpu, user
         output_fields="$(echo "$ps_out" |
             awk -v "threadId=$threadId" -v "pcpu=$pcpu" '$2==threadId {
-                printf "%s %s %s %s\n", $1, threadId, pcpu, $3; exit
+                print $1, threadId, pcpu, $3; exit
             }')"
         if [ -n "$output_fields" ]; then
             ((idx++))

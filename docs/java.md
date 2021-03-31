@@ -120,8 +120,8 @@ Example:
   show-busy-java-threads 3 10  # update every 3 seconds, update 10 times
 
 Output control:
-  -p, --pid <java pid>      find out the highest cpu consumed threads from
-                            the specified java process.
+  -p, --pid <java pid(s)>   find out the highest cpu consumed threads from
+                            the specified java process. support pid list(eg: 42,99).
                             default from all java process.
   -c, --count <num>         set the thread count to show, default is 5.
                             set count 0 to show all threads.

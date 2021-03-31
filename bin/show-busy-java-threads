@@ -114,8 +114,8 @@ Example:
   ${PROG} 3 10  # update every 3 seconds, update 10 times
 
 Output control:
-  -p, --pid <java pid>      find out the highest cpu consumed threads from
-                            the specified java process.
+  -p, --pid <java pid(s)>   find out the highest cpu consumed threads from
+                            the specified java process. support pid list(eg: 42,99).
                             default from all java process.
   -c, --count <num>         set the thread count to show, default is 5.
                             set count 0 to show all threads.
@@ -290,7 +290,7 @@ fi
 
 # NOTE: DO NOT declare var run_timestamp as readonly, because its value is supplied by subshell.
 run_timestamp="$(date "+%Y-%m-%d_%H:%M:%S.%N")"
-readonly uuid="${PROG}_${run_timestamp}_${RANDOM}_$$"
+readonly uuid="${PROG}_${run_timestamp}_${$}_${RANDOM}"
 
 readonly tmp_store_dir="/tmp/${uuid}"
 if [ -n "$store_dir" ]; then
@@ -318,6 +318,14 @@ else
     readonly ps_process_select_options="-C java -C jsvc"
 fi
 
+__die_when_no_java_process_found() {
+    if [ -n "${pid}" ]; then
+        die "process($pid) is not running, or not java process!"
+    else
+        die 'No java process found!'
+    fi
+}
+
 # output field: pid, thread id(lwp), pcpu, user
 #   order by pcpu(percentage of cpu usage)
 findBusyJavaThreadsByPs() {
@@ -330,6 +338,8 @@ findBusyJavaThreadsByPs() {
     # DO NOT combine var ps_out declaration and assignment, because its value is supplied by subshell.
     local ps_out
     ps_out="$("${ps_cmd_line[@]}")"
+    [ -n "$ps_out" ] || __die_when_no_java_process_found
+
     if [ -n "$store_dir" ]; then
         echo "$ps_out" | logAndCat "${ps_cmd_line[@]}" >"${store_file_prefix}$((i + 1))_ps"
     fi
@@ -343,13 +353,13 @@ findBusyJavaThreadsByPs() {
 
 # top with output field: thread id, %cpu
 __top_threadId_cpu() {
-    local java_pid_list="${pid:-}"
-    if [ -z "$java_pid_list" ]; then
-        # shellcheck disable=SC2086
-        java_pid_list="$(ps $ps_process_select_options -o pid --no-headers)"
-        # shellcheck disable=SC2086
-        java_pid_list="$(echo $java_pid_list | tr ' ' ,)" # join with ,
-    fi
+    # DO NOT combine var java_pid_list declaration and assignment, because its value is supplied by subshell.
+    local java_pid_list
+    # shellcheck disable=SC2086
+    java_pid_list="$(ps $ps_process_select_options -o pid --no-headers)"
+    [ -n "$java_pid_list" ] || __die_when_no_java_process_found
+    # shellcheck disable=SC2086
+    java_pid_list="$(echo $java_pid_list | tr ' ' ,)" # join with ,
 
     # 1. sort by %cpu by top option `-o %CPU`
     #    unfortunately, top version 3.2 does not support -o option(supports from top version 3.3+),
@@ -373,15 +383,21 @@ __top_threadId_cpu() {
         echo "$top_out" | logAndCat "${top_cmd_line[@]}" >"${store_file_prefix}$((i + 1))_top"
     fi
 
-    echo "$top_out" |
-        awk '{
+    # DO NOT combine var result_threads_top_info declaration and assignment, because its value is supplied by subshell.
+    local result_threads_top_info
+    result_threads_top_info=$(
+        echo "$top_out" | awk '{
             # from text line to empty line, increase block index
             if (previousLine && !$0) blockIndex++
             # only print 4th text block(blockIndex == 3), aka. process info of second top update
             if (blockIndex == 3 && $1 ~ /^[0-9]+$/)
                 print $1, $9  # $1 is thread id field, $9 is %cpu field
             previousLine = $0
-        }' | sort -k2,2nr
+        }'
+    )
+    [ -n "$result_threads_top_info" ] || __die_when_no_java_process_found
+
+    echo "$result_threads_top_info" | sort -k2,2nr
 }
 
 __complete_pid_user_by_ps() {

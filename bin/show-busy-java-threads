@@ -343,6 +343,14 @@ findBusyJavaThreadsByPs() {
 
 # top with output field: thread id, %cpu
 __top_threadId_cpu() {
+    local java_pid_list="${pid:-}"
+    if [ -z "$java_pid_list" ]; then
+        # shellcheck disable=SC2086
+        java_pid_list="$(ps $ps_process_select_options -o pid --no-headers)"
+        # shellcheck disable=SC2086
+        java_pid_list="$(echo $java_pid_list | tr ' ' ,)" # join with ,
+    fi
+
     # 1. sort by %cpu by top option `-o %CPU`
     #    unfortunately, top version 3.2 does not support -o option(supports from top version 3.3+),
     #    use
@@ -357,7 +365,7 @@ __top_threadId_cpu() {
     #    and use second time update data to get cpu percentage of thread in 0.5 second interval
     # 4. top v3.3, there is 1 black line between 2 update;
     #    but top v3.2, there is 2 blank lines between 2 update!
-    local -a top_cmd_line=(top -H -b -d "$top_delay" -n 2)
+    local -a top_cmd_line=(top -H -b -d "$top_delay" -n 2 -p "$java_pid_list")
     # DO NOT combine var ps_out declaration and assignment, because its value is supplied by subshell.
     local top_out
     top_out=$(HOME="$tmp_store_dir" "${top_cmd_line[@]}")
@@ -370,7 +378,7 @@ __top_threadId_cpu() {
             # from text line to empty line, increase block index
             if (previousLine && !$0) blockIndex++
             # only print 4th text block(blockIndex == 3), aka. process info of second top update
-            if (blockIndex == 3 && ($NF == "java" || $NF == "jsvc"))  # $NF(last field) is command field
+            if (blockIndex == 3 && $1 ~ /^[0-9]+$/)
                 print $1, $9  # $1 is thread id field, $9 is %cpu field
             previousLine = $0
         }' | sort -k2,2nr

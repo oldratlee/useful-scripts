@@ -21,7 +21,13 @@
 
 # NOTE: DO NOT declare var PROG as readonly, because its value is supplied by subshell.
 PROG="$(basename "$0")"
-readonly -a COMMAND_LINE=("$0" "$@")
+# choosing between $0 and BASH_SOURCE
+# https://stackoverflow.com/a/35006505/922688
+# How can I get the source directory of a Bash script from within the script itself?
+# https://stackoverflow.com/questions/59895
+# Will $0 always include the path to the script?
+# https://unix.stackexchange.com/questions/119929
+readonly -a COMMAND_LINE=("${BASH_SOURCE[0]}" "$@")
 # Get current user name via whoami command
 #   See https://www.lifewire.com/current-linux-user-whoami-command-3867579
 # Because if run command by `sudo -u`, env var $USER is not rewritten/correct, just inherited from outside!
@@ -93,6 +99,23 @@ logAndCat() {
     echo "$@"
     echo
     cat
+}
+
+# print calling(quoted) command line which is able to copy and paste to rerun safely
+#
+# How to get the complete calling command of a BASH script from inside the script (not just the arguments)
+# https://stackoverflow.com/questions/36625593
+printCallingCommandLine() {
+    local arg isFirst=true
+    for arg in "${COMMAND_LINE[@]}"; do
+        if $isFirst; then
+            isFirst=false
+        else
+            printf ' '
+        fi
+        printf '%q' "$arg"
+    done
+    echo
 }
 
 usage() {
@@ -315,7 +338,7 @@ trap "cleanupWhenExit" EXIT
 
 headInfo() {
     colorEcho "0;34;42" ================================================================================
-    echo "$(date "+%Y-%m-%d %H:%M:%S.%N") [$((i + 1))/$update_count]: ${COMMAND_LINE[*]}"
+    echo "$(date "+%Y-%m-%d %H:%M:%S.%N") [$((i + 1))/$update_count]: $(printCallingCommandLine)"
     colorEcho "0;34;42" ================================================================================
     echo
 }
@@ -460,7 +483,7 @@ printStackOfThreads() {
                 # current user is not root user, so can not run with sudo; print error message and rerun suggestion
                 redPrint "[$idx] Fail to jstack busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user})."
                 redPrint "User of java process($user) is not current user($USER), need sudo to rerun:"
-                yellowPrint "    sudo ${COMMAND_LINE[*]}"
+                yellowPrint "    sudo $(printCallingCommandLine)"
                 normalPrint
                 continue
             fi || {

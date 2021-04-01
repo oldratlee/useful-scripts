@@ -181,8 +181,9 @@ ARGS=$(
 }
 eval set -- "${ARGS}"
 
-top_delay=0.5
 count=5
+use_ps=false
+top_delay=0.5
 
 while true; do
     case "$1" in
@@ -237,10 +238,17 @@ while true; do
 done
 
 update_delay=${1:-0}
-[ -z "$1" ] && update_count=1 || update_count=${2:-0}
-((update_count < 0)) && update_count=0
+# Bash RegEx to check floating point numbers from user input
+# https://stackoverflow.com/questions/13790763
+[[ "$update_delay" =~ ^[+]?[0-9]+\.?[0-9]*$ ]] || die "update delay($update_delay) is not a positive float number!"
 
-use_ps=${use_ps:-false}
+[ -z "$1" ] && update_count=1 || update_count=${2:-0}
+[[ "$update_count" =~ ^[+]?[0-9]+$ ]] || die "update count($update_count) is not a natural number!"
+
+if [ -n "$pid_list" ]; then
+    pid_list="${pid_list//[[:space:]]/}" # delete white space
+    [[ "$pid_list" =~ ^([0-9]+)(,[0-9]+)*$ ]] || die "pid(s)($pid_list) is illegal! example: 42 or 42,99,67"
+fi
 
 # check the directory of append-file(-a) mode, create if not exist.
 if [ -n "$append_file" ]; then

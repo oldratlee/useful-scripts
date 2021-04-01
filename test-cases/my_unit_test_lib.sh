@@ -74,7 +74,7 @@ assertEquals() {
         failMsg=$1
         shift
     }
-    [ "$1" = "$2" ] || fail "assertEqual fail [$1] != [$2]${failMsg:+: $failMsg}"
+    [ "$1" == "$2" ] || fail "assertEqual fail [$1] != [$2]${failMsg:+: $failMsg}"
 }
 
 readonly __ut_exclude_vars_builtin='^BASH_|^_=|^COLUMNS=|LINES='

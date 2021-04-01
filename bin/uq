@@ -209,7 +209,7 @@ elif ((argc == 1)); then
 else
     input_files=("${argv[@]:0:argc-1}")
     output_file=${argv[argc - 1]}
-    if [ "$output_file" = - ]; then
+    if [ "$output_file" == - ]; then
         output_file=/dev/stdout
     fi
 fi
@@ -217,7 +217,7 @@ fi
 # Check input file
 for f in ${input_files[@]:+"${input_files[@]}"}; do
     # - is stdin, ok
-    [ "$f" = - ] && continue
+    [ "$f" == - ] && continue
 
     [ -e "$f" ] || die "input file $f does not exist!"
     [ ! -d "$f" ] || die "input file $f exists, but is a directory!"

@@ -76,7 +76,7 @@ _opts_findOptMode() {
 
         local optName
         for optName in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do # index from 1, skip mode
-            [ "$opt" = "${optName}" ] && {
+            [ "$opt" == "${optName}" ] && {
                 echo "$mode"
                 return
             }
@@ -111,7 +111,7 @@ _opts_setOptValue() {
 
         local optName
         for optName in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do # index from 1, skip mode
-            [ "$opt" = "$optName" ] && {
+            [ "$opt" == "$optName" ] && {
                 local optName2
                 for optName2 in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do
                     local optValueVarName="_OPT_VALUE_`_opts_convertToVarName "${optName2}"`"
@@ -138,7 +138,7 @@ _opts_setOptArray() {
         
         local optName
         for optName in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do # index from 1, skip mode
-            [ "$opt" = "$optName" ] && {
+            [ "$opt" == "$optName" ] && {
                 # set _OPT_VALUE
                 local optName2
                 for optName2 in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do
@@ -286,7 +286,7 @@ parseOpts() {
 
                 local value
                 for value in "$@" ; do
-                    [ ";" = "$value" ] && {
+                    [ ";" == "$value" ] && {
                         foundComma=true
                         break
                     } || valueArray=("${valueArray[@]}" "$value")

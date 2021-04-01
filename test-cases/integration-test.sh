@@ -43,7 +43,7 @@ blueEcho() {
 
 logAndRun() {
     local simple_mode=false
-    [ "$1" = "-s" ] && {
+    [ "$1" == "-s" ] && {
         simple_mode=true
         shift
     }

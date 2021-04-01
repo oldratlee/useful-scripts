@@ -1,6 +1,6 @@
 #!/bin/bash
 # @Function
-# svn merge commit between verison when source branch copy(--stop-on-copy)
+# svn merge commit between version when source branch copy(--stop-on-copy)
 # and head version of source branch.
 #
 # @Usage
@@ -11,28 +11,29 @@
 # @author jiangjizhong(@jzwlqx)
 # @author Jerry Lee (oldratlee at gmail dot com)
 
-PROG=`basename $0`
+PROG="$(basename "$0")"
 
 usage() {
     cat <<EOF
 Usage: ${PROG} <source branch> [target branch]
-svn merge commit between verison when source branch copy(--stop-on-copy)
+svn merge commit between version when source branch copy(--stop-on-copy)
 and head version of source branch.
 Source branch must be a remote branch.
 
 Example: 
 	${PROG} http://www.foo.com/project1/branches/feature1
-	# merge http://www.foo.com/project1/branches/feature1 to current svn direcotry
+	# merge http://www.foo.com/project1/branches/feature1 to current svn directory
 
-	${PROG} http://www.foo.com/project1/branches/feature1 /path/to/svn/direcotry
-	# merge branch http://www.foo.com/project1/branches/feature1 to svn direcotry /path/to/svn/direcotry
-	# will prompt comfirm for committing to target branch.
+	${PROG} http://www.foo.com/project1/branches/feature1 /path/to/svn/directory
+	# merge branch http://www.foo.com/project1/branches/feature1 to svn directory /path/to/svn/directory
+	# will prompt confirm for committing to target branch.
 
 	${PROG} http://www.foo.com/project1/branches/feature1 http://www.foo.com/project1/branches/feature2
 	# merge http://www.foo.com/project1/branches/feature1 to branch http://www.foo.com/project1/branches/feature2
 	# because http://www.foo.com/project1/branches/feature2 is remote url,
-	# will check out target branch to tmp direcotry, and prompt comfirm for committing to target branch.
+	# will check out target branch to tmp directory, and prompt confirm for committing to target branch.
 EOF
+    # shellcheck disable=SC2086
     exit $1
 }
 
@@ -68,21 +69,21 @@ cleanup() {
 }
 trap "cleanup" EXIT
 
-svnstatusline=$(svn status --ignore-externals "$workDir" | grep -v ^X | wc -l)
-[ "$svnstatusline" -ne 0 ] && {
-	echo "svn work direcotry is modified!"
+svn_status_line=$(svn status --ignore-externals "$workDir" | grep -c -v ^X)
+[ "$svn_status_line" -ne 0 ] && {
+	echo "svn work directory is modified!"
 	exit 1
 }
 
 cd "$workDir" &&
-from_version=$(svn log --stop-on-copy --quiet "$source_branch" | awk '$1~/^r[0-9]+/{print $1}' | tail -n1) && {
+if from_version=$(svn log --stop-on-copy --quiet "$source_branch" | awk '$1~/^r[0-9]+/{print $1}' | tail -n1); then
 	echo "oldest version($from_version) of source branch $source_branch ."
 	echo "starting merge to $workDir ."
-	svn merge -${from_version}:HEAD $source_branch
-} || {
+	svn merge "-${from_version}:HEAD" "$source_branch"
+else
 	echo "Fail to merge to work dir $workDir ."
 	exit 2
-}
+fi
 
-read -p "Check In? (Y/N)" ci
-[ "$ci" = "Y" ] && svn ci -m "svn merge -${from_version}:HEAD $source_branch"
+read -r -p "Check In? (Y/N)" ci
+[ "$ci" == "Y" ] && svn ci -m "svn merge -${from_version}:HEAD $source_branch"

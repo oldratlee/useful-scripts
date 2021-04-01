@@ -20,7 +20,7 @@
 #      tested on bash 3.2.57/4.2.46
 
 # NOTE: DO NOT declare var PROG as readonly, because its value is supplied by subshell.
-PROG=`basename $0`
+PROG="$(basename "$0")"
 
 usage() {
     cat <<EOF
@@ -35,11 +35,12 @@ Example:
 Options:
     -h, --help      display this help and exit
 EOF
+    # shellcheck disable=SC2086
     exit $1
 }
 
 for a; do
-    [ -h = "$a" -o  --help = "$1" ] && usage
+    [[ "-h" == "$a" ||  "--help" == "$a" ]] && usage
 done
 
 [ $# -gt 1 ]  && { echo At most 1 local directory is need! ; usage 1; }
@@ -54,7 +55,7 @@ if [ -z "${url}" ]; then
 fi
 
 copy() {
-    case "`uname`" in
+    case "$(uname)" in
     Darwin*)
         pbcopy ;;
     CYGWIN*|MINGW*)

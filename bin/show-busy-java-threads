@@ -191,7 +191,7 @@ while true; do
         shift 2
         ;;
     -p | --pid)
-        pid="$2"
+        pid_list="$2"
         shift 2
         ;;
     -a | --append-file)
@@ -312,15 +312,15 @@ headInfo() {
     echo
 }
 
-if [ -n "${pid}" ]; then
-    readonly ps_process_select_options="-p $pid"
+if [ -n "${pid_list}" ]; then
+    readonly ps_process_select_options="-p $pid_list"
 else
     readonly ps_process_select_options="-C java -C jsvc"
 fi
 
 __die_when_no_java_process_found() {
-    if [ -n "${pid}" ]; then
-        die "process($pid) is not running, or not java process!"
+    if [ -n "${pid_list}" ]; then
+        die "process($pid_list) is not running, or not java process!"
     else
         die 'No java process found!'
     fi

@@ -22,6 +22,7 @@ set -eEuo pipefail
 
 # NOTE: DO NOT declare var PROG as readonly, because its value is supplied by subshell.
 PROG="$(basename "$0")"
+readonly PROG_VERSION='2.4.0-dev'
 
 ################################################################################
 # util functions
@@ -58,9 +59,15 @@ Options:
   -k, --keep-eol  do not trim new line at end of file
   -q, --quiet     suppress all normal output, default is false
   -h, --help      display this help and exit
+  -V, --version   display version information and exit
 EOF
 
     exit "$exit_code"
+}
+
+progVersion() {
+    echo "$PROG $PROG_VERSION"
+    exit
 }
 
 ################################################################################
@@ -82,6 +89,9 @@ while [ $# -gt 0 ]; do
         ;;
     -h | --help)
         usage
+        ;;
+    -V | --version)
+        progVersion
         ;;
     --)
         shift

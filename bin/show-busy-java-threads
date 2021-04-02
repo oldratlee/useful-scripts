@@ -21,6 +21,7 @@
 
 # NOTE: DO NOT declare var PROG as readonly, because its value is supplied by subshell.
 PROG="$(basename "$0")"
+readonly PROG_VERSION='2.4.0-dev'
 # choosing between $0 and BASH_SOURCE
 # https://stackoverflow.com/a/35006505/922688
 # How can I get the source directory of a Bash script from within the script itself?
@@ -176,9 +177,15 @@ CPU usage calculation control:
 
 Miscellaneous:
   -h, --help                display this help and exit.
+  -V, --version             display version information and exit.
 EOF
 
     exit "$exit_code"
+}
+
+progVersion() {
+    echo "$PROG $PROG_VERSION"
+    exit
 }
 
 ################################################################################
@@ -195,8 +202,8 @@ uname | grep '^Linux' -q || die "$PROG only support Linux, not support $(uname) 
 # readonly declaration make exit code of assignment to be always 0, aka. the exit code of `getopt` in subshell is discarded.
 #   tested on bash 4.2.46
 ARGS=$(
-    getopt -n "$PROG" -a -o p:c:a:s:S:Pd:Fmlh \
-        -l count:,pid:,append-file:,jstack-path:,store-dir:,use-ps,top-delay:,force,mix-native-frames,lock-info,help \
+    getopt -n "$PROG" -a -o c:p:a:s:S:Pd:FmlhV \
+        -l count:,pid:,append-file:,jstack-path:,store-dir:,use-ps,top-delay:,force,mix-native-frames,lock-info,help,version \
         -- "$@"
 ) || {
     echo
@@ -252,6 +259,9 @@ while true; do
         ;;
     -h | --help)
         usage
+        ;;
+    -V | --version)
+        progVersion
         ;;
     --)
         shift

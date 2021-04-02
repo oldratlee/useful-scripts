@@ -30,6 +30,7 @@ from zipfile import ZipFile, BadZipfile
 ################################################################################
 # utils functions
 ################################################################################
+PROG_VERSION = '2.4.0-dev'
 
 # How to delete line with echo?
 # https://unix.stackexchange.com/questions/26576
@@ -270,7 +271,8 @@ def main():
               '\n  %prog -c path/to/class_dir1 -c /path/to/class_dir2'
               '\n  %prog -c path/to/class_dir1 path/to/lib_dir1'
               '\n  %prog -L path/to/lib_dir1'
-              '\n  %prog -J path/to/lib_dir1'
+              '\n  %prog -J path/to/lib_dir1',
+        version='%prog ' + PROG_VERSION
     )
     option_parser.add_option('-L', '--recursive-lib', dest='recursive_lib', default=False,
                              action='store_true', help='search jars in the sub-directories of lib dir')

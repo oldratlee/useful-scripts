@@ -229,11 +229,12 @@ def print_duplicate_classes_info(class_paths_to_duplicate_classes):
 
     idx_str_max_len = len(str(len(class_paths_to_duplicate_classes)))
     for idx, (class_paths, classes) in enumerate(class_paths_to_duplicate_classes, start=1):
-        print('[%*s] found %s duplicate classes in %s class paths:\n    %s' % (
-            idx_str_max_len, idx,
-            len(classes), len(class_paths),
-            '\n    '.join(class_paths)
-        ))
+        print('[%*s] found %s duplicate classes in %s class paths:' % (
+            idx_str_max_len, idx, len(classes), len(class_paths)))
+
+        class_path_idx_str_max_len = len(str(len(class_paths)))
+        for i, cp in enumerate(class_paths, start=1):
+            print('    %*s: %s' % (class_path_idx_str_max_len, i, cp))
 
     print_box_message('Duplicate classes detail info:')
     for idx, (class_paths, classes) in enumerate(class_paths_to_duplicate_classes, start=1):
@@ -241,9 +242,10 @@ def print_duplicate_classes_info(class_paths_to_duplicate_classes):
             idx_str_max_len, idx,
             len(classes), len(class_paths), ' '.join(class_paths)
         ))
+
         class_idx_str_max_len = len(str(len(classes)))
         for i, c in enumerate(classes, start=1):
-            print('    %*d: %s' % (class_idx_str_max_len, i, c))
+            print('    %*s: %s' % (class_idx_str_max_len, i, c))
 
 
 def print_class_paths_info(class_paths):
@@ -253,7 +255,7 @@ def print_class_paths_info(class_paths):
 
     idx_str_max_len = len(str(len(class_paths)))
     for idx, class_path in enumerate(class_paths, start=1):
-        print('%*d: %s' % (idx_str_max_len, idx, class_path))
+        print('%*s: %s' % (idx_str_max_len, idx, class_path))
 
 
 def main():

@@ -99,7 +99,7 @@ Run command and put output to system clipper.
 If no command is specified, read from stdin(pipe).
 
 Example:
-  c echo 'hello world!'
+  c echo "hello world!"
   c grep -i 'hello world' menu.h main.c
   set | c
   c -q < ~/.ssh/id_rsa.pub
@@ -108,6 +108,7 @@ Options:
   -k, --keep-eol  do not trim new line at end of file
   -q, --quiet     suppress all normal output, default is false
   -h, --help      display this help and exit
+  -V, --version   display version information and exit
 ```
 
 ### 参考资料
@@ -327,6 +328,7 @@ Options:
                           default is 256m
                           avoid consuming large memory unexpectedly
   -h, --help            display this help and exit
+  -V, --version         display version information and exit
 ```
 
 🍺 [ap](../bin/ap) and [rp](../bin/rp)

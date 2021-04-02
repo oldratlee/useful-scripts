@@ -159,6 +159,7 @@ CPU usage calculation control:
 
 Miscellaneous:
   -h, --help                display this help and exit.
+  -V, --version             display version information and exit.
 ```
 
 ### 示例
@@ -210,7 +211,7 @@ $ show-busy-java-threads
 
 ### 贡献者
 
-- [silentforce](https://github.com/silentforce)改进此脚本，增加对环境变量`JAVA_HOME`的判断。 [#15](https://github.com/oldratlee/useful-scripts/pull/15)
+- [silentforce](https://github.com/silentforce) 改进此脚本，增加对环境变量`JAVA_HOME`的判断。 [#15](https://github.com/oldratlee/useful-scripts/pull/15)
 - [liuyangc3](https://github.com/liuyangc3)
     - 发现并解决`jstack`非当前用户`Java`进程的问题。 [#50](https://github.com/oldratlee/useful-scripts/pull/50)
     - 优化性能，通过`read -a`简化反复的`awk`操作。 [#51](https://github.com/oldratlee/useful-scripts/pull/51)
@@ -273,6 +274,7 @@ Examples:
   show-duplicate-java-classes -J path/to/lib_dir1
 
 Options:
+  --version             show program's version number and exit
   -h, --help            show this help message and exit
   -L, --recursive-lib   search jars in the sub-directories of lib dir
   -J, --recursive-jar   search jars in the jar file
@@ -409,7 +411,7 @@ Find in 232 class paths:
 
 ### 贡献者
 
-[tgic](https://github.com/tg123)提供此脚本。友情贡献者的链接 [commandlinefu.cn](http://commandlinefu.cn/) | [微博linux命令行精选](http://weibo.com/u/2674868673)
+[tgic](https://github.com/tg123) 提供此脚本。友情贡献者的链接 [commandlinefu.cn](http://commandlinefu.cn/) | [微博linux命令行精选](http://weibo.com/u/2674868673)
 
 <a id="beer-find-in-jarssh"></a>
 <a id="beer-find-in-jars"></a>
@@ -493,6 +495,7 @@ Output control:
 
 Miscellaneous:
   -h, --help             display this help and exit
+  -V, --version          display version information and exit
 ```
 
 注意，Pattern缺省是`grep`的 **扩展**正则表达式。

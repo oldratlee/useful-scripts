@@ -338,7 +338,7 @@ trap "cleanupWhenExit" EXIT
 
 headInfo() {
     colorEcho "0;34;42" ================================================================================
-    echo "$(date "+%Y-%m-%d %H:%M:%S.%N") [$((i + 1))/$update_count]: $(printCallingCommandLine)"
+    echo "$(date "+%Y-%m-%d %H:%M:%S.%N") [$((update_round_num + 1))/$update_count]: $(printCallingCommandLine)"
     colorEcho "0;34;42" ================================================================================
     echo
 }
@@ -372,7 +372,7 @@ findBusyJavaThreadsByPs() {
     [ -n "$ps_out" ] || __die_when_no_java_process_found
 
     if [ -n "$store_dir" ]; then
-        echo "$ps_out" | logAndCat "${ps_cmd_line[@]}" >"${store_file_prefix}$((i + 1))_ps"
+        echo "$ps_out" | logAndCat "${ps_cmd_line[@]}" >"${store_file_prefix}$((update_round_num + 1))_ps"
     fi
 
     if ((count > 0)); then
@@ -411,7 +411,7 @@ __top_threadId_cpu() {
     local top_out
     top_out=$(HOME="$tmp_store_dir" "${top_cmd_line[@]}")
     if [ -n "$store_dir" ]; then
-        echo "$top_out" | logAndCat "${top_cmd_line[@]}" >"${store_file_prefix}$((i + 1))_top"
+        echo "$top_out" | logAndCat "${top_cmd_line[@]}" >"${store_file_prefix}$((update_round_num + 1))_top"
     fi
 
     # DO NOT combine var result_threads_top_info declaration and assignment, because its value is supplied by subshell.
@@ -439,7 +439,7 @@ __complete_pid_user_by_ps() {
     local ps_out
     ps_out="$("${ps_cmd_line[@]}")"
     if [ -n "$store_dir" ]; then
-        echo "$ps_out" | logAndCat "${ps_cmd_line[@]}" >"${store_file_prefix}$((i + 1))_ps"
+        echo "$ps_out" | logAndCat "${ps_cmd_line[@]}" >"${store_file_prefix}$((update_round_num + 1))_ps"
     fi
 
     local idx=0 threadId pcpu output_fields
@@ -469,7 +469,7 @@ printStackOfThreads() {
         threadId0x="0x$(printf %x "${threadId}")"
 
         ((idx++))
-        local jstackFile="${store_file_prefix}$((i + 1))_jstack_${pid}"
+        local jstackFile="${store_file_prefix}$((update_round_num + 1))_jstack_${pid}"
         [ -f "${jstackFile}" ] || {
             # shellcheck disable=SC2206
             local -a jstack_cmd_line=("$jstack_path" ${force} $mix_native_frames $more_lock_info ${pid})
@@ -523,10 +523,10 @@ printStackOfThreads() {
 ################################################################################
 
 main() {
-    local i
+    local update_round_num
     # if update_count <= 0, infinite loop till user interrupted (eg: CTRL+C)
-    for ((i = 0; update_count <= 0 || i < update_count; ++i)); do
-        ((i > 0)) && sleep "$update_delay"
+    for ((update_round_num = 0; update_count <= 0 || update_round_num < update_count; ++update_round_num)); do
+        ((update_round_num > 0)) && sleep "$update_delay"
 
         [[ -n "$append_file" || -n "$store_dir" ]] && headInfo |
             tee ${append_file:+-a "$append_file"} ${store_dir:+-a "${store_file_prefix}$PROG"} >/dev/null

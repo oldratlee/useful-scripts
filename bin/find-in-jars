@@ -314,7 +314,7 @@ __outputResultOfJarFile() {
         # - https://stackoverflow.com/questions/19120263/why-exit-code-141-with-grep-q
         # - https://unix.stackexchange.com/questions/305547/broken-pipe-when-grepping-output-but-only-with-i-flag
         # - http://www.pixelbeat.org/programming/sigpipe_handling.html
-        if grep $regex_mode ${ignore_case_option:-} -- "$pattern" &>/dev/null; then
+        if grep $regex_mode ${ignore_case_option:-} -c -- "$pattern" &>/dev/null; then
             matched=true
         fi
 

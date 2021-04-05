@@ -18,6 +18,27 @@
 #    declaration make exit code of assignment to be always 0,
 #      aka. the exit code of command in subshell is discarded.
 #      tested on bash 3.2.57/4.2.46
+set -eEuo pipefail
+################################################################################
+# trap error setting
+################################################################################
+
+# https://stackoverflow.com/questions/6928946/mysterious-lineno-in-bash-trap-err
+# https://stackoverflow.com/questions/64786/error-handling-in-bash
+# https://stackoverflow.com/questions/24398691/how-to-get-the-real-line-number-of-a-failing-bash-command
+# https://unix.stackexchange.com/questions/39623/trap-err-and-echoing-the-error-line
+# https://unix.stackexchange.com/questions/462156/how-do-i-find-the-line-number-in-bash-when-an-error-occured
+# https://unix.stackexchange.com/questions/365113/how-to-avoid-error-message-during-the-execution-of-a-bash-script
+# https://shapeshed.com/unix-exit-codes/#how-to-suppress-exit-statuses
+# https://stackoverflow.com/questions/30078281/raise-error-in-a-bash-script/50265513#50265513
+__error_trap_handler_() {
+  local file_line_info="$1"
+  local code="$2"
+  local commands="$3"
+  echo "Trap error! Exit status: $code${nl}File/(near) line info:$nl  $file_line_info${nl}Error code line:$nl  $commands"
+}
+trap '__error_trap_handler_ "${BASH_SOURCE[*]} / $LINENO ${BASH_LINENO[*]}" "$?" "$BASH_COMMAND"' ERR
+
 
 # NOTE: DO NOT declare var PROG as readonly, because its value is supplied by subshell.
 PROG="$(basename "$0")"
@@ -58,15 +79,15 @@ colorPrint() {
     shift
 
     colorEcho "$color" "$@"
-    [[ -n "$append_file" && -w "$append_file" ]] && echo "$@" >>"$append_file"
-    [[ -n "$store_dir" && -w "$store_dir" ]] && echo "$@" >>"${store_file_prefix}$PROG"
+    [[ -n "${append_file:-}" && -w "$append_file" ]] && echo "$@" >>"$append_file"
+    [[ -n "${store_dir:-}" && -w "$store_dir" ]] && echo "$@" >>"${store_file_prefix}$PROG"
 }
 
 # shellcheck disable=SC2120
 normalPrint() {
     echo "$@"
-    [[ -n "$append_file" && -w "$append_file" ]] && echo "$@" >>"$append_file"
-    [[ -n "$store_dir" && -w "$store_dir" ]] && echo "$@" >>"${store_file_prefix}$PROG"
+    [[ -n "${append_file:-}" && -w "$append_file" ]] && echo "$@" >>"$append_file"
+    [[ -n "${store_dir:-}" && -w "$store_dir" ]] && echo "$@" >>"${store_file_prefix}$PROG"
 }
 
 redPrint() {
@@ -270,21 +291,30 @@ while true; do
     esac
 done
 
-update_delay=${1:-0}
+if [ $# == 0 ]; then
+    update_delay=0
+    update_count=1
+elif [ $# == 1 ]; then
+    update_delay="$1"
+    update_count=0
+elif [ $# == 2 ]; then
+    update_delay="$1"
+    update_count="$2"
+else
+    usage 1 "too many arguments!"
+fi
 # Bash RegEx to check floating point numbers from user input
 # https://stackoverflow.com/questions/13790763
 [[ "$update_delay" =~ ^[+]?[0-9]+\.?[0-9]*$ ]] || die "update delay($update_delay) is not a positive float number!"
-
-[ -z "$1" ] && update_count=1 || update_count=${2:-0}
 [[ "$update_count" =~ ^[+]?[0-9]+$ ]] || die "update count($update_count) is not a natural number!"
 
-if [ -n "$pid_list" ]; then
+if [ -n "${pid_list:-}" ]; then
     pid_list="${pid_list//[[:space:]]/}" # delete white space
     [[ "$pid_list" =~ ^([0-9]+)(,[0-9]+)*$ ]] || die "pid(s)($pid_list) is illegal! example: 42 or 42,99,67"
 fi
 
 # check the directory of append-file(-a) mode, create if not exist.
-if [ -n "$append_file" ]; then
+if [ -n "${append_file:-}" ]; then
     if [ -e "$append_file" ]; then
         [ -f "$append_file" ] || die "$append_file(specified by option -a, for storing run output files) exists but is not a file!"
         [ -w "$append_file" ] || die "file $append_file(specified by option -a, for storing run output files) exists but is not writable!"
@@ -300,7 +330,7 @@ if [ -n "$append_file" ]; then
 fi
 
 # check store directory(-S) mode, create directory if not exist.
-if [ -n "$store_dir" ]; then
+if [ -n "${store_dir:-}" ]; then
     if [ -e "$store_dir" ]; then
         [ -d "$store_dir" ] || die "$store_dir(specified by option -S, for storing output files) exists but is not a directory!"
         [ -w "$store_dir" ] || die "directory $store_dir(specified by option -S, for storing output files) exists but is not writable!"
@@ -313,7 +343,7 @@ fi
 # check the existence of jstack command
 ################################################################################
 
-if [ -n "$jstack_path" ]; then
+if [ -n "${jstack_path:-}" ]; then
     [ -f "$jstack_path" ] || die "$jstack_path is NOT found!"
     [ -x "$jstack_path" ] || die "$jstack_path is NOT executable!"
 elif command -v jstack &>/dev/null; then
@@ -334,7 +364,7 @@ run_timestamp="$(date "+%Y-%m-%d_%H:%M:%S.%N")"
 readonly uuid="${PROG}_${run_timestamp}_${$}_${RANDOM}"
 
 readonly tmp_store_dir="/tmp/${uuid}"
-if [ -n "$store_dir" ]; then
+if [ -n "${store_dir:-}" ]; then
     readonly store_file_prefix="$store_dir/${run_timestamp}_"
 else
     readonly store_file_prefix="$tmp_store_dir/${run_timestamp}_"
@@ -353,14 +383,14 @@ headInfo() {
     echo
 }
 
-if [ -n "${pid_list}" ]; then
+if [ -n "${pid_list:-}" ]; then
     readonly ps_process_select_options="-p $pid_list"
 else
     readonly ps_process_select_options="-C java -C jsvc"
 fi
 
 __die_when_no_java_process_found() {
-    if [ -n "${pid_list}" ]; then
+    if [ -n "${pid_list:-}" ]; then
         die "process($pid_list) is not running, or not java process!"
     else
         die 'No java process found!'
@@ -381,7 +411,7 @@ findBusyJavaThreadsByPs() {
     ps_out="$("${ps_cmd_line[@]}")"
     [ -n "$ps_out" ] || __die_when_no_java_process_found
 
-    if [ -n "$store_dir" ]; then
+    if [ -n "${store_dir:-}" ]; then
         echo "$ps_out" | logAndCat "${ps_cmd_line[@]}" >"${store_file_prefix}$((update_round_num + 1))_ps"
     fi
 
@@ -420,7 +450,7 @@ __top_threadId_cpu() {
     # DO NOT combine var ps_out declaration and assignment, because its value is supplied by subshell.
     local top_out
     top_out=$(HOME="$tmp_store_dir" "${top_cmd_line[@]}")
-    if [ -n "$store_dir" ]; then
+    if [ -n "${store_dir:-}" ]; then
         echo "$top_out" | logAndCat "${top_cmd_line[@]}" >"${store_file_prefix}$((update_round_num + 1))_top"
     fi
 
@@ -448,7 +478,7 @@ __complete_pid_user_by_ps() {
     # DO NOT combine var ps_out declaration and assignment, because its value is supplied by subshell.
     local ps_out
     ps_out="$("${ps_cmd_line[@]}")"
-    if [ -n "$store_dir" ]; then
+    if [ -n "${store_dir:-}" ]; then
         echo "$ps_out" | logAndCat "${ps_cmd_line[@]}" >"${store_file_prefix}$((update_round_num + 1))_ps"
     fi
 
@@ -538,7 +568,7 @@ main() {
     for ((update_round_num = 0; update_count <= 0 || update_round_num < update_count; ++update_round_num)); do
         ((update_round_num > 0)) && sleep "$update_delay"
 
-        [[ -n "$append_file" || -n "$store_dir" ]] && headInfo |
+        [[ -n "${append_file:-}" || -n "${store_dir:-}" ]] && headInfo |
             tee ${append_file:+-a "$append_file"} ${store_dir:+-a "${store_file_prefix}$PROG"} >/dev/null
         ((update_count != 1)) && headInfo
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # @Function
-# Find duplicate classes among java lib dirs and class dirs..
+# Find duplicate classes among java lib dirs and class dirs.
 #
 # @Usage
 #   $ show-duplicate-java-classes # search jars from current dir
@@ -218,15 +218,26 @@ def print_duplicate_classes_info(class_paths_to_duplicate_classes):
         return
 
     duplicate_classes_total_count = sum(len(dcs) for dcs in class_paths_to_duplicate_classes.values())
+    print('Found %s duplicate classes in %s class path set:' %
+          (duplicate_classes_total_count, len(class_paths_to_duplicate_classes)))
+
     # sort key(class_paths) and value(duplicate_classes)
     class_paths_to_duplicate_classes = [(sorted(cps), sorted(dcs))
                                         for cps, dcs in class_paths_to_duplicate_classes.items()]
     # sort kv pairs
-    class_paths_to_duplicate_classes = sorted(class_paths_to_duplicate_classes, reverse=True,
-                                              key=lambda item: (len(item[0]), len(item[1]), '|'.join(item[0])))
-
-    print('Found %s duplicate classes in %s class path set:' %
-          (duplicate_classes_total_count, len(class_paths_to_duplicate_classes)))
+    #
+    # sort by multiple keys:
+    #    1. class paths count, *descending*; aka. sort by len(item[0]) *reverse=True*
+    #    2. duplicate classes count, *descending*; aka. sort by len(item[1]) *reverse=True*
+    #    3. class paths, ascending; aka. sort by item[0]
+    # sort also ensure output consistent for same input.
+    #
+    # How to sort objects by multiple keys in Python?
+    # https://stackoverflow.com/questions/1143671
+    # Sort a list by multiple attributes?
+    # https://stackoverflow.com/questions/4233476
+    class_paths_to_duplicate_classes.sort(key=lambda item: item[0])
+    class_paths_to_duplicate_classes.sort(reverse=True, key=lambda item: (len(item[0]), len(item[1])))
 
     idx_str_max_len = len(str(len(class_paths_to_duplicate_classes)))
     for idx, (class_paths, classes) in enumerate(class_paths_to_duplicate_classes, start=1):

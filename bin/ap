@@ -14,7 +14,7 @@ set -eEuo pipefail
 
 # NOTE: DO NOT declare var PROG as readonly, because its value is supplied by subshell.
 PROG="$(basename "$0")"
-readonly PROG_VERSION='2.4.0-dev'
+readonly PROG_VERSION='2.3.1'
 
 READLINK_CMD=readlink
 if command -v greadlink >/dev/null; then

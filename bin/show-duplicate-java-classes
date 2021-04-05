@@ -89,8 +89,8 @@ def list_jar_file_under_lib_dirs(lib_dirs, recursive):
 
     idx_str_max_len = len(str(len(lib_dirs)))
     for idx, lib_dir in enumerate(lib_dirs, start=1):
-        print_responsive_message('list jar file under lib dir(%*s/%s): %s' %
-                                 (idx_str_max_len, idx, len(lib_dirs), lib_dir))
+        print_responsive_message('list jar file under lib dir(%*s/%s): %s' % (
+            idx_str_max_len, idx, len(lib_dirs), lib_dir))
 
         if not exists(lib_dir):
             print_error('WARN: lib dir %s not exists, ignored!' % lib_dir)
@@ -151,8 +151,8 @@ def list_class_under_jar_file(jar_file, recursive, progress):
 
 
 def list_class_under_class_dir(class_dir, progress):
-    print_responsive_message('list class under class dir(%*s/%s): %s' %
-                             (len(str(progress[1])), progress[0], progress[1], class_dir))
+    print_responsive_message('list class under class dir(%*s/%s): %s' % (
+        len(str(progress[1])), progress[0], progress[1], class_dir))
 
     if not exists(class_dir):
         print_error('WARN: class dir %s not exists, ignored!' % class_dir)
@@ -195,7 +195,7 @@ def invert_as_class_to_class_paths(class_path_to_classes):
 # biz functions
 ################################################################################
 
-_java9_module_file_pattern = re.compile(r'(^|.*/)module-info\.class$')
+__java9_module_file_pattern = re.compile(r'(^|.*/)module-info\.class$')
 
 
 def find_duplicate_classes(class_to_class_paths):
@@ -203,7 +203,7 @@ def find_duplicate_classes(class_to_class_paths):
 
     for clazz, class_paths in class_to_class_paths.items():
         # skip java 9 module-info files
-        if len(class_paths) == 1 or _java9_module_file_pattern.match(clazz):
+        if len(class_paths) == 1 or __java9_module_file_pattern.match(clazz):
             continue
 
         classes = class_paths_to_duplicate_classes.setdefault(frozenset(class_paths), set())
@@ -218,8 +218,9 @@ def print_duplicate_classes_info(class_paths_to_duplicate_classes):
         return
 
     duplicate_classes_total_count = sum(len(dcs) for dcs in class_paths_to_duplicate_classes.values())
-    print('Found %s duplicate classes in %s class path set:' %
-          (duplicate_classes_total_count, len(class_paths_to_duplicate_classes)))
+    class_paths_total_count = sum(len(cps) for cps in class_paths_to_duplicate_classes)
+    print('Found %s duplicate classes in %s class paths and %s class path sets:' % (
+        duplicate_classes_total_count, class_paths_total_count, len(class_paths_to_duplicate_classes)))
 
     # sort key(class_paths) and value(duplicate_classes)
     class_paths_to_duplicate_classes = [(sorted(cps), sorted(dcs))
@@ -252,8 +253,7 @@ def print_duplicate_classes_info(class_paths_to_duplicate_classes):
     for idx, (class_paths, classes) in enumerate(class_paths_to_duplicate_classes, start=1):
         print('[%*s] found %s duplicate classes in %s class paths %s :' % (
             idx_str_max_len, idx,
-            len(classes), len(class_paths), ' '.join(class_paths)
-        ))
+            len(classes), len(class_paths), ' '.join(class_paths)))
 
         class_idx_str_max_len = len(str(len(classes)))
         for i, c in enumerate(classes, start=1):
@@ -283,8 +283,7 @@ def main():
               '\n  %prog -c path/to/class_dir1 path/to/lib_dir1'
               '\n  %prog -L path/to/lib_dir1'
               '\n  %prog -J path/to/lib_dir1',
-        version='%prog ' + PROG_VERSION
-    )
+        version='%prog ' + PROG_VERSION)
     option_parser.add_option('-L', '--recursive-lib', dest='recursive_lib', default=False,
                              action='store_true', help='search jars in the sub-directories of lib dir')
     option_parser.add_option('-J', '--recursive-jar', dest='recursive_jar', default=False,

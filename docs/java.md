@@ -363,25 +363,26 @@ Find in 150 class paths:
 ...
 
 $ show-duplicate-java-classes -c WEB-INF/classes WEB-INF/lib
-Found duplicate classes in below 9 class path set:
-[1] found 188 duplicate classes in 2 class paths:
-    WEB-INF/lib/jdom-2.0.2.jar
-    WEB-INF/lib/jdom2-2.0.6.jar
+Found 1272 duplicate classes in 345 class paths and 9 class path sets:
+[1] found 188 duplicate classes in 3 class paths:
+    1: WEB-INF/lib/jdom-2.0.2.jar
+    2: WEB-INF/lib/jdom2-2.0.6.jar
+    3: WEB-INF/lib/jdom2-2.0.8.jar
 [2] found 150 duplicate classes in 2 class paths:
-    WEB-INF/lib/netty-all-4.0.35.Final.jar
-    WEB-INF/lib/netty-common-4.1.31.Final.jar
+    1: WEB-INF/lib/netty-all-4.0.35.Final.jar
+    2: WEB-INF/lib/netty-common-4.1.31.Final.jar
 [3] found 148 duplicate classes in 2 class paths:
-    WEB-INF/lib/netty-all-4.0.35.Final.jar
-    WEB-INF/lib/netty-handler-4.1.31.Final.jar
+    1: WEB-INF/lib/netty-all-4.0.35.Final.jar
+    2: WEB-INF/lib/netty-handler-4.1.31.Final.jar
 [4] found 103 duplicate classes in 2 class paths:
-    WEB-INF/lib/hessian-3.0.14.bugfix-tae3.jar
-    WEB-INF/lib/hessian-4.0.38.jar
+    1: WEB-INF/lib/hessian-3.0.14.bugfix-tae3.jar
+    2: WEB-INF/lib/hessian-4.0.38.jar
 ...
 
 ================================================================================
 Duplicate classes detail info:
 ================================================================================
-[1] found 188 duplicate classes in 2 class paths WEB-INF/lib/jdom-2.0.2.jar WEB-INF/lib/jdom2-2.0.6.jar :
+[1] found 188 duplicate classes in 3 class paths WEB-INF/lib/jdom-2.0.2.jar WEB-INF/lib/jdom2-2.0.6.jar WEB-INF/lib/jdom2-2.0.8.jar :
       1: org/jdom2/Attribute.class
       2: org/jdom2/AttributeList$1.class
       3: org/jdom2/AttributeList$ALIterator.class

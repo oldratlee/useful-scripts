@@ -436,7 +436,7 @@ xpf /path/to/dir1 /path/to/foo1.txt
 
 ### 贡献者
 
-[Linhua Tan](https://github.com/toolchainX)修复Linux的选定Bug。
+- [Linhua Tan](https://github.com/toolchainX) 修复Linux的选定Bug。
 
 `Shell`开发/测试加强
 ====================================
@@ -507,7 +507,7 @@ colorEchoWithoutNewLine "4;33;40" "Hello world!" "Hello Hell!"
 
 ### 参考资料
 
-- [utensil](https://github.com/utensil)的[在Bash下输出彩色的文本](http://utensil.github.io/tech/2007/09/10/colorful-bash.html)，这是篇很有信息量很钻研的文章！
+- [utensil](https://github.com/utensil) 的[在Bash下输出彩色的文本](http://utensil.github.io/tech/2007/09/10/colorful-bash.html)，这是篇很有信息量很钻研的文章！
 
 🍺 [parseOpts.sh](../lib/parseOpts.sh)
 ----------------------
@@ -608,5 +608,5 @@ parseOpts "a,a-long|b,b-long:|c,c-long+" -a -b bv -- --c-long c.sh -p pv -q qv a
 
 ### 贡献者
 
-[Khotyn Huang](https://github.com/khotyn)指出`bash` `3.0`下使用有问题，并提供`bash` `3.0`的测试机器。
+- [Khotyn Huang](https://github.com/khotyn) 指出`bash` `3.0`下使用有问题，并提供`bash` `3.0`的测试机器。
 

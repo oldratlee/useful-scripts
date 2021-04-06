@@ -122,8 +122,11 @@ def list_class_under_jar_file(jar_file, recursive, progress):
     def list_zip_in_zip(jar_jar_path, zf):
         nonlocal index
         index += 1
+        index_marker = ''
+        if recursive:
+            index_marker = ' #%3s' % index
         print_responsive_message('list class under jar file(%*s/%s%s): %s' % (
-            len(str(progress[1])), progress[0], progress[1], ' #' + str(index) if recursive else '', jar_jar_path))
+            len(str(progress[1])), progress[0], progress[1], index_marker, jar_jar_path))
 
         ret = {}
         classes = {f for f in zf.namelist() if f.lower().endswith('.class')}

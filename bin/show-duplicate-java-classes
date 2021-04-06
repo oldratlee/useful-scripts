@@ -240,8 +240,9 @@ def print_duplicate_classes_info(class_paths_to_duplicate_classes):
     # https://stackoverflow.com/questions/1143671
     # Sort a list by multiple attributes?
     # https://stackoverflow.com/questions/4233476
-    class_paths_to_duplicate_classes.sort(key=lambda item: item[0])
-    class_paths_to_duplicate_classes.sort(reverse=True, key=lambda item: (len(item[0]), len(item[1])))
+    #
+    # use - operator of number key for reverse sort key
+    class_paths_to_duplicate_classes.sort(key=lambda item: (-len(item[0]), -len(item[1]), item[0]))
 
     idx_str_max_len = len(str(len(class_paths_to_duplicate_classes)))
     for idx, (class_paths, classes) in enumerate(class_paths_to_duplicate_classes, start=1):

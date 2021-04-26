@@ -56,6 +56,8 @@ source <(curl -fsSL https://raw.githubusercontent.com/oldratlee/useful-scripts/r
     不重排序输入完成整个输入行的去重。相比系统的`uniq`命令加强的是可以跨行去重，不需要排序输入。
 1. [ap and rp](docs/shell.md#-ap-and-rp)  
     批量转换文件路径为绝对路径/相对路径，会自动跟踪链接并规范化路径。
+1. [cp-into-docker-run](docs/shell.md#-cp-into-docker-run)  
+    一个`Docker`使用的便利脚本。拷贝本机的执行文件到指定的`docker container`中并在`docker container`中执行。
 1. [tcp-connection-state-counter](docs/shell.md#-tcp-connection-state-counter)  
     统计各个`TCP`连接状态的个数。用于方便排查系统连接负荷问题。
 1. [xpl and xpf](docs/shell.md#-xpl-and-xpf)  

@@ -391,10 +391,13 @@ docker options:
   -c, --container    destination docker container
   -u, --docker-user  docker username or UID to run command
                      optional, docker default is (maybe) root user
-  -w, --workdir      working directory inside the container
+  -w, --workdir      absolute working directory inside the container
                      optional, docker default is (maybe) root dir
   -t, --tmpdir       tmp dir in docker to copy command
                      optional, default is /tmp
+  -p, --cp-path      destination path in docker of the command(including file name)
+                     if specified, command will be kept when run finished
+                     optional, default is under tmp dir and deleted when run finished
 
 run options:
   -v, --verbose      show operation step infos
@@ -432,7 +435,7 @@ SYN_SENT      7
 
 ### 贡献者
 
-[sunuslee](https://github.com/sunuslee)改进此脚本，增加对`MacOS`的支持。 [#56](https://github.com/oldratlee/useful-scripts/pull/56)
+[sunuslee](https://github.com/sunuslee) 改进此脚本，增加对`MacOS`的支持。 [#56](https://github.com/oldratlee/useful-scripts/pull/56)
 
 🍺 [xpl](../bin/xpl) and [xpf](../bin/xpf)
 ----------------------
@@ -536,7 +539,7 @@ colorEchoWithoutNewLine "4;33;40" "Hello world!" "Hello Hell!"
 
 ### 贡献者
 
-[姜太公](https://github.com/jzwlqx)提供循环输出彩色组合的脚本。
+[姜太公](https://github.com/jzwlqx) 提供循环输出彩色组合的脚本。
 
 ### 参考资料
 

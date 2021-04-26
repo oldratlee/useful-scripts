@@ -49,10 +49,13 @@ docker options:
   -c, --container    destination docker container
   -u, --docker-user  docker username or UID to run command
                      optional, docker default is (maybe) root user
-  -w, --workdir      working directory inside the container
+  -w, --workdir      absolute working directory inside the container
                      optional, docker default is (maybe) root dir
   -t, --tmpdir       tmp dir in docker to copy command
                      optional, default is /tmp
+  -p, --cp-path      destination path in docker of the command(including file name)
+                     if specified, command will be kept when run finished
+                     optional, default is under tmp dir and deleted when run finished
 
 run options:
   -v, --verbose      show operation step infos
@@ -78,6 +81,7 @@ container_name=
 docker_user=
 docker_workdir=
 docker_tmpdir=/tmp
+docker_command_cp_path=
 verbose=false
 declare -a args=()
 
@@ -97,6 +101,10 @@ while (($# > 0)); do
         ;;
     -t | --tmpdir)
         docker_tmpdir="$2"
+        shift 2
+        ;;
+    -p | --cp-path)
+        docker_command_cp_path="$2"
         shift 2
         ;;
     -v | --verbose)
@@ -125,6 +133,11 @@ while (($# > 0)); do
     esac
 done
 
+if [ -n "${docker_command_cp_path:-}" ]; then
+    [[ "$docker_command_cp_path" =~ ^/ ]] ||
+        die "the command path in docker to copy must be absolute path: $docker_command_cp_path"
+fi
+
 ################################################################################
 # biz logic
 ################################################################################
@@ -148,17 +161,25 @@ if [ ! -f "$specified_run_command" ]; then
     run_command="$(which "$specified_run_command")"
 fi
 run_command="$($READLINK_CMD -f "$run_command")"
-
-run_timestamp="$(date "+%Y%m%d_%H%M%S")"
-readonly uuid="${PROG}_${run_timestamp}_${$}_${RANDOM}"
-
 run_command_base_name="$(basename "$run_command")"
-readonly run_command_dir_in_docker="$docker_tmpdir/$uuid"
-readonly run_command_in_docker="$run_command_dir_in_docker/$run_command_base_name"
+
+if [ -n "${docker_command_cp_path:-}" ]; then
+    run_command_dir_in_docker="$(dirname "$docker_command_cp_path")"
+    readonly run_command_in_docker="$docker_command_cp_path"
+else
+    run_timestamp="$(date "+%Y%m%d_%H%M%S")"
+    readonly uuid="${PROG}_${run_timestamp}_${$}_${RANDOM}"
+    readonly work_tmp_dir_in_docker="$docker_tmpdir/$uuid"
+
+    readonly run_command_dir_in_docker="$work_tmp_dir_in_docker"
+    readonly run_command_in_docker="$run_command_dir_in_docker/$run_command_base_name"
+fi
 
 cleanupWhenExit() {
+    [ -n "${work_tmp_dir_in_docker:-}" ] || return 0
+
     # remove tmp dir in docker by root user
-    docker exec "${container_name}" rm -rf -- "$run_command_dir_in_docker" &>/dev/null
+    docker exec "${container_name}" rm -rf -- "$work_tmp_dir_in_docker" &>/dev/null
 }
 trap "cleanupWhenExit" EXIT
 

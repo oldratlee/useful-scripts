@@ -2,7 +2,7 @@
 set -eEuo pipefail
 
 PROG="$(basename "$0")"
-readonly PROG_VERSION='2.4.0-dev'
+readonly PROG_VERSION='2.5.0-dev'
 
 READLINK_CMD=readlink
 if command -v greadlink >/dev/null; then

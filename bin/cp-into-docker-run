@@ -1,0 +1,184 @@
+#!/bin/bash
+set -eEuo pipefail
+
+PROG="$(basename "$0")"
+readonly PROG_VERSION='2.4.0-dev'
+
+READLINK_CMD=readlink
+if command -v greadlink >/dev/null; then
+    READLINK_CMD=greadlink
+fi
+
+################################################################################
+# util functions
+################################################################################
+
+# NOTE: $'foo' is the escape sequence syntax of bash
+readonly ec=$'\033'      # escape char
+readonly eend=$'\033[0m' # escape end
+readonly nl=$'\n'        # new line
+
+redEcho() {
+    # -t check: is a terminal device?
+    [ -t 1 ] && echo "${ec}[1;31m$*$eend" || echo "$*"
+}
+
+die() {
+    redEcho "Error: $*" 1>&2
+    exit 1
+}
+
+usage() {
+    local -r exit_code="${1:-0}"
+    (($# > 0)) && shift
+    # shellcheck disable=SC2015
+    [ "$exit_code" != 0 ] && local -r out=/dev/stderr || local -r out=/dev/stdout
+
+    (($# > 0)) && redEcho "$*$nl" >$out
+
+    cat >$out <<EOF
+Usage: ${PROG} [OPTION]... command [command-args]...
+
+Copy the command into docker container
+and run the command in container.
+
+Example:
+  ${PROG} -c container_foo command_copied_into_container command_arg1
+
+docker options:
+  -c, --container    destination docker container
+  -u, --docker-user  docker username or UID to run command
+                     optional, docker default is (maybe) root user
+  -w, --workdir      working directory inside the container
+                     optional, docker default is (maybe) root dir
+  -t, --tmpdir       tmp dir in docker to copy command
+                     optional, default is /tmp
+
+run options:
+  -v, --verbose      show operation step infos
+
+miscellaneous:
+  -h, --help         display this help and exit
+  -V, --version      display version information and exit
+EOF
+
+    exit "$exit_code"
+}
+
+progVersion() {
+    echo "$PROG $PROG_VERSION"
+    exit
+}
+
+################################################################################
+# parse options
+################################################################################
+
+container_name=
+docker_user=
+docker_workdir=
+docker_tmpdir=/tmp
+verbose=false
+declare -a args=()
+
+while (($# > 0)); do
+    case "$1" in
+    -c | --container)
+        container_name="$2"
+        shift 2
+        ;;
+    -u | --docker-user)
+        docker_user="$2"
+        shift 2
+        ;;
+    -w | --workdir)
+        docker_workdir="$2"
+        shift 2
+        ;;
+    -t | --tmpdir)
+        docker_tmpdir="$2"
+        shift 2
+        ;;
+    -v | --verbose)
+        verbose=true
+        shift
+        ;;
+    -h | --help)
+        usage
+        ;;
+    -V | --version)
+        progVersion
+        ;;
+    --)
+        shift
+        args=(${args[@]:+"${args[@]}"} "$@")
+        break
+        ;;
+    -*)
+        usage 2 "${PROG}: unrecognized option '$1'"
+        ;;
+    *)
+        # if not option, treat all follow args as command
+        args=(${args[@]:+"${args[@]}"} "$@")
+        break
+        ;;
+    esac
+done
+
+################################################################################
+# biz logic
+################################################################################
+
+########################################
+# check docker command existence
+########################################
+
+command -v docker &>/dev/null || die 'docker command not found!'
+
+########################################
+# prepare vars for docker operation
+########################################
+
+readonly specified_run_command="${args[0]}"
+run_command="$specified_run_command"
+if [ ! -f "$specified_run_command" ]; then
+    which "$specified_run_command" &>/dev/null ||
+        die "specified command not exists and not found in PATH: $specified_run_command"
+
+    run_command="$(which "$specified_run_command")"
+fi
+run_command="$($READLINK_CMD -f "$run_command")"
+
+run_timestamp="$(date "+%Y%m%d_%H%M%S")"
+readonly uuid="${PROG}_${run_timestamp}_${$}_${RANDOM}"
+
+run_command_base_name="$(basename "$run_command")"
+readonly run_command_dir_in_docker="$docker_tmpdir/$uuid"
+readonly run_command_in_docker="$run_command_dir_in_docker/$run_command_base_name"
+
+cleanupWhenExit() {
+    # remove tmp dir in docker by root user
+    docker exec "${container_name}" rm -rf -- "$run_command_dir_in_docker" &>/dev/null
+}
+trap "cleanupWhenExit" EXIT
+
+########################################
+# docker operations
+########################################
+
+logAndRun() {
+    $verbose && echo "[$PROG] $*" 1>&2
+    "$@"
+}
+
+logAndRun docker exec ${docker_user:+"--user=$docker_user"} "$container_name" \
+    mkdir -p -- "$run_command_dir_in_docker"
+logAndRun docker cp "$run_command" "$container_name:$run_command_in_docker"
+logAndRun docker exec ${docker_user:+"--user=$docker_user"} "$container_name" \
+    chmod +x "$run_command_in_docker"
+
+logAndRun docker exec -i -t \
+    ${docker_user:+"--user=$docker_user"} \
+    ${docker_workdir:+"--workdir=$docker_workdir"} \
+    "$container_name" \
+    "$run_command_in_docker" "${args[@]:1:${#args[@]}}"

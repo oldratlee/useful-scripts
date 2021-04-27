@@ -1,4 +1,12 @@
 #!/bin/bash
+# @Function
+# Copy the command into docker container and run the command in container.
+#
+# Example:
+#  ${PROG} -c container_foo command_copied_into_container command_arg1
+#
+# @online-doc https://github.com/oldratlee/useful-scripts/blob/dev-2.x/docs/shell.md#-cp-into-docker-run
+# @author Jerry Lee (oldratlee at gmail dot com)
 set -eEuo pipefail
 
 PROG="$(basename "$0")"
@@ -21,6 +29,10 @@ readonly nl=$'\n'        # new line
 redEcho() {
     # -t check: is a terminal device?
     [ -t 1 ] && echo "${ec}[1;31m$*$eend" || echo "$*"
+}
+
+isAbsolutePath() {
+    [[ "$1" =~ ^/ ]]
 }
 
 die() {
@@ -133,9 +145,12 @@ while (($# > 0)); do
     esac
 done
 
-if [ -n "${docker_command_cp_path:-}" ]; then
-    [[ "$docker_command_cp_path" =~ ^/ ]] ||
-        die "the command path in docker to copy must be absolute path: $docker_command_cp_path"
+if [ -n "${docker_workdir}" ]; then
+    isAbsolutePath "$docker_workdir" ||
+        die "docker workdir(-w/--workdir) must be absolute path: $docker_workdir"
+elif [ -n "${docker_command_cp_path}" ]; then
+    isAbsolutePath "$docker_command_cp_path" ||
+        die "when no docker workdir(-w/--workdir) is specified, the command path in docker to copy(-p/--cp-path) must be absolute path: $docker_command_cp_path"
 fi
 
 ################################################################################
@@ -163,16 +178,20 @@ fi
 run_command="$($READLINK_CMD -f "$run_command")"
 run_command_base_name="$(basename "$run_command")"
 
-if [ -n "${docker_command_cp_path:-}" ]; then
-    run_command_dir_in_docker="$(dirname "$docker_command_cp_path")"
-    readonly run_command_in_docker="$docker_command_cp_path"
+if [ -n "${docker_command_cp_path}" ]; then
+    if isAbsolutePath "$docker_command_cp_path"; then
+        readonly run_command_in_docker="$docker_command_cp_path"
+    else
+        readonly run_command_in_docker="${docker_workdir:+"$docker_workdir/"}$docker_command_cp_path"
+    fi
+    run_command_dir_in_docker="$(dirname "$run_command_in_docker")"
 else
     run_timestamp="$(date "+%Y%m%d_%H%M%S")"
     readonly uuid="${PROG}_${run_timestamp}_${$}_${RANDOM}"
     readonly work_tmp_dir_in_docker="$docker_tmpdir/$uuid"
 
+    readonly run_command_in_docker="$work_tmp_dir_in_docker/$run_command_base_name"
     readonly run_command_dir_in_docker="$work_tmp_dir_in_docker"
-    readonly run_command_in_docker="$run_command_dir_in_docker/$run_command_base_name"
 fi
 
 cleanupWhenExit() {

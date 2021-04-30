@@ -78,7 +78,7 @@ clearResponsiveMessage() {
 
 die() {
     clearResponsiveMessage
-    redEcho "Error: $*" 1>&2
+    redEcho "Error: $*" >&2
     exit 1
 }
 
@@ -262,23 +262,62 @@ done
 # Check the existence of command for listing zip entry!
 ################################################################################
 
-# `zipinfo -1`/`unzip -Z1` is ~25 times faster than `jar tf`, find zipinfo/unzip command first.
-#
-# How to list files in a zip without extra information in command line
-# https://unix.stackexchange.com/a/128304/136953
-if command -v zipinfo &>/dev/null; then
-    readonly command_for_list_zip='zipinfo -1'
-elif command -v unzip &>/dev/null; then
-    readonly command_for_list_zip='unzip -Z1'
-else
-    if ! command -v jar &>/dev/null; then
-        [ -n "$JAVA_HOME" ] || die "jar not found on PATH and JAVA_HOME env var is blank!"
-        [ -f "$JAVA_HOME/bin/jar" ] || die "jar not found on PATH and \$JAVA_HOME/bin/jar($JAVA_HOME/bin/jar) file does NOT exists!"
-        [ -x "$JAVA_HOME/bin/jar" ] || die "jar not found on PATH and \$JAVA_HOME/bin/jar($JAVA_HOME/bin/jar) is NOT executable!"
-        export PATH="$JAVA_HOME/bin:$PATH"
+__prepareCommandToListZipEntries() {
+    # `zipinfo -1`/`unzip -Z1` is ~25 times faster than `jar tf`, find zipinfo/unzip command first.
+    #
+    # How to list files in a zip without extra information in command line
+    # https://unix.stackexchange.com/a/128304/136953
+
+    if command -v zipinfo &>/dev/null; then
+        command_to_list_zip_entries=(zipinfo -1)
+        is_use_zip_cmd_to_list_zip_entries=true
+    elif command -v unzip &>/dev/null; then
+        command_to_list_zip_entries=(unzip -Z1)
+        is_use_zip_cmd_to_list_zip_entries=true
+    elif [ -n "$JAVA_HOME" ]; then
+        # search jar command under JAVA_HOME
+        if [ -f "$JAVA_HOME/bin/jar" ]; then
+            [ -x "$JAVA_HOME/bin/jar" ] || die "found \$JAVA_HOME/bin/jar($JAVA_HOME/bin/jar) is NOT executable!"
+            command_to_list_zip_entries=("$JAVA_HOME/bin/jar" tf)
+        elif [ -f "$JAVA_HOME/../bin/jar" ]; then
+            [ -x "$JAVA_HOME/../bin/jar" ] || die "found \$JAVA_HOME/../bin/jar($JAVA_HOME/../bin/jar) is NOT executable!"
+            command_to_list_zip_entries=("$JAVA_HOME/../bin/jar" tf)
+        fi
+        is_use_zip_cmd_to_list_zip_entries=false
+    elif command -v jar &>/dev/null; then
+        # search jar command under PATH
+        command_to_list_zip_entries=(jar tf)
+        is_use_zip_cmd_to_list_zip_entries=false
+    else
+        die "NOT found command to list zip entries: zipinfo, unzip or jar!"
     fi
-    readonly command_for_list_zip='jar tf'
-fi
+}
+__prepareCommandToListZipEntries
+
+listZipEntries() {
+    local zip_file="$1" msg
+
+    if $is_use_zip_cmd_to_list_zip_entries; then
+        # How to check if zip file is empty in bash
+        # https://superuser.com/questions/438878
+        msg="$("${command_to_list_zip_entries[@]}" -t "$zip_file" 2>&1)" || {
+            # NOTE:
+            # if list emtpy zip file by zipinfo/unzip command,
+            # exit code is 1, and print 'Empty zipfile.'
+            if [ "$msg" != 'Empty zipfile.' ]; then
+                clearResponsiveMessage
+                redEcho "fail to list zip entries of $zip_file, ignored: $msg" >&2
+            fi
+            return 0
+        }
+    fi
+
+    "${command_to_list_zip_entries[@]}" "$zip_file" || {
+        clearResponsiveMessage
+        redEcho "fail to list zip entries of $zip_file, ignored!" >&2
+        return 0
+    }
+}
 
 ################################################################################
 # find logic
@@ -348,7 +387,7 @@ findInJarFiles() {
 
     while read -r jar_file; do
         printResponsiveMessage "finding in jar($((counter++))/$total_jar_count): $jar_file"
-        $command_for_list_zip "${jar_file}" | __outputResultOfJarFile "${jar_file}"
+        listZipEntries "${jar_file}" | __outputResultOfJarFile "${jar_file}"
     done
 
     clearResponsiveMessage

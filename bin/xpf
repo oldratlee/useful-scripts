@@ -10,6 +10,29 @@
 # @author Jerry Lee (oldratlee at gmail dot com)
 set -eEuo pipefail
 
-# BASE="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
-BASE="$(dirname "$0")"
+# How can I get the behavior of GNU's readlink -f on a Mac?
+# https://stackoverflow.com/questions/1055671
+portableReadLink() {
+    local file="$1" uname
+
+    uname="$(uname)"
+    case "$uname" in
+    Linux* | CYGWIN* | MINGW*)
+        readlink -f "$file"
+        ;;
+    Darwin*)
+        if command -v greadlink >/dev/null; then
+            greadlink -f "$file"
+        else
+            python -c 'import os, sys; print(os.path.realpath(sys.argv[1]))' "$file"
+        fi
+        ;;
+    *)
+        echo "not support uname($uname)!" >&2
+        exit 1
+        ;;
+    esac
+}
+
+BASE="$(dirname "$(portableReadLink "${BASH_SOURCE[0]}")")"
 source "$BASE/xpl" "$@"

@@ -10,7 +10,7 @@
 set -eEuo pipefail
 
 PROG="$(basename "$0")"
-readonly PROG_VERSION='2.5.0-dev'
+readonly PROG_VERSION='2.4.1'
 
 ################################################################################
 # util functions

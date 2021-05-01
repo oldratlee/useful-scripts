@@ -218,7 +218,7 @@ cleanupWhenExit() {
     # remove tmp dir in docker by root user
     docker exec "${container_name}" rm -rf -- "$work_tmp_dir_in_docker" &>/dev/null
 }
-trap "cleanupWhenExit" EXIT
+trap cleanupWhenExit EXIT
 
 ########################################
 # docker operations

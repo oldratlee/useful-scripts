@@ -61,13 +61,13 @@ target=${2:-.}
 	}
 } || workDir="$target"
 
-cleanup() {
+cleanupWhenExit() {
 	[ "$workDir" != "$target" ] && {
 		echo "rm tmp dir $workDir ."
 		rm -rf "$workDir"
 	}
 }
-trap "cleanup" EXIT
+trap cleanupWhenExit EXIT
 
 svn_status_line=$(svn status --ignore-externals "$workDir" | grep -c -v ^X)
 [ "$svn_status_line" -ne 0 ] && {

@@ -358,7 +358,7 @@ mkdir -p "$tmp_store_dir"
 cleanupWhenExit() {
     rm -rf "$tmp_store_dir" &>/dev/null
 }
-trap "cleanupWhenExit" EXIT
+trap cleanupWhenExit EXIT
 
 headInfo() {
     colorEcho "0;34;42" ================================================================================

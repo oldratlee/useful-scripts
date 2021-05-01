@@ -356,27 +356,27 @@ COOL! No duplicate classes found!
 ================================================================================
 Find in 150 class paths:
 ================================================================================
-  1: WEB-INF/lib/aopalliance-1.0.jar
-  2: WEB-INF/lib/asm-3.2.jar
-  3: WEB-INF/lib/aspectjrt-1.6.1.jar
-  4: WEB-INF/lib/aspectjweaver-1.6.6.jar
+  1: (contain   9 classes) WEB-INF/lib/aopalliance-1.0.jar
+  2: (contain  25 classes) WEB-INF/lib/asm-5.0.4.jar
+  3: (contain 313 classes) WEB-INF/lib/aviator-5.0.0.jar
+  4: (contain 687 classes) WEB-INF/lib/cassandra-0.6.1.jar
 ...
 
 $ show-duplicate-java-classes -c WEB-INF/classes WEB-INF/lib
 Found 1272 duplicate classes in 345 class paths and 9 class path sets:
-[1] found 188 duplicate classes in 3 class paths:
-    1: WEB-INF/lib/jdom-2.0.2.jar
-    2: WEB-INF/lib/jdom2-2.0.6.jar
-    3: WEB-INF/lib/jdom2-2.0.8.jar
-[2] found 150 duplicate classes in 2 class paths:
-    1: WEB-INF/lib/netty-all-4.0.35.Final.jar
-    2: WEB-INF/lib/netty-common-4.1.31.Final.jar
-[3] found 148 duplicate classes in 2 class paths:
-    1: WEB-INF/lib/netty-all-4.0.35.Final.jar
-    2: WEB-INF/lib/netty-handler-4.1.31.Final.jar
-[4] found 103 duplicate classes in 2 class paths:
-    1: WEB-INF/lib/hessian-3.0.14.bugfix-tae3.jar
-    2: WEB-INF/lib/hessian-4.0.38.jar
+[1] found 188(100%) duplicate classes in 3 class paths:
+    1: (contain 188 classes) WEB-INF/lib/jdom-2.0.2.jar
+    2: (contain 195 classes) WEB-INF/lib/jdom2-2.0.6.jar
+    3: (contain 195 classes) WEB-INF/lib/jdom2-2.0.8.jar
+[2] found 150(33.8%) duplicate classes in 2 class paths:
+    1: (contain 1385 classes) WEB-INF/lib/netty-all-4.0.35.Final.jar
+    2: (contain  444 classes) WEB-INF/lib/netty-common-4.1.31.Final.jar
+[3] found 148(55.4%) duplicate classes in 2 class paths:
+    1: (contain 1385 classes) WEB-INF/lib/netty-all-4.0.35.Final.jar
+    2: (contain  267 classes) WEB-INF/lib/netty-handler-4.1.31.Final.jar
+[4] found 103(82.4%) duplicate classes in 2 class paths:
+    1: (contain 125 classes) WEB-INF/lib/hessian-3.0.14.bugfix.jar
+    2: (contain 275 classes) WEB-INF/lib/hessian-4.0.38.jar
 ...
 
 ================================================================================
@@ -401,12 +401,12 @@ Duplicate classes detail info:
 ================================================================================
 Find in 232 class paths:
 ================================================================================
-  1: WEB-INF/classes
-  2: WEB-INF/lib/HikariCP-2.7.8.jar
-  3: WEB-INF/lib/accessors-smart-1.2.jar
-  4: WEB-INF/lib/alimonitor-jmonitor-1.1.3.jar
-  5: WEB-INF/lib/aopalliance-1.0.jar
-  6: WEB-INF/lib/asm-5.0.4.jar
+  1: (contain  42 classes) WEB-INF/classes
+  2: (contain  70 classes) WEB-INF/lib/HikariCP-2.7.8.jar
+  3: (contain  13 classes) WEB-INF/lib/accessors-smart-1.2.jar
+  4: (contain   9 classes) WEB-INF/lib/aopalliance-1.0.jar
+  5: (contain  25 classes) WEB-INF/lib/asm-5.0.4.jar
+  6: (contain 313 classes) WEB-INF/lib/aviator-5.0.0.jar
 ...
 ```
 

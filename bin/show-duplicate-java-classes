@@ -84,13 +84,17 @@ def print_box_message(msg):
     print('=' * 80)
 
 
+def str_len(x):
+    return len(str(x))
+
+
 def list_jar_file_under_lib_dirs(lib_dirs, recursive):
     jar_files = set()
 
-    idx_str_max_len = len(str(len(lib_dirs)))
+    max_idx_str_len = str_len(len(lib_dirs))
     for idx, lib_dir in enumerate(lib_dirs, start=1):
         print_responsive_message('list jar file under lib dir(%*s/%s): %s' % (
-            idx_str_max_len, idx, len(lib_dirs), lib_dir))
+            max_idx_str_len, idx, len(lib_dirs), lib_dir))
 
         if not exists(lib_dir):
             print_error('WARN: lib dir %s not exists, ignored!' % lib_dir)
@@ -126,7 +130,7 @@ def list_class_under_jar_file(jar_file, recursive, progress):
         if recursive:
             index_marker = ' #%3s' % index
         print_responsive_message('list class under jar file(%*s/%s%s): %s' % (
-            len(str(progress[1])), progress[0], progress[1], index_marker, jar_jar_path))
+            str_len(progress[1]), progress[0], progress[1], index_marker, jar_jar_path))
 
         ret = {}
         classes = {f for f in zf.namelist() if f.lower().endswith('.class')}
@@ -155,7 +159,7 @@ def list_class_under_jar_file(jar_file, recursive, progress):
 
 def list_class_under_class_dir(class_dir, progress):
     print_responsive_message('list class under class dir(%*s/%s): %s' % (
-        len(str(progress[1])), progress[0], progress[1], class_dir))
+        str_len(progress[1]), progress[0], progress[1], class_dir))
 
     if not exists(class_dir):
         print_error('WARN: class dir %s not exists, ignored!' % class_dir)
@@ -215,7 +219,7 @@ def find_duplicate_classes(class_to_class_paths):
     return class_paths_to_duplicate_classes
 
 
-def print_duplicate_classes_info(class_paths_to_duplicate_classes):
+def print_duplicate_classes_info(class_paths_to_duplicate_classes, class_path_to_classes):
     if not class_paths_to_duplicate_classes:
         print('COOL! No duplicate classes found!')
         return
@@ -244,34 +248,37 @@ def print_duplicate_classes_info(class_paths_to_duplicate_classes):
     # use - operator of number key for reverse sort key
     class_paths_to_duplicate_classes.sort(key=lambda item: (-len(item[0]), -len(item[1]), item[0]))
 
-    idx_str_max_len = len(str(len(class_paths_to_duplicate_classes)))
+    max_idx_str_len = str_len(len(class_paths_to_duplicate_classes))
     for idx, (class_paths, classes) in enumerate(class_paths_to_duplicate_classes, start=1):
-        print('[%*s] found %s duplicate classes in %s class paths:' % (
-            idx_str_max_len, idx, len(classes), len(class_paths)))
+        duplicate_ratio = len(classes) / min((len(class_path_to_classes[cp]) for cp in class_paths))
+        print('[%*s] found %s(%.3g%%) duplicate classes in %s class paths:' % (
+            max_idx_str_len, idx, len(classes), duplicate_ratio * 100, len(class_paths)))
 
-        class_path_idx_str_max_len = len(str(len(class_paths)))
+        max_class_path_idx_str_len = str_len(len(class_paths))
+        max_classes_count_str_len = str_len(max(len(class_path_to_classes[cp]) for cp in class_paths))
         for i, cp in enumerate(class_paths, start=1):
-            print('    %*s: %s' % (class_path_idx_str_max_len, i, cp))
+            print('    %*s: (contain %*s classes) %s' % (
+                max_class_path_idx_str_len, i, max_classes_count_str_len, len(class_path_to_classes[cp]), cp))
 
     print_box_message('Duplicate classes detail info:')
     for idx, (class_paths, classes) in enumerate(class_paths_to_duplicate_classes, start=1):
         print('[%*s] found %s duplicate classes in %s class paths %s :' % (
-            idx_str_max_len, idx,
-            len(classes), len(class_paths), ' '.join(class_paths)))
+            max_idx_str_len, idx, len(classes), len(class_paths), ' '.join(class_paths)))
 
-        class_idx_str_max_len = len(str(len(classes)))
+        max_class_idx_str_len = str_len(len(classes))
         for i, c in enumerate(classes, start=1):
-            print('    %*s: %s' % (class_idx_str_max_len, i, c))
+            print('    %*s: %s' % (max_class_idx_str_len, i, c))
 
 
-def print_class_paths_info(class_paths):
-    class_paths = sorted(class_paths)
+def print_class_paths_info(class_path_to_classes):
+    max_idx_str_len = str_len(len(class_path_to_classes))
+    max_classes_count_str_len = str_len(max(len(classes) for classes in class_path_to_classes.values()))
 
-    print_box_message('Find in %s class paths:' % len(class_paths))
-
-    idx_str_max_len = len(str(len(class_paths)))
-    for idx, class_path in enumerate(class_paths, start=1):
-        print('%*s: %s' % (idx_str_max_len, idx, class_path))
+    class_path_to_classes = sorted(class_path_to_classes.items(), key=lambda item: item[0])
+    print_box_message('Find in %s class paths:' % len(class_path_to_classes))
+    for idx, (cp, classes) in enumerate(class_path_to_classes, start=1):
+        print('%*s: (contain %*s classes) %s' % (
+            max_idx_str_len, idx, max_classes_count_str_len, len(classes), cp))
 
 
 def main():
@@ -311,8 +318,8 @@ def main():
     class_paths_to_duplicate_classes = find_duplicate_classes(class_to_class_paths)
 
     clear_responsive_message()
-    print_duplicate_classes_info(class_paths_to_duplicate_classes)
-    print_class_paths_info(class_path_to_classes.keys())
+    print_duplicate_classes_info(class_paths_to_duplicate_classes, class_path_to_classes)
+    print_class_paths_info(class_path_to_classes)
 
     return int(bool(class_paths_to_duplicate_classes))
 

@@ -9,12 +9,13 @@
 [![GitHub stars](https://img.shields.io/github/stars/oldratlee/useful-scripts.svg?style=social&label=Star&)](https://github.com/oldratlee/useful-scripts/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/oldratlee/useful-scripts.svg?style=social&label=Fork&)](https://github.com/oldratlee/useful-scripts/fork)
 
+> ❗️ `master`是 不再开发的老版本`1.x`的分支 ❗️
+>
+> 请切到 [新版本的开发分支](https://github.com/oldratlee/useful-scripts)。
 
 👉 把平时有用的手动操作做成脚本，这样可以便捷的使用。 ✨
 
 有自己用的好的脚本 或是 平时常用但没有写成脚本的功能，欢迎提供（[提交Issue](https://github.com/oldratlee/useful-scripts/issues))和分享（[Fork后提交代码](https://github.com/oldratlee/useful-scripts/fork)）！ 💖
-
-PS：
 
 本仓库的脚本（如`Java`相关脚本）在阿里等公司（如随身云，见[`awesome-scripts`仓库](https://github.com/Suishenyun/awesome-scripts)说明）的线上生产环境部署使用。  
 如果你的公司有部署使用，欢迎使用通过[提交Issue](https://github.com/oldratlee/useful-scripts/issues)告知，方便互相交流反馈～ 💘

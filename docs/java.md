@@ -1,6 +1,12 @@
 🐌 `Java`相关脚本
 ====================================
 
+> ❗️ `master`是 不再开发的老版本`1.x`的分支 ❗️
+>
+> 请切到 [新版本的开发分支](https://github.com/oldratlee/useful-scripts/blob/dev-2.x/docs/java.md)。
+
+----------------------
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
@@ -48,6 +54,12 @@
 <a id="beer-show-busy-java-threads"></a>
 
 🍺 [show-busy-java-threads](../show-busy-java-threads)
+----------------------
+
+> ❗️ `master`是 不再开发的老版本`1.x`的分支 ❗️
+>
+> 请切到 [新版本的开发分支](https://github.com/oldratlee/useful-scripts/blob/dev-2.x/docs/java.md#-show-busy-java-threads)。
+
 ----------------------
 
 用于快速排查`Java`的`CPU`性能问题(`top us`值过高)，自动查出运行的`Java`进程中消耗`CPU`多的线程，并打印出其线程栈，从而确定导致性能问题的方法调用。  
@@ -225,6 +237,12 @@ $ show-busy-java-threads
 🍺 [show-duplicate-java-classes](../show-duplicate-java-classes)
 ----------------------
 
+> ❗️ `master`是 不再开发的老版本`1.x`的分支 ❗️
+>
+> 请切到 [新版本的开发分支](https://github.com/oldratlee/useful-scripts/blob/dev-2.x/docs/java.md#-show-duplicate-java-classes)。
+
+----------------------
+
 找出`Java Lib`（`Java`库，即`Jar`文件）或`Class`目录（类目录）中的重复类。  
 全系统支持（`Python`实现，安装`Python`即可），如`Linux`、`Mac`、`Windows`。
 
@@ -386,6 +404,12 @@ class paths to find:
 <a id="beer-find-in-jars"></a>
 
 🍺 [find-in-jars](../find-in-jars)
+----------------------
+
+> ❗️ `master`是 不再开发的老版本`1.x`的分支 ❗️
+>
+> 请切到 [新版本的开发分支](https://github.com/oldratlee/useful-scripts/blob/dev-2.x/docs/java.md#-find-in-jars)。
+
 ----------------------
 
 在当前目录下所有`jar`文件里，查找类或资源文件。  

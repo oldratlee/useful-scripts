@@ -1,6 +1,12 @@
 🐌 `Shell`相关脚本
 ====================================
 
+> ❗️ `master`是 不再开发的老版本`1.x`的分支 ❗️
+>
+> 请切到 [新版本的开发分支](https://github.com/oldratlee/useful-scripts/blob/dev-2.x/docs/shell.md)。
+
+----------------------
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 

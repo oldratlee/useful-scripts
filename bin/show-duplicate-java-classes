@@ -88,6 +88,32 @@ def str_len(x):
     return len(str(x))
 
 
+# issue 32790: Keep trailing zeros in precision for string format option g - Python tracker
+# https://bugs.python.org/issue32790
+def percent_str(num):
+    """
+    Input            => Output
+    1.4545 / 10 **-1 => 1455%
+    1.4545 / 10 ** 0 => 145%
+    1.4545 / 10 ** 1 => 14.5%
+    1.4545 / 10 ** 2 => 1.45%
+    1.4545 / 10 ** 3 => 0.145%
+    1.4545 / 10 ** 4 => 0.015%
+    1.4545 / 10 ** 5 => 0.001%
+    1.4545 / 10 ** 6 => 0.000%
+    1.4545 / 10 ** 7 => 0.000%
+    """
+    num = num * 100
+    if num >= 100:
+        return '%.0f%%' % num
+    elif num >= 10:
+        return '%.1f%%' % num
+    elif num >= 1:
+        return '%.2f%%' % num
+    else:
+        return '%.3f%%' % num
+
+
 def list_jar_file_under_lib_dirs(lib_dirs, recursive):
     jar_files = set()
 
@@ -251,8 +277,8 @@ def print_duplicate_classes_info(class_paths_to_duplicate_classes, class_path_to
     max_idx_str_len = str_len(len(class_paths_to_duplicate_classes))
     for idx, (class_paths, classes) in enumerate(class_paths_to_duplicate_classes, start=1):
         duplicate_ratio = len(classes) / min((len(class_path_to_classes[cp]) for cp in class_paths))
-        print('[%*s] found %s(%.3g%%) duplicate classes in %s class paths:' % (
-            max_idx_str_len, idx, len(classes), duplicate_ratio * 100, len(class_paths)))
+        print('[%*s] found %s(%s) duplicate classes in %s class paths:' % (
+            max_idx_str_len, idx, len(classes), percent_str(duplicate_ratio), len(class_paths)))
 
         max_class_path_idx_str_len = str_len(len(class_paths))
         max_classes_count_str_len = str_len(max(len(class_path_to_classes[cp]) for cp in class_paths))

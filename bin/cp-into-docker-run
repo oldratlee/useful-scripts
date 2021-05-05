@@ -163,6 +163,9 @@ while (($# > 0)); do
     esac
 done
 
+[ -n "$container_name" ] ||
+    usage 1 "No destination docker container name, specified by option -c/--container!"
+
 if [ -n "${docker_workdir}" ]; then
     isAbsolutePath "$docker_workdir" ||
         die "docker workdir(-w/--workdir) must be absolute path: $docker_workdir"

@@ -111,4 +111,4 @@ http://www.foo.com/project1/branches/feature1 copied!
 
 ### 参考资料
 
-[拷贝复制命令行输出放在系统剪贴板上](http://oldratlee.com/post/2012-12-23/command-output-to-clip)，给出了不同系统可用命令。
+[拷贝复制命令行输出放在系统剪贴板上](http://oldratlee.github.io/post/2012-12-23/command-output-to-clip)，给出了不同系统可用命令。

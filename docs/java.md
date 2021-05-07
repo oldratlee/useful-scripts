@@ -540,4 +540,4 @@ WEB-INF/lib/javax.servlet-api-3.0.1.jar
 
 ### 参考资料
 
-[在多个Jar(Zip)文件查找Log4J配置文件的Shell命令行](http://oldratlee.com/458/tech/shell/find-file-in-jar-zip-files.html)
+[在多个Jar(Zip)文件查找Log4J配置文件的Shell命令行](http://oldratlee.github.io/458/tech/shell/find-file-in-jar-zip-files.html)

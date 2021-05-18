@@ -199,7 +199,7 @@ def list_class_under_class_dir(class_dir, progress):
             for filename in file_names if filename.lower().endswith('.class')}
 
 
-def collect_class_path_to_classes(jar_files, class_dirs, recursive_jar):
+def collect_class_path_to_classes(class_dirs, jar_files, recursive_jar):
     class_path_to_classes = {}
     total_count = len(jar_files) + len(class_dirs)
     index = 0
@@ -335,9 +335,8 @@ def main():
     if not options.class_dirs and not lib_dirs:
         lib_dirs = ['.']
 
-    class_path_to_classes = collect_class_path_to_classes(
-        list_jar_file_under_lib_dirs(lib_dirs, recursive=options.recursive_lib),
-        options.class_dirs, recursive_jar=options.recursive_jar)
+    jar_files = list_jar_file_under_lib_dirs(lib_dirs, recursive=options.recursive_lib)
+    class_path_to_classes = collect_class_path_to_classes(options.class_dirs, jar_files, options.recursive_jar)
 
     print_responsive_message('find duplicate classes...')
     class_to_class_paths = invert_as_class_to_class_paths(class_path_to_classes)

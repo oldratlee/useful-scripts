@@ -16,6 +16,8 @@ addons:
 #   https://docs.travis-ci.com/user/installing-dependencies/#installing-packages-on-macos
 jobs:
   include:
+    - os: osx
+      osx_image: xcode11.3
     - os: linux
       dist: precise
     - os: linux
@@ -26,8 +28,6 @@ jobs:
       dist: bionic
     - os: linux
       dist: focal
-    - os: osx
-      osx_image: xcode11.3
 
 script:
   - test-cases/integration-test.sh

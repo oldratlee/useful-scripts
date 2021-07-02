@@ -21,7 +21,6 @@ readonly PROG_VERSION='2.5.0-dev'
 # NOTE: $'foo' is the escape sequence syntax of bash
 readonly ec=$'\033'      # escape char
 readonly eend=$'\033[0m' # escape end
-readonly nl=$'\n'        # new line
 
 colorEcho() {
     local color="$1"

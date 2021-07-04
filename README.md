@@ -3,7 +3,7 @@
 
 <img src="docs/script-logo.png" alt="repo-icon" width="20%" align="right" />
 
-[![Build Status](https://img.shields.io/travis/oldratlee/useful-scripts/dev-2.x?logo=travis-ci&logoColor=white)](https://travis-ci.org/oldratlee/useful-scripts)
+[![Build Status](https://img.shields.io/travis/com/oldratlee/useful-scripts/dev-2.x?logo=travis-ci&logoColor=white)](https://travis-ci.com/github/oldratlee/useful-scripts)
 [![GitHub release](https://img.shields.io/github/release/oldratlee/useful-scripts.svg)](https://github.com/oldratlee/useful-scripts/releases)
 [![License](https://img.shields.io/github/license/oldratlee/useful-scripts?color=4D7A97)](https://www.apache.org/licenses/LICENSE-2.0.html)
 [![Chat at gitter.im](https://img.shields.io/gitter/room/oldratlee/useful-scripts?color=46BC99&logo=gitter&logoColor=white)](https://gitter.im/oldratlee/useful-scripts?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)  

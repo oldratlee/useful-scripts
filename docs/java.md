@@ -124,7 +124,8 @@ Example:
 
 Output control:
   -p, --pid <java pid(s)>   find out the highest cpu consumed threads from
-                            the specified java process. support pid list(eg: 42,47).
+                            the specified java process.
+                            support pid list(eg: 42,47).
                             default from all java process.
   -c, --count <num>         set the thread count to show, default is 5.
                             set count 0 to show all threads.
@@ -141,24 +142,19 @@ Output control:
 
 jstack control:
   -s, --jstack-path <path>  specifies the path of jstack command.
-  -F, --force               set jstack to force a thread dump. use when jstack
-                            does not respond (process is hung).
-  -m, --mix-native-frames   set jstack to print both java and native frames
-                            (mixed mode).
+  -F, --force               set jstack to force a thread dump.
+                            use when jstack does not respond (process is hung).
+  -m, --mix-native-frames   set jstack to print both java and
+                            native frames (mixed mode).
   -l, --lock-info           set jstack with long listing.
                             prints additional information about locks.
 
 CPU usage calculation control:
-  -d, --top-delay           specifies the delay between top samples.
-                            default is 0.5 (second). get thread cpu percentage
-                            during this delay interval.
-                            more info see top -d option. eg: -d 1 (1 second).
-  -P, --use-ps              use ps command to find busy thread(cpu usage)
-                            instead of top command.
-                            default use top command, because cpu usage of
-                            ps command is expressed as the percentage of
-                            time spent running during the *entire lifetime*
-                            of a process, this is not ideal in general.
+  -i, --cpu-sample-interval specifies the delay between cpu samples to get
+                            thread cpu usage percentage during this interval.
+                            default is 0.5 (second).
+                            set interval 0 to get the percentage of time spent
+                            running during the *entire lifetime* of a process.
 
 Miscellaneous:
   -h, --help                display this help and exit.

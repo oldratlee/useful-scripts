@@ -30,7 +30,7 @@
 关于`Java`排错与诊断，力荐️`Arthas`： ❤️
 
 - `Arthas`用户文档： https://arthas.aliyun.com/doc/quick-start.html
-- github repo: [alibaba/arthas: Alibaba Java诊断利器](https://github.com/alibaba/arthas)
+- GitHub Repo： [alibaba/arthas: Alibaba Java诊断利器](https://github.com/alibaba/arthas)
 
 `Arthas`功能异常(😜)强劲，且在阿里巴巴线上支持使用多年。我自己也常用，一定要看看用用！
 
@@ -324,7 +324,7 @@ $ show-duplicate-java-classes -c target/war/WEB-INF/classes target/war/WEB-INF/l
 
 在`App`的`build.gradle`中添加拷贝库到目录`build/dependencies`下。
 
-```java
+```groovy
 task copyDependencies(type: Copy) {
     def dest = new File(buildDir, "dependencies")
 

@@ -402,18 +402,25 @@ __die_when_no_java_process_found() {
 # this is not ideal in general.
 findBusyJavaThreadsByPs() {
     # 1. sort by %cpu by ps option `--sort -pcpu`
+    #    unfortunately, ps from `procps-ng 3.3.12`, `--sort` does not work properly with other options,
+    #    use
+    #       ps <other options>
+    #    combined
+    #       sort -k3,3nr
+    #    instead of
+    #       ps <other options> --sort -pcpu
     # 2. use wide output(unlimited width) by ps option `-ww`
     #    avoid trunk user column to username_fo+ or $uid alike
 
     # shellcheck disable=SC2206
-    local -a ps_cmd_line=(ps $ps_process_select_options -wwLo 'pid,lwp,pcpu,user' --sort -pcpu --no-headers)
+    local -a ps_cmd_line=(ps $ps_process_select_options -wwLo 'pid,lwp,pcpu,user' --no-headers)
     # DO NOT combine var ps_out declaration and assignment, because its value is supplied by subshell.
     local ps_out
-    ps_out="$("${ps_cmd_line[@]}")"
+    ps_out="$("${ps_cmd_line[@]}" | sort -k3,3nr)"
     [ -n "$ps_out" ] || __die_when_no_java_process_found
 
     if [ -n "$store_dir" ]; then
-        echo "$ps_out" | logAndCat "${ps_cmd_line[@]}" >"${store_file_prefix}$((update_round_num + 1))_ps"
+        echo "$ps_out" | logAndCat "${ps_cmd_line[@]} | sort -k3,3nr" >"${store_file_prefix}$((update_round_num + 1))_ps"
     fi
 
     if ((count > 0)); then

@@ -46,17 +46,17 @@ swtrunk path/to/svn/work/directory1 /path/to/svn/work/directory2 # svn工作目�
 ```bash
 $ swtrunk
 # <svn sw output...>
-svn work dir . switch from http://www.foo.com/project1/branches/feature1 to http://www.foo.com/project1/trunk !
+svn work dir . switch from https://www.foo.com/project1/branches/feature1 to https://www.foo.com/project1/trunk !
 
 $ swtrunk /path/to/svn/work/dir
 # <svn sw output...>
-svn work dir /path/to/svn/work/dir switch from http://www.foo.com/project1/branches/feature1 to http://www.foo.com/project1/trunk !
+svn work dir /path/to/svn/work/dir switch from https://www.foo.com/project1/branches/feature1 to https://www.foo.com/project1/trunk !
 
 $ swtrunk /path/to/svn/work/dir1 /path/to/svn/work/dir2
 # <svn sw output...>
-svn work dir /path/to/svn/work/dir1 switch from http://www.foo.com/project1/branches/feature1 to http://www.foo.com/project1/trunk !
+svn work dir /path/to/svn/work/dir1 switch from https://www.foo.com/project1/branches/feature1 to https://www.foo.com/project1/trunk !
 # <svn sw output...>
-svn work dir /path/to/svn/work/dir2 switch from http://www.foo.com/project2/branches/feature1 to http://www.foo.com/project2/trunk !
+svn work dir /path/to/svn/work/dir2 switch from https://www.foo.com/project2/branches/feature1 to https://www.foo.com/project2/trunk !
 ```
 
 🍺 [svn-merge-stop-on-copy](../legacy-bin/svn-merge-stop-on-copy)
@@ -76,9 +76,9 @@ svn-merge-stop-on-copy <来源的远程分支> <目标远程分支>
 ### 示例
 
 ```bash
-svn-merge-stop-on-copy http://www.foo.com/project1/branches/feature1 # 缺省使用当前目录作为svn工作目录
-svn-merge-stop-on-copy http://www.foo.com/project1/branches/feature1 /path/to/svn/work/directory
-svn-merge-stop-on-copy http://www.foo.com/project1/branches/feature1 http://www.foo.com/project1/branches/feature2
+svn-merge-stop-on-copy https://www.foo.com/project1/branches/feature1 # 缺省使用当前目录作为svn工作目录
+svn-merge-stop-on-copy https://www.foo.com/project1/branches/feature1 /path/to/svn/work/directory
+svn-merge-stop-on-copy https://www.foo.com/project1/branches/feature1 https://www.foo.com/project1/branches/feature2
 ```
 
 ### 贡献者
@@ -102,7 +102,7 @@ cp-svn-url /path/to/svn/work/directory
 
 ```bash
 $ cp-svn-url
-http://www.foo.com/project1/branches/feature1 copied!
+https://www.foo.com/project1/branches/feature1 copied!
 ```
 
 ### 贡献者

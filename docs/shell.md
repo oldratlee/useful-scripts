@@ -170,8 +170,8 @@ Examples:
   cat f - g  Output f's contents, then standard input, then g's contents.
   cat        Copy standard input to standard output.
 
-GNU coreutils online help: <http://www.gnu.org/software/coreutils/>
-Full documentation at: <http://www.gnu.org/software/coreutils/cat>
+GNU coreutils online help: <https://www.gnu.org/software/coreutils/>
+Full documentation at: <https://www.gnu.org/software/coreutils/cat>
 or available locally via: info '(coreutils) cat invocation'
 ```
 
@@ -571,7 +571,7 @@ find file: bar.txt
 
 选项说明最后可以有选项类型说明：
 
-- `-`： 无参数的选项。即有选项则把值设置成`true`。这是 ***缺省*** 的类型。
+- `-`： 无参数的选项。既有选项则把值设置成`true`。这是 ***缺省*** 的类型。
 - `:`： 有参数的选项，值只有一个。
 - `+`： 有多个参数值的选项。值列表要以`;`表示结束。  
   注意，`;`是`Bash`的元字符（用于一行中多个命令分隔），所以加上转义写成`\;`（当然也可以按你的喜好写成`";"`或`';'`）。

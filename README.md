@@ -12,7 +12,7 @@
 [![GitHub issues](https://img.shields.io/github/issues/oldratlee/useful-scripts)](https://github.com/oldratlee/useful-scripts/issues)
 [![GitHub Contributors](https://img.shields.io/github/contributors/oldratlee/useful-scripts)](https://github.com/oldratlee/useful-scripts/graphs/contributors)
 
-👉 把平时有用的手动操作做成脚本，这样可以便捷的使用。 ✨
+👉 把平时有用的手动操作做成脚本，以便捷地使用。 ✨
 
 
 欢迎 👏💖

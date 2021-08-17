@@ -21,13 +21,20 @@ readonly eend=$'\033[0m' # escape end
 
 readonly -a ECHO_COLORS=(33 35 36 31 32 37 34)
 COUNT=0
-colorEcho() {
-    local color="${ECHO_COLORS[COUNT++ % ${#ECHO_COLORS[@]}]}"
-    echo "${ec}[1;${color}m$*$eend"
+rotateColorEcho() {
+    local message="$*"
+
+    # skip color for white space
+    if [[ "$message" =~ ^[[:space:]]*$ ]]; then
+        echo "$message"
+    else
+        local color="${ECHO_COLORS[COUNT++ % ${#ECHO_COLORS[@]}]}"
+        echo "${ec}[1;${color}m$message$eend"
+    fi
 }
 
 # Bash read line does not read leading spaces
 # https://stackoverflow.com/questions/29689172
 cat "$@" | while IFS= read -r line; do
-    colorEcho "$line"
+    rotateColorEcho "$line"
 done

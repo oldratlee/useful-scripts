@@ -93,7 +93,18 @@ done
 
 readonly -a ECHO_COLORS=(33 35 36 31 32 37 34)
 COUNT=0
+rotateColorEcho() {
+    local message="$*"
+
+    # skip color for white space
+    if [[ "$message" =~ ^[[:space:]]*$ ]]; then
+        echo "$message"
+    else
+        local color="${ECHO_COLORS[COUNT++ % ${#ECHO_COLORS[@]}]}"
+        colorEcho "$color" "$*"
+    fi
+}
 
 for a in ${args[@]:+"${args[@]}"}; do
-    colorEcho "${ECHO_COLORS[COUNT++ % ${#ECHO_COLORS[@]}]}" "$a"
+    rotateColorEcho "$a"
 done

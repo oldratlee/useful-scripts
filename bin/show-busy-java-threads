@@ -246,12 +246,12 @@ while true; do
         store_dir="$2"
         shift 2
         ;;
-    # support the option name -P,--use-ps for compatibility
+    # support the legacy option name -P,--use-ps for compatibility
     -P | --use-ps)
         cpu_sample_interval=0
         shift
         ;;
-    # support the option name -d,--top-delay for compatibility
+    # support the legacy option name -d,--top-delay for compatibility
     -i | --cpu-sample-interval | -d | --top-delay)
         cpu_sample_interval="$2"
         shift 2
@@ -420,7 +420,7 @@ findBusyJavaThreadsByPs() {
     [ -n "$ps_out" ] || __die_when_no_java_process_found
 
     if [ -n "$store_dir" ]; then
-        echo "$ps_out" | logAndCat "${ps_cmd_line[@]} | sort -k3,3nr" >"${store_file_prefix}$((update_round_num + 1))_ps"
+        echo "$ps_out" | logAndCat "${ps_cmd_line[*]} | sort -k3,3nr" >"${store_file_prefix}$((update_round_num + 1))_ps"
     fi
 
     if ((count > 0)); then

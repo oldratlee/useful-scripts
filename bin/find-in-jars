@@ -189,7 +189,7 @@ while (($# > 0)); do
         use_absolute_path=true
         shift
         ;;
-    # support the typo option name --seperator for compatibility
+    # support the legacy typo option name --seperator for compatibility
     -s | --separator | --seperator)
         separator="$2"
         shift 2

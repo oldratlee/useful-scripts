@@ -15,7 +15,7 @@
 👉 把平时有用的手动操作做成脚本，以便捷地使用。 ✨
 
 
-欢迎 👏💖
+欢迎 👏 💖
 
 - 建议和提问，[提交 Issue](https://github.com/oldratlee/useful-scripts/issues/new)
 - 贡献和改进，[Fork 后提通过 Pull Request 贡献代码](https://github.com/oldratlee/useful-scripts/fork)
@@ -25,6 +25,26 @@
 本仓库的脚本（如`Java`相关脚本）在阿里等公司（如随身云，见[`awesome-scripts`仓库](https://github.com/Suishenyun/awesome-scripts)说明）的线上生产环境部署使用。
 
 如果你的公司有部署使用，欢迎使用通过 [Issue：who's using | 用户反馈收集](https://github.com/oldratlee/useful-scripts/issues/96) 告知，方便互相交流反馈～ 💘
+
+----------------------
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [🔰 快速下载&使用](#-%E5%BF%AB%E9%80%9F%E4%B8%8B%E8%BD%BD%E4%BD%BF%E7%94%A8)
+- [📚 使用文档](#-%E4%BD%BF%E7%94%A8%E6%96%87%E6%A1%A3)
+    - [☕ `Java`相关脚本](#-java%E7%9B%B8%E5%85%B3%E8%84%9A%E6%9C%AC)
+    - [🐚 `Shell`相关脚本](#-shell%E7%9B%B8%E5%85%B3%E8%84%9A%E6%9C%AC)
+    - [⌚ `VCS`相关脚本](#-vcs%E7%9B%B8%E5%85%B3%E8%84%9A%E6%9C%AC)
+- [🎓 Developer Guide](#-developer-guide)
+    - [🎯 面向开发者的目标](#-%E9%9D%A2%E5%90%91%E5%BC%80%E5%8F%91%E8%80%85%E7%9A%84%E7%9B%AE%E6%A0%87)
+        - [关于`Shell`脚本](#%E5%85%B3%E4%BA%8Eshell%E8%84%9A%E6%9C%AC)
+    - [🚦 开发约定](#-%E5%BC%80%E5%8F%91%E7%BA%A6%E5%AE%9A)
+    - [📚 `Shell`学习与开发的资料](#-shell%E5%AD%A6%E4%B9%A0%E4%B8%8E%E5%BC%80%E5%8F%91%E7%9A%84%E8%B5%84%E6%96%99)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+----------------------
 
 🔰 快速下载&使用
 ----------------------
@@ -119,7 +139,7 @@ PS：
 
 ### 📚 `Shell`学习与开发的资料
 
-> 更多资料放在[子文档](docs/developer-guide.md)。
+> 更多资料参见 [子文档](docs/developer-guide.md)。
 
 - 👷 **`Bash/Shell`最佳实践与安全编程**
     - [**_`Google Shell Style Guide`_**](https://google.github.io/styleguide/shell.xml) | [中文版](https://zh-google-styleguide.readthedocs.io/en/latest/google-shell-styleguide/background/)

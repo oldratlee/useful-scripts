@@ -1,0 +1,6 @@
+logo is created by https://www.logoly.pro
+
+font: Francois One
+
+logo.fond-size: 65
+logo-social.fond-size: 160

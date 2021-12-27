@@ -1,16 +1,18 @@
-🐌 useful-scripts
-====================================
+# <div align="center"><a href="#dummy"><img src="docs/logo.png" alt="🐌 useful-scripts"></a></div>
 
 <img src="docs/script-logo.png" alt="repo-icon" width="20%" align="right" />
 
-[![Build Status](https://img.shields.io/travis/com/oldratlee/useful-scripts/dev-2.x?logo=travis-ci&logoColor=white)](https://travis-ci.com/github/oldratlee/useful-scripts)
-[![GitHub release](https://img.shields.io/github/release/oldratlee/useful-scripts.svg)](https://github.com/oldratlee/useful-scripts/releases)
-[![License](https://img.shields.io/github/license/oldratlee/useful-scripts?color=4D7A97)](https://www.apache.org/licenses/LICENSE-2.0.html)
-[![Chat at gitter.im](https://img.shields.io/gitter/room/oldratlee/useful-scripts?color=46BC99&logo=gitter&logoColor=white)](https://gitter.im/oldratlee/useful-scripts?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)  
-[![GitHub Stars](https://img.shields.io/github/stars/oldratlee/useful-scripts)](https://github.com/oldratlee/useful-scripts/stargazers)
-[![GitHub Forks](https://img.shields.io/github/forks/oldratlee/useful-scripts)](https://github.com/oldratlee/useful-scripts/fork)
-[![GitHub issues](https://img.shields.io/github/issues/oldratlee/useful-scripts)](https://github.com/oldratlee/useful-scripts/issues)
-[![GitHub Contributors](https://img.shields.io/github/contributors/oldratlee/useful-scripts)](https://github.com/oldratlee/useful-scripts/graphs/contributors)
+<p align="center">
+<a href="https://travis-ci.com/github/oldratlee/useful-scripts"><img src="https://img.shields.io/travis/com/oldratlee/useful-scripts/dev-2.x?logo=travis-ci&logoColor=white" alt="Build Status"></a>
+<a href="https://github.com/oldratlee/useful-scripts/releases"><img src="https://img.shields.io/github/release/oldratlee/useful-scripts.svg" alt="GitHub release"></a>
+<a href="https://www.apache.org/licenses/LICENSE-2.0.html"><img src="https://img.shields.io/github/license/oldratlee/useful-scripts?color=4D7A97&logo=apache" alt="License"></a>
+<a href="https://gitter.im/oldratlee/useful-scripts?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge&utm_content=badge"><img src="https://img.shields.io/gitter/room/oldratlee/useful-scripts?color=46BC99&logo=gitter&logoColor=white" alt="Chat at gitter.im"></a>
+<a href="https://github.com/oldratlee/useful-scripts/stargazers"><img src="https://img.shields.io/github/stars/oldratlee/useful-scripts" alt="GitHub Stars"></a>
+<a href="https://github.com/oldratlee/useful-scripts/fork"><img src="https://img.shields.io/github/forks/oldratlee/useful-scripts" alt="GitHub Forks"></a>
+<a href="https://github.com/oldratlee/useful-scripts/issues"><img src="https://img.shields.io/github/issues/oldratlee/useful-scripts" alt="GitHub issues"></a>
+<a href="https://github.com/oldratlee/useful-scripts/graphs/contributors"><img src="https://img.shields.io/github/contributors/oldratlee/useful-scripts" alt="GitHub Contributors"></a>
+<a href="https://github.com/oldratlee/useful-scripts"><img src="https://img.shields.io/github/repo-size/oldratlee/useful-scripts" alt="GitHub repo size"></a>
+</p>
 
 👉 把平时有用的手动操作做成脚本，以便捷地使用。 ✨
 

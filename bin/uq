@@ -13,16 +13,22 @@
 #
 # NOTE about Bash Traps and Pitfalls:
 #
-# 1. DO NOT combine var declaration and assignment which value supplied by subshell!
+# 1. DO NOT combine var declaration and assignment which value supplied by subshell in ONE line!
 #    for example: readonly var1=$(echo value1)
-#                 local var1=$(echo value1)
+#                 local var2=$(echo value1)
 #
-#    declaration make exit code of assignment to be always 0,
+#    Because the combination make exit code of assignment to be always 0,
 #      aka. the exit code of command in subshell is discarded.
 #      tested on bash 3.2.57/4.2.46
+#
+#    solution is separation of var declaration and assignment:
+#           var1=$(echo value1)
+#           readonly var1
+#           local var2
+#           var2=$(echo value1)
 set -eEuo pipefail
 
-# NOTE: DO NOT declare var PROG as readonly, because its value is supplied by subshell.
+# NOTE: DO NOT declare var PROG as readonly in ONE line!
 PROG="$(basename "$0")"
 readonly PROG
 readonly PROG_VERSION='2.5.0-dev'
@@ -205,7 +211,7 @@ done
 [[ $uq_opt_all_repeated == 1 && $uq_opt_repeated_method == none && ($uq_opt_count == 0 && $uq_opt_only_repeated == 0) ]] &&
     yellowEcho "[$PROG] WARN: -D/--all-repeated=none option without -c/-d option, just cat input simply!" >&2
 
-# NOTE: DO NOT declare var uq_max_input_size as readonly, because its value is supplied by subshell.
+# NOTE: DO NOT declare var uq_max_input_size as readonly in ONE line!
 uq_max_input_size="$(convertHumanReadableSizeToSize "$uq_max_input_human_readable_size")" ||
     usage 2 "[$PROG] ERROR: illegal value of option -XM/--max-input: $uq_max_input_human_readable_size"
 

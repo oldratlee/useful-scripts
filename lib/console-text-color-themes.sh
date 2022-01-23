@@ -7,20 +7,26 @@
 #
 # NOTE about Bash Traps and Pitfalls:
 #
-# 1. DO NOT combine var declaration and assignment which value supplied by subshell!
+# 1. DO NOT combine var declaration and assignment which value supplied by subshell in ONE line!
 #    for example: readonly var1=$(echo value1)
-#                 local var1=$(echo value1)
+#                 local var2=$(echo value1)
 #
-#    declaration make exit code of assignment to be always 0,
+#    Because the combination make exit code of assignment to be always 0,
 #      aka. the exit code of command in subshell is discarded.
 #      tested on bash 3.2.57/4.2.46
+#
+#    solution is separation of var declaration and assignment:
+#           var1=$(echo value1)
+#           readonly var1
+#           local var2
+#           var2=$(echo value1)
 
 _ctct_READLINK_CMD=readlink
 if command -v greadlink > /dev/null; then
     _ctct_READLINK_CMD=greadlink
 fi
 
-# NOTE: DO NOT declare var _ctct_PROG as readonly, because its value is supplied by subshell.
+# NOTE: DO NOT declare var _ctct_PROG as readonly in ONE line!
 _ctct_PROG="$(basename "$($_ctct_READLINK_CMD -f "${BASH_SOURCE[0]}")")"
 [ "$_ctct_PROG" == 'console-text-color-themes.sh' ] && readonly _ctct_is_direct_run=true
 

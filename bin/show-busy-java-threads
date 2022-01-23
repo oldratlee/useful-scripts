@@ -11,15 +11,21 @@
 #
 # NOTE about Bash Traps and Pitfalls:
 #
-# 1. DO NOT combine var declaration and assignment which value supplied by subshell!
+# 1. DO NOT combine var declaration and assignment which value supplied by subshell in ONE line!
 #    for example: readonly var1=$(echo value1)
-#                 local var1=$(echo value1)
+#                 local var2=$(echo value1)
 #
-#    declaration make exit code of assignment to be always 0,
+#    Because the combination make exit code of assignment to be always 0,
 #      aka. the exit code of command in subshell is discarded.
 #      tested on bash 3.2.57/4.2.46
+#
+#    solution is separation of var declaration and assignment:
+#           var1=$(echo value1)
+#           readonly var1
+#           local var2
+#           var2=$(echo value1)
 
-# NOTE: DO NOT declare var PROG as readonly, because its value is supplied by subshell.
+# NOTE: DO NOT declare var PROG as readonly in ONE line!
 PROG="$(basename "$0")"
 readonly PROG
 readonly PROG_VERSION='2.5.0-dev'
@@ -34,7 +40,7 @@ readonly -a COMMAND_LINE=("${BASH_SOURCE[0]}" "$@")
 #   See https://www.lifewire.com/current-linux-user-whoami-command-3867579
 # Because if run command by `sudo -u`, env var $USER is not rewritten/correct, just inherited from outside!
 #
-# NOTE: DO NOT declare var USER as readonly, because its value is supplied by subshell.
+# NOTE: DO NOT declare var USER as readonly in ONE line!
 USER="$(whoami)"
 readonly USER
 
@@ -210,9 +216,7 @@ uname | grep '^Linux' -q || die "$PROG only support Linux, not support $(uname) 
 # parse options
 ################################################################################
 
-# NOTE: ARGS can not be declared as readonly!!
-# readonly declaration make exit code of assignment to be always 0, aka. the exit code of `getopt` in subshell is discarded.
-#   tested on bash 4.2.46
+# DO NOT declare var ARGS as readonly in ONE line!
 ARGS=$(
     getopt -n "$PROG" -a -o c:p:a:s:S:i:Pd:FmlhV \
         -l count:,pid:,append-file:,jstack-path:,store-dir:,cpu-sample-interval:,use-ps,top-delay:,force,mix-native-frames,lock-info,help,version \
@@ -363,7 +367,7 @@ readonly jstack_path
 # biz logic
 ################################################################################
 
-# NOTE: DO NOT declare var run_timestamp as readonly, because its value is supplied by subshell.
+# NOTE: DO NOT declare var run_timestamp as readonly in ONE line!
 run_timestamp="$(date "+%Y-%m-%d_%H:%M:%S.%N")"
 readonly run_timestamp
 readonly uuid="${PROG}_${run_timestamp}_${$}_${RANDOM}"
@@ -424,7 +428,7 @@ findBusyJavaThreadsByPs() {
 
     # shellcheck disable=SC2206
     local -a ps_cmd_line=(ps $ps_process_select_options -wwLo 'pid,lwp,pcpu,user' --no-headers)
-    # DO NOT combine var ps_out declaration and assignment, because its value is supplied by subshell.
+    # DO NOT combine var ps_out declaration and assignment in ONE line!
     local ps_out
     ps_out="$("${ps_cmd_line[@]}" | sort -k3,3nr)"
     [ -n "$ps_out" ] || __die_when_no_java_process_found
@@ -442,7 +446,7 @@ findBusyJavaThreadsByPs() {
 
 # top with output field: thread id, %cpu
 __top_threadId_cpu() {
-    # DO NOT combine var java_pid_list declaration and assignment, because its value is supplied by subshell.
+    # DO NOT combine var java_pid_list declaration and assignment in ONE line!
     local java_pid_list
     # shellcheck disable=SC2086
     java_pid_list="$(ps $ps_process_select_options -o pid --no-headers)"
@@ -465,14 +469,14 @@ __top_threadId_cpu() {
     # 4. top v3.3, there is 1 black line between 2 update;
     #    but top v3.2, there is 2 blank lines between 2 update!
     local -a top_cmd_line=(top -H -b -d "$cpu_sample_interval" -n 2 -p "$java_pid_list")
-    # DO NOT combine var ps_out declaration and assignment, because its value is supplied by subshell.
+    # DO NOT combine var ps_out declaration and assignment in ONE line!
     local top_out
     top_out=$(HOME="$tmp_store_dir" "${top_cmd_line[@]}")
     if [ -n "$store_dir" ]; then
         echo "$top_out" | logAndCat "${top_cmd_line[@]}" >"${store_file_prefix}$((update_round_num + 1))_top"
     fi
 
-    # DO NOT combine var result_threads_top_info declaration and assignment, because its value is supplied by subshell.
+    # DO NOT combine var result_threads_top_info declaration and assignment in ONE line!
     local result_threads_top_info
     result_threads_top_info=$(
         echo "$top_out" | awk '{
@@ -493,7 +497,7 @@ __complete_pid_user_by_ps() {
     # ps output field: pid, thread id(lwp), user
     # shellcheck disable=SC2206
     local -a ps_cmd_line=(ps $ps_process_select_options -wwLo 'pid,lwp,user' --no-headers)
-    # DO NOT combine var ps_out declaration and assignment, because its value is supplied by subshell.
+    # DO NOT combine var ps_out declaration and assignment in ONE line!
     local ps_out
     ps_out="$("${ps_cmd_line[@]}")"
     if [ -n "$store_dir" ]; then

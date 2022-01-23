@@ -21,6 +21,7 @@
 
 # NOTE: DO NOT declare var PROG as readonly, because its value is supplied by subshell.
 PROG="$(basename "$0")"
+readonly PROG
 readonly PROG_VERSION='2.5.0-dev'
 # choosing between $0 and BASH_SOURCE
 # https://stackoverflow.com/a/35006505/922688
@@ -35,6 +36,7 @@ readonly -a COMMAND_LINE=("${BASH_SOURCE[0]}" "$@")
 #
 # NOTE: DO NOT declare var USER as readonly, because its value is supplied by subshell.
 USER="$(whoami)"
+readonly USER
 
 ################################################################################
 # util functions
@@ -219,6 +221,7 @@ ARGS=$(
     echo
     usage 1
 }
+readonly ARGS
 eval set -- "${ARGS}"
 
 count=5
@@ -265,7 +268,7 @@ while true; do
         shift
         ;;
     -l | --lock-info)
-        more_lock_info=-l
+        lock_info=-l
         shift
         ;;
     -h | --help)
@@ -281,16 +284,19 @@ while true; do
     esac
 done
 
-update_delay=${1:-0}
+readonly count cpu_sample_interval force mix_native_frames lock_info
+readonly update_delay=${1:-0}
 isNonNegativeFloatNumber "$update_delay" || die "update delay($update_delay) is not a non-negative float number!"
 
 [ -z "$1" ] && update_count=1 || update_count=${2:-0}
 isNaturalNumber "$update_count" || die "update count($update_count) is not a natural number!"
+readonly update_count
 
 if [ -n "$pid_list" ]; then
     pid_list="${pid_list//[[:space:]]/}" # delete white space
     isNaturalNumberList "$pid_list" || die "pid(s)($pid_list) is illegal! example: 42 or 42,99,67"
 fi
+readonly pid_list
 
 # check the directory of append-file(-a) mode, create if not exist.
 if [ -n "$append_file" ]; then
@@ -307,6 +313,7 @@ if [ -n "$append_file" ]; then
         fi
     fi
 fi
+readonly append_file
 
 # check store directory(-S) mode, create directory if not exist.
 if [ -n "$store_dir" ]; then
@@ -317,6 +324,7 @@ if [ -n "$store_dir" ]; then
         mkdir -p "$store_dir" || die "fail to create directory $store_dir(specified by option -S, for storing output files)!"
     fi
 fi
+readonly store_dir
 
 isNonNegativeFloatNumber "$cpu_sample_interval" || die "cpu sample interval($cpu_sample_interval) is not a non-negative float number!"
 
@@ -349,6 +357,7 @@ elif command -v jstack &>/dev/null; then
 else
     die "jstack NOT found by JAVA_HOME(${JAVA_HOME:-not set}) setting and PATH!${nl}Use -s option set jstack path manually."
 fi
+readonly jstack_path
 
 ################################################################################
 # biz logic
@@ -356,6 +365,7 @@ fi
 
 # NOTE: DO NOT declare var run_timestamp as readonly, because its value is supplied by subshell.
 run_timestamp="$(date "+%Y-%m-%d_%H:%M:%S.%N")"
+readonly run_timestamp
 readonly uuid="${PROG}_${run_timestamp}_${$}_${RANDOM}"
 
 readonly tmp_store_dir="/tmp/${uuid}"
@@ -520,7 +530,7 @@ printStackOfThreads() {
         local jstackFile="${store_file_prefix}$((update_round_num + 1))_jstack_${pid}"
         [ -f "${jstackFile}" ] || {
             # shellcheck disable=SC2206
-            local -a jstack_cmd_line=("$jstack_path" ${force} $mix_native_frames $more_lock_info ${pid})
+            local -a jstack_cmd_line=("$jstack_path" ${force} $mix_native_frames $lock_info ${pid})
             if [ "${user}" == "${USER}" ]; then
                 # run without sudo, when java process user is current user
                 logAndRun "${jstack_cmd_line[@]}" >"${jstackFile}"

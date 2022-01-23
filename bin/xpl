@@ -21,6 +21,7 @@ set -eEuo pipefail
 
 # NOTE: DO NOT declare var PROG as readonly, because its value is supplied by subshell.
 PROG="$(basename "$0")"
+readonly PROG
 readonly PROG_VERSION='2.5.0-dev'
 
 readonly nl=$'\n' # new line
@@ -61,6 +62,7 @@ progVersion() {
 ################################################################################
 
 declare -a args=()
+selected=false
 while [ $# -gt 0 ]; do
     case "$1" in
     -s | --selected)
@@ -88,28 +90,30 @@ while [ $# -gt 0 ]; do
     esac
 done
 
+readonly args selected
+
 ################################################################################
 # biz options
 ################################################################################
 
 # open one file
 openOneFile() {
-    local file="$1"
+    local file="$1" slt="${selected}"
 
     case "$(uname)" in
     Darwin*)
-        [ -f "${file}" ] && selected=true
-        open ${selected:+-R} "$file"
+        [ -f "${file}" ] && slt=true
+        open ${slt:+-R} "$file"
         ;;
     CYGWIN*)
-        [ -f "${file}" ] && selected=true
-        explorer ${selected:+/select,} "$(cygpath -w "${file}")"
+        [ -f "${file}" ] && slt=true
+        explorer ${slt:+/select,} "$(cygpath -w "${file}")"
         ;;
     *)
         if [ -d "${file}" ]; then
             nautilus "$(dirname "${file}")"
         else
-            if [ -z "${selected}" ]; then
+            if [ -z "${slt}" ]; then
                 nautilus "$(dirname "${file}")"
             else
                 nautilus "${file}"

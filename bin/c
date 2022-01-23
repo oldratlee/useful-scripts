@@ -22,6 +22,7 @@ set -eEuo pipefail
 
 # NOTE: DO NOT declare var PROG as readonly, because its value is supplied by subshell.
 PROG="$(basename "$0")"
+readonly PROG
 readonly PROG_VERSION='2.5.0-dev'
 
 ################################################################################
@@ -108,6 +109,8 @@ while [ $# -gt 0 ]; do
         ;;
     esac
 done
+
+readonly eol quiet args
 
 ################################################################################
 # biz logic

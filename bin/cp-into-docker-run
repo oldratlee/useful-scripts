@@ -10,6 +10,7 @@
 set -eEuo pipefail
 
 PROG="$(basename "$0")"
+readonly PROG
 readonly PROG_VERSION='2.5.0-dev'
 
 ################################################################################
@@ -163,6 +164,8 @@ while (($# > 0)); do
     esac
 done
 
+readonly container_name docker_user docker_workdir docker_tmpdir docker_command_cp_path verbose args
+
 [ -n "$container_name" ] ||
     usage 1 "No destination docker container name, specified by option -c/--container!"
 
@@ -198,6 +201,11 @@ if [ ! -f "$specified_run_command" ]; then
 fi
 run_command="$(portableReadLink "$run_command")"
 run_command_base_name="$(basename "$run_command")"
+readonly run_command run_command_base_name
+
+run_timestamp="$(date "+%Y%m%d_%H%M%S")"
+readonly run_timestamp
+readonly uuid="${PROG}_${run_timestamp}_${$}_${RANDOM}"
 
 if [ -n "${docker_command_cp_path}" ]; then
     if isAbsolutePath "$docker_command_cp_path"; then
@@ -206,9 +214,8 @@ if [ -n "${docker_command_cp_path}" ]; then
         readonly run_command_in_docker="${docker_workdir:+"$docker_workdir/"}$docker_command_cp_path"
     fi
     run_command_dir_in_docker="$(dirname "$run_command_in_docker")"
+    readonly run_command_dir_in_docker
 else
-    run_timestamp="$(date "+%Y%m%d_%H%M%S")"
-    readonly uuid="${PROG}_${run_timestamp}_${$}_${RANDOM}"
     readonly work_tmp_dir_in_docker="$docker_tmpdir/$uuid"
 
     readonly run_command_in_docker="$work_tmp_dir_in_docker/$run_command_base_name"

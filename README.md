@@ -3,10 +3,9 @@
 <img src="docs/script-logo.png" alt="repo-icon" width="20%" align="right" />
 
 <p align="center">
-<a href="https://travis-ci.com/github/oldratlee/useful-scripts"><img src="https://img.shields.io/travis/com/oldratlee/useful-scripts/dev-2.x?logo=travis-ci&logoColor=white" alt="Build Status"></a>
+<a href="https://github.com/oldratlee/useful-scripts/actions/workflows/ci.yaml"><img src="https://img.shields.io/github/workflow/status/oldratlee/useful-scripts/CI/dev-2.x?logo=github&logoColor=white" alt="Github Workflow Build Status"></a>
 <a href="https://github.com/oldratlee/useful-scripts/releases"><img src="https://img.shields.io/github/release/oldratlee/useful-scripts.svg" alt="GitHub release"></a>
 <a href="https://www.apache.org/licenses/LICENSE-2.0.html"><img src="https://img.shields.io/github/license/oldratlee/useful-scripts?color=4D7A97&logo=apache" alt="License"></a>
-<a href="https://gitter.im/oldratlee/useful-scripts?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge&utm_content=badge"><img src="https://img.shields.io/gitter/room/oldratlee/useful-scripts?color=46BC99&logo=gitter&logoColor=white" alt="Chat at gitter.im"></a>
 <a href="https://github.com/oldratlee/useful-scripts/stargazers"><img src="https://img.shields.io/github/stars/oldratlee/useful-scripts" alt="GitHub Stars"></a>
 <a href="https://github.com/oldratlee/useful-scripts/fork"><img src="https://img.shields.io/github/forks/oldratlee/useful-scripts" alt="GitHub Forks"></a>
 <a href="https://github.com/oldratlee/useful-scripts/issues"><img src="https://img.shields.io/github/issues/oldratlee/useful-scripts" alt="GitHub issues"></a>

@@ -3,16 +3,24 @@
 
 name: CI
 on: [ push, pull_request, workflow_dispatch ]
+
 jobs:
+
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 5
     strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-11, macos-12 ]
       fail-fast: false
-      max-parallel: 32
+      max-parallel: 64
+    name: Test on ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v3
         with:
           submodules: recursive
+      - run: brew install coreutils gnu-sed
+        # https://docs.github.com/en/actions/learn-github-actions/expressions
+        if: ${{ startsWith(matrix.os, 'macos') }}
       - run: test-cases/integration-test.sh

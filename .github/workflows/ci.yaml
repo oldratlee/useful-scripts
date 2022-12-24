@@ -4,15 +4,30 @@
 name: CI
 on: [ push, pull_request, workflow_dispatch ]
 jobs:
-  test:
+
+  test-on-ubuntu:
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    name: Test on ubuntu
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - run: test-cases/integration-test.sh
+
+  test-on-macos:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 5
     strategy:
+      matrix:
+        os: [ macos-11, macos-12 ]
       fail-fast: false
-      max-parallel: 32
+      max-parallel: 64
+    name: Test on ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v3
         with:
           submodules: recursive
+      - run: brew install coreutils gnu-sed
       - run: test-cases/integration-test.sh

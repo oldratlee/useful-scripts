@@ -4,9 +4,9 @@
 #
 # @Usage
 #   source this script to your script file, then use func parseOpts.
-#   parseOpts func useage sample:
+#   parseOpts func usage sample:
 #   $ parseOpts "a,a-long|b,b-long:|c,c-long+" -a -b bv -c c.sh -p pv -q qv arg1 \; aa bb cc
-#       then below globle var is set:
+#       then below global var is set:
 #           _OPT_VALUE_a = true
 #           _OPT_VALUE_a_long = true
 #           _OPT_VALUE_b = bv
@@ -19,23 +19,28 @@
 # @author Jerry Lee (oldratlee at gmail dot com)
 
 #####################################################################
-# Util Funtions
+# Util Functions
 #####################################################################
 
 # NOTE: $'foo' is the escape sequence syntax of bash
 readonly _opts_ec=$'\033'      # escape char
 readonly _opts_eend=$'\033[0m' # escape end
 
-_opts_SED_CMD=sed
-if command -v gsed &>/dev/null; then
-  _opts_SED_CMD=gsed
+# shellcheck disable=SC2209
+
+if [ -z "${_opts_SED_CMD:-}" ]; then
+  _opts_SED_CMD=sed
+  if command -v gsed &>/dev/null; then
+    _opts_SED_CMD=gsed
+  fi
+  readonly _opts_SED_CMD
 fi
 
 _opts_colorEcho() {
   local color=$1
   shift
   # if stdout is console, turn on color output.
-  [ -t 1 ] && echo "$_opts_ec[1;${color}m$@$_opts_eend" || echo "$@"
+  [ -t 1 ] && echo "${_opts_ec}[1;${color}m$*${_opts_eend}" || echo "$*"
 }
 
 _opts_redEcho() {
@@ -44,7 +49,7 @@ _opts_redEcho() {
 
 _opts_convertToVarName() {
   [ $# -ne 1 ] && {
-    _opts_redEcho "NOT 1 arguemnts when call _opts_convertToVarName: $@"
+    _opts_redEcho "NOT 1 arguments when call _opts_convertToVarName: $*"
     return 1
   }
   echo "$1" | $_opts_SED_CMD 's/-/_/g'
@@ -53,7 +58,7 @@ _opts_convertToVarName() {
 #####################################################################
 # Parse Functions
 #
-# Use Globle Variable:
+# Use Globe Variable:
 # * _OPT_INFO_LIST_INDEX : Option info, data structure.
 #                          _OPT_INFO_LIST_INDEX ->* _a_a_long -> option value.
 # * _OPT_VALUE_* : value of option. is Array type for + mode option
@@ -62,20 +67,21 @@ _opts_convertToVarName() {
 
 _opts_findOptMode() {
   [ $# -ne 1 ] && {
-    _opts_redEcho "NOT 1 arguemnts when call _opts_findOptMode: $@"
+    _opts_redEcho "NOT 1 arguments when call _opts_findOptMode: $*"
     return 1
   }
 
   local opt="$1" # like a, a-long
   local idxName
   for idxName in "${_OPT_INFO_LIST_INDEX[@]}"; do
-    local idxNameArrayPlaceHolder="$idxName[@]"
+    local idxNameArrayPlaceHolder="${idxName}[@]"
     local -a idxNameArray=("${!idxNameArrayPlaceHolder}")
 
     local mode="${idxNameArray[0]}"
 
     local optName
-    for optName in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do # index from 1, skip mode
+    # index from 1, skip mode
+    for optName in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do
       [ "$opt" == "${optName}" ] && {
         echo "$mode"
         return
@@ -88,7 +94,7 @@ _opts_findOptMode() {
 
 _opts_setOptBool() {
   [ $# -ne 2 ] && {
-    _opts_redEcho "NOT 2 arguemnts when call _opts_setOptBool: $@"
+    _opts_redEcho "NOT 2 arguments when call _opts_setOptBool: $*"
     return 1
   }
 
@@ -97,7 +103,7 @@ _opts_setOptBool() {
 
 _opts_setOptValue() {
   [ $# -ne 2 ] && {
-    _opts_redEcho "NOT 2 arguemnts when call _opts_setOptValue: $@"
+    _opts_redEcho "NOT 2 arguments when call _opts_setOptValue: $*"
     return 1
   }
 
@@ -106,17 +112,21 @@ _opts_setOptValue() {
 
   local idxName
   for idxName in "${_OPT_INFO_LIST_INDEX[@]}"; do
-    local idxNameArrayPlaceHolder="$idxName[@]"
+    local idxNameArrayPlaceHolder="${idxName}[@]"
     local -a idxNameArray=("${!idxNameArrayPlaceHolder}")
 
     local optName
-    for optName in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do # index from 1, skip mode
+    # index from 1, skip mode
+    for optName in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do
       [ "$opt" == "$optName" ] && {
         local optName2
         for optName2 in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do
-          local optValueVarName="_OPT_VALUE_$(_opts_convertToVarName "${optName2}")"
+          local optValueVarName
+          optValueVarName="_OPT_VALUE_$(_opts_convertToVarName "${optName2}")"
+          # shellcheck disable=SC2016
           local from='"$value"'
-          eval "$optValueVarName=$from" # set global var!
+          # set global var!
+          eval "$optValueVarName=$from"
         done
         return
       }
@@ -133,16 +143,18 @@ _opts_setOptArray() {
 
   local idxName
   for idxName in "${_OPT_INFO_LIST_INDEX[@]}"; do
-    local idxNameArrayPlaceHolder="$idxName[@]"
+    local idxNameArrayPlaceHolder="${idxName}[@]"
     local -a idxNameArray=("${!idxNameArrayPlaceHolder}")
 
     local optName
-    for optName in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do # index from 1, skip mode
+    # index from 1, skip mode
+    for optName in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do
       [ "$opt" == "$optName" ] && {
         # set _OPT_VALUE
         local optName2
         for optName2 in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do
-          local optValueVarName="_OPT_VALUE_$(_opts_convertToVarName "${optName2}")"
+          local optValueVarName
+          optValueVarName="_OPT_VALUE_$(_opts_convertToVarName "${optName2}")"
           local from='"$@"'
           eval "$optValueVarName=($from)" # set global var!
         done
@@ -158,14 +170,16 @@ _opts_setOptArray() {
 _opts_cleanOptValueInfoList() {
   local idxName
   for idxName in "${_OPT_INFO_LIST_INDEX[@]}"; do
-    local idxNameArrayPlaceHolder="$idxName[@]"
+    local idxNameArrayPlaceHolder="${idxName}[@]"
     local -a idxNameArray=("${!idxNameArrayPlaceHolder}")
 
     eval "unset $idxName"
 
     local optName
-    for optName in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do # index from 1, skip mode
-      local optValueVarName="_OPT_VALUE_$(_opts_convertToVarName "$optName")"
+    # index from 1, skip mode
+    for optName in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do
+      local optValueVarName
+      optValueVarName="_OPT_VALUE_$(_opts_convertToVarName "$optName")"
       eval "unset $optValueVarName"
     done
   done
@@ -180,56 +194,61 @@ parseOpts() {
 
   _OPT_INFO_LIST_INDEX=() # set global var!
 
-  local optDescLines=$(echo "$optsDescription" |
-    # cut head and tail space
-    $_opts_SED_CMD -r 's/^\s+//;s/\s+$//' |
-    awk -F '[\t ]*\\\\|[\t ]*' '{for(i=1; i<=NF; i++) print $i}')
+  local optDescLines
+  optDescLines=$(
+    echo "$optsDescription" |
+      $_opts_SED_CMD -r 's/^\s+//;s/\s+$//' | # cut head and tail space
+      awk -F '[\t ]*\\|[\t ]*' '{for(i=1; i<=NF; i++) print $i}'
+  )
 
-  local optDesc
-  while read optDesc; do # optDesc LIKE b,b-long:
+  local optDesc # optDesc LIKE b,b-long:
+  while read -r optDesc; do
     [ -z "$optDesc" ] && continue
 
-    local mode="${optDesc:(-1)}" # LIKE : or +
+    # LIKE : or +
+    local mode="${optDesc:(-1)}"
     case "$mode" in
     + | : | -)
-      optDesc="${optDesc:0:(${#optDesc} - 1)}" # LIKE b,b-long
+      # LIKE b,b-long
+      optDesc="${optDesc:0:(${#optDesc} - 1)}"
       ;;
     *)
       mode="-"
       ;;
     esac
 
-    local optLines=$(echo "$optDesc" | awk -F '[\t ]*,[\t ]*' '{for(i=1; i<=NF; i++) print $i}') # LIKE "a\na-long"
+    local optLines # LIKE "a\na-long"
+    optLines="$(echo "$optDesc" | awk -F '[\t ]*,[\t ]*' '{for(i=1; i<=NF; i++) print $i}')"
 
-    [ $(echo "$optLines" | wc -l) -gt 2 ] && {
+    [ "$(echo "$optLines" | wc -l)" -gt 2 ] && {
       _opts_redEcho "Illegal option description($optDesc), more than 2 opt name!" 1>&2
       _opts_cleanOptValueInfoList
       return 220
     }
 
     local -a optTuple=()
-    local opt
-    while read opt; do # opt LIKE a , a-long
+    local opt # opt LIKE a , a-long
+    while read -r opt; do
       [ -z "$opt" ] && continue
 
-      [ ${#opt} -eq 1 ] && {
+      if [ ${#opt} -eq 1 ]; then
         echo "$opt" | grep -E '^[a-zA-Z0-9]$' -q || {
           _opts_redEcho "Illegal short option name($opt in $optDesc) in option description!" 1>&2
           _opts_cleanOptValueInfoList
           return 221
         }
-      } || {
+      else
         echo "$opt" | grep -E '^[-a-zA-Z0-9]+$' -q || {
           _opts_redEcho "Illegal long option name($opt in $optDesc) in option description!" 1>&2
           _opts_cleanOptValueInfoList
           return 222
         }
-      }
+      fi
       optTuple=("${optTuple[@]}" "$opt")
     done < <(echo "$optLines")
 
     [ ${#optTuple[@]} -gt 2 ] && {
-      _opts_redEcho "more than 2 opt(${optTuple[@]}) in option description($optDesc)!" 1>&2
+      _opts_redEcho "more than 2 opt(${optTuple[*]}) in option description($optDesc)!" 1>&2
       _opts_cleanOptValueInfoList
       return 223
     }
@@ -263,8 +282,10 @@ parseOpts() {
       ;;
     -*) # short & long option(-a, -a-long), use same read-in logic.
       local opt="$1"
-      local optName=$(echo "$1" | $_opts_SED_CMD -r 's/^--?//')
-      local mode=$(_opts_findOptMode "$optName")
+      local optName
+      optName=$(echo "$1" | $_opts_SED_CMD -r 's/^--?//')
+      local mode
+      mode=$(_opts_findOptMode "$optName")
       case "$mode" in
       -)
         _opts_setOptBool "$optName" "true"
@@ -292,7 +313,7 @@ parseOpts() {
           } || valueArray=("${valueArray[@]}" "$value")
         done
         [ "$foundComma" ] || {
-          _opts_redEcho "value of option $opt no end comma, value = ${valueArray[@]}" 1>&2
+          _opts_redEcho "value of option $opt no end comma, value = ${valueArray[*]}" 1>&2
           _opts_cleanOptValueInfoList
           return 231
         }
@@ -312,7 +333,8 @@ parseOpts() {
       ;;
     esac
   done
-  _OPT_ARGS=("${args[@]}") # set global var!
+  # set global var!
+  _OPT_ARGS=("${args[@]}")
 }
 
 #####################################################################
@@ -324,7 +346,7 @@ _opts_showOptDescInfoList() {
   echo "show option desc info list:"
   local idxName
   for idxName in "${_OPT_INFO_LIST_INDEX[@]}"; do
-    local idxNameArrayPlaceHolder="$idxName[@]"
+    local idxNameArrayPlaceHolder="${idxName}[@]"
     echo "$idxName = (${!idxNameArrayPlaceHolder})"
   done
   echo "==============================================================================="
@@ -335,14 +357,16 @@ _opts_showOptValueInfoList() {
   echo "show option value info list:"
   local idxName
   for idxName in "${_OPT_INFO_LIST_INDEX[@]}"; do
-    local idxNameArrayPlaceHolder="$idxName[@]"
+    local idxNameArrayPlaceHolder="${idxName}[@]"
     local -a idxNameArray=("${!idxNameArrayPlaceHolder}")
 
     local mode=${idxNameArray[0]}
 
     local optName
-    for optName in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do # index from 1, skip mode
-      local optValueVarName="_OPT_VALUE_$(_opts_convertToVarName "$optName")"
+    # index from 1, skip mode
+    for optName in "${idxNameArray[@]:1:${#idxNameArray[@]}}"; do
+      local optValueVarName
+      optValueVarName="_OPT_VALUE_$(_opts_convertToVarName "$optName")"
       case "$mode" in
       -)
         echo "$optValueVarName=${!optValueVarName}"
@@ -351,12 +375,12 @@ _opts_showOptValueInfoList() {
         echo "$optValueVarName=${!optValueVarName}"
         ;;
       +)
-        local optArrayValueArrayPlaceHolder="$optValueVarName[@]"
+        local optArrayValueArrayPlaceHolder="${optValueVarName}[@]"
         echo "$optValueVarName=(${!optArrayValueArrayPlaceHolder})"
         ;;
       esac
     done
   done
-  echo "_OPT_ARGS=(${_OPT_ARGS[@]})"
+  echo "_OPT_ARGS=(${_OPT_ARGS[*]})"
   echo "==============================================================================="
 }

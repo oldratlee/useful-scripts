@@ -27,7 +27,7 @@
 
 # NOTE: DO NOT declare var PROG as readonly in ONE line!
 PROG="$(basename "$0")"
-readonly PROG_VERSION='2.5.0-dev'
+readonly PROG_VERSION='2.4.4'
 
 usage() {
   cat <<EOF

@@ -30,7 +30,7 @@ from zipfile import ZipFile, BadZipfile
 ################################################################################
 # utils functions
 ################################################################################
-PROG_VERSION = '2.5.0-dev'
+PROG_VERSION = '2.4.4'
 
 # How to delete line with echo?
 # https://unix.stackexchange.com/questions/26576

@@ -3,7 +3,7 @@
 <img src="docs/script-logo.png" alt="repo-icon" width="20%" align="right" />
 
 <p align="center">
-<a href="https://github.com/oldratlee/useful-scripts/actions/workflows/ci.yaml"><img src="https://img.shields.io/github/workflow/status/oldratlee/useful-scripts/CI/dev-2.x?logo=github&logoColor=white" alt="Github Workflow Build Status"></a>
+<a href="https://github.com/oldratlee/useful-scripts/actions/workflows/ci.yaml"><img src="https://img.shields.io/github/actions/workflow/status/oldratlee/useful-scripts/ci.yaml?branch=dev-2.x&logo=github&logoColor=white" alt="Github Workflow Build Status"></a>
 <a href="https://github.com/oldratlee/useful-scripts/releases"><img src="https://img.shields.io/github/release/oldratlee/useful-scripts.svg" alt="GitHub release"></a>
 <a href="https://www.apache.org/licenses/LICENSE-2.0.html"><img src="https://img.shields.io/github/license/oldratlee/useful-scripts?color=4D7A97&logo=apache" alt="License"></a>
 <a href="https://github.com/oldratlee/useful-scripts/stargazers"><img src="https://img.shields.io/github/stars/oldratlee/useful-scripts" alt="GitHub Stars"></a>

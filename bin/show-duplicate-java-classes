@@ -8,7 +8,7 @@
 #   $ show-duplicate-java-classes path/to/lib_dir1 /path/to/lib_dir2
 #   $ show-duplicate-java-classes -c path/to/class_dir1 -c /path/to/class_dir2
 #   $ show-duplicate-java-classes -c path/to/class_dir1 path/to/lib_dir1
-#   $ show-duplicate-java-classes -L path/to/lib_dir1 # search jars in the sub-directories of lib dir
+#   $ show-duplicate-java-classes -L path/to/lib_dir1 # search jars in the subdirectories of lib dir
 #   $ show-duplicate-java-classes -J path/to/lib_dir1 # search jars in the jar file
 #
 # @online-doc https://github.com/oldratlee/useful-scripts/blob/dev-2.x/docs/java.md#-show-duplicate-java-classes
@@ -297,6 +297,9 @@ def print_duplicate_classes_info(class_paths_to_duplicate_classes, class_path_to
 
 
 def print_class_paths_info(class_path_to_classes):
+    if not class_path_to_classes:
+        return
+
     max_idx_str_len = str_len(len(class_path_to_classes))
     max_classes_count_str_len = str_len(max(len(classes) for classes in class_path_to_classes.values()))
 
@@ -329,14 +332,24 @@ def main():
                              action='append', help='add class dir')
     option_parser.add_option('-R', '--no-find-progress', dest='show_responsive', default=True,
                              action='store_false', help='do not display responsive find progress')
+
     options, lib_dirs = option_parser.parse_args()
+    class_dirs = options.class_dirs
+    if not lib_dirs and not class_dirs:
+        lib_dirs = ['.']
     global __show_responsive
     __show_responsive = options.show_responsive
-    if not options.class_dirs and not lib_dirs:
-        lib_dirs = ['.']
 
     jar_files = list_jar_file_under_lib_dirs(lib_dirs, recursive=options.recursive_lib)
-    class_path_to_classes = collect_class_path_to_classes(options.class_dirs, jar_files, options.recursive_jar)
+    if not jar_files and not class_dirs:
+        clear_responsive_message()
+        print('search no jar files under lib dirs, and class dirs is absent.')
+        return 0
+    class_path_to_classes = collect_class_path_to_classes(class_dirs, jar_files, options.recursive_jar)
+    if all(not classes for classes in class_path_to_classes.values()):
+        clear_responsive_message()
+        print('find no class files in jar files or class dirs.')
+        return 0
 
     print_responsive_message('find duplicate classes...')
     class_to_class_paths = invert_as_class_to_class_paths(class_path_to_classes)

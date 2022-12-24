@@ -183,7 +183,7 @@ parseOpts() {
   local optDescLines=$(echo "$optsDescription" |
     # cut head and tail space
     $_opts_SED_CMD -r 's/^\s+//;s/\s+$//' |
-    awk -F '[\t ]*\\\\|[\t ]*' '{for(i=1; i<=NF; i++) print $i}')
+    awk -F '[\t ]*\\|[\t ]*' '{for(i=1; i<=NF; i++) print $i}')
 
   local optDesc
   while read optDesc; do # optDesc LIKE b,b-long:

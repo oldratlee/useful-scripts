@@ -43,48 +43,48 @@ readonly eend=$'\033[0m' # escape end
 readonly nl=$'\n'        # new line
 
 redEcho() {
-    [ -t 1 ] && echo "${ec}[1;31m$*$eend" || echo "$*"
+  [ -t 1 ] && echo "${ec}[1;31m$*$eend" || echo "$*"
 }
 
 yellowEcho() {
-    [ -t 1 ] && echo "${ec}[1;33m$*$eend" || echo "$*"
+  [ -t 1 ] && echo "${ec}[1;33m$*$eend" || echo "$*"
 }
 
 die() {
-    redEcho "Error: $*" 1>&2
-    exit 1
+  redEcho "Error: $*" 1>&2
+  exit 1
 }
 
 convertHumanReadableSizeToSize() {
-    local human_readable_size="$1"
+  local human_readable_size="$1"
 
-    [[ "$human_readable_size" =~ ^([0-9][0-9]*)([kmg]?)$ ]] || return 1
+  [[ "$human_readable_size" =~ ^([0-9][0-9]*)([kmg]?)$ ]] || return 1
 
-    local size="${BASH_REMATCH[1]}" unit="${BASH_REMATCH[2]}"
-    case "$unit" in
-    g)
-        ((size *= 1024 * 1024 * 1024))
-        ;;
-    m)
-        ((size *= 1024 * 1024))
-        ;;
-    k)
-        ((size *= 1024))
-        ;;
-    esac
+  local size="${BASH_REMATCH[1]}" unit="${BASH_REMATCH[2]}"
+  case "$unit" in
+  g)
+    ((size *= 1024 * 1024 * 1024))
+    ;;
+  m)
+    ((size *= 1024 * 1024))
+    ;;
+  k)
+    ((size *= 1024))
+    ;;
+  esac
 
-    echo "$size"
+  echo "$size"
 }
 
 usage() {
-    local -r exit_code="${1:-0}"
-    (($# > 0)) && shift
-    # shellcheck disable=SC2015
-    [ "$exit_code" != 0 ] && local -r out=/dev/stderr || local -r out=/dev/stdout
+  local -r exit_code="${1:-0}"
+  (($# > 0)) && shift
+  # shellcheck disable=SC2015
+  [ "$exit_code" != 0 ] && local -r out=/dev/stderr || local -r out=/dev/stdout
 
-    (($# > 0)) && redEcho "$*$nl" >$out
+  (($# > 0)) && redEcho "$*$nl" >$out
 
-    cat >$out <<EOF
+  cat >$out <<EOF
 Usage: ${PROG} [OPTION]... [INPUT [OUTPUT]]
 Filter lines from INPUT (or standard input), writing to OUTPUT (or standard output).
 Same as \`uniq\` command in core utils,
@@ -117,12 +117,12 @@ Options:
   -V, --version         display version information and exit
 EOF
 
-    exit "$exit_code"
+  exit "$exit_code"
 }
 
 progVersion() {
-    echo "$PROG $PROG_VERSION"
-    exit
+  echo "$PROG $PROG_VERSION"
+  exit
 }
 
 ################################################################################
@@ -140,106 +140,106 @@ uq_max_input_human_readable_size=256m
 declare -a argv=()
 
 while (($# > 0)); do
-    case "$1" in
-    -c | --count)
-        uq_opt_count=1
-        shift
-        ;;
-    -d | --repeated)
-        uq_opt_only_repeated=1
-        shift
-        ;;
-    -D)
-        uq_opt_all_repeated=1
-        shift
-        ;;
-    --all-repeated=*)
-        uq_opt_all_repeated=1
+  case "$1" in
+  -c | --count)
+    uq_opt_count=1
+    shift
+    ;;
+  -d | --repeated)
+    uq_opt_only_repeated=1
+    shift
+    ;;
+  -D)
+    uq_opt_all_repeated=1
+    shift
+    ;;
+  --all-repeated=*)
+    uq_opt_all_repeated=1
 
-        uq_opt_repeated_method=$(echo "$1" | awk -F= '{print $2}')
-        [[ $uq_opt_repeated_method == 'none' || $uq_opt_repeated_method == 'prepend' || $uq_opt_repeated_method == 'separate' ]] ||
-            usage 1 "$PROG: invalid argument ‘${uq_opt_repeated_method}’ for ‘--all-repeated’${nl}Valid arguments are:$nl  - ‘none’$nl  - ‘prepend’$nl  - ‘separate’"
+    uq_opt_repeated_method=$(echo "$1" | awk -F= '{print $2}')
+    [[ $uq_opt_repeated_method == 'none' || $uq_opt_repeated_method == 'prepend' || $uq_opt_repeated_method == 'separate' ]] ||
+      usage 1 "$PROG: invalid argument ‘${uq_opt_repeated_method}’ for ‘--all-repeated’${nl}Valid arguments are:$nl  - ‘none’$nl  - ‘prepend’$nl  - ‘separate’"
 
-        shift
-        ;;
-    -u | --unique)
-        uq_opt_only_unique=1
-        shift
-        ;;
-    -i | --ignore-case)
-        uq_opt_ignore_case=1
-        shift
-        ;;
-    -z | --zero-terminated)
-        uq_opt_zero_terminated=1
-        shift
-        ;;
-    -XM | --max-input)
-        uq_max_input_human_readable_size="$2"
-        shift 2
-        ;;
-    -h | --help)
-        usage
-        ;;
-    -V | --version)
-        progVersion
-        ;;
-    --)
-        shift
-        argv=("${argv[@]}" "$@")
-        break
-        ;;
-    -)
-        argv=(${argv[@]:+"${argv[@]}"} "$1")
-        shift
-        ;;
-    -*)
-        usage 2 "${PROG}: unrecognized option '$1'"
-        ;;
-    *)
-        argv=(${argv[@]:+"${argv[@]}"} "$1")
-        shift
-        ;;
-    esac
+    shift
+    ;;
+  -u | --unique)
+    uq_opt_only_unique=1
+    shift
+    ;;
+  -i | --ignore-case)
+    uq_opt_ignore_case=1
+    shift
+    ;;
+  -z | --zero-terminated)
+    uq_opt_zero_terminated=1
+    shift
+    ;;
+  -XM | --max-input)
+    uq_max_input_human_readable_size="$2"
+    shift 2
+    ;;
+  -h | --help)
+    usage
+    ;;
+  -V | --version)
+    progVersion
+    ;;
+  --)
+    shift
+    argv=("${argv[@]}" "$@")
+    break
+    ;;
+  -)
+    argv=(${argv[@]:+"${argv[@]}"} "$1")
+    shift
+    ;;
+  -*)
+    usage 2 "${PROG}: unrecognized option '$1'"
+    ;;
+  *)
+    argv=(${argv[@]:+"${argv[@]}"} "$1")
+    shift
+    ;;
+  esac
 done
 
 [[ $uq_opt_only_repeated == 1 && $uq_opt_only_unique == 1 ]] &&
-    usage 2 "printing duplicated lines(-d, --repeated) and unique lines(-u, --unique) is meaningless"
+  usage 2 "printing duplicated lines(-d, --repeated) and unique lines(-u, --unique) is meaningless"
 [[ $uq_opt_all_repeated == 1 && $uq_opt_only_unique == 1 ]] &&
-    usage 2 "printing all duplicate lines(-D, --all-repeated) and unique lines(-u, --unique) is meaningless"
+  usage 2 "printing all duplicate lines(-D, --all-repeated) and unique lines(-u, --unique) is meaningless"
 
 [[ $uq_opt_all_repeated == 1 && $uq_opt_repeated_method == none && ($uq_opt_count == 0 && $uq_opt_only_repeated == 0) ]] &&
-    yellowEcho "[$PROG] WARN: -D/--all-repeated=none option without -c/-d option, just cat input simply!" >&2
+  yellowEcho "[$PROG] WARN: -D/--all-repeated=none option without -c/-d option, just cat input simply!" >&2
 
 # NOTE: DO NOT declare var uq_max_input_size as readonly in ONE line!
 uq_max_input_size="$(convertHumanReadableSizeToSize "$uq_max_input_human_readable_size")" ||
-    usage 2 "[$PROG] ERROR: illegal value of option -XM/--max-input: $uq_max_input_human_readable_size"
+  usage 2 "[$PROG] ERROR: illegal value of option -XM/--max-input: $uq_max_input_human_readable_size"
 
 readonly argc=${#argv[@]}
 
 if ((argc == 0)); then
-    input_files=()
-    output_file=/dev/stdout
+  input_files=()
+  output_file=/dev/stdout
 elif ((argc == 1)); then
-    input_files=("${argv[0]}")
-    output_file=/dev/stdout
+  input_files=("${argv[0]}")
+  output_file=/dev/stdout
 else
-    input_files=("${argv[@]:0:argc-1}")
-    output_file=${argv[argc - 1]}
-    if [ "$output_file" == - ]; then
-        output_file=/dev/stdout
-    fi
+  input_files=("${argv[@]:0:argc-1}")
+  output_file=${argv[argc - 1]}
+  if [ "$output_file" == - ]; then
+    output_file=/dev/stdout
+  fi
 fi
 
 # Check input file
 for f in ${input_files[@]:+"${input_files[@]}"}; do
-    # - is stdin, ok
-    [ "$f" == - ] && continue
+  # - is stdin, ok
+  [ "$f" == - ] && continue
 
-    [ -e "$f" ] || die "input file $f does not exist!"
-    [ ! -d "$f" ] || die "input file $f exists, but is a directory!"
-    [ -f "$f" ] || die "input file $f exists, but is not a file!"
-    [ -r "$f" ] || die "input file $f exists, but is not readable!"
+  [ -e "$f" ] || die "input file $f does not exist!"
+  [ ! -d "$f" ] || die "input file $f exists, but is a directory!"
+  [ -f "$f" ] || die "input file $f exists, but is not a file!"
+  [ -r "$f" ] || die "input file $f exists, but is not readable!"
 done
 
 ################################################################################
@@ -316,16 +316,16 @@ END {
 '
 
 awk \
-    -v "uq_opt_count=$uq_opt_count" \
-    -v "uq_opt_only_repeated=$uq_opt_only_repeated" \
-    -v "uq_opt_all_repeated=$uq_opt_all_repeated" \
-    -v "uq_opt_repeated_method=$uq_opt_repeated_method" \
-    -v "uq_opt_only_unique=$uq_opt_only_unique" \
-    -v "IGNORECASE=$uq_opt_ignore_case" \
-    -v "uq_opt_zero_terminated=$uq_opt_zero_terminated" \
-    -v "uq_max_input_human_readable_size=$uq_max_input_human_readable_size" \
-    -v "uq_max_input_size=$uq_max_input_size" \
-    -v "uq_PROG=$PROG" \
-    -f <(printf "%s" "$uq_awk_script") \
-    -- ${input_files[@]:+"${input_files[@]}"} \
-    >"$output_file"
+  -v "uq_opt_count=$uq_opt_count" \
+  -v "uq_opt_only_repeated=$uq_opt_only_repeated" \
+  -v "uq_opt_all_repeated=$uq_opt_all_repeated" \
+  -v "uq_opt_repeated_method=$uq_opt_repeated_method" \
+  -v "uq_opt_only_unique=$uq_opt_only_unique" \
+  -v "IGNORECASE=$uq_opt_ignore_case" \
+  -v "uq_opt_zero_terminated=$uq_opt_zero_terminated" \
+  -v "uq_max_input_human_readable_size=$uq_max_input_human_readable_size" \
+  -v "uq_max_input_size=$uq_max_input_size" \
+  -v "uq_PROG=$PROG" \
+  -f <(printf "%s" "$uq_awk_script") \
+  -- ${input_files[@]:+"${input_files[@]}"} \
+  >"$output_file"

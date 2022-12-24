@@ -23,51 +23,51 @@ readonly eend=$'\033[0m' # escape end
 readonly nl=$'\n'        # new line
 
 redEcho() {
-    # -t check: is a terminal device?
-    [ -t 1 ] && echo "${ec}[1;31m$*$eend" || echo "$*"
+  # -t check: is a terminal device?
+  [ -t 1 ] && echo "${ec}[1;31m$*$eend" || echo "$*"
 }
 
 die() {
-    redEcho "Error: $*" 1>&2
-    exit 1
+  redEcho "Error: $*" 1>&2
+  exit 1
 }
 
 isAbsolutePath() {
-    [[ "$1" =~ ^/ ]]
+  [[ "$1" =~ ^/ ]]
 }
 
 # How can I get the behavior of GNU's readlink -f on a Mac?
 # https://stackoverflow.com/questions/1055671
 portableReadLink() {
-    local file="$1" uname
+  local file="$1" uname
 
-    uname="$(uname)"
-    case "$uname" in
-    Linux* | CYGWIN* | MINGW*)
-        readlink -f "$file"
-        ;;
-    Darwin*)
-        if command -v greadlink >/dev/null; then
-            greadlink -f "$file"
-        else
-            python -c 'import os, sys; print(os.path.realpath(sys.argv[1]))' "$file"
-        fi
-        ;;
-    *)
-        die "NOT support uname($uname)!"
-        ;;
-    esac
+  uname="$(uname)"
+  case "$uname" in
+  Linux* | CYGWIN* | MINGW*)
+    readlink -f "$file"
+    ;;
+  Darwin*)
+    if command -v greadlink >/dev/null; then
+      greadlink -f "$file"
+    else
+      python -c 'import os, sys; print(os.path.realpath(sys.argv[1]))' "$file"
+    fi
+    ;;
+  *)
+    die "NOT support uname($uname)!"
+    ;;
+  esac
 }
 
 usage() {
-    local -r exit_code="${1:-0}"
-    (($# > 0)) && shift
-    # shellcheck disable=SC2015
-    [ "$exit_code" != 0 ] && local -r out=/dev/stderr || local -r out=/dev/stdout
+  local -r exit_code="${1:-0}"
+  (($# > 0)) && shift
+  # shellcheck disable=SC2015
+  [ "$exit_code" != 0 ] && local -r out=/dev/stderr || local -r out=/dev/stdout
 
-    (($# > 0)) && redEcho "$*$nl" >$out
+  (($# > 0)) && redEcho "$*$nl" >$out
 
-    cat >$out <<EOF
+  cat >$out <<EOF
 Usage: ${PROG} [OPTION]... command [command-args]...
 
 Copy the command into docker container
@@ -96,12 +96,12 @@ miscellaneous:
   -V, --version      display version information and exit
 EOF
 
-    exit "$exit_code"
+  exit "$exit_code"
 }
 
 progVersion() {
-    echo "$PROG $PROG_VERSION"
-    exit
+  echo "$PROG $PROG_VERSION"
+  exit
 }
 
 ################################################################################
@@ -117,64 +117,64 @@ verbose=false
 declare -a args=()
 
 while (($# > 0)); do
-    case "$1" in
-    -c | --container)
-        container_name="$2"
-        shift 2
-        ;;
-    -u | --docker-user)
-        docker_user="$2"
-        shift 2
-        ;;
-    -w | --workdir)
-        docker_workdir="$2"
-        shift 2
-        ;;
-    -t | --tmpdir)
-        docker_tmpdir="$2"
-        shift 2
-        ;;
-    -p | --cp-path)
-        docker_command_cp_path="$2"
-        shift 2
-        ;;
-    -v | --verbose)
-        verbose=true
-        shift
-        ;;
-    -h | --help)
-        usage
-        ;;
-    -V | --version)
-        progVersion
-        ;;
-    --)
-        shift
-        args=(${args[@]:+"${args[@]}"} "$@")
-        break
-        ;;
-    -*)
-        usage 2 "${PROG}: unrecognized option '$1'"
-        ;;
-    *)
-        # if not option, treat all follow args as command
-        args=(${args[@]:+"${args[@]}"} "$@")
-        break
-        ;;
-    esac
+  case "$1" in
+  -c | --container)
+    container_name="$2"
+    shift 2
+    ;;
+  -u | --docker-user)
+    docker_user="$2"
+    shift 2
+    ;;
+  -w | --workdir)
+    docker_workdir="$2"
+    shift 2
+    ;;
+  -t | --tmpdir)
+    docker_tmpdir="$2"
+    shift 2
+    ;;
+  -p | --cp-path)
+    docker_command_cp_path="$2"
+    shift 2
+    ;;
+  -v | --verbose)
+    verbose=true
+    shift
+    ;;
+  -h | --help)
+    usage
+    ;;
+  -V | --version)
+    progVersion
+    ;;
+  --)
+    shift
+    args=(${args[@]:+"${args[@]}"} "$@")
+    break
+    ;;
+  -*)
+    usage 2 "${PROG}: unrecognized option '$1'"
+    ;;
+  *)
+    # if not option, treat all follow args as command
+    args=(${args[@]:+"${args[@]}"} "$@")
+    break
+    ;;
+  esac
 done
 
 readonly container_name docker_user docker_workdir docker_tmpdir docker_command_cp_path verbose args
 
 [ -n "$container_name" ] ||
-    usage 1 "No destination docker container name, specified by option -c/--container!"
+  usage 1 "No destination docker container name, specified by option -c/--container!"
 
 if [ -n "${docker_workdir}" ]; then
-    isAbsolutePath "$docker_workdir" ||
-        die "docker workdir(-w/--workdir) must be absolute path: $docker_workdir"
+  isAbsolutePath "$docker_workdir" ||
+    die "docker workdir(-w/--workdir) must be absolute path: $docker_workdir"
 elif [ -n "${docker_command_cp_path}" ]; then
-    isAbsolutePath "$docker_command_cp_path" ||
-        die "when no docker workdir(-w/--workdir) is specified, the command path in docker to copy(-p/--cp-path) must be absolute path: $docker_command_cp_path"
+  isAbsolutePath "$docker_command_cp_path" ||
+    die "when no docker workdir(-w/--workdir) is specified, the command path in docker to copy(-p/--cp-path) must be absolute path: $docker_command_cp_path"
 fi
 
 ################################################################################
@@ -194,10 +194,10 @@ command -v docker &>/dev/null || die 'docker command not found!'
 readonly specified_run_command="${args[0]}"
 run_command="$specified_run_command"
 if [ ! -f "$specified_run_command" ]; then
-    which "$specified_run_command" &>/dev/null ||
-        die "specified command not exists and not found in PATH: $specified_run_command"
+  which "$specified_run_command" &>/dev/null ||
+    die "specified command not exists and not found in PATH: $specified_run_command"
 
-    run_command="$(which "$specified_run_command")"
+  run_command="$(which "$specified_run_command")"
 fi
 run_command="$(portableReadLink "$run_command")"
 run_command_base_name="$(basename "$run_command")"
@@ -208,25 +208,25 @@ readonly run_timestamp
 readonly uuid="${PROG}_${run_timestamp}_${$}_${RANDOM}"
 
 if [ -n "${docker_command_cp_path}" ]; then
-    if isAbsolutePath "$docker_command_cp_path"; then
-        readonly run_command_in_docker="$docker_command_cp_path"
-    else
-        readonly run_command_in_docker="${docker_workdir:+"$docker_workdir/"}$docker_command_cp_path"
-    fi
-    run_command_dir_in_docker="$(dirname "$run_command_in_docker")"
-    readonly run_command_dir_in_docker
+  if isAbsolutePath "$docker_command_cp_path"; then
+    readonly run_command_in_docker="$docker_command_cp_path"
+  else
+    readonly run_command_in_docker="${docker_workdir:+"$docker_workdir/"}$docker_command_cp_path"
+  fi
+  run_command_dir_in_docker="$(dirname "$run_command_in_docker")"
+  readonly run_command_dir_in_docker
 else
-    readonly work_tmp_dir_in_docker="$docker_tmpdir/$uuid"
+  readonly work_tmp_dir_in_docker="$docker_tmpdir/$uuid"
 
-    readonly run_command_in_docker="$work_tmp_dir_in_docker/$run_command_base_name"
-    readonly run_command_dir_in_docker="$work_tmp_dir_in_docker"
+  readonly run_command_in_docker="$work_tmp_dir_in_docker/$run_command_base_name"
+  readonly run_command_dir_in_docker="$work_tmp_dir_in_docker"
 fi
 
 cleanupWhenExit() {
-    [ -n "${work_tmp_dir_in_docker:-}" ] || return 0
+  [ -n "${work_tmp_dir_in_docker:-}" ] || return 0
 
-    # remove tmp dir in docker by root user
-    docker exec "${container_name}" rm -rf -- "$work_tmp_dir_in_docker" &>/dev/null
+  # remove tmp dir in docker by root user
+  docker exec "${container_name}" rm -rf -- "$work_tmp_dir_in_docker" &>/dev/null
 }
 trap cleanupWhenExit EXIT
 
@@ -235,18 +235,18 @@ trap cleanupWhenExit EXIT
 ########################################
 
 logAndRun() {
-    $verbose && echo "[$PROG] $*" 1>&2
-    "$@"
+  $verbose && echo "[$PROG] $*" 1>&2
+  "$@"
 }
 
 logAndRun docker exec ${docker_user:+"--user=$docker_user"} "$container_name" \
-    mkdir -p -- "$run_command_dir_in_docker"
+  mkdir -p -- "$run_command_dir_in_docker"
 logAndRun docker cp "$run_command" "$container_name:$run_command_in_docker"
 logAndRun docker exec ${docker_user:+"--user=$docker_user"} "$container_name" \
-    chmod +x "$run_command_in_docker"
+  chmod +x "$run_command_in_docker"
 
 logAndRun docker exec -i -t \
-    ${docker_user:+"--user=$docker_user"} \
-    ${docker_workdir:+"--workdir=$docker_workdir"} \
-    "$container_name" \
-    "$run_command_in_docker" "${args[@]:1:${#args[@]}}"
+  ${docker_user:+"--user=$docker_user"} \
+  ${docker_workdir:+"--workdir=$docker_workdir"} \
+  "$container_name" \
+  "$run_command_in_docker" "${args[@]:1:${#args[@]}}"

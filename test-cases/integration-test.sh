@@ -2,8 +2,8 @@
 set -eEuo pipefail
 
 READLINK_CMD=readlink
-if command -v greadlink &> /dev/null; then
-    READLINK_CMD=greadlink
+if command -v greadlink &>/dev/null; then
+  READLINK_CMD=greadlink
 fi
 
 cd "$(dirname "$($READLINK_CMD -f "${BASH_SOURCE[0]}")")"
@@ -22,39 +22,39 @@ readonly nl=$'\n'        # new line
 ################################################################################
 
 colorEcho() {
-    local color=$1
-    shift
+  local color=$1
+  shift
 
-    # if stdout is the console, turn on color output.
-    [ -t 1 ] && echo "${ec}[1;${color}m$*${eend}" || echo "$*"
+  # if stdout is the console, turn on color output.
+  [ -t 1 ] && echo "${ec}[1;${color}m$*${eend}" || echo "$*"
 }
 
 redEcho() {
-    colorEcho 31 "$@"
+  colorEcho 31 "$@"
 }
 
 yellowEcho() {
-    colorEcho 33 "$@"
+  colorEcho 33 "$@"
 }
 
 blueEcho() {
-    colorEcho 36 "$@"
+  colorEcho 36 "$@"
 }
 
 logAndRun() {
-    local simple_mode=false
-    [ "$1" == "-s" ] && {
-        simple_mode=true
-        shift
-    }
+  local simple_mode=false
+  [ "$1" == "-s" ] && {
+    simple_mode=true
+    shift
+  }
 
-    if $simple_mode; then
-        echo "Run under work directory $PWD : $*"
-        "$@"
-    else
-        blueEcho "Run under work directory $PWD :$nl$*"
-        time "$@"
-    fi
+  if $simple_mode; then
+    echo "Run under work directory $PWD : $*"
+    "$@"
+  else
+    blueEcho "Run under work directory $PWD :$nl$*"
+    time "$@"
+  fi
 }
 
 ################################################################################
@@ -62,5 +62,5 @@ logAndRun() {
 ################################################################################
 
 for test_case in *_test.sh; do
-    logAndRun ./"$test_case"
+  logAndRun ./"$test_case"
 done

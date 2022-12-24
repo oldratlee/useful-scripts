@@ -30,7 +30,7 @@ PROG="$(basename "$0")"
 readonly PROG_VERSION='2.5.0-dev'
 
 usage() {
-    cat <<EOF
+  cat <<EOF
 Usage: ${PROG} [DIR]
 Copy the svn remote url of local svn directory
 DIR is local svn directory, default is current directory.
@@ -43,13 +43,13 @@ Options:
     -h, --help      display this help and exit
     -V, --version   display version information and exit
 EOF
-    # shellcheck disable=SC2086
-    exit $1
+  # shellcheck disable=SC2086
+  exit $1
 }
 
 progVersion() {
-    echo "$PROG $PROG_VERSION"
-    exit
+  echo "$PROG $PROG_VERSION"
+  exit
 }
 
 ################################################################################
@@ -57,37 +57,43 @@ progVersion() {
 ################################################################################
 
 for a; do
-    [[ "-h" == "$a" ||  "--help" == "$a" ]] && usage
+  [[ "-h" == "$a" || "--help" == "$a" ]] && usage
 done
 
 for a; do
-    [[ "-V" == "$a" ||  "--version" == "$a" ]] && progVersion
+  [[ "-V" == "$a" || "--version" == "$a" ]] && progVersion
 done
 
 ################################################################################
 # biz logic
 ################################################################################
 
-[ $# -gt 1 ]  && { echo At most 1 local directory is need! ; usage 1; }
+[ $# -gt 1 ] && {
+  echo At most 1 local directory is need!
+  usage 1
+}
 
 readonly dir="${1:-.}"
 
 # NOTE: DO NOT declare var url as readonly in ONE line!
 url="$(svn info "${dir}" | awk '/^URL: /{print $2}')"
 if [ -z "${url}" ]; then
-    echo "Fail to get svn url!"  1>&2
-    exit 1
+  echo "Fail to get svn url!" 1>&2
+  exit 1
 fi
 
 copy() {
-    case "$(uname)" in
-    Darwin*)
-        pbcopy ;;
-    CYGWIN*|MINGW*)
-        clip ;;
-    *)
-        xsel -b ;;
-    esac
+  case "$(uname)" in
+  Darwin*)
+    pbcopy
+    ;;
+  CYGWIN* | MINGW*)
+    clip
+    ;;
+  *)
+    xsel -b
+    ;;
+  esac
 }
 
 echo -n "${url}" | copy && echo "${url} copied!"

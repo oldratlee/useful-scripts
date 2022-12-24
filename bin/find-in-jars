@@ -55,8 +55,8 @@ readonly nl=$'\n'        # new line
 readonly clear_line=$'\033[2K\r'
 
 redEcho() {
-    # -t check: is a terminal device?
-    [ -t 1 ] && echo "${ec}[1;31m$*$eend" || echo "$*"
+  # -t check: is a terminal device?
+  [ -t 1 ] && echo "${ec}[1;31m$*$eend" || echo "$*"
 }
 
 # Getting console width using a bash script
@@ -66,38 +66,38 @@ redEcho() {
 [ -t 2 ] && columns=$(stty size | awk '{print $2}')
 
 printResponsiveMessage() {
-    if ! $show_responsive || [ ! -t 2 ]; then
-        return
-    fi
+  if ! $show_responsive || [ ! -t 2 ]; then
+    return
+  fi
 
-    local message="$*"
-    # http://www.linuxforums.org/forum/red-hat-fedora-linux/142825-how-truncate-string-bash-script.html
-    echo -n "$clear_line${message:0:columns}" >&2
+  local message="$*"
+  # http://www.linuxforums.org/forum/red-hat-fedora-linux/142825-how-truncate-string-bash-script.html
+  echo -n "$clear_line${message:0:columns}" >&2
 }
 
 clearResponsiveMessage() {
-    if ! $show_responsive || [ ! -t 2 ]; then
-        return
-    fi
+  if ! $show_responsive || [ ! -t 2 ]; then
+    return
+  fi
 
-    echo -n "$clear_line" >&2
+  echo -n "$clear_line" >&2
 }
 
 die() {
-    clearResponsiveMessage
-    redEcho "Error: $*" >&2
-    exit 1
+  clearResponsiveMessage
+  redEcho "Error: $*" >&2
+  exit 1
 }
 
 usage() {
-    local -r exit_code="${1:-0}"
-    (($# > 0)) && shift
-    # shellcheck disable=SC2015
-    [ "$exit_code" != 0 ] && local -r out=/dev/stderr || local -r out=/dev/stdout
+  local -r exit_code="${1:-0}"
+  (($# > 0)) && shift
+  # shellcheck disable=SC2015
+  [ "$exit_code" != 0 ] && local -r out=/dev/stderr || local -r out=/dev/stdout
 
-    (($# > 0)) && redEcho "$*$nl" >$out
+  (($# > 0)) && redEcho "$*$nl" >$out
 
-    cat >$out <<EOF
+  cat >$out <<EOF
 Usage: ${PROG} [OPTION]... PATTERN
 
 Find files in the jar files under specified directory,
@@ -140,12 +140,12 @@ Miscellaneous:
   -V, --version          display version information and exit
 EOF
 
-    exit "$exit_code"
+  exit "$exit_code"
 }
 
 progVersion() {
-    echo "$PROG $PROG_VERSION"
-    exit
+  echo "$PROG $PROG_VERSION"
+  exit
 }
 
 ################################################################################
@@ -163,77 +163,77 @@ show_responsive=true
 only_print_file_name=false
 
 while (($# > 0)); do
-    case "$1" in
-    -d | --dir)
-        dirs=(${dirs[@]:+"${dirs[@]}"} "$2")
-        shift 2
-        ;;
-    -e | --extension)
-        extensions=(${extensions[@]:+"${extensions[@]}"} "$2")
-        shift 2
-        ;;
-    -E | --extended-regexp)
-        regex_mode=-E
-        shift
-        ;;
-    -F | --fixed-strings)
-        regex_mode=-F
-        shift
-        ;;
-    -G | --basic-regexp)
-        regex_mode=-G
-        shift
-        ;;
-    -P | --perl-regexp)
-        regex_mode=-P
-        shift
-        ;;
-    -i | --ignore-case)
-        ignore_case_option=-i
-        shift
-        ;;
-    -a | --absolute-path)
-        use_absolute_path=true
-        shift
-        ;;
-    # support the legacy typo option name --seperator for compatibility
-    -s | --separator | --seperator)
-        separator="$2"
-        shift 2
-        ;;
-    -L | --files-not-contained-found)
-        only_print_file_name=true
-        print_matched_files=false
-        shift
-        ;;
-    -l | --files-contained-found)
-        only_print_file_name=true
-        print_matched_files=true
-        shift
-        ;;
-    -R | --no-find-progress)
-        show_responsive=false
-        shift
-        ;;
-    -h | --help)
-        usage
-        ;;
-    -V | --version)
-        progVersion
-        ;;
-    --)
-        shift
-        args=(${args[@]:+"${args[@]}"} "$@")
-        break
-        ;;
-    -*)
-        usage 2 "${PROG}: unrecognized option '$1'"
-        ;;
-    *)
-        args=(${args[@]:+"${args[@]}"} "$1")
-        shift
-        ;;
-    esac
+  case "$1" in
+  -d | --dir)
+    dirs=(${dirs[@]:+"${dirs[@]}"} "$2")
+    shift 2
+    ;;
+  -e | --extension)
+    extensions=(${extensions[@]:+"${extensions[@]}"} "$2")
+    shift 2
+    ;;
+  -E | --extended-regexp)
+    regex_mode=-E
+    shift
+    ;;
+  -F | --fixed-strings)
+    regex_mode=-F
+    shift
+    ;;
+  -G | --basic-regexp)
+    regex_mode=-G
+    shift
+    ;;
+  -P | --perl-regexp)
+    regex_mode=-P
+    shift
+    ;;
+  -i | --ignore-case)
+    ignore_case_option=-i
+    shift
+    ;;
+  -a | --absolute-path)
+    use_absolute_path=true
+    shift
+    ;;
+  # support the legacy typo option name --seperator for compatibility
+  -s | --separator | --seperator)
+    separator="$2"
+    shift 2
+    ;;
+  -L | --files-not-contained-found)
+    only_print_file_name=true
+    print_matched_files=false
+    shift
+    ;;
+  -l | --files-contained-found)
+    only_print_file_name=true
+    print_matched_files=true
+    shift
+    ;;
+  -R | --no-find-progress)
+    show_responsive=false
+    shift
+    ;;
+  -h | --help)
+    usage
+    ;;
+  -V | --version)
+    progVersion
+    ;;
+  --)
+    shift
+    args=(${args[@]:+"${args[@]}"} "$@")
+    break
+    ;;
+  -*)
+    usage 2 "${PROG}: unrecognized option '$1'"
+    ;;
+  *)
+    args=(${args[@]:+"${args[@]}"} "$1")
+    shift
+    ;;
+  esac
 done
 
 readonly separator regex_mode ignore_case_option use_absolute_path only_print_file_name print_matched_files show_responsive args
@@ -249,12 +249,12 @@ readonly pattern="${args[0]}"
 
 declare -a tmp_dirs=()
 for d in "${dirs[@]}"; do
-    [ -e "$d" ] || die "file $d(specified by option -d) does not exist!"
-    [ -d "$d" ] || die "file $d(specified by option -d) exists but is not a directory!"
-    [ -r "$d" ] || die "directory $d(specified by option -d) exists but is not readable!"
+  [ -e "$d" ] || die "file $d(specified by option -d) does not exist!"
+  [ -d "$d" ] || die "file $d(specified by option -d) exists but is not a directory!"
+  [ -r "$d" ] || die "directory $d(specified by option -d) exists but is not readable!"
 
-    # convert dirs to Absolute Path if has option -a, --absolute-path
-    $use_absolute_path && tmp_dirs=(${tmp_dirs[@]:+"${tmp_dirs[@]}"} "$(cd "$d" && pwd)")
+  # convert dirs to Absolute Path if has option -a, --absolute-path
+  $use_absolute_path && tmp_dirs=(${tmp_dirs[@]:+"${tmp_dirs[@]}"} "$(cd "$d" && pwd)")
 done
 # set dirs to Absolute Path
 $use_absolute_path && dirs=("${tmp_dirs[@]}")
@@ -263,9 +263,9 @@ readonly dirs
 # convert extensions to find -iname options
 find_iname_options=()
 for e in "${extensions[@]}"; do
-    (("${#find_iname_options[@]}" == 0)) &&
-        find_iname_options=(-iname "*.$e") ||
-        find_iname_options=("${find_iname_options[@]}" -o -iname "*.$e")
+  (("${#find_iname_options[@]}" == 0)) &&
+    find_iname_options=(-iname "*.$e") ||
+    find_iname_options=("${find_iname_options[@]}" -o -iname "*.$e")
 done
 readonly find_iname_options
 
@@ -274,62 +274,62 @@ readonly find_iname_options
 ################################################################################
 
 __prepareCommandToListZipEntries() {
-    # `zipinfo -1`/`unzip -Z1` is ~25 times faster than `jar tf`, find zipinfo/unzip command first.
-    #
-    # How to list files in a zip without extra information in command line
-    # https://unix.stackexchange.com/a/128304/136953
+  # `zipinfo -1`/`unzip -Z1` is ~25 times faster than `jar tf`, find zipinfo/unzip command first.
+  #
+  # How to list files in a zip without extra information in command line
+  # https://unix.stackexchange.com/a/128304/136953
 
-    if command -v zipinfo &>/dev/null; then
-        command_to_list_zip_entries=(zipinfo -1)
-        is_use_zip_cmd_to_list_zip_entries=true
-    elif command -v unzip &>/dev/null; then
-        command_to_list_zip_entries=(unzip -Z1)
-        is_use_zip_cmd_to_list_zip_entries=true
-    elif [ -n "$JAVA_HOME" ]; then
-        # search jar command under JAVA_HOME
-        if [ -f "$JAVA_HOME/bin/jar" ]; then
-            [ -x "$JAVA_HOME/bin/jar" ] || die "found \$JAVA_HOME/bin/jar($JAVA_HOME/bin/jar) is NOT executable!"
-            command_to_list_zip_entries=("$JAVA_HOME/bin/jar" tf)
-        elif [ -f "$JAVA_HOME/../bin/jar" ]; then
-            [ -x "$JAVA_HOME/../bin/jar" ] || die "found \$JAVA_HOME/../bin/jar($JAVA_HOME/../bin/jar) is NOT executable!"
-            command_to_list_zip_entries=("$JAVA_HOME/../bin/jar" tf)
-        fi
-        is_use_zip_cmd_to_list_zip_entries=false
-    elif command -v jar &>/dev/null; then
-        # search jar command under PATH
-        command_to_list_zip_entries=(jar tf)
-        is_use_zip_cmd_to_list_zip_entries=false
-    else
-        die "NOT found command to list zip entries: zipinfo, unzip or jar!"
+  if command -v zipinfo &>/dev/null; then
+    command_to_list_zip_entries=(zipinfo -1)
+    is_use_zip_cmd_to_list_zip_entries=true
+  elif command -v unzip &>/dev/null; then
+    command_to_list_zip_entries=(unzip -Z1)
+    is_use_zip_cmd_to_list_zip_entries=true
+  elif [ -n "$JAVA_HOME" ]; then
+    # search jar command under JAVA_HOME
+    if [ -f "$JAVA_HOME/bin/jar" ]; then
+      [ -x "$JAVA_HOME/bin/jar" ] || die "found \$JAVA_HOME/bin/jar($JAVA_HOME/bin/jar) is NOT executable!"
+      command_to_list_zip_entries=("$JAVA_HOME/bin/jar" tf)
+    elif [ -f "$JAVA_HOME/../bin/jar" ]; then
+      [ -x "$JAVA_HOME/../bin/jar" ] || die "found \$JAVA_HOME/../bin/jar($JAVA_HOME/../bin/jar) is NOT executable!"
+      command_to_list_zip_entries=("$JAVA_HOME/../bin/jar" tf)
     fi
+    is_use_zip_cmd_to_list_zip_entries=false
+  elif command -v jar &>/dev/null; then
+    # search jar command under PATH
+    command_to_list_zip_entries=(jar tf)
+    is_use_zip_cmd_to_list_zip_entries=false
+  else
+    die "NOT found command to list zip entries: zipinfo, unzip or jar!"
+  fi
 
-    readonly command_to_list_zip_entries is_use_zip_cmd_to_list_zip_entries
+  readonly command_to_list_zip_entries is_use_zip_cmd_to_list_zip_entries
 }
 __prepareCommandToListZipEntries
 
 listZipEntries() {
-    local zip_file="$1" msg
+  local zip_file="$1" msg
 
-    if $is_use_zip_cmd_to_list_zip_entries; then
-        # How to check if zip file is empty in bash
-        # https://superuser.com/questions/438878
-        msg="$("${command_to_list_zip_entries[@]}" -t "$zip_file" 2>&1)" || {
-            # NOTE:
-            # if list emtpy zip file by zipinfo/unzip command,
-            # exit code is 1, and print 'Empty zipfile.'
-            if [ "$msg" != 'Empty zipfile.' ]; then
-                clearResponsiveMessage
-                redEcho "fail to list zip entries of $zip_file, ignored: $msg" >&2
-            fi
-            return 0
-        }
-    fi
-
-    "${command_to_list_zip_entries[@]}" "$zip_file" || {
+  if $is_use_zip_cmd_to_list_zip_entries; then
+    # How to check if zip file is empty in bash
+    # https://superuser.com/questions/438878
+    msg="$("${command_to_list_zip_entries[@]}" -t "$zip_file" 2>&1)" || {
+      # NOTE:
+      # if list emtpy zip file by zipinfo/unzip command,
+      # exit code is 1, and print 'Empty zipfile.'
+      if [ "$msg" != 'Empty zipfile.' ]; then
         clearResponsiveMessage
-        redEcho "fail to list zip entries of $zip_file, ignored!" >&2
-        return 0
+        redEcho "fail to list zip entries of $zip_file, ignored: $msg" >&2
+      fi
+      return 0
     }
+  fi
+
+  "${command_to_list_zip_entries[@]}" "$zip_file" || {
+    clearResponsiveMessage
+    redEcho "fail to list zip entries of $zip_file, ignored!" >&2
+    return 0
+  }
 }
 
 ################################################################################
@@ -337,73 +337,73 @@ listZipEntries() {
 ################################################################################
 
 searchJarFiles() {
-    printResponsiveMessage "searching jars under dir ${dirs[*]} , ..."
+  printResponsiveMessage "searching jars under dir ${dirs[*]} , ..."
 
-    local jar_files total_jar_count
+  local jar_files total_jar_count
 
-    jar_files="$(find "${dirs[@]}" "${find_iname_options[@]}" -type f)"
-    [ -n "$jar_files" ] || die "No ${extensions[*]} file found!"
+  jar_files="$(find "${dirs[@]}" "${find_iname_options[@]}" -type f)"
+  [ -n "$jar_files" ] || die "No ${extensions[*]} file found!"
 
-    total_jar_count="$(echo "$jar_files" | wc -l)"
-    # delete white space
-    # because the output of mac system command `wc -l` contains white space!
-    total_jar_count="${total_jar_count//[[:space:]]/}"
+  total_jar_count="$(echo "$jar_files" | wc -l)"
+  # delete white space
+  # because the output of mac system command `wc -l` contains white space!
+  total_jar_count="${total_jar_count//[[:space:]]/}"
 
-    echo "$total_jar_count"
-    echo "$jar_files"
+  echo "$total_jar_count"
+  echo "$jar_files"
 }
 
 __outputResultOfJarFile() {
-    local jar_file="$1" file
+  local jar_file="$1" file
 
-    if $only_print_file_name; then
-        local matched=false
-        # NOTE: Do NOT use -q flag with grep:
-        #   With the -q flag the grep program will stop immediately when the first line of data matches.
-        #   Normally you shouldn't use -q in a pipeline like this
-        #   unless you are sure the program at the other end can handle SIGPIPE.
-        # more info see:
-        # - https://stackoverflow.com/questions/19120263/why-exit-code-141-with-grep-q
-        # - https://unix.stackexchange.com/questions/305547/broken-pipe-when-grepping-output-but-only-with-i-flag
-        # - http://www.pixelbeat.org/programming/sigpipe_handling.html
-        if grep $regex_mode ${ignore_case_option:-} -c -- "$pattern" &>/dev/null; then
-            matched=true
-        fi
-
-        if [ $print_matched_files != $matched ]; then
-            return
-        fi
-
-        clearResponsiveMessage
-        [ -t 1 ] && echo "${ec}[1;35m${jar_file}${eend}" || echo "${jar_file}"
-    else
-        {
-            # Prevent grep from exiting in case of no match
-            # https://unix.stackexchange.com/questions/330660
-            # shellcheck disable=SC2086
-            grep $regex_mode ${ignore_case_option:-} ${grep_color_option:-} -- "$pattern" || true
-        } | while read -r file; do
-            clearResponsiveMessage
-            [ -t 1 ] &&
-                echo "${ec}[1;35m${jar_file}${eend}${ec}[1;32m${separator}${eend}${file}" ||
-                echo "${jar_file}${separator}${file}"
-        done
+  if $only_print_file_name; then
+    local matched=false
+    # NOTE: Do NOT use -q flag with grep:
+    #   With the -q flag the grep program will stop immediately when the first line of data matches.
+    #   Normally you shouldn't use -q in a pipeline like this
+    #   unless you are sure the program at the other end can handle SIGPIPE.
+    # more info see:
+    # - https://stackoverflow.com/questions/19120263/why-exit-code-141-with-grep-q
+    # - https://unix.stackexchange.com/questions/305547/broken-pipe-when-grepping-output-but-only-with-i-flag
+    # - http://www.pixelbeat.org/programming/sigpipe_handling.html
+    if grep $regex_mode ${ignore_case_option:-} -c -- "$pattern" &>/dev/null; then
+      matched=true
     fi
+
+    if [ $print_matched_files != $matched ]; then
+      return
+    fi
+
+    clearResponsiveMessage
+    [ -t 1 ] && echo "${ec}[1;35m${jar_file}${eend}" || echo "${jar_file}"
+  else
+    {
+      # Prevent grep from exiting in case of no match
+      # https://unix.stackexchange.com/questions/330660
+      # shellcheck disable=SC2086
+      grep $regex_mode ${ignore_case_option:-} ${grep_color_option:-} -- "$pattern" || true
+    } | while read -r file; do
+      clearResponsiveMessage
+      [ -t 1 ] &&
+        echo "${ec}[1;35m${jar_file}${eend}${ec}[1;32m${separator}${eend}${file}" ||
+        echo "${jar_file}${separator}${file}"
+    done
+  fi
 }
 
 findInJarFiles() {
-    [ -t 1 ] && local -r grep_color_option='--color=always'
+  [ -t 1 ] && local -r grep_color_option='--color=always'
 
-    local counter=1 total_jar_count jar_file
+  local counter=1 total_jar_count jar_file
 
-    read -r total_jar_count
+  read -r total_jar_count
 
-    while read -r jar_file; do
-        printResponsiveMessage "finding in jar($((counter++))/$total_jar_count): $jar_file"
-        listZipEntries "${jar_file}" | __outputResultOfJarFile "${jar_file}"
-    done
+  while read -r jar_file; do
+    printResponsiveMessage "finding in jar($((counter++))/$total_jar_count): $jar_file"
+    listZipEntries "${jar_file}" | __outputResultOfJarFile "${jar_file}"
+  done
 
-    clearResponsiveMessage
+  clearResponsiveMessage
 }
 
 searchJarFiles | findInJarFiles

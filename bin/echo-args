@@ -10,16 +10,16 @@ readonly ec=$'\033'      # escape char
 readonly eend=$'\033[0m' # escape end
 
 echoArg() {
-    local index="$1" count="$2" value="$3"
+  local index="$1" count="$2" value="$3"
 
-    # if stdout is console, turn on color output.
-    [ -t 1 ] &&
-        echo "${index}/${count}: ${ec}[1;31m[$eend${ec}[1;36;40m$value$eend${ec}[1;31m]$eend" ||
-        echo "${index}/${count}: [${value}]"
+  # if stdout is console, turn on color output.
+  [ -t 1 ] &&
+    echo "${index}/${count}: ${ec}[1;31m[$eend${ec}[1;36;40m$value$eend${ec}[1;31m]$eend" ||
+    echo "${index}/${count}: [${value}]"
 }
 
 echoArg 0 $# "$0"
 idx=1
 for a; do
-    echoArg $((idx++)) $# "$a"
+  echoArg $((idx++)) $# "$a"
 done

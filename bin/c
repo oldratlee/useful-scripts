@@ -40,18 +40,18 @@ readonly eend=$'\033[0m' # escape end
 readonly nl=$'\n'        # new line
 
 redEcho() {
-    [ -t 1 ] && echo "${ec}[1;31m$*$eend" || echo "$*"
+  [ -t 1 ] && echo "${ec}[1;31m$*$eend" || echo "$*"
 }
 
 usage() {
-    local -r exit_code="${1:-0}"
-    (($# > 0)) && shift
-    # shellcheck disable=SC2015
-    [ "$exit_code" != 0 ] && local -r out=/dev/stderr || local -r out=/dev/stdout
+  local -r exit_code="${1:-0}"
+  (($# > 0)) && shift
+  # shellcheck disable=SC2015
+  [ "$exit_code" != 0 ] && local -r out=/dev/stderr || local -r out=/dev/stdout
 
-    (($# > 0)) && redEcho "$*$nl" >$out
+  (($# > 0)) && redEcho "$*$nl" >$out
 
-    cat >$out <<EOF
+  cat >$out <<EOF
 Usage: ${PROG} [OPTION]... [command [command_args ...]]
 Run command and put output to system clipper.
 If no command is specified, read from stdin(pipe).
@@ -69,12 +69,12 @@ Options:
   -V, --version   display version information and exit
 EOF
 
-    exit "$exit_code"
+  exit "$exit_code"
 }
 
 progVersion() {
-    echo "$PROG $PROG_VERSION"
-    exit
+  echo "$PROG $PROG_VERSION"
+  exit
 }
 
 ################################################################################
@@ -85,35 +85,35 @@ quiet=false
 eol=-n
 declare -a args=()
 while [ $# -gt 0 ]; do
-    case "$1" in
-    -k | --keep-eol)
-        eol=
-        shift
-        ;;
-    -q | --quiet)
-        quiet=true
-        shift
-        ;;
-    -h | --help)
-        usage
-        ;;
-    -V | --version)
-        progVersion
-        ;;
-    --)
-        shift
-        args=(${args[@]:+"${args[@]}"} "$@")
-        break
-        ;;
-    -*)
-        usage 2 "${PROG}: unrecognized option '$1'"
-        ;;
-    *)
-        # if not option, treat all follow args as command
-        args=(${args[@]:+"${args[@]}"} "$@")
-        break
-        ;;
-    esac
+  case "$1" in
+  -k | --keep-eol)
+    eol=
+    shift
+    ;;
+  -q | --quiet)
+    quiet=true
+    shift
+    ;;
+  -h | --help)
+    usage
+    ;;
+  -V | --version)
+    progVersion
+    ;;
+  --)
+    shift
+    args=(${args[@]:+"${args[@]}"} "$@")
+    break
+    ;;
+  -*)
+    usage 2 "${PROG}: unrecognized option '$1'"
+    ;;
+  *)
+    # if not option, treat all follow args as command
+    args=(${args[@]:+"${args[@]}"} "$@")
+    break
+    ;;
+  esac
 done
 
 readonly eol quiet args
@@ -123,31 +123,31 @@ readonly eol quiet args
 ################################################################################
 
 copy() {
-    case "$(uname)" in
-    Darwin*)
-        pbcopy
-        ;;
-    CYGWIN* | MINGW*)
-        clip
-        ;;
-    *)
-        xsel -b
-        ;;
-    esac
+  case "$(uname)" in
+  Darwin*)
+    pbcopy
+    ;;
+  CYGWIN* | MINGW*)
+    clip
+    ;;
+  *)
+    xsel -b
+    ;;
+  esac
 }
 
 teeAndCopy() {
-    # shellcheck disable=SC2015
-    $quiet && local -r out=/dev/null || local -r out=/dev/stdout
-    tee >(
-        content="$(cat)"
-        # shellcheck disable=SC2086
-        echo $eol "$content" | copy
-    ) >$out
+  # shellcheck disable=SC2015
+  $quiet && local -r out=/dev/null || local -r out=/dev/stdout
+  tee >(
+    content="$(cat)"
+    # shellcheck disable=SC2086
+    echo $eol "$content" | copy
+  ) >$out
 }
 
 if [ ${#args[@]} -eq 0 ]; then
-    teeAndCopy
+  teeAndCopy
 else
-    "${args[@]}" | teeAndCopy
+  "${args[@]}" | teeAndCopy
 fi

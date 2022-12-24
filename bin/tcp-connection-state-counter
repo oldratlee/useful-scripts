@@ -20,7 +20,7 @@ readonly PROG_VERSION='2.5.0-dev'
 ################################################################################
 
 usage() {
-    cat <<EOF
+  cat <<EOF
 Usage: ${PROG} [OPTION]...
 show count of tcp connection stat.
 
@@ -31,12 +31,12 @@ Options:
     -h, --help      display this help and exit
     -V, --version   display version information and exit
 EOF
-    exit
+  exit
 }
 
 progVersion() {
-    echo "$PROG $PROG_VERSION"
-    exit
+  echo "$PROG $PROG_VERSION"
+  exit
 }
 
 ################################################################################
@@ -44,11 +44,11 @@ progVersion() {
 ################################################################################
 
 for a; do
-    [[ "-h" == "$a" || "--help" == "$a" ]] && usage
+  [[ "-h" == "$a" || "--help" == "$a" ]] && usage
 done
 
 for a; do
-    [[ "-V" == "$a" || "--version" == "$a" ]] && progVersion
+  [[ "-V" == "$a" || "--version" == "$a" ]] && progVersion
 done
 
 ################################################################################

@@ -1,6 +1,6 @@
 # <div align="center"><a href="#dummy"><img src="docs/logo.png" alt="🐌 useful-scripts"></a></div>
 
-<img src="docs/script-logo.png" alt="repo-icon" width="20%" align="right" />
+<a href="#dummy"><img src="docs/script-logo.png" alt="repo-icon" width="20%" align="right" /></a>
 
 <p align="center">
 <a href="https://github.com/oldratlee/useful-scripts/actions/workflows/ci.yaml"><img src="https://img.shields.io/github/actions/workflow/status/oldratlee/useful-scripts/ci.yaml?branch=dev-2.x&logo=github&logoColor=white" alt="Github Workflow Build Status"></a>

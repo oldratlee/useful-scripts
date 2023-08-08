@@ -1,6 +1,4 @@
-# <div align="center"><a href="#dummy"><img src="docs/logo.png" alt="🐌 useful-scripts"></a></div>
-
-<a href="#dummy"><img src="docs/script-logo.png" alt="repo-icon" width="20%" align="right" /></a>
+# <div align="center"><a href="#dummy"><img src="https://github.com/oldratlee/useful-scripts/assets/1063891/990d7ab3-1a84-4024-b1c6-4c8d441dcfc6" alt="🐌 useful-scripts"></a></div>
 
 <p align="center">
 <a href="https://github.com/oldratlee/useful-scripts/actions/workflows/ci.yaml"><img src="https://img.shields.io/github/actions/workflow/status/oldratlee/useful-scripts/ci.yaml?branch=dev-2.x&logo=github&logoColor=white" alt="Github Workflow Build Status"></a>
@@ -14,6 +12,7 @@
 </p>
 
 🐌 useful scripts for making developer's everyday life easier and happier, involved java, shell etc.  
+
 👉 平时有用的手动操作做成脚本，以便捷地使用，让开发的日常生活更轻松些。 💕
 
 欢迎 👏 💖
@@ -25,7 +24,9 @@
 
 本仓库的脚本（如`Java`相关脚本）在阿里等公司（如随身云，见[`awesome-scripts`仓库](https://github.com/Suishenyun/awesome-scripts)说明）的线上生产环境部署使用。
 
-如果你的公司有部署使用，欢迎使用通过 [Issue：who's using | 用户反馈收集](https://github.com/oldratlee/useful-scripts/issues/96) 告知，方便互相交流反馈～ 💘
+如果你的公司有部署使用，欢迎使用通过 [Issue：who's using | 用户反馈收集](https://github.com/oldratlee/useful-scripts/issues/96) 告知，方便互相交流反馈～ 💗
+
+<a href="#dummy"><img src="https://github.com/oldratlee/useful-scripts/assets/1063891/82f2d184-ca16-4c37-b053-07f21fd8aef1" alt="repo-icon" width="20%" align="right" /></a>
 
 ----------------------
 

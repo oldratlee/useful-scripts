@@ -136,14 +136,19 @@ copy() {
   esac
 }
 
+catThenCopy() {
+  local content
+  content="$(cat)"
+  # shellcheck disable=SC2086
+  echo $eol "$content" | copy
+}
+
 teeAndCopy() {
-  # shellcheck disable=SC2015
-  $quiet && local -r out=/dev/null || local -r out=/dev/stdout
-  tee >(
-    content="$(cat)"
-    # shellcheck disable=SC2086
-    echo $eol "$content" | copy
-  ) >$out
+  if $quiet; then
+    catThenCopy
+  else
+    tee >(catThenCopy)
+  fi
 }
 
 if [ ${#args[@]} -eq 0 ]; then

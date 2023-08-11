@@ -82,12 +82,12 @@ progVersion() {
 ################################################################################
 
 quiet=false
-eol=-n
-declare -a args=()
+keep_eol=false
+declare -a target_command=()
 while [ $# -gt 0 ]; do
   case "$1" in
   -k | --keep-eol)
-    eol=
+    keep_eol=true
     shift
     ;;
   -q | --quiet)
@@ -102,7 +102,7 @@ while [ $# -gt 0 ]; do
     ;;
   --)
     shift
-    args=(${args[@]:+"${args[@]}"} "$@")
+    target_command=(${target_command[@]:+"${target_command[@]}"} "$@")
     break
     ;;
   -*)
@@ -110,13 +110,13 @@ while [ $# -gt 0 ]; do
     ;;
   *)
     # if not option, treat all follow args as command
-    args=(${args[@]:+"${args[@]}"} "$@")
+    target_command=(${target_command[@]:+"${target_command[@]}"} "$@")
     break
     ;;
   esac
 done
 
-readonly eol quiet args
+readonly keep_eol quiet target_command
 
 ################################################################################
 # biz logic
@@ -139,8 +139,10 @@ copy() {
 catThenCopy() {
   local content
   content="$(cat)"
-  # shellcheck disable=SC2086
-  echo $eol "$content" | copy
+  {
+    printf %s "$content"
+    $keep_eol && echo
+  } | copy
 }
 
 teeAndCopy() {
@@ -151,8 +153,8 @@ teeAndCopy() {
   fi
 }
 
-if [ ${#args[@]} -eq 0 ]; then
+if [ ${#target_command[@]} -eq 0 ]; then
   teeAndCopy
 else
-  "${args[@]}" | teeAndCopy
+  "${target_command[@]}" | teeAndCopy
 fi

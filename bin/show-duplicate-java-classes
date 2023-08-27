@@ -15,17 +15,21 @@
 # @author tg123 (farmer1992 at gmail dot com)
 # @author Jerry Lee (oldratlee at gmail dot com)
 
-__author__ = 'tg123'
+import sys
+
+if sys.version_info < (3, 8):
+    raise RuntimeError('Python 3.8+ required. Current version: %s' % sys.version.split()[0])
 
 import os
 import re
-import sys
 from glob import glob
 from io import BytesIO
 from optparse import OptionParser
-from os import walk
 from os.path import relpath, isdir, exists
-from zipfile import ZipFile, BadZipfile
+from zipfile import ZipFile, BadZipFile
+
+# __author__ contains GitHub ids
+__author__ = 'tg123, oldratlee'
 
 ################################################################################
 # utils functions
@@ -136,7 +140,7 @@ def list_jar_file_under_lib_dirs(lib_dirs, recursive):
 
         jar_files |= {
             dir_path + '/' + filename
-            for dir_path, _, file_names in walk(lib_dir)
+            for dir_path, _, file_names in os.walk(lib_dir)
             for filename in file_names if filename.lower().endswith('.jar')
         }
 
@@ -170,7 +174,7 @@ def list_class_under_jar_file(jar_file, recursive, progress):
             try:
                 with ZipFile(BytesIO(zf.read(jar))) as f:
                     ret.update(list_zip_in_zip(next_jar_jar_path, f))
-            except BadZipfile as e:
+            except BadZipFile as e:
                 print_error('WARN: %s is bad zip file(%s), ignored!' % (next_jar_jar_path, e))
 
         return ret
@@ -178,7 +182,7 @@ def list_class_under_jar_file(jar_file, recursive, progress):
     try:
         with ZipFile(jar_file) as zip_file:
             return list_zip_in_zip(jar_file, zip_file)
-    except BadZipfile as error:
+    except BadZipFile as error:
         print_error('WARN: %s is bad zip file(%s), ignored!' % (jar_file, error))
         return {}
 
@@ -195,7 +199,7 @@ def list_class_under_class_dir(class_dir, progress):
         return {}
 
     return {relpath(dir_path + '/' + filename, class_dir)
-            for dir_path, _, file_names in walk(class_dir)
+            for dir_path, _, file_names in os.walk(class_dir)
             for filename in file_names if filename.lower().endswith('.class')}
 
 

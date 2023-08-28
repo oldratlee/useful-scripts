@@ -1,6 +1,6 @@
 #!/bin/bash
 # @Function
-# echo each arguments on one line colorfully.
+# print each arguments on one line colorfully.
 #
 # @Usage
 #   $ ./a2l arg1 arg2
@@ -19,26 +19,22 @@ readonly PROG_VERSION='2.5.0-dev'
 # util functions
 ################################################################################
 
-# NOTE: $'foo' is the escape sequence syntax of bash
-readonly ec=$'\033'      # escape char
-readonly eend=$'\033[0m' # escape end
-
-colorEcho() {
+colorPrint() {
   local color="$1"
   shift
   # check isatty in bash https://stackoverflow.com/questions/10022323
   # if stdout is console, turn on color output.
-  [ -t 1 ] && echo "${ec}[1;${color}m$*${eend}" || echo "$*"
-}
-
-redEcho() {
-  colorEcho 31 "$@"
+  if [ -t 1 ]; then
+    printf "\033[1;${color}m%s\033[0m\n" "$*"
+  else
+    printf '%s\n' "$*"
+  fi
 }
 
 usage() {
   cat <<EOF
 Usage: ${PROG} [OPTION]... ARG...
-echo each arguments on one line colorfully.
+print each arguments on one line colorfully.
 
 Example:
   ${PROG} arg1 arg2
@@ -53,7 +49,7 @@ EOF
 }
 
 progVersion() {
-  echo "$PROG $PROG_VERSION"
+  printf '%s\n' "$PROG $PROG_VERSION"
   exit
 }
 
@@ -94,20 +90,20 @@ readonly args
 # biz logic
 ################################################################################
 
-readonly -a ECHO_COLORS=(33 35 36 31 32 37 34)
+readonly -a ROTATE_COLORS=(33 35 36 31 32 37 34)
 COUNT=0
-rotateColorEcho() {
+rotateColorPrint() {
   local message="$*"
 
   # skip color for white space
   if [[ "$message" =~ ^[[:space:]]*$ ]]; then
-    echo "$message"
+    printf '%s\n' "$message"
   else
-    local color="${ECHO_COLORS[COUNT++ % ${#ECHO_COLORS[@]}]}"
-    colorEcho "$color" "$*"
+    local color="${ROTATE_COLORS[COUNT++ % ${#ROTATE_COLORS[@]}]}"
+    colorPrint "$color" "$*"
   fi
 }
 
 for a in ${args[@]:+"${args[@]}"}; do
-  rotateColorEcho "$a"
+  rotateColorPrint "$a"
 done

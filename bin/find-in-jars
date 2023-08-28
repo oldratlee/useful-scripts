@@ -40,10 +40,9 @@ readonly PROG_VERSION='2.5.0-dev'
 # util functions
 ################################################################################
 
-# NOTE: $'foo' is the escape sequence syntax of bash
-readonly ec=$'\033'      # escape char
-readonly eend=$'\033[0m' # escape end
-readonly nl=$'\n'        # new line
+readonly red='\033[1;31m' normal='\033[0m'
+readonly jar_color='\033[1;35m' sep_color='\033[1;32m'
+
 # How to delete line with echo?
 # https://unix.stackexchange.com/questions/26576
 #
@@ -52,11 +51,15 @@ readonly nl=$'\n'        # new line
 # echo -e "\033[1K"
 # Or everything on the line, regardless of cursor position:
 # echo -e "\033[2K"
-readonly clear_line=$'\033[2K\r'
+readonly clear_line='\033[2K\r'
 
-redEcho() {
+redPrint() {
   # -t check: is a terminal device?
-  [ -t 1 ] && echo "${ec}[1;31m$*$eend" || echo "$*"
+  if [ -t 1 ]; then
+    printf "${red}%s${normal}\n" "$*"
+  else
+    printf '%s\n' "$*"
+  fi
 }
 
 # Getting console width using a bash script
@@ -72,7 +75,7 @@ printResponsiveMessage() {
 
   local message="$*"
   # http://www.linuxforums.org/forum/red-hat-fedora-linux/142825-how-truncate-string-bash-script.html
-  echo -n "$clear_line${message:0:columns}" >&2
+  printf "${clear_line}%s" "${message:0:columns}" >&2
 }
 
 clearResponsiveMessage() {
@@ -80,12 +83,12 @@ clearResponsiveMessage() {
     return
   fi
 
-  echo -n "$clear_line" >&2
+  printf "%b" "$clear_line" >&2
 }
 
 die() {
   clearResponsiveMessage
-  redEcho "Error: $*" >&2
+  redPrint "Error: $*" >&2
   exit 1
 }
 
@@ -95,7 +98,9 @@ usage() {
   # shellcheck disable=SC2015
   [ "$exit_code" != 0 ] && local -r out=/dev/stderr || local -r out=/dev/stdout
 
-  (($# > 0)) && redEcho "$*$nl" >$out
+  # NOTE: $'foo' is the escape sequence syntax of bash
+  local -r nl=$'\n' # new line
+  (($# > 0)) && redPrint "$*$nl" >$out
 
   cat >$out <<EOF
 Usage: ${PROG} [OPTION]... PATTERN
@@ -144,7 +149,7 @@ EOF
 }
 
 progVersion() {
-  echo "$PROG $PROG_VERSION"
+  printf '%s\n' "$PROG $PROG_VERSION"
   exit
 }
 
@@ -227,7 +232,7 @@ while (($# > 0)); do
     break
     ;;
   -*)
-    usage 2 "${PROG}: unrecognized option '$1'"
+    usage 2 "Error: unrecognized option '$1'"
     ;;
   *)
     args=(${args[@]:+"${args[@]}"} "$1")
@@ -319,7 +324,7 @@ listZipEntries() {
       # exit code is 1, and print 'Empty zipfile.'
       if [ "$msg" != 'Empty zipfile.' ]; then
         clearResponsiveMessage
-        redEcho "fail to list zip entries of $zip_file, ignored: $msg" >&2
+        redPrint "fail to list zip entries of $zip_file, ignored: $msg" >&2
       fi
       return 0
     }
@@ -327,7 +332,7 @@ listZipEntries() {
 
   "${command_to_list_zip_entries[@]}" "$zip_file" || {
     clearResponsiveMessage
-    redEcho "fail to list zip entries of $zip_file, ignored!" >&2
+    redPrint "fail to list zip entries of $zip_file, ignored!" >&2
     return 0
   }
 }
@@ -344,17 +349,18 @@ searchJarFiles() {
   jar_files="$(find "${dirs[@]}" "${find_iname_options[@]}" -type f)"
   [ -n "$jar_files" ] || die "No ${extensions[*]} file found!"
 
-  total_jar_count="$(echo "$jar_files" | wc -l)"
-  # delete white space
-  # because the output of mac system command `wc -l` contains white space!
+  total_jar_count="$(printf '%s\n' "$jar_files" | wc -l)"
+  # remove white space, because the `wc -l` output on mac contains white space!
   total_jar_count="${total_jar_count//[[:space:]]/}"
 
   echo "$total_jar_count"
-  echo "$jar_files"
+  printf '%s\n' "$jar_files"
 }
 
 __outputResultOfJarFile() {
   local jar_file="$1" file
+  # shellcheck disable=SC2206
+  local grep_opt_args=($regex_mode ${ignore_case_option:-} ${grep_color_option:-} -- "$pattern")
 
   if $only_print_file_name; then
     local matched=false
@@ -366,7 +372,7 @@ __outputResultOfJarFile() {
     # - https://stackoverflow.com/questions/19120263/why-exit-code-141-with-grep-q
     # - https://unix.stackexchange.com/questions/305547/broken-pipe-when-grepping-output-but-only-with-i-flag
     # - http://www.pixelbeat.org/programming/sigpipe_handling.html
-    if grep $regex_mode ${ignore_case_option:-} -c -- "$pattern" &>/dev/null; then
+    if grep -c "${grep_opt_args[@]}" &>/dev/null; then
       matched=true
     fi
 
@@ -375,18 +381,23 @@ __outputResultOfJarFile() {
     fi
 
     clearResponsiveMessage
-    [ -t 1 ] && echo "${ec}[1;35m${jar_file}${eend}" || echo "${jar_file}"
+    if [ -t 1 ]; then
+      printf "${jar_color}%s${normal}\n" "${jar_file}"
+    else
+      printf '%s\n' "${jar_file}"
+    fi
   else
     {
       # Prevent grep from exiting in case of no match
       # https://unix.stackexchange.com/questions/330660
-      # shellcheck disable=SC2086
-      grep $regex_mode ${ignore_case_option:-} ${grep_color_option:-} -- "$pattern" || true
+      grep "${grep_opt_args[@]}" || true
     } | while read -r file; do
       clearResponsiveMessage
-      [ -t 1 ] &&
-        echo "${ec}[1;35m${jar_file}${eend}${ec}[1;32m${separator}${eend}${file}" ||
-        echo "${jar_file}${separator}${file}"
+      if [ -t 1 ]; then
+        printf "${jar_color}%s${sep_color}%s${normal}%s\n" "$jar_file" "$separator" "$file"
+      else
+        printf '%s\n' "${jar_file}${separator}${file}"
+      fi
     done
   fi
 }

@@ -21,21 +21,51 @@ readonly PROG_VERSION='2.5.0-dev'
 # util functions
 ################################################################################
 
-# NOTE: $'foo' is the escape sequence syntax of bash
-readonly ec=$'\033'      # escape char
-readonly eend=$'\033[0m' # escape end
-readonly nl=$'\n'        # new line
-
-colorEcho() {
+colorPrint() {
   local color="$1"
   shift
   # check isatty in bash https://stackoverflow.com/questions/10022323
   # if stdout is console, turn on color output.
-  [ -t 1 ] && echo "${ec}[1;${color}m$*${eend}" || echo "$*"
+  if [ -t 1 ]; then
+    printf "\033[1;${color}m%s\033[0m\n" "$*"
+  else
+    printf '%s\n' "$*"
+  fi
 }
 
-redEcho() {
-  colorEcho 31 "$@"
+redPrint() {
+  colorPrint 31 "$@"
+}
+
+die() {
+  redPrint "Error: $*" >&2
+  exit 1
+}
+
+portableRelPath() {
+  local file="$1" relTo="$2" uname
+
+  uname="$(uname)"
+  case "$uname" in
+  Linux* | CYGWIN* | MINGW*)
+    realpath "$f" --relative-to="$relTo"
+    ;;
+  Darwin*)
+    local py_args=(-c 'import os, sys; print(os.path.relpath(sys.argv[1], sys.argv[2]))' "$file" "$relTo")
+    if command -v grealpath >/dev/null; then
+      grealpath "$f" --relative-to="$relTo"
+    elif command -v python3 >/dev/null; then
+      python3 "${py_args[@]}"
+    elif command -v python >/dev/null; then
+      python "${py_args[@]}"
+    else
+      die "fail to find command(grealpath/python3/python) to get relative path!"
+    fi
+    ;;
+  *)
+    die "NOT support uname($uname)!"
+    ;;
+  esac
 }
 
 usage() {
@@ -44,15 +74,18 @@ usage() {
   # shellcheck disable=SC2015
   [ "$exit_code" != 0 ] && local -r out=/dev/stderr || local -r out=/dev/stdout
 
-  (($# > 0)) && redEcho "$*$nl" >$out
+  # NOTE: $'foo' is the escape sequence syntax of bash
+  local nl=$'\n' # new line
+  (($# > 0)) && redPrint "$*$nl" >$out
 
   cat >$out <<EOF
-Usage: ${PROG} [OPTION]... ARG...
+Usage: ${PROG} [OPTION]... [FILE]...
 convert to Relative Path.
 
 Example:
-  ${PROG} arg1 arg2
-  ${PROG} */*.py
+  ${PROG} path    # relative to current dir
+  ${PROG} path1 relativeToPath
+  ${PROG} */*.c relativeToPath
 
 Options:
   -h, --help      display this help and exit
@@ -63,7 +96,7 @@ EOF
 }
 
 progVersion() {
-  echo "$PROG $PROG_VERSION"
+  printf '%s\n' "$PROG $PROG_VERSION"
   exit
 }
 
@@ -87,7 +120,6 @@ while [ $# -gt 0 ]; do
     ;;
   -*)
     usage 2 "${PROG}: unrecognized option '$1'"
-    break
     ;;
   *)
     # if not option, treat all follow files as args
@@ -97,10 +129,7 @@ while [ $# -gt 0 ]; do
   esac
 done
 
-[ "${#files[@]}" -eq 0 ] && {
-  redEcho "Error: NO argument!" 1>&2
-  exit 1
-}
+[ "${#files[@]}" -eq 0 ] && die "NO argument!"
 
 if [ "${#files[@]}" -eq 1 ]; then
   relativeTo=.
@@ -113,12 +142,24 @@ else
 fi
 
 [ -f "$relativeTo" ] && relativeTo="$(dirname "$relativeTo")"
+[ -e "$relativeTo" ] || die "relativeTo dir($relativeTo) does NOT exists!"
+
 readonly files relativeTo
 
+################################################################################
+# biz logic
+################################################################################
+
+has_error=false
+
 for f in "${files[@]}"; do
-  ! [ -e "$f" ] && {
-    echo "$f does not exists!"
-    continue
-  }
-  realpath "$f" --relative-to="$relativeTo"
+  if [ -e "$f" ]; then
+    portableRelPath "$f" "$relativeTo"
+  else
+    redPrint "error: $f does not exists!" >&2
+    has_error=true
+  fi
 done
+
+# set exit status
+! $has_error

@@ -17,18 +17,17 @@ readonly PROG_VERSION='2.5.0-dev'
 # util functions
 ################################################################################
 
-# NOTE: $'foo' is the escape sequence syntax of bash
-readonly ec=$'\033'      # escape char
-readonly eend=$'\033[0m' # escape end
-readonly nl=$'\n'        # new line
-
-redEcho() {
+redPrint() {
   # -t check: is a terminal device?
-  [ -t 1 ] && echo "${ec}[1;31m$*$eend" || echo "$*"
+  if [ -t 1 ]; then
+    printf "\033[1;31m%s\033[0m\n" "$*"
+  else
+    printf '%s\n' "$*"
+  fi
 }
 
 die() {
-  redEcho "Error: $*" 1>&2
+  redPrint "Error: $*" 1>&2
   exit 1
 }
 
@@ -47,10 +46,15 @@ portableReadLink() {
     readlink -f "$file"
     ;;
   Darwin*)
+    local py_args=(-c 'import os, sys; print(os.path.realpath(sys.argv[1]))' "$file")
     if command -v greadlink >/dev/null; then
       greadlink -f "$file"
+    elif command -v python3 >/dev/null; then
+      python3 "${py_args[@]}"
+    elif command -v python >/dev/null; then
+      python "${py_args[@]}"
     else
-      python -c 'import os, sys; print(os.path.realpath(sys.argv[1]))' "$file"
+      die "fail to find command(greadlink/python3/python) for readlink!"
     fi
     ;;
   *)
@@ -65,7 +69,9 @@ usage() {
   # shellcheck disable=SC2015
   [ "$exit_code" != 0 ] && local -r out=/dev/stderr || local -r out=/dev/stdout
 
-  (($# > 0)) && redEcho "$*$nl" >$out
+  # NOTE: $'foo' is the escape sequence syntax of bash
+  local nl=$'\n' # new line
+  (($# > 0)) && redPrint "$*$nl" >$out
 
   cat >$out <<EOF
 Usage: ${PROG} [OPTION]... command [command-args]...
@@ -100,7 +106,7 @@ EOF
 }
 
 progVersion() {
-  echo "$PROG $PROG_VERSION"
+  printf '%s\n' "$PROG $PROG_VERSION"
   exit
 }
 
@@ -235,7 +241,7 @@ trap cleanupWhenExit EXIT
 ########################################
 
 logAndRun() {
-  $verbose && echo "[$PROG] $*" 1>&2
+  $verbose && printf '%s\n' "[$PROG] $*" 1>&2
   "$@"
 }
 

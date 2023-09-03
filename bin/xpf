@@ -1,7 +1,7 @@
 #!/bin/bash
 # @Function
 # Open file in file explorer, file is selected.
-# same as xpl --selected [file [file ...] ]
+# same as xpl --selected [file]...
 #
 # @Usage
 #   $ ./xpf file
@@ -9,6 +9,10 @@
 # @online-doc https://github.com/oldratlee/useful-scripts/blob/dev-2.x/docs/shell.md#-xpl-and-xpf
 # @author Jerry Lee (oldratlee at gmail dot com)
 set -eEuo pipefail
+
+################################################################################
+# util functions
+################################################################################
 
 # How can I get the behavior of GNU's readlink -f on a Mac?
 # https://stackoverflow.com/questions/1055671
@@ -21,10 +25,16 @@ portableReadLink() {
     readlink -f "$file"
     ;;
   Darwin*)
+    local py_args=(-c 'import os, sys; print(os.path.realpath(sys.argv[1]))' "$file")
     if command -v greadlink >/dev/null; then
       greadlink -f "$file"
+    elif command -v python3 >/dev/null; then
+      python3 "${py_args[@]}"
+    elif command -v python >/dev/null; then
+      python "${py_args[@]}"
     else
-      python -c 'import os, sys; print(os.path.realpath(sys.argv[1]))' "$file"
+      echo "fail to find command(greadlink/python3/python) for readlink!" >&2
+      exit 1
     fi
     ;;
   *)
@@ -34,5 +44,13 @@ portableReadLink() {
   esac
 }
 
-BASE="$(dirname "$(portableReadLink "${BASH_SOURCE[0]}")")"
-source "$BASE/xpl" "$@"
+################################################################################
+# biz logic
+################################################################################
+
+# DO NOT inline THIS_SCRIPT into BASE_DIR, because sub-shell:
+#   BASE_DIR="$(dirname "$(portableReadLink "${BASH_SOURCE[0]}")")"
+THIS_SCRIPT="$(portableReadLink "${BASH_SOURCE[0]}")"
+BASE_DIR="$(dirname "$THIS_SCRIPT")"
+
+source "$BASE_DIR/xpl" "$@"

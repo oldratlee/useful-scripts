@@ -30,7 +30,9 @@ PROG="$(basename "$0")"
 readonly PROG
 readonly PROG_VERSION='2.5.0-dev'
 
-readonly nl=$'\n' # new line
+################################################################################
+# util functions
+################################################################################
 
 usage() {
   local -r exit_code="${1:-0}"
@@ -38,7 +40,7 @@ usage() {
   # shellcheck disable=SC2015
   [ "$exit_code" != 0 ] && local -r out=/dev/stderr || local -r out=/dev/stdout
 
-  (($# > 0)) && echo "$*$nl" >$out
+  (($# > 0)) && printf '%s\n\n' "$*" >$out
 
   cat <<EOF
 Usage: ${PROG} [OPTION] [FILE]...
@@ -56,12 +58,9 @@ EOF
 }
 
 progVersion() {
-  echo "$PROG $PROG_VERSION"
+  printf '%s\n' "$PROG $PROG_VERSION"
   exit
 }
-
-# if program name is xpf, set option selected!
-[ "xpf" == "${PROG}" ] && selected=true
 
 ################################################################################
 # parse options
@@ -96,10 +95,13 @@ while [ $# -gt 0 ]; do
   esac
 done
 
+# if program name is xpf, set option selected!
+[ "xpf" == "${PROG}" ] && selected=true
+
 readonly args selected
 
 ################################################################################
-# biz options
+# biz logic
 ################################################################################
 
 # open one file
@@ -109,33 +111,49 @@ openOneFile() {
   case "$(uname)" in
   Darwin*)
     [ -f "${file}" ] && slt=true
-    open ${slt:+-R} "$file"
+    if $slt; then
+      open -R "$file"
+    else
+      open "$file"
+    fi
     ;;
   CYGWIN*)
     [ -f "${file}" ] && slt=true
-    explorer ${slt:+/select,} "$(cygpath -w "${file}")"
+    if $slt; then
+      explorer /select, "$(cygpath -w "${file}")"
+    else
+      explorer "$(cygpath -w "${file}")"
+    fi
     ;;
   *)
     if [ -d "${file}" ]; then
       nautilus "$(dirname "${file}")"
     else
-      if [ -z "${slt}" ]; then
-        nautilus "$(dirname "${file}")"
-      else
+      if $slt; then
         nautilus "${file}"
+      else
+        nautilus "$(dirname "${file}")"
       fi
     fi
     ;;
   esac
+
+  local selected_msg
+  $slt && selected_msg='with selection'
+  printf 'open %14s: %s\n' "$selected_msg" "$file"
 }
 
 [ "${#args[@]}" == 0 ] && files=(.) || files=("${args[@]}")
+has_error=false
+
 for file in "${files[@]}"; do
   [ ! -e "$file" ] && {
-    echo "$file not existed!"
+    printf '%s\n' "$file not existed!"
     continue
   }
 
   openOneFile "$file"
-  echo "$file opened${selected:+ with selection}!"
 done
+
+# set exit status
+! $has_error

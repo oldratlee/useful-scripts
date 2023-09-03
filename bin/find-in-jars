@@ -100,9 +100,9 @@ usage() {
 
   # NOTE: $'foo' is the escape sequence syntax of bash
   local -r nl=$'\n' # new line
-  (($# > 0)) && redPrint "$*$nl" >$out
+  (($# > 0)) && redPrint "$*$nl" >"$out"
 
-  cat >$out <<EOF
+  cat >"$out" <<EOF
 Usage: ${PROG} [OPTION]... PATTERN
 
 Find files in the jar files under specified directory,
@@ -376,7 +376,7 @@ __outputResultOfJarFile() {
       matched=true
     fi
 
-    if [ $print_matched_files != $matched ]; then
+    if [ "$print_matched_files" != "$matched" ]; then
       return
     fi
 

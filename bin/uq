@@ -90,9 +90,9 @@ usage() {
   # shellcheck disable=SC2015
   [ "$exit_code" != 0 ] && local -r out=/dev/stderr || local -r out=/dev/stdout
 
-  (($# > 0)) && redPrint "$*$nl" >$out
+  (($# > 0)) && redPrint "$*$nl" >"$out"
 
-  cat >$out <<EOF
+  cat >"$out" <<EOF
 Usage: ${PROG} [OPTION]... [INPUT [OUTPUT]]
 Filter lines from INPUT (or standard input), writing to OUTPUT (or standard output).
 Same as \`uniq\` command in core utils,

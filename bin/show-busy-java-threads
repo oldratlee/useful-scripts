@@ -49,9 +49,7 @@ readonly USER
 ################################################################################
 
 # NOTE: $'foo' is the escape sequence syntax of bash
-readonly ec=$'\033'      # escape char
-readonly eend=$'\033[0m' # escape end
-readonly nl=$'\n'        # new line
+readonly nl=$'\n' # new line
 
 colorPrint() {
   local color=$1
@@ -154,9 +152,9 @@ usage() {
   # shellcheck disable=SC2015
   [ "$exit_code" != 0 ] && local -r out=/dev/stderr || local -r out=/dev/stdout
 
-  (($# > 0)) && colorPrint 31 "$*$nl" >$out
+  (($# > 0)) && colorPrint 31 "$*$nl" >"$out"
 
-  cat >$out <<EOF
+  cat >"$out" <<EOF
 Usage: ${PROG} [OPTION]... [delay [count]]
 Find out the highest cpu consumed threads of java processes,
 and print the stack of these threads.

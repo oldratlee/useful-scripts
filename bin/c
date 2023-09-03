@@ -51,9 +51,9 @@ usage() {
   # shellcheck disable=SC2015
   [ "$exit_code" != 0 ] && local -r out=/dev/stderr || local -r out=/dev/stdout
 
-  (($# > 0)) && printErrorMsg "$*" >$out
+  (($# > 0)) && printErrorMsg "$*" >"$out"
 
-  cat >$out <<EOF
+  cat >"$out" <<EOF
 Usage: ${PROG} [OPTION]... [command [command_args ...]]
 Run command and put output to system clipper.
 If no command is specified, read from stdin(pipe).

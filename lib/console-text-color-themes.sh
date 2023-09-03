@@ -72,21 +72,21 @@ colorEchoWithoutNewLine() {
 
   echo 'Code sample to print color text:'
 
-  echo -n '    echo -e "\033['
+  printf %s '    echo -e "\033['
   colorEchoWithoutNewLine '3;35;40' '1;36;41'
-  echo -n m
+  printf %s m
   colorEchoWithoutNewLine '0;32;40' 'Sample Text'
-  echo '\033[0m"'
+  printf '%s\n' '\033[0m"'
 
-  echo -n "    echo \$'\033["
+  printf %s "    echo \$'\033["
   colorEchoWithoutNewLine '3;35;40' '1;36;41'
-  echo -n "m'\""
+  printf %s "m'\""
   colorEchoWithoutNewLine '0;32;40' 'Sample Text'
-  echo "\"$'\033[0m'"
-  echo "      # NOTE: $'foo' is the escape sequence syntax of bash, safer escape"
+  printf '%s\n' "\"$'\033[0m'"
+  printf '%s\n' "      # NOTE: $'foo' is the escape sequence syntax of bash, safer escape"
 
-  echo 'Output of above code:'
-  echo -n '    '
+  printf '%s\n' 'Output of above code:'
+  printf %s '    '
   colorEcho '1;36;41' 'Sample Text'
   echo
   echo 'If you are going crazy to write text in escapes string like me,'

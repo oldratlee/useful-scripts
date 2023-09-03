@@ -78,9 +78,9 @@ usage() {
 
   # NOTE: $'foo' is the escape sequence syntax of bash
   local nl=$'\n' # new line
-  (($# > 0)) && redPrint "$*$nl" >$out
+  (($# > 0)) && redPrint "$*$nl" >"$out"
 
-  cat >$out <<EOF
+  cat >"$out" <<EOF
 Usage: ${PROG} [OPTION]... [FILE]...
 convert to Absolute Path.
 

@@ -8,7 +8,7 @@
     - [🍺 c](#-c)
         - [用法/示例](#%E7%94%A8%E6%B3%95%E7%A4%BA%E4%BE%8B)
         - [参考资料](#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99)
-    - [🍺 coat](#-coat)
+    - [🍺 coat and taoc](#-coat-and-taoc)
         - [用法/示例](#%E7%94%A8%E6%B3%95%E7%A4%BA%E4%BE%8B-1)
     - [🍺 a2l](#-a2l)
         - [用法/示例](#%E7%94%A8%E6%B3%95%E7%A4%BA%E4%BE%8B-2)
@@ -51,7 +51,7 @@
 原样命令行输出，并拷贝标准输出到系统剪贴板，省去`CTRL+C`操作，优化命令行与其它应用之间的操作流。  
 支持`Linux`、`Mac`、`Windows`（`cygwin`、`MSSYS`）。
 
-命令名`c`意思是`Copy`，因为这个命令我平时非常常用，所以使用一个字符的命令名，方便快速键入。
+命令名`c`的意思是`Copy`，因为这个命令我平时非常常用，所以使用一个字符的命令名，方便快速键入。
 
 更多说明参见[拷贝复制命令行输出放在系统剪贴板上](http://oldratlee.github.io/post/2012-12-23/command-output-to-clip)。
 
@@ -115,15 +115,19 @@ Options:
 - [拷贝复制命令行输出放在系统剪贴板上](http://oldratlee.github.io/post/2012-12-23/command-output-to-clip)，给出了不同系统可用命令。
 - 关于文本文件最后的换行，参见[Why should text files end with a newline?](https://stackoverflow.com/questions/729692)
 
-🍺 [coat](../bin/coat)
+<a id="-coat"></a>
+
+🍺 [coat](../bin/coat) and [taoc](../bin/taoc)
 ----------------------
 
-彩色`cat`出文件行，方便人眼区分不同的行。  
+彩色`cat`/`tac`出文件行，方便人眼区分不同的行。  
 支持`Linux`、`Mac`、`Windows`（`cygwin`、`MSSYS`）。
 
-命令支持选项、功能和使用方式与[`cat`命令](https://linux.die.net/man/1/cat)完全一样（实际上文件操作的实现全部代理给了`cat`命令）。
+命令支持选项、功能和使用方式与[`cat`](https://linux.die.net/man/1/cat)/[`tac`](https://linux.die.net/man/1/cat)命令完全一样。  
+文件操作在实现上完全代理给了`cat`/`tac`命令。
 
-命令名`coat`意思是`COlorful cAT`；当然单词`coat`的意思是外套，彩色的输出行就像件漂亮的外套～ 😆
+- 命令名`coat`的意思是`COlorful cAT`；同时单词`coat`是外套，而彩色的输出行就像件漂亮的外套～ 🌈 😆
+- 命令名`taoc`是`coat`倒序拼写；命名方式就像`tac`之于`cat`。 🐈
 
 ### 用法/示例
 
@@ -133,6 +137,9 @@ Hello world
 $ echo -e 'Hello\nWorld' | coat
 Hello
 World
+$ echo -e 'Hello\nWorld' | taoc
+World
+Hello
 $ echo -e 'Hello\nWorld' | nl | coat
      1	Hello
      2	World
@@ -145,7 +152,7 @@ line2 of file2
 ...
 
 # 帮助信息
-#   可以看到本人机器上实现代理的`cat`命令是GNU的实现。
+#   可以看到本人机器上实现代理的`cat`/`tac`命令是GNU的实现。
 $ coat --help
 Usage: cat [OPTION]... [FILE]...
 Concatenate FILE(s) to standard output.
@@ -172,6 +179,23 @@ Examples:
 GNU coreutils online help: <https://www.gnu.org/software/coreutils/>
 Full documentation at: <https://www.gnu.org/software/coreutils/cat>
 or available locally via: info '(coreutils) cat invocation'
+
+$ taoc --help
+Usage: tac [OPTION]... [FILE]...
+Write each FILE to standard output, last line first.
+
+With no FILE, or when FILE is -, read standard input.
+
+Mandatory arguments to long options are mandatory for short options too.
+  -b, --before             attach the separator before instead of after
+  -r, --regex              interpret the separator as a regular expression
+  -s, --separator=STRING   use STRING as the separator instead of newline
+      --help        display this help and exit
+      --version     output version information and exit
+
+GNU coreutils online help: <https://www.gnu.org/software/coreutils/>
+Full documentation <https://www.gnu.org/software/coreutils/tac>
+or available locally via: info '(coreutils) tac invocation'
 ```
 
 注：上面示例中，没有彩色；在控制台上运行可以看出彩色效果，如下：  
@@ -183,7 +207,7 @@ or available locally via: info '(coreutils) cat invocation'
 按行彩色输出参数，方便人眼查看。  
 支持`Linux`、`Mac`、`Windows`（`cygwin`、`MSSYS`）。
 
-命令名`a2l`意思是`Arguments to(2) Lines`。
+命令名`a2l`的意思是`Arguments to(2) Lines`。
 
 ### 用法/示例
 
@@ -336,7 +360,7 @@ Options:
 批量转换文件路径为绝对路径/相对路径，会自动跟踪链接并规范化路径。  
 支持`Linux`、`Mac`、`Windows`（`cygwin`、`MSSYS`）。
 
-命令名`ap`意思是`Absolute Path`，`rp`是`Relative Path`。
+命令名`ap`的意思是`Absolute Path`，`rp`是`Relative Path`。
 
 ### 用法/示例
 
@@ -445,7 +469,7 @@ SYN_SENT      7
 - `xpl`：在文件浏览器中打开指定的文件或文件夹。  
   `xpl`是`explorer`的缩写。
 - `xpf`: 在文件浏览器中打开指定的文件或文件夹，并选中。  
-  `xpf`是`explorer and select file`的缩写。
+  `xpf`是`EXplorer and select File`的缩写。
 
 ### 用法/示例
 

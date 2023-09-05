@@ -75,8 +75,8 @@ source <(curl -fsSL https://raw.githubusercontent.com/oldratlee/useful-scripts/r
 
 1. [c](docs/shell.md#-c)  
    原样命令行输出，并拷贝标准输出到系统剪贴板，省去`CTRL+C`操作，优化命令行与其它应用之间的操作流。
-1. [coat](docs/shell.md#-coat)  
-   彩色`cat`出文件行，方便人眼区分不同的行。
+1. [coat and taoc](docs/shell.md#-coat)  
+   彩色`cat`/`tac`出文件行，方便人眼区分不同的行。
 1. [a2l](docs/shell.md#-a2l)  
    按行彩色输出参数，方便人眼查看。
 1. [uq](docs/shell.md#-uq)  

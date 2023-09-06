@@ -53,4 +53,5 @@ portableReadLink() {
 THIS_SCRIPT="$(portableReadLink "${BASH_SOURCE[0]}")"
 BASE_DIR="$(dirname "$THIS_SCRIPT")"
 
+# shellcheck disable=SC1091
 source "$BASE_DIR/xpl" "$@"

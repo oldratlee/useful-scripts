@@ -9,7 +9,7 @@ indent_style = space
 indent_size = 2
 trim_trailing_whitespace = true
 
-[*.{xml,py,md,mkd,markdown}]
+[*.{py,md,mkd,markdown}]
 indent_size = 4
 
 [*.xml]
@@ -17,3 +17,7 @@ indent_style = tab
 
 [*.{md,mkd,markdown}]
 trim_trailing_whitespace = false
+
+# python files without extension
+[show-duplicate-java-classes]
+indent_size = 4

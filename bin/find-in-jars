@@ -268,9 +268,7 @@ readonly dirs
 # convert extensions to find -iname options
 find_iname_options=()
 for e in "${extensions[@]}"; do
-  (("${#find_iname_options[@]}" == 0)) &&
-    find_iname_options=(-iname "*.$e") ||
-    find_iname_options=("${find_iname_options[@]}" -o -iname "*.$e")
+  find_iname_options=(${find_iname_options[@]:+"${find_iname_options[@]}" -o} -iname "*.$e")
 done
 readonly find_iname_options
 

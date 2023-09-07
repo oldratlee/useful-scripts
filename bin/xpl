@@ -66,7 +66,7 @@ progVersion() {
 # parse options
 ################################################################################
 
-declare -a args=()
+declare -a files=()
 selected=false
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -82,23 +82,26 @@ while [ $# -gt 0 ]; do
     ;;
   --)
     shift
-    args=(${args[@]:+"${args[@]}"} "$@")
+    files=(${files[@]:+"${files[@]}"} "$@")
     break
     ;;
   -*)
     usage 2 "${PROG}: unrecognized option '$1'"
     ;;
   *)
-    args=(${args[@]:+"${args[@]}"} "$1")
+    files=(${files[@]:+"${files[@]}"} "$1")
     shift
     ;;
   esac
 done
 
+# if files is empty, use one element "."
+files=("${files[@]:-.}")
+
 # if program name is xpf, set option selected!
 [ "xpf" == "${PROG}" ] && selected=true
 
-readonly args selected
+readonly files selected
 
 ################################################################################
 # biz logic
@@ -143,7 +146,6 @@ openOneFile() {
   printf 'open %14s: %s\n' "$selected_msg" "$file"
 }
 
-[ "${#args[@]}" == 0 ] && files=(.) || files=("${args[@]}")
 has_error=false
 
 for file in "${files[@]}"; do

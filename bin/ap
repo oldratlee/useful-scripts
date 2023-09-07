@@ -130,7 +130,8 @@ while [ $# -gt 0 ]; do
   esac
 done
 
-[ ${#files[@]} -eq 0 ] && files=(.)
+# if files is empty, use "."
+files=("${files[@]:-.}")
 readonly files
 
 ################################################################################

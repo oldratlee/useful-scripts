@@ -27,7 +27,8 @@ greenEcho() {
   colorEcho 32 "$@"
 }
 
-[ $# -eq 0 ] && dirs=(.) || dirs=("$@")
+# if dirs is empty, use "."
+dirs=("${dirs[@]:-.}")
 
 for d in "${dirs[@]}"; do
   [ ! -d "${d}/.svn" ] && {

@@ -141,10 +141,11 @@ copy() {
 catThenCopy() {
   local content
   content="$(cat)"
-  {
+  if $keep_eol; then
+    printf '%s\n' "$content"
+  else
     printf %s "$content"
-    $keep_eol && echo
-  } | copy
+  fi | copy
 }
 
 teeAndCopy() {

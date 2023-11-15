@@ -41,7 +41,6 @@ readonly PROG_VERSION='2.6.0-dev'
 ################################################################################
 
 readonly red='\033[1;31m' normal='\033[0m'
-readonly jar_color='\033[1;35m' sep_color='\033[1;32m'
 
 # How to delete line with echo?
 # https://unix.stackexchange.com/questions/26576
@@ -95,14 +94,13 @@ die() {
 usage() {
   local -r exit_code="${1:-0}"
   (($# > 0)) && shift
-  # shellcheck disable=SC2015
-  [ "$exit_code" != 0 ] && local -r out=/dev/stderr || local -r out=/dev/stdout
+  local -r out=$(((exit_code != 0) + 1))
 
   # NOTE: $'foo' is the escape sequence syntax of bash
   local -r nl=$'\n' # new line
-  (($# > 0)) && redPrint "$*$nl" >"$out"
+  (($# > 0)) && redPrint "$*$nl" >&"$out"
 
-  cat >"$out" <<EOF
+  cat >&"$out" <<EOF
 Usage: ${PROG} [OPTION]... PATTERN
 
 Find files in the jar files under specified directory,
@@ -355,10 +353,12 @@ searchJarFiles() {
   printf '%s\n' "$jar_files"
 }
 
+readonly jar_color='\033[1;35m' sep_color='\033[1;32m'
+
 __outputResultOfJarFile() {
   local jar_file="$1" file
   # shellcheck disable=SC2206
-  local grep_opt_args=($regex_mode ${ignore_case_option:-} ${grep_color_option:-} -- "$pattern")
+  local grep_opt_args=("$regex_mode" ${ignore_case_option:-} ${grep_color_option:-} -- "$pattern")
 
   if $only_print_file_name; then
     local matched=false

@@ -149,12 +149,11 @@ printCallingCommandLine() {
 usage() {
   local -r exit_code="${1:-0}"
   (($# > 0)) && shift
-  # shellcheck disable=SC2015
-  [ "$exit_code" != 0 ] && local -r out=/dev/stderr || local -r out=/dev/stdout
+  local -r out=$(((exit_code != 0) + 1))
 
-  (($# > 0)) && colorPrint 31 "$*$nl" >"$out"
+  (($# > 0)) && colorPrint 31 "$*$nl" >&"$out"
 
-  cat >"$out" <<EOF
+  cat >&"$out" <<EOF
 Usage: ${PROG} [OPTION]... [delay [count]]
 Find out the highest cpu consumed threads of java processes,
 and print the stack of these threads.

@@ -87,12 +87,11 @@ convertHumanReadableSizeToSize() {
 usage() {
   local -r exit_code="${1:-0}"
   (($# > 0)) && shift
-  # shellcheck disable=SC2015
-  [ "$exit_code" != 0 ] && local -r out=/dev/stderr || local -r out=/dev/stdout
+  local -r out=$(((exit_code != 0) + 1))
 
-  (($# > 0)) && redPrint "$*$nl" >"$out"
+  (($# > 0)) && redPrint "$*$nl" >&"$out"
 
-  cat >"$out" <<EOF
+  cat >&"$out" <<EOF
 Usage: ${PROG} [OPTION]... [INPUT [OUTPUT]]
 Filter lines from INPUT (or standard input), writing to OUTPUT (or standard output).
 Same as \`uniq\` command in core utils,

@@ -154,19 +154,20 @@ PS: 虽然交互`Shell`个人已经使用`Zsh` + [`oh-my-zsh`](https://ohmyz.sh/
 
 > 更多资料参见 [子文档](docs/developer-guide.md)。
 
-- 👷 **`Bash/Shell`最佳实践与安全编程**
+- 开发规范与工具
     - [**_`Google Shell Style Guide`_**](https://google.github.io/styleguide/shell.xml) | [中文版](https://zh-google-styleguide.readthedocs.io/en/latest/google-shell-styleguide/background/)
-    - [`koalaman/shellcheck`](https://github.com/koalaman/shellcheck): ShellCheck, a static analysis tool for shell scripts
+    - [`koalaman/shellcheck`](https://github.com/koalaman/shellcheck): `ShellCheck`, a static analysis tool for shell scripts
+    - [`mvdan/sh(shfmt)`](https://github.com/mvdan/sh): `shfmt` formats shell programs
+- 👷 **`Bash/Shell`最佳实践与安全编程**文章
     - [Use the Unofficial Bash Strict Mode (Unless You Looove Debugging)](http://redsymbol.net/articles/unofficial-bash-strict-mode/)
-    - Bash Pitfalls: 编程易犯的错误 - 团子的小窝：[Part 1](http://kodango.com/bash-pitfalls-part-1) | [Part 2](http://kodango.com/bash-pitfalls-part-2) | [Part 3](http://kodango.com/bash-pitfalls-part-3) | [Part 4](http://kodango.com/bash-pitfalls-part-4)
+    - Bash Pitfalls: 编程易犯的错误 - 团子的小窝：[Part 1](http://kodango.com/bash-pitfalls-part-1) | [Part 2](http://kodango.com/bash-pitfalls-part-2) | [Part 3](http://kodango.com/bash-pitfalls-part-3) | [Part 4](http://kodango.com/bash-pitfalls-part-4) | [英文原文：Bash Pitfalls](http://mywiki.wooledge.org/BashPitfalls)
     - [不要自己去指定sh的方式去执行脚本](https://github.com/oldratlee/useful-scripts/issues/57#issuecomment-326485965)
 - 🎶 **Tips**
     - [让你提升命令行效率的 Bash 快捷键 【完整版】](https://linuxtoy.org/archives/bash-shortcuts.html)  
       补充：`ctrl + x, ctrl + e` 就地打开文本编辑器来编辑当前命令行，对于复杂命令行特别有用
     - [应该知道的Linux技巧 | 酷 壳 - CoolShell](https://coolshell.cn/articles/8883.html)
     - 简洁的 Bash Programming 技巧 - 团子的小窝：[Part 1](http://kodango.com/simple-bash-programming-skills) | [Part 2](http://kodango.com/simple-bash-programming-skills-2) | [Part 3](http://kodango.com/simple-bash-programming-skills-3)
-- 💎 **系统学习**  
-  看文章、了解Tips完全不能替代系统学习才能真正理解并专业开发！
+- 💎 **系统学习** — 看文章、了解Tips完全不能替代系统学习才能真正理解并专业开发！
     - [《Bash Pocket Reference》](https://book.douban.com/subject/26738258/)  
       力荐！说明简单直接结构体系的佳作，专业`Bash`编程必备！且16年的第二版更新到了新版的`Bash 4`
     - [《学习bash》](https://book.douban.com/subject/1241361/) 上面那本的展开版
@@ -174,6 +175,8 @@ PS: 虽然交互`Shell`个人已经使用`Zsh` + [`oh-my-zsh`](https://ohmyz.sh/
         - [`bash man`](https://linux.die.net/man/1/bash) | [中文版](http://ahei.info/chinese-bash-man.htm)
         - [Bash Reference Manual - gnu.org](http://www.gnu.org/software/bash/manual/) | [中文版](https://yiyibooks.cn/Phiix/bash_reference_manual/bash%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3.html)  
           Bash参考手册，讲得全面且有深度，比如会全面地讲解不同转义的区别、命令的解析过程，这有助统一深入的方式认识Bash整个执行方式和过程。这些内容在其它书中往往不会讲（因为复杂难于深入浅出的讲解），但却一通百通的关键。
+    - [Advanced Bash-Scripting Guide](https://hangar118.sdf.org/p/bash-scripting-guide/index.html): An in-depth exploration of the art of shell scripting.
     - [命令行的艺术 - `jlevy/the-art-of-command-line`](https://github.com/jlevy/the-art-of-command-line/blob/master/README-zh.md)
+    - [`awesome-lists/awesome-bash`](https://github.com/awesome-lists/awesome-bash): A curated list of delightful Bash scripts and resources.
     - [`alebcay/awesome-shell`](https://github.com/alebcay/awesome-shell): A curated list of awesome command-line frameworks, toolkits, guides and gizmos.
     - 更多书籍参见个人整理的[书籍豆列 **_`Bash/Shell`_**](https://www.douban.com/doulist/1779379/)

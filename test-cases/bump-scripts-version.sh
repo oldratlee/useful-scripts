@@ -5,29 +5,30 @@ set -eEuo pipefail
 # util functions
 ################################################################################
 
-# NOTE: $'foo' is the escape sequence syntax of bash
-readonly ec=$'\033'      # escape char
-readonly eend=$'\033[0m' # escape end
-readonly nl=$'\n'        # new line
+readonly nl=$'\n' # new line
 
-colorEcho() {
-  local color=$1
+colorPrint() {
+  local color="$1"
   shift
-
-  # if stdout is the console, turn on color output.
-  [ -t 1 ] && echo "${ec}[1;${color}m$*${eend}" || echo "$*"
+  # check isatty in bash https://stackoverflow.com/questions/10022323
+  # if stdout is console, turn on color output.
+  if [ -t 1 ]; then
+    printf "\033[1;${color}m%s\033[0m\n" "$*"
+  else
+    printf '%s\n' "$*"
+  fi
 }
 
-redEcho() {
-  colorEcho 31 "$@"
+redPrint() {
+  colorPrint 31 "$@"
 }
 
-yellowEcho() {
-  colorEcho 33 "$@"
+yellowPrint() {
+  colorPrint 33 "$@"
 }
 
-blueEcho() {
-  colorEcho 36 "$@"
+bluePrint() {
+  colorPrint 36 "$@"
 }
 
 logAndRun() {
@@ -41,13 +42,13 @@ logAndRun() {
     echo "Run under work directory $PWD : $*"
     "$@"
   else
-    blueEcho "Run under work directory $PWD :$nl$*"
+    bluePrint "Run under work directory $PWD :$nl$*"
     time "$@"
   fi
 }
 
 die() {
-  redEcho "Error: $*" 1>&2
+  redPrint "Error: $*" 1>&2
   exit 1
 }
 
@@ -59,13 +60,13 @@ die() {
 readonly bump_version="$1"
 
 # adjust current dir to project dir
-cd "$(dirname "$(readlink -f "$0")")/.."
+#
+# Bash Pitfalls#5
+#  http://mywiki.wooledge.org/BashPitfalls#cd_.24.28dirname_.22.24f.22.29
+cd -P -- "$(dirname -- "$0")"/..
 
-script_files=$(
-  find bin legacy-bin -type f
-)
-
-# shellcheck disable=SC2086
-logAndRun sed -ri \
-  's/^(.*PROG_VERSION\s*=\s*)'\''(.*)'\''(.*)$/\1'\'"$bump_version"\''\3/' \
-  $script_files
+# Bash Pitfalls#1
+#  http://mywiki.wooledge.org/BashPitfalls#for_f_in_.24.28ls_.2A.mp3.29
+logAndRun find -D exec bin legacy-bin lib -type f -exec \
+  sed -ri "s/^(.*\bPROG_VERSION\s*=\s*')\S*('.*)$/\1$bump_version\2/" -- \
+  {} +

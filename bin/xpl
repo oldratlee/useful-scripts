@@ -26,7 +26,7 @@
 set -eEuo pipefail
 
 # NOTE: DO NOT declare var PROG as readonly in ONE line!
-PROG="$(basename "$0")"
+PROG="$(basename -- "$0")"
 readonly PROG
 readonly PROG_VERSION='2.6.0-dev'
 
@@ -129,12 +129,12 @@ openOneFile() {
     ;;
   *)
     if [ -d "${file}" ]; then
-      nautilus "$(dirname "${file}")"
+      nautilus "$(dirname -- "${file}")"
     else
       if $slt; then
         nautilus "${file}"
       else
-        nautilus "$(dirname "${file}")"
+        nautilus "$(dirname -- "${file}")"
       fi
     fi
     ;;

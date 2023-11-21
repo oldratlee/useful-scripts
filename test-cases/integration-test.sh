@@ -6,7 +6,7 @@ if command -v greadlink &>/dev/null; then
   READLINK_CMD=greadlink
 fi
 
-cd "$(dirname "$($READLINK_CMD -f "${BASH_SOURCE[0]}")")"
+cd "$(dirname -- "$($READLINK_CMD -f -- "${BASH_SOURCE[0]}")")"
 
 ################################################################################
 # constants

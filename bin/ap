@@ -13,7 +13,7 @@
 set -eEuo pipefail
 
 # NOTE: DO NOT declare var PROG as readonly in ONE line!
-PROG="$(basename "$0")"
+PROG="$(basename -- "$0")"
 readonly PROG
 readonly PROG_VERSION='2.6.0-dev'
 
@@ -50,12 +50,12 @@ portableReadLink() {
   uname="$(uname)"
   case "$uname" in
   Linux* | CYGWIN* | MINGW*)
-    readlink -f "$file"
+    readlink -f -- "$file"
     ;;
   Darwin*)
     local py_args=(-c 'import os, sys; print(os.path.realpath(sys.argv[1]))' "$file")
     if command -v greadlink >/dev/null; then
-      greadlink -f "$file"
+      greadlink -f -- "$file"
     elif command -v python3 >/dev/null; then
       python3 "${py_args[@]}"
     elif command -v python >/dev/null; then

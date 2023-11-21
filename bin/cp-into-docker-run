@@ -9,7 +9,7 @@
 # @author Jerry Lee (oldratlee at gmail dot com)
 set -eEuo pipefail
 
-PROG="$(basename "$0")"
+PROG="$(basename -- "$0")"
 readonly PROG
 readonly PROG_VERSION='2.6.0-dev'
 
@@ -43,12 +43,12 @@ portableReadLink() {
   uname="$(uname)"
   case "$uname" in
   Linux* | CYGWIN* | MINGW*)
-    readlink -f "$file"
+    readlink -f -- "$file"
     ;;
   Darwin*)
     local py_args=(-c 'import os, sys; print(os.path.realpath(sys.argv[1]))' "$file")
     if command -v greadlink >/dev/null; then
-      greadlink -f "$file"
+      greadlink -f -- "$file"
     elif command -v python3 >/dev/null; then
       python3 "${py_args[@]}"
     elif command -v python >/dev/null; then
@@ -205,7 +205,7 @@ if [ ! -f "$specified_run_command" ]; then
   run_command="$(which "$specified_run_command")"
 fi
 run_command="$(portableReadLink "$run_command")"
-run_command_base_name="$(basename "$run_command")"
+run_command_base_name="$(basename -- "$run_command")"
 readonly run_command run_command_base_name
 
 run_timestamp="$(date "+%Y%m%d_%H%M%S")"
@@ -218,7 +218,7 @@ if [ -n "${docker_command_cp_path}" ]; then
   else
     readonly run_command_in_docker="${docker_workdir:+"$docker_workdir/"}$docker_command_cp_path"
   fi
-  run_command_dir_in_docker="$(dirname "$run_command_in_docker")"
+  run_command_dir_in_docker="$(dirname -- "$run_command_in_docker")"
   readonly run_command_dir_in_docker
 else
   readonly work_tmp_dir_in_docker="$docker_tmpdir/$uuid"

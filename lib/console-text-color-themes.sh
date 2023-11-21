@@ -27,7 +27,7 @@ if command -v greadlink >/dev/null; then
 fi
 
 # NOTE: DO NOT declare var _ctct_PROG as readonly in ONE line!
-_ctct_PROG="$(basename "$($_ctct_READLINK_CMD -f "${BASH_SOURCE[0]}")")"
+_ctct_PROG="$(basename -- "$($_ctct_READLINK_CMD -f -- "${BASH_SOURCE[0]}")")"
 [ "$_ctct_PROG" == 'console-text-color-themes.sh' ] && readonly _ctct_is_direct_run=true
 
 readonly _ctct_ec=$'\033'      # escape char

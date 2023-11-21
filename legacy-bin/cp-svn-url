@@ -26,7 +26,7 @@
 #           var2=$(echo value1)
 
 # NOTE: DO NOT declare var PROG as readonly in ONE line!
-PROG="$(basename "$0")"
+PROG="$(basename -- "$0")"
 readonly PROG_VERSION='2.6.0-dev'
 
 usage() {

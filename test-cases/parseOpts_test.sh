@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BASE="$(dirname "${BASH_SOURCE[0]}")"
+BASE="$(dirname -- "${BASH_SOURCE[0]}")"
 
 source "$BASE/../lib/parseOpts.sh"
 

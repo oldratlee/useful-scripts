@@ -21,26 +21,14 @@
 #           local var2
 #           var2=$(echo value1)
 
-_ctct_READLINK_CMD=readlink
-if command -v greadlink >/dev/null; then
-  _ctct_READLINK_CMD=greadlink
-fi
-
-# NOTE: DO NOT declare var _ctct_PROG as readonly in ONE line!
-_ctct_PROG="$(basename -- "$($_ctct_READLINK_CMD -f -- "${BASH_SOURCE[0]}")")"
-[ "$_ctct_PROG" == 'console-text-color-themes.sh' ] && readonly _ctct_is_direct_run=true
-
-readonly _ctct_ec=$'\033'      # escape char
-readonly _ctct_eend=$'\033[0m' # escape end
-
 colorEcho() {
   local combination="$1"
   shift 1
 
   if [ -t 1 ]; then
-    echo "${_ctct_ec}[${combination}m$*$_ctct_eend"
+    printf "\e[${combination}m%s\e[0m\n" "$*"
   else
-    echo "$*"
+    print '%s\n' "$*"
   fi
 }
 
@@ -49,15 +37,16 @@ colorEchoWithoutNewLine() {
   shift 1
 
   if [ -t 1 ]; then
-    echo -n "${_ctct_ec}[${combination}m$*$_ctct_eend"
+    printf "\e[${combination}m%s\e[0m" "$*"
   else
-    echo -n "$*"
+    printf %s "$*"
   fi
 }
 
-# if not directly run this script(use as lib), just export 2 helper functions,
-# and do NOT print anything.
-[ "$_ctct_is_direct_run" == true ] && {
+# if not directly run this script(use as lib), just export 2 helper functions, and do NOT print anything.
+#
+# if directly run this script, the length of array BASH_SOURCE is 1.
+if ((${#BASH_SOURCE[@]} == 1)); then
   for style in 0 1 2 3 4 5 6 7; do
     for fg in 30 31 32 33 34 35 36 37; do
       for bg in 40 41 42 43 44 45 46 47; do
@@ -97,4 +86,4 @@ colorEchoWithoutNewLine() {
   echo 'Output of above code:'
   echo -n '    '
   colorEcho '1;36;41' 'Sample Text'
-}
+fi

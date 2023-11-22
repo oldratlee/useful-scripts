@@ -30,9 +30,11 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: recursive
-      # https://github.com/orgs/community/discussions/27125#discussioncomment-3254720
-      - run: brew install ${{ join(fromJSON(matrix.os_deps).deps, ' ') }}
+      - run: brew list
         # https://docs.github.com/en/actions/learn-github-actions/variables#detecting-the-operating-system
         # https://docs.github.com/en/actions/learn-github-actions/expressions
+        if: runner.os == 'macOS'
+      # https://github.com/orgs/community/discussions/27125#discussioncomment-3254720
+      - run: brew install ${{ join(fromJSON(matrix.os_deps).deps, ' ') }}
         if: runner.os == 'macOS' && fromJSON(matrix.os_deps).deps[0] != null
       - run: test-cases/integration-test.sh

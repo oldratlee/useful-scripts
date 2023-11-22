@@ -17,7 +17,11 @@ jobs:
           - |
             {"os": "macos-11"}
           - |
+            {"os": "macos-11", "deps": ["coreutils", "gnu-sed"]}
+          - |
             {"os": "macos-latest"}
+          - |
+            {"os": "macos-latest", "deps": ["coreutils", "gnu-sed"]}
       fail-fast: false
       max-parallel: 64
     name: Test on ${{ matrix.os_deps }}
@@ -26,8 +30,9 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: recursive
-      - run: brew install coreutils gnu-sed
+      # https://github.com/orgs/community/discussions/27125#discussioncomment-3254720
+      - run: brew install ${{ join(fromJSON(matrix.os_deps).deps, ' ') }}
         # https://docs.github.com/en/actions/learn-github-actions/variables#detecting-the-operating-system
         # https://docs.github.com/en/actions/learn-github-actions/expressions
-        if: runner.os == 'macOS'
+        if: runner.os == 'macOS' && fromJSON(matrix.os_deps).deps[0] != null
       - run: test-cases/integration-test.sh

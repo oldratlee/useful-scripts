@@ -7,14 +7,20 @@ on: [ push, pull_request, workflow_dispatch ]
 jobs:
 
   test:
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ fromJSON(matrix.os_deps).os }}
     timeout-minutes: 5
     strategy:
       matrix:
-        os: [ ubuntu-latest, macos-11, macos-latest ]
+        os_deps:
+          - |
+            {"os": "ubuntu-latest"}
+          - |
+            {"os": "macos-11"}
+          - |
+            {"os": "macos-latest"}
       fail-fast: false
       max-parallel: 64
-    name: Test on ${{ matrix.os }}
+    name: Test on ${{ matrix.os_deps }}
 
     steps:
       - uses: actions/checkout@v3

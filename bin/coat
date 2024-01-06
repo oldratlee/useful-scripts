@@ -19,13 +19,13 @@ set -eEuo pipefail
 readonly -a ROTATE_COLORS=(33 35 36 31 32 37 34)
 COUNT=0
 rotateColorPrint() {
-  local content="$*"
+  local content=$*
 
   # skip color for white space
   if [[ "$content" =~ ^[[:space:]]*$ ]]; then
     printf '%s\n' "$content"
   else
-    local color="${ROTATE_COLORS[COUNT++ % ${#ROTATE_COLORS[@]}]}"
+    local color=${ROTATE_COLORS[COUNT++ % ${#ROTATE_COLORS[@]}]}
     printf '\e[1;%sm%s\e[0m\n' "$color" "$content"
   fi
 }

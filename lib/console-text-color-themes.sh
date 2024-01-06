@@ -22,7 +22,7 @@
 #           var2=$(echo value1)
 
 colorEcho() {
-  local combination="$1"
+  local combination=$1
   shift 1
   # if stdout is a terminal, turn on color output.
   #   '-t' check: is a terminal?
@@ -35,7 +35,7 @@ colorEcho() {
 }
 
 colorEchoWithoutNewLine() {
-  local combination="$1"
+  local combination=$1
   shift 1
 
   if [ -t 1 ]; then

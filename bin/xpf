@@ -17,9 +17,9 @@ set -eEuo pipefail
 # How can I get the behavior of GNU's readlink -f on a Mac?
 # https://stackoverflow.com/questions/1055671
 portableReadLink() {
-  local file="$1" uname
+  local file=$1 uname
 
-  uname="$(uname)"
+  uname=$(uname)
   case "$uname" in
   Linux* | CYGWIN* | MINGW*)
     readlink -f -- "$file"
@@ -49,9 +49,9 @@ portableReadLink() {
 ################################################################################
 
 # DO NOT inline THIS_SCRIPT into BASE_DIR, because sub-shell:
-#   BASE_DIR="$(dirname -- "$(portableReadLink "${BASH_SOURCE[0]}")")"
-THIS_SCRIPT="$(portableReadLink "${BASH_SOURCE[0]}")"
-BASE_DIR="$(dirname -- "$THIS_SCRIPT")"
+#   BASE_DIR=$(dirname -- "$(portableReadLink "${BASH_SOURCE[0]}")")
+THIS_SCRIPT=$(portableReadLink "${BASH_SOURCE[0]}")
+BASE_DIR=$(dirname -- "$THIS_SCRIPT")
 
 # shellcheck disable=SC1091
 source "$BASE_DIR/xpl" "$@"

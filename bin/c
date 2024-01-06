@@ -27,7 +27,7 @@
 set -eEuo pipefail
 
 # NOTE: DO NOT declare var PROG as readonly in ONE line!
-PROG="$(basename -- "$0")"
+PROG=$(basename -- "$0")
 readonly PROG
 readonly PROG_VERSION='2.6.0-dev'
 
@@ -47,22 +47,22 @@ printErrorMsg() {
 }
 
 usage() {
-  local -r exit_code="${1:-0}"
+  local -r exit_code=${1:-0}
   (($# > 0)) && shift
   local -r out=$(((exit_code != 0) + 1))
 
   (($# > 0)) && printErrorMsg "$*" >&"$out"
 
   cat >&"$out" <<EOF
-Usage: ${PROG} [OPTION]... [command [command_args ...]]
+Usage: $PROG [OPTION]... [command [command_args ...]]
 Run command and put output to system clipper.
 If no command is specified, read from stdin(pipe).
 
 Example:
-  ${PROG} echo "hello world!"
-  ${PROG} grep -i 'hello world' menu.h main.c
-  set | ${PROG}
-  ${PROG} -q < ~/.ssh/id_rsa.pub
+  $PROG echo "hello world!"
+  $PROG grep -i 'hello world' menu.h main.c
+  set | $PROG
+  $PROG -q < ~/.ssh/id_rsa.pub
 
 Options:
   -k, --keep-eol  do not trim new line at end of file
@@ -140,7 +140,7 @@ copy() {
 
 catThenCopy() {
   local content
-  content="$(cat)"
+  content=$(cat)
   if $keep_eol; then
     printf '%s\n' "$content"
   else

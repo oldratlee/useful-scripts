@@ -34,12 +34,23 @@ readonly PROG_VERSION='2.6.0-dev'
 # util functions
 ################################################################################
 
+redPrint() {
+  # if stdout is a terminal, turn on color output.
+  #   '-t' check: is a terminal?
+  #   check isatty in bash https://stackoverflow.com/questions/10022323
+  if [ -t 1 ]; then
+    printf '\e[1;31m%s\e[0m\n' "$*"
+  else
+    printf '%s\n' "$*"
+  fi
+}
+
 usage() {
   local -r exit_code=${1:-0}
   (($# > 0)) && shift
   local -r out=$(((exit_code != 0) + 1))
 
-  (($# > 0)) && printf '%s\n\n' "$*" >&"$out"
+  (($# > 0)) && redPrint "$*"$'\n' >&"$out"
 
   cat >&"$out" <<EOF
 Usage: ${PROG} [OPTION] [FILE]...
@@ -148,12 +159,13 @@ openOneFile() {
 has_error=false
 
 for file in "${files[@]}"; do
-  [ ! -e "$file" ] && {
-    printf '%s\n' "$file not existed!"
+  [ -e "$file" ] || {
+    has_error=true
+    redPrint "$file not existed!" >&2
     continue
   }
 
-  openOneFile "$file"
+  openOneFile "$file" || has_error=true
 done
 
 # set exit status

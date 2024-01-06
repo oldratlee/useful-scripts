@@ -32,7 +32,7 @@
 set -eEuo pipefail
 
 # NOTE: DO NOT declare var PROG as readonly in ONE line!
-PROG="$(basename -- "$0")"
+PROG=$(basename -- "$0")
 readonly PROG
 readonly PROG_VERSION='2.6.0-dev'
 
@@ -74,9 +74,9 @@ printResponsiveMessage() {
     return
   fi
 
-  local content="$*"
+  local content=$*
   # http://www.linuxforums.org/forum/red-hat-fedora-linux/142825-how-truncate-string-bash-script.html
-  printf %b%s "${clear_line}" "${content:0:columns}" >&2
+  printf %b%s "$clear_line" "${content:0:columns}" >&2
 }
 
 clearResponsiveMessage() {
@@ -94,7 +94,7 @@ die() {
 }
 
 usage() {
-  local -r exit_code="${1:-0}"
+  local -r exit_code=${1:-0}
   (($# > 0)) && shift
   local -r out=$(((exit_code != 0) + 1))
 
@@ -203,7 +203,7 @@ while (($# > 0)); do
     ;;
   # support the legacy typo option name --seperator for compatibility
   -s | --separator | --seperator)
-    separator="$2"
+    separator=$2
     shift 2
     ;;
   -L | --files-not-contained-found)
@@ -250,7 +250,7 @@ readonly extensions=${extensions:-jar}
 
 (("${#args[@]}" == 0)) && usage 1 "Missing file pattern!"
 (("${#args[@]}" > 1)) && usage 1 "More than 1 file pattern: ${args[*]}"
-readonly pattern="${args[0]}"
+readonly pattern=${args[0]}
 
 declare -a tmp_dirs=()
 for d in "${dirs[@]}"; do
@@ -311,12 +311,12 @@ __prepareCommandToListZipEntries() {
 __prepareCommandToListZipEntries
 
 listZipEntries() {
-  local zip_file="$1" msg
+  local zip_file=$1 msg
 
   if $is_use_zip_cmd_to_list_zip_entries; then
     # How to check if zip file is empty in bash
     # https://superuser.com/questions/438878
-    msg="$("${command_to_list_zip_entries[@]}" -t "$zip_file" 2>&1)" || {
+    msg=$("${command_to_list_zip_entries[@]}" -t "$zip_file" 2>&1) || {
       # NOTE:
       # if list emtpy zip file by zipinfo/unzip command,
       # exit code is 1, and print 'Empty zipfile.'
@@ -344,10 +344,10 @@ searchJarFiles() {
 
   local jar_files total_jar_count
 
-  jar_files="$(find "${dirs[@]}" "${find_iname_options[@]}" -type f)"
+  jar_files=$(find "${dirs[@]}" "${find_iname_options[@]}" -type f)
   [ -n "$jar_files" ] || die "No ${extensions[*]} file found!"
 
-  total_jar_count="$(printf '%s\n' "$jar_files" | wc -l)"
+  total_jar_count=$(printf '%s\n' "$jar_files" | wc -l)
   # remove white space, because the `wc -l` output on mac contains white space!
   total_jar_count=${total_jar_count//[[:space:]]}
 
@@ -356,7 +356,7 @@ searchJarFiles() {
 }
 
 __outputResultOfJarFile() {
-  local jar_file="$1" file jar_color='\e[1;35m' sep_color='\e[1;32m'
+  local jar_file=$1 file jar_color='\e[1;35m' sep_color='\e[1;32m'
   # shellcheck disable=SC2206
   local grep_opt_args=("$regex_mode" ${ignore_case_option:-} ${grep_color_option:-} -- "$pattern")
 
@@ -380,9 +380,9 @@ __outputResultOfJarFile() {
 
     clearResponsiveMessage
     if [ -t 1 ]; then
-      printf "${jar_color}%s${color_reset}\n" "${jar_file}"
+      printf "$jar_color%s$color_reset\n" "$jar_file"
     else
-      printf '%s\n' "${jar_file}"
+      printf '%s\n' "$jar_file"
     fi
   else
     {
@@ -392,9 +392,9 @@ __outputResultOfJarFile() {
     } | while read -r file; do
       clearResponsiveMessage
       if [ -t 1 ]; then
-        printf "${jar_color}%s${sep_color}%s${color_reset}%s\n" "$jar_file" "$separator" "$file"
+        printf "$jar_color%s$sep_color%s$color_reset%s\n" "$jar_file" "$separator" "$file"
       else
-        printf '%s\n' "${jar_file}${separator}${file}"
+        printf '%s\n' "$jar_file$separator$file"
       fi
     done
   fi
@@ -409,7 +409,7 @@ findInJarFiles() {
 
   while read -r jar_file; do
     printResponsiveMessage "finding in jar($((counter++))/$total_jar_count): $jar_file"
-    listZipEntries "${jar_file}" | __outputResultOfJarFile "${jar_file}"
+    listZipEntries "$jar_file" | __outputResultOfJarFile "$jar_file"
   done
 
   clearResponsiveMessage

@@ -26,7 +26,7 @@
 set -eEuo pipefail
 
 # NOTE: DO NOT declare var PROG as readonly in ONE line!
-PROG="$(basename -- "$0")"
+PROG=$(basename -- "$0")
 readonly PROG
 readonly PROG_VERSION='2.6.0-dev'
 
@@ -35,7 +35,7 @@ readonly PROG_VERSION='2.6.0-dev'
 ################################################################################
 
 usage() {
-  local -r exit_code="${1:-0}"
+  local -r exit_code=${1:-0}
   (($# > 0)) && shift
   local -r out=$(((exit_code != 0) + 1))
 
@@ -98,7 +98,7 @@ done
 files=("${files[@]:-.}")
 
 # if program name is xpf, set option selected!
-[ "xpf" == "${PROG}" ] && selected=true
+[ "xpf" == "$PROG" ] && selected=true
 
 readonly files selected
 
@@ -108,11 +108,11 @@ readonly files selected
 
 # open one file
 openOneFile() {
-  local file="$1" slt="${selected}"
+  local file=$1 slt=${selected}
 
   case "$(uname)" in
   Darwin*)
-    [ -f "${file}" ] && slt=true
+    [ -f "$file" ] && slt=true
     if $slt; then
       open -R "$file"
     else
@@ -120,21 +120,21 @@ openOneFile() {
     fi
     ;;
   CYGWIN*)
-    [ -f "${file}" ] && slt=true
+    [ -f "$file" ] && slt=true
     if $slt; then
-      explorer /select, "$(cygpath -w "${file}")"
+      explorer /select, "$(cygpath -w "$file")"
     else
-      explorer "$(cygpath -w "${file}")"
+      explorer "$(cygpath -w "$file")"
     fi
     ;;
   *)
-    if [ -d "${file}" ]; then
-      nautilus "$(dirname -- "${file}")"
+    if [ -d "$file" ]; then
+      nautilus "$(dirname -- "$file")"
     else
       if $slt; then
-        nautilus "${file}"
+        nautilus "$file"
       else
-        nautilus "$(dirname -- "${file}")"
+        nautilus "$(dirname -- "$file")"
       fi
     fi
     ;;

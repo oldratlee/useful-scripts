@@ -29,7 +29,7 @@
 set -eEuo pipefail
 
 # NOTE: DO NOT declare var PROG as readonly in ONE line!
-PROG="$(basename -- "$0")"
+PROG=$(basename -- "$0")
 readonly PROG
 readonly PROG_VERSION='2.6.0-dev'
 
@@ -65,11 +65,11 @@ die() {
 }
 
 convertHumanReadableSizeToSize() {
-  local human_readable_size="$1"
+  local human_readable_size=$1
 
   [[ "$human_readable_size" =~ ^([0-9][0-9]*)([kmg]?)$ ]] || return 1
 
-  local size="${BASH_REMATCH[1]}" unit="${BASH_REMATCH[2]}"
+  local size=${BASH_REMATCH[1]} unit=${BASH_REMATCH[2]}
   case "$unit" in
   g)
     ((size *= 1024 * 1024 * 1024))
@@ -86,7 +86,7 @@ convertHumanReadableSizeToSize() {
 }
 
 usage() {
-  local -r exit_code="${1:-0}"
+  local -r exit_code=${1:-0}
   (($# > 0)) && shift
   local -r out=$(((exit_code != 0) + 1))
 
@@ -183,7 +183,7 @@ while (($# > 0)); do
     shift
     ;;
   -XM | --max-input)
-    uq_max_input_human_readable_size="$2"
+    uq_max_input_human_readable_size=$2
     shift 2
     ;;
   -h | --help)
@@ -220,7 +220,7 @@ done
   yellowPrint "[$PROG] WARN: -D/--all-repeated=none option without -c/-d option, just cat input simply!" >&2
 
 # NOTE: DO NOT declare var uq_max_input_size as readonly in ONE line!
-uq_max_input_size="$(convertHumanReadableSizeToSize "$uq_max_input_human_readable_size")" ||
+uq_max_input_size=$(convertHumanReadableSizeToSize "$uq_max_input_human_readable_size") ||
   usage 2 "[$PROG] ERROR: illegal value of option -XM/--max-input: $uq_max_input_human_readable_size"
 
 readonly argc=${#argv[@]}

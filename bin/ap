@@ -13,7 +13,7 @@
 set -eEuo pipefail
 
 # NOTE: DO NOT declare var PROG as readonly in ONE line!
-PROG="$(basename -- "$0")"
+PROG=$(basename -- "$0")
 readonly PROG
 readonly PROG_VERSION='2.6.0-dev'
 
@@ -22,7 +22,7 @@ readonly PROG_VERSION='2.6.0-dev'
 ################################################################################
 
 colorPrint() {
-  local color="$1"
+  local color=$1
   shift
   # if stdout is a terminal, turn on color output.
   #   '-t' check: is a terminal?
@@ -46,9 +46,9 @@ die() {
 # How can I get the behavior of GNU's readlink -f on a Mac?
 # https://stackoverflow.com/questions/1055671
 portableReadLink() {
-  local file="$1" uname
+  local file=$1 uname
 
-  uname="$(uname)"
+  uname=$(uname)
   case "$uname" in
   Linux* | CYGWIN* | MINGW*)
     readlink -f -- "$file"
@@ -72,7 +72,7 @@ portableReadLink() {
 }
 
 usage() {
-  local -r exit_code="${1:-0}"
+  local -r exit_code=${1:-0}
   (($# > 0)) && shift
   local -r out=$(((exit_code != 0) + 1))
 

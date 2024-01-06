@@ -26,7 +26,7 @@
 #           var2=$(echo value1)
 
 # NOTE: DO NOT declare var PROG as readonly in ONE line!
-PROG="$(basename -- "$0")"
+PROG=$(basename -- "$0")
 readonly PROG
 readonly PROG_VERSION='2.6.0-dev'
 # choosing between $0 and BASH_SOURCE
@@ -41,7 +41,7 @@ readonly -a COMMAND_LINE=("${BASH_SOURCE[0]}" "$@")
 # Because if run command by `sudo -u`, env var $USER is not rewritten/correct, just inherited from outside!
 #
 # NOTE: DO NOT declare var USER as readonly in ONE line!
-USER="$(whoami)"
+USER=$(whoami)
 readonly USER
 
 ################################################################################
@@ -149,7 +149,7 @@ printCallingCommandLine() {
 }
 
 usage() {
-  local -r exit_code="${1:-0}"
+  local -r exit_code=${1:-0}
   (($# > 0)) && shift
   local -r out=$(((exit_code != 0) + 1))
 
@@ -240,23 +240,23 @@ cpu_sample_interval=0.5
 while true; do
   case "$1" in
   -c | --count)
-    count="$2"
+    count=$2
     shift 2
     ;;
   -p | --pid)
-    pid_list="$2"
+    pid_list=$2
     shift 2
     ;;
   -a | --append-file)
-    append_file="$2"
+    append_file=$2
     shift 2
     ;;
   -s | --jstack-path)
-    jstack_path="$2"
+    jstack_path=$2
     shift 2
     ;;
   -S | --store-dir)
-    store_dir="$2"
+    store_dir=$2
     shift 2
     ;;
   # support the legacy option name -P,--use-ps for compatibility
@@ -266,7 +266,7 @@ while true; do
     ;;
   # support the legacy option name -d,--top-delay for compatibility
   -i | --cpu-sample-interval | -d | --top-delay)
-    cpu_sample_interval="$2"
+    cpu_sample_interval=$2
     shift 2
     ;;
   -F | --force)
@@ -314,7 +314,7 @@ if [ -n "$append_file" ]; then
     [ -f "$append_file" ] || die "$append_file(specified by option -a, for storing run output files) exists but is not a file!"
     [ -w "$append_file" ] || die "file $append_file(specified by option -a, for storing run output files) exists but is not writable!"
   else
-    append_file_dir="$(dirname -- "$append_file")"
+    append_file_dir=$(dirname -- "$append_file")
     if [ -e "$append_file_dir" ]; then
       [ -d "$append_file_dir" ] || die "directory $append_file_dir(specified by option -a, for storing run output files) exists but is not a directory!"
       [ -w "$append_file_dir" ] || die "directory $append_file_dir(specified by option -a, for storing run output files) exists but is not writable!"
@@ -362,7 +362,7 @@ elif [ -n "$JAVA_HOME" ]; then
   fi
 elif command -v jstack &>/dev/null; then
   # 3. search jstack under PATH
-  jstack_path="$(command -v jstack)"
+  jstack_path=$(command -v jstack)
   [ -x "$jstack_path" ] || die "found $jstack_path from PATH is NOT executable!${nl}Use -s option set jstack path manually."
 else
   die "jstack NOT found by JAVA_HOME(${JAVA_HOME:-not set}) setting and PATH!${nl}Use -s option set jstack path manually."
@@ -374,7 +374,7 @@ readonly jstack_path
 ################################################################################
 
 # NOTE: DO NOT declare var run_timestamp as readonly in ONE line!
-run_timestamp="$(date "+%Y-%m-%d_%H:%M:%S.%N")"
+run_timestamp=$(date "+%Y-%m-%d_%H:%M:%S.%N")
 readonly run_timestamp
 readonly uuid="${PROG}_${run_timestamp}_${$}_${RANDOM}"
 
@@ -436,7 +436,7 @@ findBusyJavaThreadsByPs() {
   local -a ps_cmd_line=(ps $ps_process_select_options -wwLo 'pid,lwp,pcpu,user' --no-headers)
   # DO NOT combine var ps_out declaration and assignment in ONE line!
   local ps_out
-  ps_out="$("${ps_cmd_line[@]}" | sort -k3,3nr)"
+  ps_out=$("${ps_cmd_line[@]}" | sort -k3,3nr)
   [ -n "$ps_out" ] || __die_when_no_java_process_found
 
   if [ -n "$store_dir" ]; then
@@ -455,19 +455,19 @@ __top_threadId_cpu() {
   # DO NOT combine var java_pid_list declaration and assignment in ONE line!
   local java_pid_list
   # shellcheck disable=SC2086
-  java_pid_list="$(ps $ps_process_select_options -o pid --no-headers)"
+  java_pid_list=$(ps $ps_process_select_options -o pid --no-headers)
   [ -n "$java_pid_list" ] || __die_when_no_java_process_found
   # shellcheck disable=SC2086
-  java_pid_list="$(echo $java_pid_list | tr ' ' ,)" # join with ,
+  java_pid_list=$(echo $java_pid_list | tr ' ' ,) # join with ,
 
   # 1. sort by %cpu by top option `-o %CPU`
   #    unfortunately, top version 3.2 does not support -o option(supports from top version 3.3+),
   #    use
-  #       HOME="$tmp_store_dir" top -H -b -n 1
+  #       HOME=$tmp_store_dir top -H -b -n 1
   #    combined
   #       sort
   #    instead of
-  #       HOME="$tmp_store_dir" top -H -b -n 1 -o '%CPU'
+  #       HOME=$tmp_store_dir top -H -b -n 1 -o %CPU
   # 2. change HOME env var when run top,
   #    so as to prevent top command output format being change by .toprc user config file unexpectedly
   # 3. use option `-d 0.5`(update interval 0.5 second) and `-n 2`(update 2 times),
@@ -477,7 +477,7 @@ __top_threadId_cpu() {
   local -a top_cmd_line=(top -H -b -d "$cpu_sample_interval" -n 2 -p "$java_pid_list")
   # DO NOT combine var ps_out declaration and assignment in ONE line!
   local top_out
-  top_out=$(HOME="$tmp_store_dir" "${top_cmd_line[@]}")
+  top_out=$(HOME=$tmp_store_dir "${top_cmd_line[@]}")
   if [ -n "$store_dir" ]; then
     printf '%s\n' "$top_out" | logAndCat "${top_cmd_line[@]}" >"${store_file_prefix}$((update_round_num + 1))_top"
   fi
@@ -505,7 +505,7 @@ __complete_pid_user_by_ps() {
   local -a ps_cmd_line=(ps $ps_process_select_options -wwLo 'pid,lwp,user' --no-headers)
   # DO NOT combine var ps_out declaration and assignment in ONE line!
   local ps_out
-  ps_out="$("${ps_cmd_line[@]}")"
+  ps_out=$("${ps_cmd_line[@]}")
   if [ -n "$store_dir" ]; then
     printf '%s\n' "$ps_out" | logAndCat "${ps_cmd_line[@]}" >"${store_file_prefix}$((update_round_num + 1))_ps"
   fi
@@ -515,10 +515,10 @@ __complete_pid_user_by_ps() {
     ((count <= 0 || idx < count)) || break
 
     # output field: pid, threadId, pcpu, user
-    output_fields="$(printf '%s\n' "$ps_out" |
+    output_fields=$(printf '%s\n' "$ps_out" |
       awk -v "threadId=$threadId" -v "pcpu=$pcpu" '$2==threadId {
                 print $1, threadId, pcpu, $3; exit
-            }')"
+            }')
     if [ -n "$output_fields" ]; then
       ((idx++))
       printf '%s\n' "$output_fields"

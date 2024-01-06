@@ -13,7 +13,7 @@
 set -eEuo pipefail
 
 # NOTE: DO NOT declare var PROG as readonly in ONE line!
-PROG="$(basename -- "$0")"
+PROG=$(basename -- "$0")
 readonly PROG
 readonly PROG_VERSION='2.6.0-dev'
 
@@ -22,7 +22,7 @@ readonly PROG_VERSION='2.6.0-dev'
 ################################################################################
 
 colorPrint() {
-  local color="$1"
+  local color=$1
   shift
   # if stdout is a terminal, turn on color output.
   #   '-t' check: is a terminal?
@@ -44,9 +44,9 @@ die() {
 }
 
 portableRelPath() {
-  local file="$1" relTo="$2" uname
+  local file=$1 relTo=$2 uname
 
-  uname="$(uname)"
+  uname=$(uname)
   case "$uname" in
   Linux* | CYGWIN* | MINGW*)
     realpath "$f" --relative-to="$relTo"
@@ -70,7 +70,7 @@ portableRelPath() {
 }
 
 usage() {
-  local -r exit_code="${1:-0}"
+  local -r exit_code=${1:-0}
   (($# > 0)) && shift
   local -r out=$(((exit_code != 0) + 1))
 
@@ -134,14 +134,14 @@ done
 if [ "${#files[@]}" -eq 1 ]; then
   relativeTo=.
 else
-  argc="${#files[@]}"
+  argc=${#files[@]}
 
   # Get last argument
-  relativeTo="${files[argc - 1]}"
+  relativeTo=${files[argc - 1]}
   files=("${files[@]:0:argc-1}")
 fi
 
-[ -f "$relativeTo" ] && relativeTo="$(dirname -- "$relativeTo")"
+[ -f "$relativeTo" ] && relativeTo=$(dirname -- "$relativeTo")
 [ -e "$relativeTo" ] || die "relativeTo dir($relativeTo) does NOT exists!"
 
 readonly files relativeTo

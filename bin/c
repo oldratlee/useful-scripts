@@ -27,7 +27,7 @@
 set -eEuo pipefail
 
 # NOTE: DO NOT declare var PROG as readonly in ONE line!
-PROG="$(basename -- "$0")"
+PROG=$(basename -- "$0")
 readonly PROG
 readonly PROG_VERSION='2.6.0-dev'
 
@@ -47,7 +47,7 @@ printErrorMsg() {
 }
 
 usage() {
-  local -r exit_code="${1:-0}"
+  local -r exit_code=${1:-0}
   (($# > 0)) && shift
   local -r out=$(((exit_code != 0) + 1))
 
@@ -140,7 +140,7 @@ copy() {
 
 catThenCopy() {
   local content
-  content="$(cat)"
+  content=$(cat)
   if $keep_eol; then
     printf '%s\n' "$content"
   else

@@ -9,7 +9,7 @@ set -eEuo pipefail
 digitCount() {
   # argument 1(num) is always a non-negative integer in this script usage,
   # so NO argument validation logic.
-  local num="$1" count=0
+  local num=$1 count=0
   while ((num != 0)); do
     ((++count))
     ((num = num / 10))
@@ -23,7 +23,7 @@ readonly arg_count=$# digit_count
 readonly red='\e[1;31m' blue='\e[1;36m' color_reset='\e[0m'
 
 printArg() {
-  local idx="$1" value="$2"
+  local idx=$1 value=$2
 
   # if stdout is a terminal, turn on color output.
   #   '-t' check: is a terminal?

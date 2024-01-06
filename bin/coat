@@ -30,8 +30,16 @@ rotateColorPrint() {
   fi
 }
 
-# Bash read line does not read leading spaces
-# https://stackoverflow.com/questions/29689172
-cat "$@" | while IFS= read -r line; do
-  rotateColorPrint "$line"
-done
+colorLines() {
+  # Bash read line does not read leading spaces
+  # https://stackoverflow.com/questions/29689172
+  while IFS= read -r line; do
+    rotateColorPrint "$line"
+  done
+}
+
+if [ $# == 0 ]; then
+  colorLines
+else
+  cat "$@" | colorLines
+fi

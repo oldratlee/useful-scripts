@@ -24,9 +24,11 @@
 colorEcho() {
   local combination="$1"
   shift 1
-
+  # if stdout is a terminal, turn on color output.
+  #   '-t' check: is a terminal?
+  #   check isatty in bash https://stackoverflow.com/questions/10022323
   if [ -t 1 ]; then
-    printf "\e[${combination}m%s\e[0m\n" "$*"
+    printf '\e[%sm%s\e[0m\n' "$combination" "$*"
   else
     print '%s\n' "$*"
   fi
@@ -37,7 +39,7 @@ colorEchoWithoutNewLine() {
   shift 1
 
   if [ -t 1 ]; then
-    printf "\e[${combination}m%s\e[0m" "$*"
+    printf '\e[%sm%s\e[0m' "$combination" "$*"
   else
     printf %s "$*"
   fi
@@ -63,17 +65,17 @@ done
 
 echo 'Code sample to print color text:'
 
-printf %s '    echo -e "\033['
+printf %s '    echo -e "\e['
 colorEchoWithoutNewLine '3;35;40' '1;36;41'
 printf %s m
 colorEchoWithoutNewLine '0;32;40' 'Sample Text'
-printf '%s\n' '\033[0m"'
+printf '%s\n' '\e[0m"'
 
-printf %s "    echo \$'\033["
+printf %s "    echo \$'\e["
 colorEchoWithoutNewLine '3;35;40' '1;36;41'
 printf %s "m'\""
 colorEchoWithoutNewLine '0;32;40' 'Sample Text'
-printf '%s\n' "\"$'\033[0m'"
+printf '%s\n' "\"$'\e[0m'"
 printf '%s\n' "      # NOTE: $'foo' is the escape sequence syntax of bash, safer escape"
 
 printf '%s\n' 'Output of above code:'

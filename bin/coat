@@ -11,21 +11,22 @@
 # @author Jerry Lee (oldratlee at gmail dot com)
 set -eEuo pipefail
 
-# if not in console, use cat directly
+# if stdout is a terminal, use `cat` directly.
+#   '-t' check: is a terminal?
 #   check isatty in bash https://stackoverflow.com/questions/10022323
 [ ! -t 1 ] && exec cat "$@"
 
 readonly -a ROTATE_COLORS=(33 35 36 31 32 37 34)
 COUNT=0
 rotateColorPrint() {
-  local message="$*"
+  local content="$*"
 
   # skip color for white space
-  if [[ "$message" =~ ^[[:space:]]*$ ]]; then
-    printf '%s\n' "$message"
+  if [[ "$content" =~ ^[[:space:]]*$ ]]; then
+    printf '%s\n' "$content"
   else
     local color="${ROTATE_COLORS[COUNT++ % ${#ROTATE_COLORS[@]}]}"
-    printf "\033[1;${color}m%s\033[0m\n" "$message"
+    printf '\e[1;%sm%s\e[0m\n' "$color" "$content"
   fi
 }
 

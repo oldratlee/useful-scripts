@@ -10,10 +10,11 @@ readonly nl=$'\n' # new line
 colorPrint() {
   local color="$1"
   shift
-  # check isatty in bash https://stackoverflow.com/questions/10022323
-  # if stdout is console, turn on color output.
+  # if stdout is a terminal, turn on color output.
+  #   '-t' check: is a terminal?
+  #   check isatty in bash https://stackoverflow.com/questions/10022323
   if [ -t 1 ]; then
-    printf "\033[1;${color}m%s\033[0m\n" "$*"
+    printf '\e[1;%sm%s\e[0m\n' "$color" "$*"
   else
     printf '%s\n' "$*"
   fi

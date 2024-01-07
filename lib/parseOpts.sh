@@ -23,8 +23,8 @@
 #####################################################################
 
 # NOTE: $'foo' is the escape sequence syntax of bash
-readonly _opts_ec=$'\033'      # escape char
-readonly _opts_eend=$'\033[0m' # escape end
+readonly _opts_ec=$'\e'      # escape char
+readonly _opts_eend=$'\e[0m' # escape end
 
 # shellcheck disable=SC2209
 

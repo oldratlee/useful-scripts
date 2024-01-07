@@ -5,15 +5,17 @@
 # commons functions
 #################################################
 
-# NOTE: $'foo' is the escape sequence syntax of bash
-readonly __ut_ec=$'\033'      # escape char
-readonly __ut_eend=$'\033[0m' # escape end
-
 __ut_colorEcho() {
   local color=$1
   shift
-  # if stdout is console, turn on color output.
-  [ -t 1 ] && echo "${__ut_ec}[1;${color}m$*$__ut_eend" || echo "$*"
+  # if stdout is a terminal, turn on color output.
+  #   '-t' check: is a terminal?
+  #   check isatty in bash https://stackoverflow.com/questions/10022323
+  if [[ -t 1 || "${GITHUB_ACTIONS:-}" = true ]]; then
+    printf '\e[1;%sm%s\e[0m\n' "$color" "$*"
+  else
+    printf '%s\n' "$*"
+  fi
 }
 
 redEcho() {

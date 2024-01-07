@@ -40,7 +40,7 @@ readonly PROG_VERSION='2.6.0-dev'
 # util functions
 ################################################################################
 
-readonly red='\033[1;31m' normal='\033[0m'
+readonly color_reset='\e[0m'
 
 # How to delete line with echo?
 # https://unix.stackexchange.com/questions/26576
@@ -50,12 +50,14 @@ readonly red='\033[1;31m' normal='\033[0m'
 # echo -e "\033[1K"
 # Or everything on the line, regardless of cursor position:
 # echo -e "\033[2K"
-readonly clear_line='\033[2K\r'
+readonly clear_line='\e[2K\r'
 
 redPrint() {
-  # -t check: is a terminal device?
+  # if stdout is a terminal, turn on color output.
+  #   '-t' check: is a terminal?
+  #   check isatty in bash https://stackoverflow.com/questions/10022323
   if [ -t 1 ]; then
-    printf "${red}%s${normal}\n" "$*"
+    printf "\e[1;31m%s${color_reset}\n" "$*"
   else
     printf '%s\n' "$*"
   fi
@@ -72,9 +74,9 @@ printResponsiveMessage() {
     return
   fi
 
-  local message="$*"
+  local content="$*"
   # http://www.linuxforums.org/forum/red-hat-fedora-linux/142825-how-truncate-string-bash-script.html
-  printf "${clear_line}%s" "${message:0:columns}" >&2
+  printf %b%s "${clear_line}" "${content:0:columns}" >&2
 }
 
 clearResponsiveMessage() {
@@ -82,7 +84,7 @@ clearResponsiveMessage() {
     return
   fi
 
-  printf "%b" "$clear_line" >&2
+  printf %b "$clear_line" >&2
 }
 
 die() {
@@ -322,14 +324,14 @@ listZipEntries() {
         clearResponsiveMessage
         redPrint "fail to list zip entries of $zip_file, ignored: $msg" >&2
       fi
-      return 0
+      return
     }
   fi
 
   "${command_to_list_zip_entries[@]}" "$zip_file" || {
     clearResponsiveMessage
     redPrint "fail to list zip entries of $zip_file, ignored!" >&2
-    return 0
+    return
   }
 }
 
@@ -347,16 +349,14 @@ searchJarFiles() {
 
   total_jar_count="$(printf '%s\n' "$jar_files" | wc -l)"
   # remove white space, because the `wc -l` output on mac contains white space!
-  total_jar_count="${total_jar_count//[[:space:]]/}"
+  total_jar_count=${total_jar_count//[[:space:]]}
 
   echo "$total_jar_count"
   printf '%s\n' "$jar_files"
 }
 
-readonly jar_color='\033[1;35m' sep_color='\033[1;32m'
-
 __outputResultOfJarFile() {
-  local jar_file="$1" file
+  local jar_file="$1" file jar_color='\e[1;35m' sep_color='\e[1;32m'
   # shellcheck disable=SC2206
   local grep_opt_args=("$regex_mode" ${ignore_case_option:-} ${grep_color_option:-} -- "$pattern")
 
@@ -380,7 +380,7 @@ __outputResultOfJarFile() {
 
     clearResponsiveMessage
     if [ -t 1 ]; then
-      printf "${jar_color}%s${normal}\n" "${jar_file}"
+      printf "${jar_color}%s${color_reset}\n" "${jar_file}"
     else
       printf '%s\n' "${jar_file}"
     fi
@@ -392,7 +392,7 @@ __outputResultOfJarFile() {
     } | while read -r file; do
       clearResponsiveMessage
       if [ -t 1 ]; then
-        printf "${jar_color}%s${sep_color}%s${normal}%s\n" "$jar_file" "$separator" "$file"
+        printf "${jar_color}%s${sep_color}%s${color_reset}%s\n" "$jar_file" "$separator" "$file"
       else
         printf '%s\n' "${jar_file}${separator}${file}"
       fi

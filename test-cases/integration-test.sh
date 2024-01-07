@@ -13,9 +13,7 @@ cd "$(dirname -- "$($READLINK_CMD -f -- "${BASH_SOURCE[0]}")")"
 ################################################################################
 
 # NOTE: $'foo' is the escape sequence syntax of bash
-readonly ec=$'\033'      # escape char
-readonly eend=$'\033[0m' # escape end
-readonly nl=$'\n'        # new line
+readonly nl=$'\n' # new line
 
 ################################################################################
 # common util functions
@@ -24,9 +22,14 @@ readonly nl=$'\n'        # new line
 colorEcho() {
   local color=$1
   shift
-
-  # if stdout is the console, turn on color output.
-  [ -t 1 ] && echo "${ec}[1;${color}m$*${eend}" || echo "$*"
+  # if stdout is a terminal, turn on color output.
+  #   '-t' check: is a terminal?
+  #   check isatty in bash https://stackoverflow.com/questions/10022323
+  if [[ -t 1 || "${GITHUB_ACTIONS:-}" = true ]]; then
+    printf '\e[1;%sm%s\e[0m\n' "$color" "$*"
+  else
+    printf '%s\n' "$*"
+  fi
 }
 
 redEcho() {

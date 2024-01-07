@@ -20,16 +20,16 @@ digitCount() {
 digit_count=$(digitCount $#)
 readonly arg_count=$# digit_count
 
-readonly red='\033[1;31m'
-readonly blue='\033[1;36m'
-readonly normal='\033[0m'
+readonly red='\e[1;31m' blue='\e[1;36m' color_reset='\e[0m'
 
 printArg() {
   local idx="$1" value="$2"
 
-  # if stdout is console, turn on color output.
+  # if stdout is a terminal, turn on color output.
+  #   '-t' check: is a terminal?
+  #   check isatty in bash https://stackoverflow.com/questions/10022323
   if [ -t 1 ]; then
-    printf "%${digit_count}s/%s: ${red}[${blue}%s${red}]${normal}\n" "$idx" "$arg_count" "$value"
+    printf "%${digit_count}s/%s: ${red}[${blue}%s${red}]${color_reset}\n" "$idx" "$arg_count" "$value"
   else
     printf "%${digit_count}s/%s: [%s]\n" "$idx" "$arg_count" "$value"
   fi

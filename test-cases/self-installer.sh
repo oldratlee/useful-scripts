@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if command -v svn &>/dev/null; then
   [ ! -d "/tmp/useful-scripts-$USER" ] &&

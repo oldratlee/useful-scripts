@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -eEuo pipefail
 
 # cd to the root of the project

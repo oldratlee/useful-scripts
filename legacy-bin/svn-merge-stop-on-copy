@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # @Function
 # svn merge commit between version when source branch copy(--stop-on-copy)
 # and head version of source branch.

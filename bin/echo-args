@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # @Function
 # print arguments in human and debugging friendly style.
 #

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # @Function
 # Open file in file explorer, file is selected.
 # same as xpl --selected [file]...

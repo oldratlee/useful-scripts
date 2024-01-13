@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # @Function
 # Copy the command into docker container and run the command in container.
 #

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # @Function
 # Find files in the jar files under specified directory, search jar files recursively(include subdirectory).
 #

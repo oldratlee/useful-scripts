@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # @Function
 #   parse options lib, support multiple values for one option.
 #

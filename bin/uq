@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # @Function
 # Filter lines from INPUT (or standard input), writing to OUTPUT (or standard output).
 # same as `uniq` command in core utils,

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # @Function
 # tac lines colorfully. taoc means coat(*CO*lorful c*AT*) in reverse(last line first).
 #

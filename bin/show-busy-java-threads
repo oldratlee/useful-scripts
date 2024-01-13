@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # @Function
 # Find out the highest cpu consumed threads of java processes, and print the stack of these threads.
 #

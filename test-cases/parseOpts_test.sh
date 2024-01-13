@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 BASE="$(dirname -- "${BASH_SOURCE[0]}")"
 

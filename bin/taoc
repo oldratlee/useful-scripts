@@ -22,7 +22,7 @@ COUNT=0
 rotateColorPrint() {
   local content=$*
   # skip color for white space
-  if [[ "$content" =~ ^[[:space:]]*$ ]]; then
+  if [[ $content =~ ^[[:space:]]*$ ]]; then
     printf %s "$content"
   else
     local color=${ROTATE_COLORS[COUNT++ % ${#ROTATE_COLORS[@]}]}

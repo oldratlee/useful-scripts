@@ -19,19 +19,6 @@ readonly PROG_VERSION='2.6.0-dev'
 # util functions
 ################################################################################
 
-colorPrint() {
-  local color=$1
-  shift
-  # if stdout is a terminal, turn on color output.
-  #   '-t' check: is a terminal?
-  #   check isatty in bash https://stackoverflow.com/questions/10022323
-  if [ -t 1 ]; then
-    printf '\e[1;%sm%s\e[0m\n' "$color" "$*"
-  else
-    printf '%s\n' "$*"
-  fi
-}
-
 usage() {
   cat <<EOF
 Usage: $PROG [OPTION]... ARG...
@@ -95,13 +82,15 @@ readonly -a ROTATE_COLORS=(33 35 36 31 32 37 34)
 COUNT=0
 rotateColorPrint() {
   local content=$*
-
-  # skip color for white space
-  if [[ "$content" =~ ^[[:space:]]*$ ]]; then
+  # - if stdout is a terminal, turn on color output.
+  #   '-t' check: is a terminal?
+  #   check isatty in bash https://stackoverflow.com/questions/10022323
+  # - skip color for white space
+  if [[ ! -t 1 || $content =~ ^[[:space:]]*$ ]]; then
     printf '%s\n' "$content"
   else
     local color=${ROTATE_COLORS[COUNT++ % ${#ROTATE_COLORS[@]}]}
-    colorPrint "$color" "$content"
+    printf '\e[1;%sm%s\e[0m\n' "$color" "$content"
   fi
 }
 

@@ -11,31 +11,42 @@
 # @author Jerry Lee (oldratlee at gmail dot com)
 set -eEuo pipefail
 
-# if stdout is a terminal, use `tac` directly.
+# if stdout is not a terminal, use `tac` directly.
 #   '-t' check: is a terminal?
 #   check isatty in bash https://stackoverflow.com/questions/10022323
-[ ! -t 1 ] && exec tac "$@"
+[ -t 1 ] || exec tac "$@"
 
 readonly -a ROTATE_COLORS=(33 35 36 31 32 37 34)
 COUNT=0
+# CAUTION: print content WITHOUT new line
 rotateColorPrint() {
   local content=$*
-
   # skip color for white space
   if [[ "$content" =~ ^[[:space:]]*$ ]]; then
-    printf '%s\n' "$content"
+    printf %s "$content"
   else
     local color=${ROTATE_COLORS[COUNT++ % ${#ROTATE_COLORS[@]}]}
-    printf '\e[1;%sm%s\e[0m\n' "$color" "$content"
+    printf '\e[1;%sm%s\e[0m' "$color" "$content"
   fi
 }
 
+rotateColorPrintln() {
+  rotateColorPrint "$*"$'\n'
+}
+
 colorLines() {
+  local line
   # Bash read line does not read leading spaces
   # https://stackoverflow.com/questions/29689172
   while IFS= read -r line; do
-    rotateColorPrint "$line"
+    rotateColorPrintln "$line"
   done
+  # How to use `while read` (Bash) to read the last line in a file
+  #   if there’s no newline at the end of the file?
+  # https://stackoverflow.com/questions/4165135
+  if [ -n "$line" ]; then
+    rotateColorPrint "$line"
+  fi
 }
 
 tac "$@" | colorLines

@@ -1,0 +1,244 @@
+#!/usr/bin/env bash
+# @Function
+# Convert unix time to human readable date string.
+# Note: The range of the 10-digit unix time in second include recent date:
+#   9999999999: 2286-11-20 17:46:39 +0000
+#   1000000000: 2001-09-09 01:46:40 +0000
+#            0: 1970-01-01 00:00:00 +0000
+#  -1000000000: 1938-04-24 22:13:20 +0000
+#  -9999999999: 1653-02-10 06:13:21 +0000
+#
+# @Usage
+#   # default treat first 10 digits as second(include recent date)
+#   $ uxt 1234567890    # unix time of second
+#   2009-02-14 07:31:30 +0800
+#   $ uxt 1234567890333 # unix time of milliseconds(10 + 3 digits)
+#   2009-02-14 07:31:30.333 +0800
+#   $ uxt 12345678903   # unix time of 10 + 1 digits
+#   2009-02-14 07:31:30.3 +0800
+#   # support multiply arguments
+#   $ uxt 0 1234567890 12345678903
+#
+# @online-doc https://github.com/oldratlee/useful-scripts/blob/dev-2.x/docs/shell.md#-unix-time
+# @author Jerry Lee (oldratlee at gmail dot com)
+set -eEuo pipefail
+
+readonly PROG=${0##*/}
+readonly PROG_VERSION='2.x-dev'
+
+################################################################################
+# util functions
+################################################################################
+
+red_print() {
+  # if stdout is a terminal, turn on color output.
+  #   '-t' check: is a terminal?
+  #   check isatty in bash https://stackoverflow.com/questions/10022323
+  if [ -t 1 ]; then
+    printf "\e[1;31m%s\e[0m\n" "$*"
+  else
+    printf '%s\n' "$*"
+  fi
+}
+
+is_integer() {
+  [[ "$1" =~ ^-?[[:digit:]]+$ ]]
+}
+
+die() {
+  local prompt_help=false exit_status=2
+  while (($# > 0)); do
+    case "$1" in
+    -h)
+      prompt_help=true
+      shift
+      ;;
+    -s)
+      exit_status=$2
+      shift 2
+      ;;
+    *)
+      break
+      ;;
+    esac
+  done
+
+  (($# > 0)) && red_print "$PROG: $*"
+  $prompt_help && echo "Try '$PROG --help' for more information."
+
+  exit "$exit_status"
+} >&2
+
+usage() {
+  cat <<EOF
+Usage: $PROG [OPTION] unix-time...
+
+Convert unix time to human readable date string.
+Note: The range of the 10-digit unix time in second include recent date:
+  9999999999: 2286-11-20 17:46:39 +0000
+  1000000000: 2001-09-09 01:46:40 +0000
+           0: 1970-01-01 00:00:00 +0000
+ -1000000000: 1938-04-24 22:13:20 +0000
+ -9999999999: 1653-02-10 06:13:21 +0000
+
+Example:
+  # default treat first 10 digits as second(include recent date)
+  $ $PROG 1234567890    # unix time of second
+  2009-02-14 07:31:30 +0800
+  $ $PROG 1234567890333 # unix time of milliseconds(10 + 3 digits)
+  2009-02-14 07:31:30.333 +0800
+  $ $PROG 12345678903   # unix time of 10 + 1 digits
+  2009-02-14 07:31:30.3 +0800
+  # support multiply arguments
+  $ $PROG 0 1234567890 12345678903
+
+Options:
+  -u, --time-unit     set the time unit of given epochs
+  -Z, --no-time-zone  do not print time zone
+  -D, --no-second-decimal
+                      do not print second decimal
+  -t, --trim-decimal-tailing-0
+                      trim the tailing zeros of second decimal
+  -h, --help          display this help and exit
+  -V, --version       display version information and exit
+EOF
+
+  exit
+}
+
+progVersion() {
+  printf '%s\n' "$PROG $PROG_VERSION"
+  exit
+}
+
+################################################################################
+# parse options
+################################################################################
+
+args=()
+unit=
+no_tz=false
+no_second_decimal=false
+trim_decimal_tailing_0=false
+
+while (($# > 0)); do
+  case "$1" in
+  -u | --unit)
+    unit=$2
+    shift 2
+    ;;
+  -Z | --no-time-zone)
+    no_tz=true
+    shift
+    ;;
+  -D | --no-second-decimal)
+    no_second_decimal=true
+    shift
+    ;;
+  -t | --trim-decimal-tailing-0)
+    trim_decimal_tailing_0=true
+    shift
+    ;;
+  -h | --help)
+    usage
+    ;;
+  -V | --version)
+    progVersion
+    ;;
+  -[[:digit:]]*)
+    # negative number start with '-', is not option
+    args=(${args[@]:+"${args[@]}"} "$1")
+    shift
+    ;;
+  --)
+    shift
+    args=(${args[@]:+"${args[@]}"} "$@")
+    break
+    ;;
+  -*)
+    die -h "unrecognized option '$1'"
+    ;;
+  *)
+    args=(${args[@]:+"${args[@]}"} "$1")
+    shift
+    ;;
+  esac
+done
+
+[[ -n $unit ]] && if [[ $unit =~ ^(s|second)$ ]]; then
+  unit=s
+elif [[ $unit =~ ^(ms|millisecond)$ ]]; then
+  unit=ms
+else
+  die -h "illegal time unit '$unit'! support values: 'second'/'s', 'millisecond'/'ms'"
+fi
+
+readonly args unit trim_decimal_tailing_0 no_tz
+
+((${#args[@]} > 0)) || die -h "requires at least one argument!"
+for a in "${args[@]}"; do
+  is_integer "$a" || die "argument $a is not integer!"
+  [[ ! $a =~ ^-?0+[1-9] ]] || die "argument $a contains beginning 0!"
+done
+
+################################################################################
+# biz logic
+################################################################################
+
+print_date() {
+  local -r input=$1
+  # split input integer to sign and number part
+  local -r sign_part=${input%%[!-]*} # remove digits from tail
+  local -r number_part=${input#-}    # remove sign from head
+  local -r np_len=${#number_part}    # length of number part
+
+  local second_part=0 decimal_part=
+  # case 1: is unix time in second?
+  if [[ $unit = s ]]; then
+    second_part=$number_part
+  # case 2: is unix time in millisecond?
+  elif [[ $unit = ms ]]; then
+    if ((np_len > 3)); then
+      second_part=${number_part:0:np_len-3}
+      decimal_part=${number_part:np_len-3:3}
+    else
+      printf -v decimal_part '%03d' "$number_part"
+    fi
+  # case 3: auto detect by length
+  else
+    # <= 10 digits, treat as second
+    if ((np_len <= 10)); then
+      second_part=$number_part
+    # for long integer(> 10 digits), treat first 10 digits as second,
+    #   and the rest as decimal/nano second(almost 9 digits)
+    elif ((np_len <= 19)); then
+      second_part=${number_part:0:10}
+      decimal_part=${number_part:10:9}
+    else
+      die "argument $input contains $np_len digits(>19), too many to treat as a recent date(first 10-digits as seconds, rest at most 9 digits as decimal)"
+    fi
+  fi
+
+  # trim tailing zeros of decimal?
+  $trim_decimal_tailing_0 && while true; do
+    local old_len=${#decimal_part}
+    decimal_part=${decimal_part%0}
+    ((${#decimal_part} < old_len)) || break
+  done
+
+  local -r seconds_value=$sign_part$second_part second_part decimal_part
+  # defensive check. 9999999999999999(16 '9') seconds is so big, 300M years later(316,889,355-01-25 17:46:39 +0000)
+  ((${#second_part} <= 16)) ||
+    die "argument $input(seconds: $seconds_value${decimal_part:+, decimal: .$decimal_part}) is too big, seconds are more than 16 digits."
+
+  local date_input=$seconds_value${decimal_part:+.$decimal_part}
+  local format_n=
+  $no_second_decimal || format_n=${decimal_part:+.%${#decimal_part}N}
+  local format_tz=
+  $no_tz || format_tz=' %z'
+  date -d "@$date_input" +"%Y-%m-%d %H:%M:%S$format_n$format_tz"
+}
+
+for a in "${args[@]}"; do
+  print_date "$a"
+done

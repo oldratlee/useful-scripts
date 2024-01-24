@@ -363,6 +363,63 @@ $ rp /home /etc/../etc /home/admin
 ../../etc
 ```
 
+🍺 [uxt](../bin/uxt)
+----------------------
+
+输出`Unix`时间戳对应的时间，自动识别秒/毫秒格式。
+
+### 用法/示例
+
+```bash
+$ uxt 1234567890    # 秒时间戳（10位以内数字）
+2009-02-14 07:31:30 +0800
+$ uxt 1234567890333 # 毫秒时间戳（10位秒 + 3位毫秒）
+2009-02-14 07:31:30.333 +0800
+$ uxt 12345678903   # 11位（10位秒 + 剩余1位作为毫秒）
+2009-02-14 07:31:30.3 +0800
+# 支持多个参数
+$ uxt 0 1234567890 12345678903
+
+# 如果需要转换秒超过10位的时间戳，显式指定单位
+$ uxt -u s 12345678900
+2361-03-22 03:15:00 +0800
+$ uxt -u ms 12345678900123
+2361-03-22 03:15:00.123 +0800
+
+$ uxt -h
+Usage: uxt [OPTION] unix-time [unix-time...]
+
+Convert unix time to human readable date string.
+Note: The range of the 10-digit unix time in second include recent date:
+  9999999999: 2286-11-20 17:46:39 +0000
+  1000000000: 2001-09-09 01:46:40 +0000
+           0: 1970-01-01 00:00:00 +0000
+ -1000000000: 1938-04-24 22:13:20 +0000
+ -9999999999: 1653-02-10 06:13:21 +0000
+
+Example:
+  # default treat first 10 digits as second(include recent date)
+  $ uxt 1234567890    # unix time of second
+  2009-02-14 07:31:30 +0800
+  $ uxt 1234567890333 # unix time of milliseconds(10 + 3 digits)
+  2009-02-14 07:31:30.333 +0800
+  $ uxt 12345678903   # unix time of 10 + 1 digits
+  2009-02-14 07:31:30.3 +0800
+  # support multiply arguments
+  $ uxt 0 1234567890 12345678903
+
+Options:
+  -u, --time-unit     set the time unit of given epochs
+  -Z, --no-time-zone  do not print time zone
+  -D, --no-second-decimal
+                      do not print second decimal
+  -t, --trim-decimal-tailing-0
+                      trim the tailing zeros of second decimal
+  -h, --help          display this help and exit
+  -V, --version       display version information and exit
+```
+
+
 🍺 [cp-into-docker-run](../bin/cp-into-docker-run)
 ----------------------
 

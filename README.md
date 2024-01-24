@@ -4,8 +4,8 @@
 <a href="https://github.com/oldratlee/useful-scripts/actions/workflows/ci.yaml"><img src="https://img.shields.io/github/actions/workflow/status/oldratlee/useful-scripts/ci.yaml?branch=dev-2.x&logo=github&logoColor=white" alt="Github Workflow Build Status"></a>
 <a href="https://github.com/oldratlee/useful-scripts/releases"><img src="https://img.shields.io/github/release/oldratlee/useful-scripts.svg" alt="GitHub release"></a>
 <a href="https://www.apache.org/licenses/LICENSE-2.0.html"><img src="https://img.shields.io/github/license/oldratlee/useful-scripts?color=4D7A97&logo=apache" alt="License"></a>
-<a href="https://github.com/oldratlee/useful-scripts/stargazers"><img src="https://img.shields.io/github/stars/oldratlee/useful-scripts" alt="GitHub Stars"></a>
-<a href="https://github.com/oldratlee/useful-scripts/fork"><img src="https://img.shields.io/github/forks/oldratlee/useful-scripts" alt="GitHub Forks"></a>
+<a href="https://github.com/oldratlee/useful-scripts/stargazers"><img src="https://img.shields.io/github/stars/oldratlee/useful-scripts?style=flat" alt="GitHub Stars"></a>
+<a href="https://github.com/oldratlee/useful-scripts/fork"><img src="https://img.shields.io/github/forks/oldratlee/useful-scripts?style=flat" alt="GitHub Forks"></a>
 <a href="https://github.com/oldratlee/useful-scripts/issues"><img src="https://img.shields.io/github/issues/oldratlee/useful-scripts" alt="GitHub issues"></a>
 <a href="https://github.com/oldratlee/useful-scripts/graphs/contributors"><img src="https://img.shields.io/github/contributors/oldratlee/useful-scripts" alt="GitHub Contributors"></a>
 <a href="https://github.com/oldratlee/useful-scripts"><img src="https://img.shields.io/github/repo-size/oldratlee/useful-scripts" alt="GitHub repo size"></a>
@@ -142,10 +142,10 @@ PS：
 `Shell`用`Bash`的原因是：
 
 - 目前仍然是主流的`Shell`，并且在不同环境基本上都缺省部署了。
-- 在[`Google`的`Shell`风格指南](https://zh-google-styleguide.readthedocs.io/en/latest/google-shell-styleguide/background/)中，明确说明了：`Bash`是**唯一**被允许执行的`shell`脚本语言。
+- 在[`Google`的`Shell`风格指南](https://zh-google-styleguide.readthedocs.io/en/latest/google-shell-styleguide/background/)中，明确说到了：`Bash`是**唯一**被允许执行的`shell`脚本语言。
+- 统一用`Bash`，可以避免差异带来的风险与没有收益的复杂性。
     - 有大量的`Shell`实现，`sh`、`bash`、`zsh`、`fish`、`csh`、`tcsh`、`ksh`、`ash`、`dash`……
     - 不同的`Shell`有各种差异，深坑勿入。
-    - 统一用`Bash`，可以避免差异带来的风险与没有收益的复杂性。
 - 个人系统学习过的是`Bash`，比较理解熟悉。
 
 PS: 虽然交互`Shell`个人已经使用`Zsh` + [`oh-my-zsh`](https://ohmyz.sh/)，但在严谨的`Shell`脚本开发时还是使用`Bash`。

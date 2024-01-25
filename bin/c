@@ -111,7 +111,7 @@ while [ $# -gt 0 ]; do
     usage 2 "unrecognized option '$1'"
     ;;
   *)
-    # if not option, treat all follow args as command
+    # if not option, treat all follow arguments as command
     target_command=(${target_command[@]:+"${target_command[@]}"} "$@")
     break
     ;;

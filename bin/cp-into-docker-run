@@ -164,7 +164,7 @@ while (($# > 0)); do
     usage 2 "$PROG: unrecognized option '$1'"
     ;;
   *)
-    # if not option, treat all follow args as command
+    # if not option, treat all follow arguments as command
     args=(${args[@]:+"${args[@]}"} "$@")
     break
     ;;

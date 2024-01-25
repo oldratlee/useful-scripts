@@ -44,9 +44,7 @@ colorLines() {
   # How to use `while read` (Bash) to read the last line in a file
   #   if there’s no newline at the end of the file?
   # https://stackoverflow.com/questions/4165135
-  if [ -n "$line" ]; then
-    rotateColorPrint "$line"
-  fi
+  [ -z "$line" ] || rotateColorPrint "$line"
 }
 
 if [ $# == 0 ]; then

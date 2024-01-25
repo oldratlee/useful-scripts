@@ -349,7 +349,7 @@ searchJarFiles() {
 
   total_jar_count=$(printf '%s\n' "$jar_files" | wc -l)
   # remove white space, because the `wc -l` output on mac contains white space!
-  total_jar_count=${total_jar_count//[[:space:]]}
+  total_jar_count=${total_jar_count//[[:space:]]/}
 
   echo "$total_jar_count"
   printf '%s\n' "$jar_files"
@@ -370,13 +370,9 @@ __outputResultOfJarFile() {
     # - https://stackoverflow.com/questions/19120263/why-exit-code-141-with-grep-q
     # - https://unix.stackexchange.com/questions/305547/broken-pipe-when-grepping-output-but-only-with-i-flag
     # - http://www.pixelbeat.org/programming/sigpipe_handling.html
-    if grep -c "${grep_opt_args[@]}" &>/dev/null; then
-      matched=true
-    fi
+    grep -c "${grep_opt_args[@]}" &>/dev/null && matched=true
 
-    if [ "$print_matched_files" != "$matched" ]; then
-      return
-    fi
+    [ "$print_matched_files" != "$matched" ] && return
 
     clearResponsiveMessage
     if [ -t 1 ]; then

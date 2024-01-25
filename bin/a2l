@@ -60,12 +60,12 @@ while [ $# -gt 0 ]; do
     break
     ;;
   -*)
-    # if unrecognized option, treat it and all follow args as args
+    # if unrecognized option, treat it and all follow arguments as args
     args=(${args[@]:+"${args[@]}"} "$@")
     break
     ;;
   *)
-    # if not option, treat all follow args as args
+    # if not option, treat all follow arguments as args
     args=(${args[@]:+"${args[@]}"} "$@")
     break
     ;;

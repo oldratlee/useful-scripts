@@ -101,7 +101,7 @@ blueOutput() {
 }
 
 die() {
-  redOutput "Error: $*" 1>&2
+  redOutput "Error: $*" >&2
   exit 1
 }
 

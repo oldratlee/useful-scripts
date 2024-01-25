@@ -40,7 +40,7 @@ fail() {
 }
 
 die() {
-  redEcho "Error: $*" 1>&2
+  redEcho "Error: $*" >&2
   exit 1
 }
 

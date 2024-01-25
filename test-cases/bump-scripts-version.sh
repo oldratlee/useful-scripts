@@ -49,7 +49,7 @@ logAndRun() {
 }
 
 die() {
-  redPrint "Error: $*" 1>&2
+  redPrint "Error: $*" >&2
   exit 1
 }
 

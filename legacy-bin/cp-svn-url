@@ -78,7 +78,7 @@ readonly dir="${1:-.}"
 # NOTE: DO NOT declare var url as readonly in ONE line!
 url="$(svn info "${dir}" | awk '/^URL: /{print $2}')"
 if [ -z "${url}" ]; then
-  echo "Fail to get svn url!" 1>&2
+  echo "Fail to get svn url!" >&2
   exit 1
 fi
 

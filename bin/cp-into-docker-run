@@ -29,7 +29,7 @@ redPrint() {
 }
 
 die() {
-  redPrint "Error: $*" 1>&2
+  redPrint "Error: $*" >&2
   exit 1
 }
 
@@ -242,7 +242,7 @@ trap cleanupWhenExit EXIT
 ########################################
 
 logAndRun() {
-  $verbose && printf '%s\n' "[$PROG] $*" 1>&2
+  $verbose && printf '%s\n' "[$PROG] $*" >&2
   "$@"
 }
 

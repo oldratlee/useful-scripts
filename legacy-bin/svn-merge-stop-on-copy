@@ -37,7 +37,7 @@ EOF
   exit $1
 }
 
-[ $# -gt 2 ] && {
+(($# > 2)) && {
   echo "too many arguments!"
   usage 1
 }

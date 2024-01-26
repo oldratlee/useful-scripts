@@ -61,7 +61,7 @@ assertArrayEquals() {
   local a1=("${!a1PlaceHolder}")
   local a2=("${!a2PlaceHolder}")
 
-  [ ${#a1[@]} -eq ${#a2[@]} ] || fail "assertArrayEquals array length [${#a1[@]}] != [${#a2[@]}]${failMsg:+: $failMsg}"
+  ((${#a1[@]} == ${#a2[@]})) || fail "assertArrayEquals array length [${#a1[@]}] != [${#a2[@]}]${failMsg:+: $failMsg}"
 
   local i
   for ((i = 0; i < ${#a1[@]}; i++)); do

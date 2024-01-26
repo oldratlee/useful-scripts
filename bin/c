@@ -86,7 +86,7 @@ progVersion() {
 quiet=false
 keep_eol=false
 declare -a target_command=()
-while [ $# -gt 0 ]; do
+while (($# > 0)); do
   case "$1" in
   -k | --keep-eol)
     keep_eol=true
@@ -156,7 +156,7 @@ teeAndCopy() {
   fi
 }
 
-if [ ${#target_command[@]} -eq 0 ]; then
+if ((${#target_command[@]} == 0)); then
   teeAndCopy
 else
   "${target_command[@]}" | teeAndCopy

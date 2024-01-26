@@ -47,7 +47,7 @@ colorLines() {
   [ -z "$line" ] || rotateColorPrint "$line"
 }
 
-if [ $# == 0 ]; then
+if (($# == 0)); then
   colorLines
 else
   cat "$@" | colorLines

@@ -78,7 +78,7 @@ progVersion() {
 
 declare -a files=()
 selected=false
-while [ $# -gt 0 ]; do
+while (($# > 0)); do
   case "$1" in
   -s | --selected)
     selected=true

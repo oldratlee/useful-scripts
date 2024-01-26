@@ -105,7 +105,7 @@ progVersion() {
 ################################################################################
 
 declare -a files=()
-while [ $# -gt 0 ]; do
+while (($# > 0)); do
   case "$1" in
   -h | --help)
     usage
@@ -129,9 +129,9 @@ while [ $# -gt 0 ]; do
   esac
 done
 
-[ ${#files[@]} -eq 0 ] && die "NO argument!"
+((${#files[@]} == 0)) && die "NO argument!"
 
-if [ ${#files[@]} -eq 1 ]; then
+if ((${#files[@]} == 1)); then
   relativeTo=.
 else
   argc=${#files[@]}

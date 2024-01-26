@@ -19,8 +19,8 @@ test_exitCode=$?
 _opts_showOptDescInfoList
 _opts_showOptValueInfoList
 
-[ $test_exitCode -eq 0 ] || fail "Wrong exit code!"
-[ ${#_OPT_INFO_LIST_INDEX[@]} -eq 4 ] || fail "Wrong _OPT_INFO_LIST_INDEX!"
+((test_exitCode == 0)) || fail "Wrong exit code!"
+((${#_OPT_INFO_LIST_INDEX[@]} == 4)) || fail "Wrong _OPT_INFO_LIST_INDEX!"
 
 [[ $_OPT_VALUE_a == "true" && $_OPT_VALUE_a_long == "true" ]] || fail "Wrong option value of a!"
 [[ $_OPT_VALUE_b == "bb" && $_OPT_VALUE_b_long == "bb" ]] || fail "Wrong option value of b!"
@@ -50,8 +50,8 @@ test_exitCode=$?
 _opts_showOptDescInfoList
 _opts_showOptValueInfoList
 
-[ $test_exitCode -eq 0 ] || fail "Wrong exit code!"
-[ ${#_OPT_INFO_LIST_INDEX[@]} -eq 4 ] || fail "Wrong _OPT_INFO_LIST_INDEX!"
+((test_exitCode == 0)) || fail "Wrong exit code!"
+((${#_OPT_INFO_LIST_INDEX[@]} == 4)) || fail "Wrong _OPT_INFO_LIST_INDEX!"
 
 [[ $_OPT_VALUE_a == "true" && $_OPT_VALUE_a_long == "true" ]] || fail "Wrong option value of a!"
 [[ $_OPT_VALUE_b == "bb" && $_OPT_VALUE_b_long == "bb" ]] || fail "Wrong option value of b!"
@@ -79,8 +79,8 @@ test_exitCode=$?
 _opts_showOptDescInfoList
 _opts_showOptValueInfoList
 
-[ $test_exitCode -eq 232 ] || fail "Wrong exit code!"
-[ ${#_OPT_INFO_LIST_INDEX[@]} -eq 0 ] || fail "Wrong _OPT_INFO_LIST_INDEX!"
+((test_exitCode == 232)) || fail "Wrong exit code!"
+((${#_OPT_INFO_LIST_INDEX[@]} == 0)) || fail "Wrong _OPT_INFO_LIST_INDEX!"
 [[ "$_OPT_VALUE_a" == "" && "$_OPT_VALUE_a_long" == "" ]] || fail "Wrong option value of a!"
 [[ "$_OPT_VALUE_b" == "" && "$_OPT_VALUE_b_long" == "" ]] || fail "Wrong option value of b!"
 [[ "$_OPT_VALUE_c" == "" && "$_OPT_VALUE_c_long" == "" ]] || fail "Wrong option value of c!"
@@ -96,8 +96,8 @@ test_exitCode=$?
 _opts_showOptDescInfoList
 _opts_showOptValueInfoList
 
-[ $test_exitCode -eq 0 ] || fail "Wrong exit code!"
-[ ${#_OPT_INFO_LIST_INDEX[@]} -eq 4 ] || fail "Wrong _OPT_INFO_LIST_INDEX!"
+((test_exitCode == 0)) || fail "Wrong exit code!"
+((${#_OPT_INFO_LIST_INDEX[@]} == 4)) || fail "Wrong _OPT_INFO_LIST_INDEX!"
 [[ "$_OPT_VALUE_a" == "" && "$_OPT_VALUE_a_long" == "" ]] || fail "Wrong option value of a!"
 [[ "$_OPT_VALUE_b" == "" && "$_OPT_VALUE_b_long" == "" ]] || fail "Wrong option value of b!"
 [[ "$_OPT_VALUE_c" == "" && "$_OPT_VALUE_c_long" == "" ]] || fail "Wrong option value of c!"
@@ -113,8 +113,8 @@ test_exitCode=$?
 _opts_showOptDescInfoList
 _opts_showOptValueInfoList
 
-[ $test_exitCode -eq 221 ] || fail "Wrong exit code!"
-[ ${#_OPT_INFO_LIST_INDEX[@]} -eq 0 ] || fail "Wrong _OPT_INFO_LIST_INDEX!"
+((test_exitCode == 221)) || fail "Wrong exit code!"
+((${#_OPT_INFO_LIST_INDEX[@]} == 0)) || fail "Wrong _OPT_INFO_LIST_INDEX!"
 [[ "$_OPT_VALUE_a" == "" && "$_OPT_VALUE_a_long" == "" ]] || fail "Wrong option value of a!"
 [[ "$_OPT_VALUE_b" == "" && "$_OPT_VALUE_b_long" == "" ]] || fail "Wrong option value of b!"
 [[ "$_OPT_VALUE_c" == "" && "$_OPT_VALUE_c_long" == "" ]] || fail "Wrong option value of c!"
@@ -126,8 +126,8 @@ test_exitCode=$?
 _opts_showOptDescInfoList
 _opts_showOptValueInfoList
 
-[ $test_exitCode -eq 222 ] || fail "Wrong exit code!"
-[ ${#_OPT_INFO_LIST_INDEX[@]} -eq 0 ] || fail "Wrong _OPT_INFO_LIST_INDEX!"
+((test_exitCode == 222)) || fail "Wrong exit code!"
+((${#_OPT_INFO_LIST_INDEX[@]} == 0)) || fail "Wrong _OPT_INFO_LIST_INDEX!"
 [[ "$_OPT_VALUE_a" == "" && "$_OPT_VALUE_a_long" == "" ]] || fail "Wrong option value of a!"
 [[ "$_OPT_VALUE_b" == "" && "$_OPT_VALUE_b_long" == "" ]] || fail "Wrong option value of b!"
 [[ "$_OPT_VALUE_c" == "" && "$_OPT_VALUE_c_long" == "" ]] || fail "Wrong option value of c!"

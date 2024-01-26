@@ -9,7 +9,7 @@
 #
 # @online-doc https://github.com/oldratlee/useful-scripts/blob/dev-2.x/docs/shell.md#-uq
 # @author Zava Xu (zava.kid at gmail dot com)
-# @author Jerry Lee (oldratlee at gmail dot com)# NOTE about Bash Traps and Pitfalls:
+# @author Jerry Lee (oldratlee at gmail dot com)
 #
 # NOTE about Bash Traps and Pitfalls:
 #
@@ -71,14 +71,14 @@ convertHumanReadableSizeToSize() {
 
   local size=${BASH_REMATCH[1]} unit=${BASH_REMATCH[2]}
   case "$unit" in
-  g)
-    ((size *= 1024 * 1024 * 1024))
-    ;;
-  m)
-    ((size *= 1024 * 1024))
-    ;;
   k)
     ((size *= 1024))
+    ;;
+  m)
+    ((size *= 1024 ** 2))
+    ;;
+  g)
+    ((size *= 1024 ** 3))
     ;;
   esac
 

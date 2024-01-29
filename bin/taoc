@@ -11,6 +11,49 @@
 # @author Jerry Lee (oldratlee at gmail dot com)
 set -eEuo pipefail
 
+# NOTE: DO NOT declare var PROG as readonly in ONE line!
+PROG=$(basename -- "$0")
+readonly PROG
+readonly PROG_VERSION='2.x-dev'
+
+################################################################################
+# parse options
+################################################################################
+
+progVersion() {
+  printf '%s version: %s\n' "$PROG" "$PROG_VERSION"
+  printf 'tac executable: %s\n' "$(command -v tac)"
+  exit
+}
+
+usage() {
+  cat <<EOF
+Usage: $PROG [OPTION]... [FILE]...
+tac lines colorfully.
+
+Support options:
+  --help     display this help and exit
+  --version  output version information and exit
+All other options and arguments are delegated to command tac,
+more info see the help/man of command tac(e.g. tac --help).
+tac executable: $(command -v tac)
+EOF
+
+  exit
+}
+
+declare -a args=("$@")
+# check arguments in reverse, so last option wins.
+for ((idx = $# - 1; idx >= 0; --idx)); do
+  [ "${args[idx]}" = --help ] && usage
+  [ "${args[idx]}" = --version ] && progVersion
+done
+unset args idx
+
+################################################################################
+# biz logic
+################################################################################
+
 # if stdout is not a terminal, use `tac` directly.
 #   '-t' check: is a terminal?
 #   check isatty in bash https://stackoverflow.com/questions/10022323

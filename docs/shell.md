@@ -154,48 +154,26 @@ line2 of file2
 # 帮助信息
 #   可以看到本人机器上实现代理的`cat`/`tac`命令是GNU的实现。
 $ coat --help
-Usage: cat [OPTION]... [FILE]...
-Concatenate FILE(s) to standard output.
+Usage: coat [OPTION]... [FILE]...
+cat lines colorfully.
 
-With no FILE, or when FILE is -, read standard input.
-
-  -A, --show-all           equivalent to -vET
-  -b, --number-nonblank    number nonempty output lines, overrides -n
-  -e                       equivalent to -vE
-  -E, --show-ends          display $ at end of each line
-  -n, --number             number all output lines
-  -s, --squeeze-blank      suppress repeated empty output lines
-  -t                       equivalent to -vT
-  -T, --show-tabs          display TAB characters as ^I
-  -u                       (ignored)
-  -v, --show-nonprinting   use ^ and M- notation, except for LFD and TAB
-      --help     display this help and exit
-      --version  output version information and exit
-
-Examples:
-  cat f - g  Output f's contents, then standard input, then g's contents.
-  cat        Copy standard input to standard output.
-
-GNU coreutils online help: <https://www.gnu.org/software/coreutils/>
-Full documentation at: <https://www.gnu.org/software/coreutils/cat>
-or available locally via: info '(coreutils) cat invocation'
+Support options:
+  --help     display this help and exit
+  --version  output version information and exit
+All other options and arguments are delegated to command cat,
+more info see the help/man of command cat(e.g. cat --help).
+cat executable: /usr/local/opt/coreutils/libexec/gnubin/cat
 
 $ taoc --help
-Usage: tac [OPTION]... [FILE]...
-Write each FILE to standard output, last line first.
+Usage: taoc [OPTION]... [FILE]...
+tac lines colorfully.
 
-With no FILE, or when FILE is -, read standard input.
-
-Mandatory arguments to long options are mandatory for short options too.
-  -b, --before             attach the separator before instead of after
-  -r, --regex              interpret the separator as a regular expression
-  -s, --separator=STRING   use STRING as the separator instead of newline
-      --help        display this help and exit
-      --version     output version information and exit
-
-GNU coreutils online help: <https://www.gnu.org/software/coreutils/>
-Full documentation <https://www.gnu.org/software/coreutils/tac>
-or available locally via: info '(coreutils) tac invocation'
+Support options:
+  --help     display this help and exit
+  --version  output version information and exit
+All other options and arguments are delegated to command tac,
+more info see the help/man of command tac(e.g. tac --help).
+tac executable: /usr/local/opt/coreutils/libexec/gnubin/tac
 ```
 
 注：上面示例中，没有彩色；在控制台上运行可以看出彩色效果，如下：  

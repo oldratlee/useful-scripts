@@ -122,7 +122,7 @@ readonly keep_eol quiet target_command
 # biz logic
 ################################################################################
 
-copy() {
+systemClip() {
   case "$(uname)" in
   Darwin*)
     pbcopy
@@ -136,21 +136,21 @@ copy() {
   esac
 }
 
-catThenCopy() {
+bufferCopy() {
   local content
   content=$(cat)
   if $keep_eol; then
     printf '%s\n' "$content"
   else
     printf %s "$content"
-  fi | copy
+  fi | systemClip
 }
 
 teeAndCopy() {
   if $quiet; then
-    catThenCopy
+    bufferCopy
   else
-    tee >(catThenCopy)
+    tee >(bufferCopy)
   fi
 }
 

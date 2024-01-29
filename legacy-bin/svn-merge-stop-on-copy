@@ -11,7 +11,7 @@
 # @author jiangjizhong(@jzwlqx)
 # @author Jerry Lee (oldratlee at gmail dot com)
 
-PROG="$(basename -- "$0")"
+readonly PROG=${0##*/}
 
 usage() {
   cat <<EOF

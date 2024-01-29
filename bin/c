@@ -26,9 +26,7 @@
 #           var2=$(echo value1)
 set -eEuo pipefail
 
-# NOTE: DO NOT declare var PROG as readonly in ONE line!
-PROG=$(basename -- "$0")
-readonly PROG
+readonly PROG=${0##*/}
 readonly PROG_VERSION='2.x-dev'
 
 ################################################################################

@@ -9,8 +9,7 @@
 # @author Jerry Lee (oldratlee at gmail dot com)
 set -eEuo pipefail
 
-PROG=$(basename -- "$0")
-readonly PROG
+readonly PROG=${0##*/}
 readonly PROG_VERSION='2.x-dev'
 
 ################################################################################
@@ -207,8 +206,7 @@ if [ ! -f "$specified_run_command" ]; then
   run_command=$(which "$specified_run_command")
 fi
 run_command=$(portableReadLink "$run_command")
-run_command_base_name=$(basename -- "$run_command")
-readonly run_command run_command_base_name
+readonly run_command run_command_base_name=${run_command##*/}
 
 run_timestamp=$(date "+%Y%m%d_%H%M%S")
 readonly run_timestamp

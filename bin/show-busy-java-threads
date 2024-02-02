@@ -47,7 +47,7 @@ readonly USER
 ################################################################################
 
 # NOTE: $'foo' is the escape sequence syntax of bash
-readonly nl=$'\n' # new line
+readonly NL=$'\n' # new line
 
 colorPrint() {
   local color=$1
@@ -151,7 +151,7 @@ usage() {
   (($# > 0)) && shift
   local -r out=$(((exit_code != 0) + 1))
 
-  (($# > 0)) && colorPrint 31 "$*$nl" >&"$out"
+  (($# > 0)) && colorPrint 31 "$*$NL" >&"$out"
 
   cat >&"$out" <<EOF
 Usage: ${PROG} [OPTION]... [delay [count]]
@@ -352,18 +352,18 @@ if [ -n "$jstack_path" ]; then
 elif [ -n "$JAVA_HOME" ]; then
   # 2. search jstack under JAVA_HOME
   if [ -f "$JAVA_HOME/bin/jstack" ]; then
-    [ -x "$JAVA_HOME/bin/jstack" ] || die "found \$JAVA_HOME/bin/jstack($JAVA_HOME/bin/jstack) is NOT executable!${nl}Use -s option set jstack path manually."
+    [ -x "$JAVA_HOME/bin/jstack" ] || die "found \$JAVA_HOME/bin/jstack($JAVA_HOME/bin/jstack) is NOT executable!${NL}Use -s option set jstack path manually."
     jstack_path="$JAVA_HOME/bin/jstack"
   elif [ -f "$JAVA_HOME/../bin/jstack" ]; then
-    [ -x "$JAVA_HOME/../bin/jstack" ] || die "found \$JAVA_HOME/../bin/jstack($JAVA_HOME/../bin/jstack) is NOT executable!${nl}Use -s option set jstack path manually."
+    [ -x "$JAVA_HOME/../bin/jstack" ] || die "found \$JAVA_HOME/../bin/jstack($JAVA_HOME/../bin/jstack) is NOT executable!${NL}Use -s option set jstack path manually."
     jstack_path="$JAVA_HOME/../bin/jstack"
   fi
 elif command -v jstack &>/dev/null; then
   # 3. search jstack under PATH
   jstack_path=$(command -v jstack)
-  [ -x "$jstack_path" ] || die "found $jstack_path from PATH is NOT executable!${nl}Use -s option set jstack path manually."
+  [ -x "$jstack_path" ] || die "found $jstack_path from PATH is NOT executable!${NL}Use -s option set jstack path manually."
 else
-  die "jstack NOT found by JAVA_HOME(${JAVA_HOME:-not set}) setting and PATH!${nl}Use -s option set jstack path manually."
+  die "jstack NOT found by JAVA_HOME(${JAVA_HOME:-not set}) setting and PATH!${NL}Use -s option set jstack path manually."
 fi
 readonly jstack_path
 

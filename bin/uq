@@ -143,7 +143,7 @@ uq_opt_only_unique=0
 uq_opt_ignore_case=0
 uq_opt_zero_terminated=0
 uq_max_input_human_readable_size=256m
-declare -a argv=()
+argv=()
 
 while (($# > 0)); do
   case "$1" in
@@ -221,7 +221,7 @@ done
 uq_max_input_size=$(convertHumanReadableSizeToSize "$uq_max_input_human_readable_size") ||
   usage 2 "[$PROG] ERROR: illegal value of option -XM/--max-input: $uq_max_input_human_readable_size"
 
-readonly argc=${#argv[@]}
+readonly argc=${#argv[@]} argv
 
 if ((argc == 0)); then
   input_files=()
@@ -236,6 +236,7 @@ else
     output_file=/dev/stdout
   fi
 fi
+readonly output_file
 
 # Check input file
 for f in ${input_files[@]:+"${input_files[@]}"}; do
@@ -247,6 +248,7 @@ for f in ${input_files[@]:+"${input_files[@]}"}; do
   [ -f "$f" ] || die "input file $f exists, but is not a file!"
   [ -r "$f" ] || die "input file $f exists, but is not readable!"
 done
+unset f
 
 ################################################################################
 # biz logic

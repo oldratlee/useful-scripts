@@ -102,7 +102,7 @@ progVersion() {
 # parse options
 ################################################################################
 
-declare -a files=()
+files=()
 while (($# > 0)); do
   case "$1" in
   -h | --help)

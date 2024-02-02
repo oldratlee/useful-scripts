@@ -103,7 +103,7 @@ progVersion() {
 # parse options
 ################################################################################
 
-declare -a files=()
+files=()
 while (($# > 0)); do
   case "$1" in
   -h | --help)
@@ -129,8 +129,7 @@ while (($# > 0)); do
 done
 
 # if files is empty, use "."
-files=("${files[@]:-.}")
-readonly files
+readonly files=("${files[@]:-.}")
 
 ################################################################################
 # biz logic

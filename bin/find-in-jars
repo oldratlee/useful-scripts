@@ -38,7 +38,18 @@ readonly PROG_VERSION='2.x-dev'
 # util functions
 ################################################################################
 
-readonly color_reset='\e[0m'
+readonly COLOR_RESET='\e[0m'
+
+redPrint() {
+  # if stdout is a terminal, turn on color output.
+  #   '-t' check: is a terminal?
+  #   check isatty in bash https://stackoverflow.com/questions/10022323
+  if [ -t 1 ]; then
+    printf "\e[1;31m%s$COLOR_RESET\n" "$*"
+  else
+    printf '%s\n' "$*"
+  fi
+}
 
 # How to delete line with echo?
 # https://unix.stackexchange.com/questions/26576
@@ -48,24 +59,13 @@ readonly color_reset='\e[0m'
 # echo -e "\033[1K"
 # Or everything on the line, regardless of cursor position:
 # echo -e "\033[2K"
-readonly clear_line='\e[2K\r'
-
-redPrint() {
-  # if stdout is a terminal, turn on color output.
-  #   '-t' check: is a terminal?
-  #   check isatty in bash https://stackoverflow.com/questions/10022323
-  if [ -t 1 ]; then
-    printf "\e[1;31m%s$color_reset\n" "$*"
-  else
-    printf '%s\n' "$*"
-  fi
-}
+readonly LINE_CLEAR='\e[2K\r'
 
 # Getting console width using a bash script
 # https://unix.stackexchange.com/questions/299067
 #
 # NOTE: DO NOT declare columns var as readonly in ONE line!
-[ -t 2 ] && columns=$(stty size | awk '{print $2}')
+[ -t 2 ] && COLUMNS=$(stty size | awk '{print $2}')
 
 printResponsiveMessage() {
   if ! $show_responsive || [ ! -t 2 ]; then
@@ -74,7 +74,7 @@ printResponsiveMessage() {
 
   local content=$*
   # http://www.linuxforums.org/forum/red-hat-fedora-linux/142825-how-truncate-string-bash-script.html
-  printf %b%s "$clear_line" "${content:0:columns}" >&2
+  printf %b%s "$LINE_CLEAR" "${content:0:COLUMNS}" >&2
 }
 
 clearResponsiveMessage() {
@@ -82,7 +82,7 @@ clearResponsiveMessage() {
     return
   fi
 
-  printf %b "$clear_line" >&2
+  printf %b "$LINE_CLEAR" >&2
 }
 
 die() {
@@ -155,9 +155,9 @@ progVersion() {
 # parse options
 ################################################################################
 
-declare -a dirs=()
-declare -a extensions=()
-declare -a args=()
+dirs=()
+extensions=()
+args=()
 
 separator='!'
 regex_mode=-E
@@ -250,7 +250,7 @@ readonly extensions=${extensions:-jar}
 ((${#args[@]} > 1)) && usage 1 "More than 1 file pattern: ${args[*]}"
 readonly pattern=${args[0]}
 
-declare -a tmp_dirs=()
+tmp_dirs=()
 for d in "${dirs[@]}"; do
   [ -e "$d" ] || die "file $d(specified by option -d) does not exist!"
   [ -d "$d" ] || die "file $d(specified by option -d) exists but is not a directory!"
@@ -262,6 +262,7 @@ done
 # set dirs to Absolute Path
 $use_absolute_path && dirs=("${tmp_dirs[@]}")
 readonly dirs
+unset d tmp_dirs
 
 # convert extensions to find -iname options
 find_iname_options=()
@@ -269,6 +270,7 @@ for e in "${extensions[@]}"; do
   find_iname_options=(${find_iname_options[@]:+"${find_iname_options[@]}" -o} -iname "*.$e")
 done
 readonly find_iname_options
+unset e
 
 ################################################################################
 # Check the existence of command for listing zip entry!
@@ -353,8 +355,9 @@ searchJarFiles() {
   printf '%s\n' "$jar_files"
 }
 
+readonly JAR_COLOR='\e[1;35m' SEP_COLOR='\e[1;32m'
 __outputResultOfJarFile() {
-  local jar_file=$1 file jar_color='\e[1;35m' sep_color='\e[1;32m'
+  local jar_file=$1 file
   # shellcheck disable=SC2206
   local grep_opt_args=("$regex_mode" ${ignore_case_option:-} ${grep_color_option:-} -- "$pattern")
 
@@ -374,7 +377,7 @@ __outputResultOfJarFile() {
 
     clearResponsiveMessage
     if [ -t 1 ]; then
-      printf "$jar_color%s$color_reset\n" "$jar_file"
+      printf "$JAR_COLOR%s$COLOR_RESET\n" "$jar_file"
     else
       printf '%s\n' "$jar_file"
     fi
@@ -386,7 +389,7 @@ __outputResultOfJarFile() {
     } | while read -r file; do
       clearResponsiveMessage
       if [ -t 1 ]; then
-        printf "$jar_color%s$sep_color%s$color_reset%s\n" "$jar_file" "$separator" "$file"
+        printf "$JAR_COLOR%s$SEP_COLOR%s$COLOR_RESET%s\n" "$jar_file" "$separator" "$file"
       else
         printf '%s\n' "$jar_file$separator$file"
       fi

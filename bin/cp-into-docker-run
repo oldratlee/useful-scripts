@@ -120,7 +120,7 @@ docker_workdir=
 docker_tmpdir=/tmp
 docker_command_cp_path=
 verbose=false
-declare -a args=()
+args=()
 
 while (($# > 0)); do
   case "$1" in

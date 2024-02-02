@@ -20,8 +20,7 @@ digitCount() {
 digit_count=$(digitCount $#)
 readonly arg_count=$# digit_count
 
-readonly red='\e[1;31m' blue='\e[1;36m' color_reset='\e[0m'
-
+readonly RED='\e[1;31m' BLUE='\e[1;36m' COLOR_RESET='\e[0m'
 printArg() {
   local idx=$1 value=$2
 
@@ -29,7 +28,7 @@ printArg() {
   #   '-t' check: is a terminal?
   #   check isatty in bash https://stackoverflow.com/questions/10022323
   if [ -t 1 ]; then
-    printf "%${digit_count}s/%s: ${red}[${blue}%s${red}]${color_reset}\n" "$idx" "$arg_count" "$value"
+    printf "%${digit_count}s/%s: ${RED}[${BLUE}%s${RED}]${COLOR_RESET}\n" "$idx" "$arg_count" "$value"
   else
     printf "%${digit_count}s/%s: [%s]\n" "$idx" "$arg_count" "$value"
   fi

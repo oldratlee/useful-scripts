@@ -4,22 +4,6 @@
 #
 # @online-doc https://github.com/oldratlee/useful-scripts/blob/dev-2.x/docs/shell.md#-console-text-color-themessh
 # @author Jerry Lee (oldratlee at gmail dot com)
-#
-# NOTE about Bash Traps and Pitfalls:
-#
-# 1. DO NOT combine var declaration and assignment which value supplied by subshell in ONE line!
-#    for example: readonly var1=$(echo value1)
-#                 local var2=$(echo value1)
-#
-#    Because the combination make exit code of assignment to be always 0,
-#      aka. the exit code of command in subshell is discarded.
-#      tested on bash 3.2.57/4.2.46
-#
-#    solution is separation of var declaration and assignment:
-#           var1=$(echo value1)
-#           readonly var1
-#           local var2
-#           var2=$(echo value1)
 
 colorEcho() {
   local combination=$1

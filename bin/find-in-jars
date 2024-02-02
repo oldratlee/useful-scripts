@@ -13,22 +13,6 @@
 #
 # @online-doc https://github.com/oldratlee/useful-scripts/blob/dev-2.x/docs/java.md#-find-in-jars
 # @author Jerry Lee (oldratlee at gmail dot com)
-#
-# NOTE about Bash Traps and Pitfalls:
-#
-# 1. DO NOT combine var declaration and assignment which value supplied by subshell in ONE line!
-#    for example: readonly var1=$(echo value1)
-#                 local var2=$(echo value1)
-#
-#    Because the combination make exit code of assignment to be always 0,
-#      aka. the exit code of command in subshell is discarded.
-#      tested on bash 3.2.57/4.2.46
-#
-#    solution is separation of var declaration and assignment:
-#           var1=$(echo value1)
-#           readonly var1
-#           local var2
-#           var2=$(echo value1)
 set -eEuo pipefail
 
 readonly PROG=${0##*/}
@@ -63,8 +47,6 @@ readonly LINE_CLEAR='\e[2K\r'
 
 # Getting console width using a bash script
 # https://unix.stackexchange.com/questions/299067
-#
-# NOTE: DO NOT declare columns var as readonly in ONE line!
 [ -t 2 ] && COLUMNS=$(stty size | awk '{print $2}')
 
 printResponsiveMessage() {

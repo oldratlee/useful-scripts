@@ -8,22 +8,6 @@
 #
 # @online-doc https://github.com/oldratlee/useful-scripts/blob/dev-2.x/docs/vcs.md#-cp-svn-url
 # @author ivanzhangwb (ivanzhangwb at gmail dot com)
-#
-# NOTE about Bash Traps and Pitfalls:
-#
-# 1. DO NOT combine var declaration and assignment which value supplied by subshell in ONE line!
-#    for example: readonly var1=$(echo value1)
-#                 local var2=$(echo value1)
-#
-#    Because the combination make exit code of assignment to be always 0,
-#      aka. the exit code of command in subshell is discarded.
-#      tested on bash 3.2.57/4.2.46
-#
-#    solution is separation of var declaration and assignment:
-#           var1=$(echo value1)
-#           readonly var1
-#           local var2
-#           var2=$(echo value1)
 
 readonly PROG=${0##*/}
 readonly PROG_VERSION='2.x-dev'
@@ -74,7 +58,8 @@ done
 
 readonly dir="${1:-.}"
 
-# NOTE: DO NOT declare var url as readonly in ONE line!
+# DO NOT declare and assign var url(as readonly) in ONE line!
+#   more info see https://github.com/koalaman/shellcheck/wiki/SC2155
 url="$(svn info "${dir}" | awk '/^URL: /{print $2}')"
 if [ -z "${url}" ]; then
   echo "Fail to get svn url!" >&2

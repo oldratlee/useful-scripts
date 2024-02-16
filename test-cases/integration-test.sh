@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
 set -eEuo pipefail
 
-READLINK_CMD=readlink
-if command -v greadlink &>/dev/null; then
-  READLINK_CMD=greadlink
-fi
+realpath() {
+  [ -e "$1" ] && command realpath -- "$1"
+}
 
-cd "$(dirname -- "$($READLINK_CMD -f -- "${BASH_SOURCE[0]}")")"
+cd "$(dirname -- "$(realpath "${BASH_SOURCE[0]}")")"
 
 ################################################################################
 # common util functions

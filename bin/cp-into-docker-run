@@ -36,32 +36,13 @@ isAbsolutePath() {
   [[ "$1" =~ ^/ ]]
 }
 
-# How can I get the behavior of GNU's readlink -f on a Mac?
-# https://stackoverflow.com/questions/1055671
-portableReadLink() {
-  local file=$1 uname
-
-  uname=$(uname)
-  case "$uname" in
-  Linux* | CYGWIN* | MINGW*)
-    readlink -f -- "$file"
-    ;;
-  Darwin*)
-    local py_args=(-c 'import os, sys; print(os.path.realpath(sys.argv[1]))' "$file")
-    if command -v greadlink >/dev/null; then
-      greadlink -f -- "$file"
-    elif command -v python3 >/dev/null; then
-      python3 "${py_args[@]}"
-    elif command -v python >/dev/null; then
-      python "${py_args[@]}"
-    else
-      die "fail to find command(greadlink/python3/python) for readlink!"
-    fi
-    ;;
-  *)
-    die "NOT support uname($uname)!"
-    ;;
-  esac
+# `realpath` command existed on Linux and macOS, return resolved physical path
+#   - realpath command on macOS do NOT support option `-e`;
+#     combined `[ -e $file ]` to check file existence first.
+#   - How can I get the behavior of GNU's readlink -f on a Mac?
+#     https://stackoverflow.com/questions/1055671
+realpath() {
+  [ -e "$1" ] && command realpath -- "$1"
 }
 
 usage() {
@@ -204,7 +185,8 @@ if [ ! -f "$specified_run_command" ]; then
 
   run_command=$(which "$specified_run_command")
 fi
-run_command=$(portableReadLink "$run_command")
+
+run_command=$(realpath "$run_command")
 readonly run_command run_command_base_name=${run_command##*/}
 
 run_timestamp=$(date "+%Y%m%d_%H%M%S")

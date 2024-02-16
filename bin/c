@@ -3,8 +3,9 @@
 # Run command and put output to system clipper.
 #
 # @Usage
-#   $ c echo 'hello world!'
-#   $ echo 'hello world!' | c
+#   $ c ls -l
+#   $ ls -l | c
+#   $ c -q < ~/.ssh/id_rsa.pub
 #
 # @online-doc https://github.com/oldratlee/useful-scripts/blob/dev-2.x/docs/shell.md#-c
 # @author Jerry Lee (oldratlee at gmail dot com)
@@ -41,7 +42,6 @@ Run command and put output to system clipper.
 If no command is specified, read from stdin(pipe).
 
 Example:
-  $PROG echo "hello world!"
   $PROG grep -i 'hello world' menu.h main.c
   set | $PROG
   $PROG -q < ~/.ssh/id_rsa.pub
@@ -141,5 +141,5 @@ teeAndCopy() {
 if ((${#target_command[@]} == 0)); then
   teeAndCopy
 else
-  "${target_command[@]}" | teeAndCopy
+  command "${target_command[@]}" | teeAndCopy
 fi

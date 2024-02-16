@@ -98,7 +98,6 @@ Run command and put output to system clipper.
 If no command is specified, read from stdin(pipe).
 
 Example:
-  c echo "hello world!"
   c grep -i 'hello world' menu.h main.c
   set | c
   c -q < ~/.ssh/id_rsa.pub

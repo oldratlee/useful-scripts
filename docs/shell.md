@@ -122,7 +122,7 @@ Options:
 彩色`cat`/`tac`出文件行，方便人眼区分不同的行。  
 支持`Linux`、`Mac`、`Windows`（`cygwin`、`MSSYS`）。
 
-命令支持选项、功能和使用方式与[`cat`](https://linux.die.net/man/1/cat)/[`tac`](https://linux.die.net/man/1/cat)命令完全一样。  
+命令支持选项、功能和使用方式与[`cat`](https://manned.org/cat)/[`tac`](https://manned.org/tac)命令完全一样。  
 文件操作在实现上完全代理给了`cat`/`tac`命令。
 
 - 命令名`coat`的意思是`COlorful cAT`；同时单词`coat`是外套，而彩色的输出行就像件漂亮的外套～ 🌈 😆
@@ -552,9 +552,9 @@ colorEchoWithoutNewLine "4;33;40" "Hello world!" "Hello Hell!"
 命令行选项解析库，加强支持选项有多个值（即数组）。  
 支持`Linux`、`Mac`、`Windows`（`cygwin`、`MSSYS`）。
 
-自己写一个命令行选项解析函数，是因为[`bash`](http://linux.die.net/man/1/bash)的`builtin`命令[`getopts`](http://linux.die.net/man/1/getopts)和加强版本命令[`getopt`](http://linux.die.net/man/1/getopt)都不支持数组的值。
+自己写一个命令行选项解析函数，是因为[`bash`](https://manned.org/bash)的`builtin`命令[`getopts`](https://manned.org/man/getopts.1)和加强版本命令[`getopt`](https://manned.org/getopt)都不支持数组的值。
 
-指定选项的多个值（即数组）的风格模仿[`find`](http://linux.die.net/man/1/find)命令的`-exec`选项：
+指定选项的多个值（即数组）的风格模仿[`find`](https://manned.org/find)命令的`-exec`选项：
 
 ```bash
 $ find . -name \*.txt -exec echo "find file: " {} \;

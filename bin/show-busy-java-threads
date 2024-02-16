@@ -536,7 +536,7 @@ printStackOfThreads() {
   while read -r pid threadId pcpu user; do
     printf -v threadId0x '%#x' "$threadId"
 
-    ((idx++))
+    ((idx++ > 0)) && normalOutput
     local jstackFile="$store_file_prefix$((update_round_num + 1))_jstack_$pid"
     [ -f "$jstackFile" ] || {
       # shellcheck disable=SC2206
@@ -552,17 +552,14 @@ printStackOfThreads() {
         redOutput "[$idx] Fail to jstack busy(${pcpu}%) thread($threadId/$threadId0x) stack of java process($pid) under user($user)."
         redOutput "User of java process($user) is not current user($USER), need sudo to rerun:"
         yellowOutput "    sudo $(printCallingCommandLine)"
-        normalOutput
         continue
       fi || {
         redOutput "[$idx] Fail to jstack busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user})."
-        normalOutput
         rm "$jstackFile" &>/dev/null
         continue
       }
     }
 
-    ((idx > 1)) && normalOutput
     blueOutput "[$idx] Busy($pcpu%) thread($threadId/$threadId0x) stack of java process($pid) under user($user):"
 
     if [ -n "$mix_native_frames" ]; then

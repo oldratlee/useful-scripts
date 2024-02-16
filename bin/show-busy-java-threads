@@ -303,7 +303,7 @@ isNaturalNumber "$update_count" || die "update count($update_count) is not a nat
 readonly update_count
 
 if [ -n "$pid_list" ]; then
-  pid_list=${pid_list//[[:space:]]} # delete white space
+  pid_list=${pid_list//[[:space:]]/} # delete white space
   isNaturalNumberList "$pid_list" || die "pid(s)($pid_list) is illegal! example: 42 or 42,99,67"
 fi
 readonly pid_list
@@ -562,6 +562,7 @@ printStackOfThreads() {
       }
     }
 
+    ((idx > 1)) && normalOutput
     blueOutput "[$idx] Busy($pcpu%) thread($threadId/$threadId0x) stack of java process($pid) under user($user):"
 
     if [ -n "$mix_native_frames" ]; then
@@ -579,10 +580,7 @@ printStackOfThreads() {
                 /^$/d; p # delete end separator line
             }"
     fi
-    {
-      sed "$sed_script" -n -r "$jstackFile"
-      echo
-    } | tee ${append_file:+-a "$append_file"} ${store_dir:+-a "$store_file_prefix$PROG"}
+    sed "$sed_script" -n -r "$jstackFile" | tee ${append_file:+-a "$append_file"} ${store_dir:+-a "$store_file_prefix$PROG"}
   done
 }
 
@@ -594,7 +592,10 @@ main() {
   local update_round_num
   # if update_count <= 0, infinite loop till user interrupted (eg: CTRL+C)
   for ((update_round_num = 0; update_count <= 0 || update_round_num < update_count; ++update_round_num)); do
-    ((update_round_num > 0)) && sleep "$update_delay"
+    ((update_round_num > 0)) && {
+      sleep "$update_delay"
+      normalOutput
+    }
 
     [[ -n "$append_file" || -n "$store_dir" ]] && headInfo |
       tee ${append_file:+-a "$append_file"} ${store_dir:+-a "$store_file_prefix$PROG"} >/dev/null

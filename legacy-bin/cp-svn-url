@@ -12,15 +12,19 @@
 readonly PROG=${0##*/}
 readonly PROG_VERSION='2.x-dev'
 
+################################################################################
+# parse options
+################################################################################
+
 usage() {
   cat <<EOF
-Usage: ${PROG} [DIR]
+Usage: $PROG [DIR]
 Copy the svn remote url of local svn directory
 DIR is local svn directory, default is current directory.
 
 Example:
-    ${PROG}
-    ${PROG} /path/to/svn/work/dir
+    $PROG
+    $PROG /path/to/svn/work/dir
 
 Options:
     -h, --help      display this help and exit
@@ -35,17 +39,13 @@ progVersion() {
   exit
 }
 
-################################################################################
-# parse options
-################################################################################
-
-for a; do
-  [[ "-h" == "$a" || "--help" == "$a" ]] && usage
+args=("$@")
+# check arguments in reverse, so last option wins.
+for ((idx = $# - 1; idx >= 0; --idx)); do
+  [[ "${args[idx]}" = -h || "${args[idx]}" = --help ]] && usage
+  [[ "${args[idx]}" = -V || "${args[idx]}" = --version ]] && progVersion
 done
-
-for a; do
-  [[ "-V" == "$a" || "--version" == "$a" ]] && progVersion
-done
+unset args idx
 
 ################################################################################
 # biz logic
@@ -60,8 +60,8 @@ readonly dir="${1:-.}"
 
 # DO NOT declare and assign var url(as readonly) in ONE line!
 #   more info see https://github.com/koalaman/shellcheck/wiki/SC2155
-url="$(svn info "${dir}" | awk '/^URL: /{print $2}')"
-if [ -z "${url}" ]; then
+url="$(svn info "$dir" | awk '/^URL: /{print $2}')"
+if [ -z "$url" ]; then
   echo "Fail to get svn url!" >&2
   exit 1
 fi
@@ -80,4 +80,4 @@ copy() {
   esac
 }
 
-echo -n "${url}" | copy && echo "${url} copied!"
+echo -n "$url" | copy && echo "$url copied!"

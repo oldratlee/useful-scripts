@@ -11,7 +11,7 @@
 <a href="https://github.com/oldratlee/useful-scripts"><img src="https://img.shields.io/github/repo-size/oldratlee/useful-scripts" alt="GitHub repo size"></a>
 </p>
 
-🐌 useful scripts for making developer's everyday life easier and happier, involved java, shell etc.  
+🐌 useful scripts for making developer's everyday life easier and happier, involved java, shell etc.
 
 👉 平时有用的手动操作做成脚本，以便捷地使用，让开发的日常生活更轻松些。 💕
 
@@ -143,7 +143,7 @@ PS：
 
 - 目前仍然是主流的`Shell`，并且在不同环境基本上都缺省部署了。
 - 在[`Google`的`Shell`风格指南](https://zh-google-styleguide.readthedocs.io/en/latest/google-shell-styleguide/background/)中，明确说到了：`Bash`是**唯一**被允许执行的`shell`脚本语言。
-- 统一用`Bash`，可以避免差异带来的风险与没有收益的复杂性。
+- 统一用`Bash`，可以避免不同`Shell`之间差异所带来的风险与没有收益的复杂性。
     - 有大量的`Shell`实现，`sh`、`bash`、`zsh`、`fish`、`csh`、`tcsh`、`ksh`、`ash`、`dash`……
     - 不同的`Shell`有各种差异，深坑勿入。
 - 个人系统学习过的是`Bash`，比较理解熟悉。
@@ -154,14 +154,14 @@ PS: 虽然交互`Shell`个人已经使用`Zsh` + [`oh-my-zsh`](https://ohmyz.sh/
 
 > 更多资料参见 [子文档](docs/developer-guide.md)。
 
-- 开发规范与工具
-    - [**_`Google Shell Style Guide`_**](https://google.github.io/styleguide/shell.xml) | [中文版](https://zh-google-styleguide.readthedocs.io/en/latest/google-shell-styleguide/background/)
+- 🛠️ 开发规范与工具
+    - [`Google Shell Style Guide`](https://google.github.io/styleguide/shell.xml) | [中文版](https://zh-google-styleguide.readthedocs.io/en/latest/google-shell-styleguide/background/)
     - [`koalaman/shellcheck`](https://github.com/koalaman/shellcheck): `ShellCheck`, a static analysis tool for shell scripts
     - [`mvdan/sh(shfmt)`](https://github.com/mvdan/sh): `shfmt` formats shell programs
 - 👷 **`Bash/Shell`最佳实践与安全编程**文章
     - [Use the Unofficial Bash Strict Mode (Unless You Looove Debugging)](http://redsymbol.net/articles/unofficial-bash-strict-mode/)
     - Bash Pitfalls: 编程易犯的错误 - 团子的小窝：[Part 1](http://kodango.com/bash-pitfalls-part-1) | [Part 2](http://kodango.com/bash-pitfalls-part-2) | [Part 3](http://kodango.com/bash-pitfalls-part-3) | [Part 4](http://kodango.com/bash-pitfalls-part-4) | [英文原文：Bash Pitfalls](http://mywiki.wooledge.org/BashPitfalls)
-    - [不要自己去指定sh的方式去执行脚本](https://github.com/oldratlee/useful-scripts/issues/57#issuecomment-326485965)
+    - [不要自己去指定`sh`的方式去执行脚本](https://github.com/oldratlee/useful-scripts/issues/57#issuecomment-326485965)
 - 🎶 **Tips**
     - [让你提升命令行效率的 Bash 快捷键 【完整版】](https://linuxtoy.org/archives/bash-shortcuts.html)  
       补充：`ctrl + x, ctrl + e` 就地打开文本编辑器来编辑当前命令行，对于复杂命令行特别有用

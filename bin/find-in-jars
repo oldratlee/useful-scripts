@@ -79,8 +79,7 @@ usage() {
   local -r out=$(((exit_code != 0) + 1))
 
   # NOTE: $'foo' is the escape sequence syntax of bash
-  local -r nl=$'\n' # new line
-  (($# > 0)) && redPrint "$*$nl" >&"$out"
+  (($# > 0)) && redPrint "$*"$'\n' >&"$out"
 
   cat >&"$out" <<EOF
 Usage: $PROG [OPTION]... PATTERN

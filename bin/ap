@@ -19,21 +19,15 @@ readonly PROG_VERSION='2.x-dev'
 # util functions
 ################################################################################
 
-colorPrint() {
-  local color=$1
-  shift
+redPrint() {
   # if stdout is a terminal, turn on color output.
   #   '-t' check: is a terminal?
   #   check isatty in bash https://stackoverflow.com/questions/10022323
   if [ -t 1 ]; then
-    printf '\e[1;%sm%s\e[0m\n' "$color" "$*"
+    printf '\e[1;31m%s\e[0m\n' "$*"
   else
     printf '%s\n' "$*"
   fi
-}
-
-redPrint() {
-  colorPrint 31 "$*"
 }
 
 die() {
@@ -75,8 +69,7 @@ usage() {
   local -r out=$(((exit_code != 0) + 1))
 
   # NOTE: $'foo' is the escape sequence syntax of bash
-  local nl=$'\n' # new line
-  (($# > 0)) && redPrint "$*$nl" >&"$out"
+  (($# > 0)) && redPrint "$*"$'\n' >&"$out"
 
   cat >&"$out" <<EOF
 Usage: $PROG [OPTION]... [FILE]...

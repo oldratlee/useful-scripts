@@ -5,7 +5,8 @@ set -eEuo pipefail
 # util functions
 ################################################################################
 
-readonly nl=$'\n' # new line
+# NOTE: $'foo' is the escape sequence syntax of bash
+readonly NL=$'\n' # new line
 
 colorPrint() {
   local color=$1
@@ -43,7 +44,7 @@ logAndRun() {
     echo "Run under work directory $PWD : $*"
     "$@"
   else
-    bluePrint "Run under work directory $PWD :$nl$*"
+    bluePrint "Run under work directory $PWD :$NL$*"
     time "$@"
   fi
 }
@@ -57,7 +58,7 @@ die() {
 # biz logic
 ################################################################################
 
-(($# != 1)) && die "need only 1 argument for version!$nl${nl}usage:$nl  $0 2.x.y"
+(($# != 1)) && die "need only 1 argument for version!$NL${NL}usage:$NL  $0 2.x.y"
 readonly bump_version=$1
 
 # adjust current dir to project dir

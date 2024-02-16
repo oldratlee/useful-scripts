@@ -33,7 +33,7 @@ greenEcho() {
 dirs=("${dirs[@]:-.}")
 
 for d in "${dirs[@]}"; do
-  [ ! -d "${d}/.svn" ] && {
+  [ ! -d "$d/.svn" ] && {
     redEcho "directory $d is not a svn work directory, ignore directory $d !"
     continue
   }
@@ -42,7 +42,7 @@ for d in "${dirs[@]}"; do
       branches=$(svn info | grep '^URL' | awk '{print $2}') &&
       trunk=$(echo "$branches" | awk -F'/branches/' '{print $1}')/trunk &&
       if svn sw "$trunk"; then
-        greenEcho "svn work directory $d switch from ${branches} to ${trunk} ."
+        greenEcho "svn work directory $d switch from $branches to $trunk ."
       else
         redEcho "fail to switch $d to trunk!"
       fi

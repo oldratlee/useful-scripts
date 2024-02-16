@@ -24,8 +24,8 @@ from glob import glob
 from io import BytesIO
 from optparse import OptionParser
 from os import walk
-from os.path import relpath, isdir, exists
-from zipfile import ZipFile, BadZipfile
+from os.path import exists, isdir, relpath
+from zipfile import BadZipfile, ZipFile
 
 ################################################################################
 # utils functions

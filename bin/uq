@@ -20,7 +20,7 @@ readonly PROG_VERSION='2.x-dev'
 ################################################################################
 
 # NOTE: $'foo' is the escape sequence syntax of bash
-readonly nl=$'\n' # new line
+readonly NL=$'\n' # new line
 
 redPrint() {
   # if stdout is a terminal, turn on color output.
@@ -72,10 +72,10 @@ usage() {
   (($# > 0)) && shift
   local -r out=$(((exit_code != 0) + 1))
 
-  (($# > 0)) && redPrint "$*$nl" >&"$out"
+  (($# > 0)) && redPrint "$*$NL" >&"$out"
 
   cat >&"$out" <<EOF
-Usage: ${PROG} [OPTION]... [INPUT [OUTPUT]]
+Usage: $PROG [OPTION]... [INPUT [OUTPUT]]
 Filter lines from INPUT (or standard input), writing to OUTPUT (or standard output).
 Same as \`uniq\` command in core utils,
 but detect repeated lines that are not adjacent, no sorting required.
@@ -147,8 +147,8 @@ while (($# > 0)); do
     uq_opt_all_repeated=1
 
     uq_opt_repeated_method=${1#--all-repeated=}
-    [[ $uq_opt_repeated_method == 'none' || $uq_opt_repeated_method == 'prepend' || $uq_opt_repeated_method == 'separate' ]] ||
-      usage 1 "$PROG: invalid argument ‘${uq_opt_repeated_method}’ for ‘--all-repeated’${nl}Valid arguments are:$nl  - ‘none’$nl  - ‘prepend’$nl  - ‘separate’"
+    [[ $uq_opt_repeated_method = 'none' || $uq_opt_repeated_method = 'prepend' || $uq_opt_repeated_method = 'separate' ]] ||
+      usage 1 "$PROG: invalid argument ‘$uq_opt_repeated_method’ for ‘--all-repeated’${NL}Valid arguments are:$NL  - ‘none’$NL  - ‘prepend’$NL  - ‘separate’"
 
     shift
     ;;
@@ -193,12 +193,12 @@ while (($# > 0)); do
   esac
 done
 
-[[ $uq_opt_only_repeated == 1 && $uq_opt_only_unique == 1 ]] &&
+[[ $uq_opt_only_repeated = 1 && $uq_opt_only_unique = 1 ]] &&
   usage 2 "printing duplicated lines(-d, --repeated) and unique lines(-u, --unique) is meaningless"
-[[ $uq_opt_all_repeated == 1 && $uq_opt_only_unique == 1 ]] &&
+[[ $uq_opt_all_repeated = 1 && $uq_opt_only_unique = 1 ]] &&
   usage 2 "printing all duplicate lines(-D, --all-repeated) and unique lines(-u, --unique) is meaningless"
 
-[[ $uq_opt_all_repeated == 1 && $uq_opt_repeated_method == none && ($uq_opt_count == 0 && $uq_opt_only_repeated == 0) ]] &&
+[[ $uq_opt_all_repeated = 1 && $uq_opt_repeated_method = none && ($uq_opt_count = 0 && $uq_opt_only_repeated = 0) ]] &&
   yellowPrint "[$PROG] WARN: -D/--all-repeated=none option without -c/-d option, just cat input simply!" >&2
 
 # DO NOT declare and assign var uq_max_input_size(as readonly) in ONE line!
@@ -217,7 +217,7 @@ elif ((argc == 1)); then
 else
   input_files=("${argv[@]:0:argc-1}")
   output_file=${argv[argc - 1]}
-  if [ "$output_file" == - ]; then
+  if [ "$output_file" = - ]; then
     output_file=/dev/stdout
   fi
 fi
@@ -226,7 +226,7 @@ readonly output_file
 # Check input file
 for f in ${input_files[@]:+"${input_files[@]}"}; do
   # - is stdin, ok
-  [ "$f" == - ] && continue
+  [ "$f" = - ] && continue
 
   [ -e "$f" ] || die "input file $f does not exist!"
   [ ! -d "$f" ] || die "input file $f exists, but is a directory!"

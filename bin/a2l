@@ -14,7 +14,7 @@ readonly PROG=${0##*/}
 readonly PROG_VERSION='2.x-dev'
 
 ################################################################################
-# util functions
+# parse options
 ################################################################################
 
 usage() {
@@ -39,10 +39,6 @@ progVersion() {
   exit
 }
 
-################################################################################
-# parse options
-################################################################################
-
 args=()
 while (($# > 0)); do
   case "$1" in
@@ -63,13 +59,12 @@ while (($# > 0)); do
     break
     ;;
   *)
-    # if not option, treat all follow arguments as args
+    # if not option, treat it and all follow arguments as args
     args=(${args[@]:+"${args[@]}"} "$@")
     break
     ;;
   esac
 done
-
 readonly args
 
 ################################################################################

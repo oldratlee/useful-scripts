@@ -139,14 +139,14 @@ usage() {
   (($# > 0)) && colorPrint 31 "$*$NL" >&"$out"
 
   cat >&"$out" <<EOF
-Usage: ${PROG} [OPTION]... [delay [count]]
+Usage: $PROG [OPTION]... [delay [count]]
 Find out the highest cpu consumed threads of java processes,
 and print the stack of these threads.
 
 Example:
-  ${PROG}       # show busy java threads info
-  ${PROG} 1     # update every 1 second, (stop by eg: CTRL+C)
-  ${PROG} 3 10  # update every 3 seconds, update 10 times
+  $PROG       # show busy java threads info
+  $PROG 1     # update every 1 second, (stop by eg: CTRL+C)
+  $PROG 3 10  # update every 3 seconds, update 10 times
 
 Output control:
   -p, --pid <java pid(s)>   find out the highest cpu consumed threads from
@@ -215,7 +215,7 @@ ARGS=$(
   usage 1
 }
 readonly ARGS
-eval set -- "${ARGS}"
+eval set -- "$ARGS"
 
 count=5
 cpu_sample_interval=0.5
@@ -525,20 +525,20 @@ printStackOfThreads() {
     [ -f "$jstackFile" ] || {
       # shellcheck disable=SC2206
       local -a jstack_cmd_line=("$jstack_path" $force $mix_native_frames $lock_info $pid)
-      if [ "$user" == "$USER" ]; then
+      if [ "$user" = "$USER" ]; then
         # run without sudo, when java process user is current user
         logAndRun "${jstack_cmd_line[@]}" >"$jstackFile"
-      elif [ $UID == 0 ]; then
+      elif ((UID == 0)); then
         # if java process user is not current user, must run jstack with sudo
         logAndRun sudo -u "$user" "${jstack_cmd_line[@]}" >"$jstackFile"
       else
         # current user is not root user, so can not run with sudo; print error message and rerun suggestion
-        redOutput "[$idx] Fail to jstack busy(${pcpu}%) thread($threadId/$threadId0x) stack of java process($pid) under user($user)."
+        redOutput "[$idx] Fail to jstack busy($pcpu%) thread($threadId/$threadId0x) stack of java process($pid) under user($user)."
         redOutput "User of java process($user) is not current user($USER), need sudo to rerun:"
         yellowOutput "    sudo $(printCallingCommandLine)"
         continue
       fi || {
-        redOutput "[$idx] Fail to jstack busy(${pcpu}%) thread(${threadId}/${threadId0x}) stack of java process(${pid}) under user(${user})."
+        redOutput "[$idx] Fail to jstack busy($pcpu%) thread($threadId/$threadId0x) stack of java process($pid) under user($user)."
         rm "$jstackFile" &>/dev/null
         continue
       }
@@ -582,7 +582,7 @@ main() {
       tee ${append_file:+-a "$append_file"} ${store_dir:+-a "$store_file_prefix$PROG"} >/dev/null
     ((update_count != 1)) && headInfo
 
-    if [ "$cpu_sample_interval" == 0 ]; then
+    if [ "$cpu_sample_interval" = 0 ]; then
       findBusyJavaThreadsByPs
     else
       findBusyJavaThreadsByTop

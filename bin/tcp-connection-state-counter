@@ -14,16 +14,16 @@ readonly PROG=${0##*/}
 readonly PROG_VERSION='2.x-dev'
 
 ################################################################################
-# util functions
+# parse options
 ################################################################################
 
 usage() {
   cat <<EOF
-Usage: ${PROG} [OPTION]...
+Usage: $PROG [OPTION]...
 show count of tcp connection stat.
 
 Example:
-    ${PROG}
+    $PROG
 
 Options:
     -h, --help      display this help and exit
@@ -37,24 +37,20 @@ progVersion() {
   exit
 }
 
-################################################################################
-# parse options
-################################################################################
-
-for a; do
-  [[ "-h" == "$a" || "--help" == "$a" ]] && usage
+args=("$@")
+# check arguments in reverse, so last option wins.
+for ((idx = $# - 1; idx >= 0; --idx)); do
+  [[ "${args[idx]}" = -h || "${args[idx]}" = --help ]] && usage
+  [[ "${args[idx]}" = -V || "${args[idx]}" = --version ]] && progVersion
 done
-
-for a; do
-  [[ "-V" == "$a" || "--version" == "$a" ]] && progVersion
-done
+unset args idx
 
 ################################################################################
 # biz logic
 ################################################################################
 
 # On MacOS, netstat need to using -p tcp to get only tcp output.
-uname | grep Darwin -q && option_for_mac="-ptcp"
+uname | grep Darwin -q && option_for_mac=-ptcp
 
 # shellcheck disable=SC2086
 netstat -tna ${option_for_mac:-} | awk 'NR > 2 {

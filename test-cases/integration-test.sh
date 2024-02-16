@@ -9,13 +9,6 @@ fi
 cd "$(dirname -- "$($READLINK_CMD -f -- "${BASH_SOURCE[0]}")")"
 
 ################################################################################
-# constants
-################################################################################
-
-# NOTE: $'foo' is the escape sequence syntax of bash
-readonly nl=$'\n' # new line
-
-################################################################################
 # common util functions
 ################################################################################
 
@@ -55,6 +48,8 @@ logAndRun() {
     echo "Run under work directory $PWD : $*"
     "$@"
   else
+    # NOTE: $'foo' is the escape sequence syntax of bash
+    local nl=$'\n' # new line
     blueEcho "Run under work directory $PWD :$nl$*"
     time "$@"
   fi

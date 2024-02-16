@@ -32,12 +32,13 @@ usage() {
   (($# > 0)) && shift
   local -r out=$(((exit_code != 0) + 1))
 
+  # NOTE: $'foo' is the escape sequence syntax of bash
   (($# > 0)) && redPrint "$*"$'\n' >&"$out"
 
   cat >&"$out" <<EOF
-Usage: ${PROG} [OPTION] [FILE]...
+Usage: $PROG [OPTION] [FILE]...
 Open file in file explorer.
-Example: ${PROG} file.txt
+Example: $PROG file.txt
 
 Options:
     -s, --selected  select the file or dir
@@ -91,7 +92,7 @@ done
 files=("${files[@]:-.}")
 
 # if program name is xpf, set option selected!
-[ "xpf" == "$PROG" ] && selected=true
+[ "xpf" = "$PROG" ] && selected=true
 
 readonly files selected
 
@@ -101,7 +102,7 @@ readonly files selected
 
 # open one file
 openOneFile() {
-  local file=$1 slt=${selected}
+  local file=$1 slt=$selected
 
   case "$(uname)" in
   Darwin*)

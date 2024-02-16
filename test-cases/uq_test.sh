@@ -14,6 +14,7 @@ cd "$BASE"
 #################################################
 
 readonly uq="../bin/uq"
+# NOTE: $'foo' is the escape sequence syntax of bash
 readonly nl=$'\n' # new line
 
 test_input=$(cat uq_test_input)

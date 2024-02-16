@@ -14,7 +14,7 @@ set -eEuo pipefail
 # util functions
 ################################################################################
 
-# `realpath` command existed on Linux and macOS, return resolved physical path
+# `realpath` command exists on Linux and macOS, return resolved physical path
 #   - realpath command on macOS do NOT support option `-e`;
 #     combined `[ -e $file ]` to check file existence first.
 #   - How can I get the behavior of GNU's readlink -f on a Mac?

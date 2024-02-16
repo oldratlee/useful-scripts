@@ -68,20 +68,32 @@ clearResponsiveMessage() {
 }
 
 die() {
+  local prompt_help=false exit_status=2
+  while (($# > 0)); do
+    case "$1" in
+    -h)
+      prompt_help=true
+      shift
+      ;;
+    -s)
+      exit_status=$2
+      shift 2
+      ;;
+    *)
+      break
+      ;;
+    esac
+  done
+
   clearResponsiveMessage
-  redPrint "Error: $*" >&2
-  exit 1
-}
+  (($# > 0)) && redPrint "$PROG: $*"
+  $prompt_help && echo "Try '$PROG --help' for more information."
+
+  exit "$exit_status"
+} >&2
 
 usage() {
-  local -r exit_code=${1:-0}
-  (($# > 0)) && shift
-  local -r out=$(((exit_code != 0) + 1))
-
-  # NOTE: $'foo' is the escape sequence syntax of bash
-  (($# > 0)) && redPrint "$*"$'\n' >&"$out"
-
-  cat >&"$out" <<EOF
+  cat <<EOF
 Usage: $PROG [OPTION]... PATTERN
 
 Find files in the jar files under specified directory,
@@ -124,7 +136,7 @@ Miscellaneous:
   -V, --version          display version information and exit
 EOF
 
-  exit "$exit_code"
+  exit
 }
 
 progVersion() {
@@ -211,7 +223,7 @@ while (($# > 0)); do
     break
     ;;
   -*)
-    usage 2 "Error: unrecognized option '$1'"
+    die -h "unrecognized option '$1'"
     ;;
   *)
     args=(${args[@]:+"${args[@]}"} "$1")
@@ -227,13 +239,13 @@ dirs=${dirs:-.}
 # shellcheck disable=SC2178
 readonly extensions=${extensions:-jar}
 
-((${#args[@]} == 0)) && usage 1 "Missing file pattern!"
-((${#args[@]} > 1)) && usage 1 "More than 1 file pattern: ${args[*]}"
+((${#args[@]} == 0)) && die -h "requires file pattern!"
+((${#args[@]} > 1)) && die -h "more than 1 file pattern: ${args[*]}"
 readonly pattern=${args[0]}
 
 tmp_dirs=()
 for d in "${dirs[@]}"; do
-  [ -e "$d" ] || die "file $d(specified by option -d) does not exist!"
+  [ -e "$d" ] || die "file $d(specified by option -d): No such file or directory!"
   [ -d "$d" ] || die "file $d(specified by option -d) exists but is not a directory!"
   [ -r "$d" ] || die "directory $d(specified by option -d) exists but is not readable!"
 
@@ -263,10 +275,10 @@ __prepareCommandToListZipEntries() {
   # How to list files in a zip without extra information in command line
   # https://unix.stackexchange.com/a/128304/136953
 
-  if command -v zipinfo &>/dev/null; then
+  if type -P zipinfo &>/dev/null; then
     command_to_list_zip_entries=(zipinfo -1)
     is_use_zip_cmd_to_list_zip_entries=true
-  elif command -v unzip &>/dev/null; then
+  elif type -P unzip &>/dev/null; then
     command_to_list_zip_entries=(unzip -Z1)
     is_use_zip_cmd_to_list_zip_entries=true
   elif [ -n "$JAVA_HOME" ]; then
@@ -279,12 +291,12 @@ __prepareCommandToListZipEntries() {
       command_to_list_zip_entries=("$JAVA_HOME/../bin/jar" tf)
     fi
     is_use_zip_cmd_to_list_zip_entries=false
-  elif command -v jar &>/dev/null; then
+  elif type -P jar &>/dev/null; then
     # search jar command under PATH
     command_to_list_zip_entries=(jar tf)
     is_use_zip_cmd_to_list_zip_entries=false
   else
-    die "NOT found command to list zip entries: zipinfo, unzip or jar!"
+    die "command to list zip entries NOT found : zipinfo, unzip or jar!"
   fi
 
   readonly command_to_list_zip_entries is_use_zip_cmd_to_list_zip_entries
@@ -312,7 +324,6 @@ listZipEntries() {
   "${command_to_list_zip_entries[@]}" "$zip_file" || {
     clearResponsiveMessage
     redPrint "fail to list zip entries of $zip_file, ignored!" >&2
-    return
   }
 }
 
@@ -326,7 +337,7 @@ searchJarFiles() {
   local jar_files total_jar_count
 
   jar_files=$(find "${dirs[@]}" "${find_iname_options[@]}" -type f)
-  [ -n "$jar_files" ] || die "No ${extensions[*]} file found!"
+  [ -n "$jar_files" ] || die "${extensions[*]} file NOT found!"
 
   total_jar_count=$(printf '%s\n' "$jar_files" | wc -l)
   # remove white space, because the `wc -l` output on mac contains white space!
@@ -380,11 +391,9 @@ __outputResultOfJarFile() {
 
 findInJarFiles() {
   [ -t 1 ] && local -r grep_color_option='--color=always'
-
   local counter=1 total_jar_count jar_file
 
   read -r total_jar_count
-
   while read -r jar_file; do
     printResponsiveMessage "finding in jar($((counter++))/$total_jar_count): $jar_file"
     listZipEntries "$jar_file" | __outputResultOfJarFile "$jar_file"

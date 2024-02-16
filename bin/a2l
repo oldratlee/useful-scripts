@@ -72,7 +72,7 @@ readonly args
 ################################################################################
 
 readonly -a ROTATE_COLORS=(33 35 36 31 32 37 34)
-COUNT=0
+COLOR_INDEX=0
 rotateColorPrint() {
   local content=$*
   # - if stdout is a terminal, turn on color output.
@@ -82,7 +82,7 @@ rotateColorPrint() {
   if [[ ! -t 1 || $content =~ ^[[:space:]]*$ ]]; then
     printf '%s\n' "$content"
   else
-    local color=${ROTATE_COLORS[COUNT++ % ${#ROTATE_COLORS[@]}]}
+    local color=${ROTATE_COLORS[COLOR_INDEX++ % ${#ROTATE_COLORS[@]}]}
     printf '\e[1;%sm%s\e[0m\n' "$color" "$content"
   fi
 }

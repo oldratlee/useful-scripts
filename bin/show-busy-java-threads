@@ -18,14 +18,14 @@ readonly PROG_VERSION='2.x-dev'
 # Will $0 always include the path to the script?
 # https://unix.stackexchange.com/questions/119929
 readonly -a COMMAND_LINE=("${BASH_SOURCE[0]}" "$@")
-# Get current user name via whoami command
-#   See https://www.lifewire.com/current-linux-user-whoami-command-3867579
-# Because if run command by `sudo -u`, env var $USER is not rewritten/correct, just inherited from outside!
+# CAUTION: env var $USER is not reliable!
+#   $USER may be overwritten; if run command by `sudo -u`, may is not `root`.
+#   more info see https://www.baeldung.com/linux/get-current-user
 #
-# DO NOT declare and assign var USER(as readonly) in ONE line!
+# DO NOT declare and assign var WHOAMI(as readonly) in ONE line!
 #   more info see https://github.com/koalaman/shellcheck/wiki/SC2155
-USER=$(whoami)
-readonly USER
+WHOAMI=$(whoami)
+readonly WHOAMI
 
 ################################################################################
 # util functions
@@ -525,7 +525,7 @@ printStackOfThreads() {
     [ -f "$jstackFile" ] || {
       # shellcheck disable=SC2206
       local -a jstack_cmd_line=("$jstack_path" $force $mix_native_frames $lock_info $pid)
-      if [ "$user" = "$USER" ]; then
+      if [ "$user" = "$WHOAMI" ]; then
         # run without sudo, when java process user is current user
         logAndRun "${jstack_cmd_line[@]}" >"$jstackFile"
       elif ((UID == 0)); then
@@ -534,7 +534,7 @@ printStackOfThreads() {
       else
         # current user is not root user, so can not run with sudo; print error message and rerun suggestion
         redOutput "[$idx] Fail to jstack busy($pcpu%) thread($threadId/$threadId0x) stack of java process($pid) under user($user)."
-        redOutput "User of java process($user) is not current user($USER), need sudo to rerun:"
+        redOutput "User of java process($user) is not current user($WHOAMI), need sudo to rerun:"
         yellowOutput "    sudo $(printCallingCommandLine)"
         continue
       fi || {

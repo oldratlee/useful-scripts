@@ -136,7 +136,7 @@ PS：
 
 在这个库中的`Shell`脚本：
 
-- 统一使用`Bash 3+`；
+- 统一使用`Bash 3.2+`；
 - 面向生产环境，尽可能使用严谨安全的开发方式。
 
 `Shell`用`Bash`的原因是：
@@ -172,7 +172,7 @@ PS: 虽然交互`Shell`个人已经使用`Zsh` + [`oh-my-zsh`](https://ohmyz.sh/
       力荐！说明简单直接结构体系的佳作，专业`Bash`编程必备！且16年的第二版更新到了新版的`Bash 4`
     - [《学习bash》](https://book.douban.com/subject/1241361/) 上面那本的展开版
     - 官方资料
-        - [`bash man`](https://linux.die.net/man/1/bash) | [中文版](http://ahei.info/chinese-bash-man.htm)
+        - [`bash man`](https://manned.org/bash) | [中文版](http://ahei.info/chinese-bash-man.htm)
         - [Bash Reference Manual - gnu.org](http://www.gnu.org/software/bash/manual/) | [中文版](https://yiyibooks.cn/Phiix/bash_reference_manual/bash%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3.html)  
           Bash参考手册，讲得全面且有深度，比如会全面地讲解不同转义的区别、命令的解析过程，这有助统一深入的方式认识Bash整个执行方式和过程。这些内容在其它书中往往不会讲（因为复杂难于深入浅出的讲解），但却一通百通的关键。
     - [Advanced Bash-Scripting Guide](https://hangar118.sdf.org/p/bash-scripting-guide/index.html): An in-depth exploration of the art of shell scripting.

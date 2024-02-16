@@ -18,25 +18,43 @@ readonly PROG_VERSION='2.x-dev'
 # util functions
 ################################################################################
 
-printErrorMsg() {
+redPrint() {
   # if stdout is a terminal, turn on color output.
   #   '-t' check: is a terminal?
   #   check isatty in bash https://stackoverflow.com/questions/10022323
   if [ -t 1 ]; then
-    printf '\e[1;31m%s\e[0m\n\n' "Error: $*"
+    printf '\e[1;31m%s\e[0m\n' "$*"
   else
-    printf '%s\n\n' "Error: $*"
+    printf '%s\n' "$*"
   fi
 }
 
+die() {
+  local prompt_help=false exit_code=2
+  while (($# > 0)); do
+    case "$1" in
+    -h)
+      prompt_help=true
+      shift
+      ;;
+    -c)
+      exit_code=$2
+      shift 2
+      ;;
+    *)
+      break
+      ;;
+    esac
+  done
+
+  (($# > 0)) && redPrint "$PROG: $*"
+  $prompt_help && echo "Try '$PROG --help' for more information."
+
+  exit "$exit_code"
+} >&2
+
 usage() {
-  local -r exit_code=${1:-0}
-  (($# > 0)) && shift
-  local -r out=$(((exit_code != 0) + 1))
-
-  (($# > 0)) && printErrorMsg "$*" >&"$out"
-
-  cat >&"$out" <<EOF
+  cat <<EOF
 Usage: $PROG [OPTION]... [command [command_args ...]]
 Run command and put output to system clipper.
 If no command is specified, read from stdin(pipe).
@@ -53,7 +71,7 @@ Options:
   -V, --version   display version information and exit
 EOF
 
-  exit "$exit_code"
+  exit
 }
 
 progVersion() {
@@ -90,7 +108,7 @@ while (($# > 0)); do
     break
     ;;
   -*)
-    usage 2 "unrecognized option '$1'"
+    die -h "unrecognized option '$1'"
     ;;
   *)
     # if not option, treat all follow arguments as command

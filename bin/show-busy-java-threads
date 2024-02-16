@@ -84,9 +84,28 @@ blueOutput() {
 }
 
 die() {
-  redOutput "Error: $*" >&2
-  exit 1
-}
+  local prompt_help=false exit_code=2
+  while (($# > 0)); do
+    case "$1" in
+    -h)
+      prompt_help=true
+      shift
+      ;;
+    -c)
+      exit_code=$2
+      shift 2
+      ;;
+    *)
+      break
+      ;;
+    esac
+  done
+
+  (($# > 0)) && colorPrint "1;31" "$PROG: $*"
+  $prompt_help && echo "Try '$PROG --help' for more information."
+
+  exit "$exit_code"
+} >&2
 
 logAndRun() {
   printf '%s\n' "$*"
@@ -132,13 +151,7 @@ printCallingCommandLine() {
 }
 
 usage() {
-  local -r exit_code=${1:-0}
-  (($# > 0)) && shift
-  local -r out=$(((exit_code != 0) + 1))
-
-  (($# > 0)) && colorPrint 31 "$*$NL" >&"$out"
-
-  cat >&"$out" <<EOF
+  cat <<EOF
 Usage: $PROG [OPTION]... [delay [count]]
 Find out the highest cpu consumed threads of java processes,
 and print the stack of these threads.
@@ -187,7 +200,7 @@ Miscellaneous:
   -V, --version             display version information and exit.
 EOF
 
-  exit "$exit_code"
+  exit
 }
 
 progVersion() {
@@ -199,7 +212,7 @@ progVersion() {
 # Check os support
 ################################################################################
 
-uname | grep '^Linux' -q || die "$PROG only support Linux, not support $(uname) yet!"
+uname | grep '^Linux' -q || die "only support Linux, not support $(uname) yet!"
 
 ################################################################################
 # parse options
@@ -211,8 +224,7 @@ ARGS=$(
     -l count:,pid:,append-file:,jstack-path:,store-dir:,cpu-sample-interval:,use-ps,top-delay:,force,mix-native-frames,lock-info,help,version \
     -- "$@"
 ) || {
-  echo
-  usage 1
+  die -h
 }
 readonly ARGS
 eval set -- "$ARGS"
@@ -291,7 +303,7 @@ if [ -n "$pid_list" ]; then
 fi
 readonly pid_list
 
-# check the directory of append-file(-a) mode, create if not exist.
+# check the directory of append-file(-a) mode, create if not existed.
 if [ -n "$append_file" ]; then
   if [ -e "$append_file" ]; then
     [ -f "$append_file" ] || die "$append_file(specified by option -a, for storing run output files) exists but is not a file!"
@@ -308,7 +320,7 @@ if [ -n "$append_file" ]; then
 fi
 readonly append_file
 
-# check store directory(-S) mode, create directory if not exist.
+# check store directory(-S) mode, create directory if not existed.
 if [ -n "$store_dir" ]; then
   if [ -e "$store_dir" ]; then
     [ -d "$store_dir" ] || die "$store_dir(specified by option -S, for storing output files) exists but is not a directory!"
@@ -337,18 +349,18 @@ if [ -n "$jstack_path" ]; then
 elif [ -n "$JAVA_HOME" ]; then
   # 2. search jstack under JAVA_HOME
   if [ -f "$JAVA_HOME/bin/jstack" ]; then
-    [ -x "$JAVA_HOME/bin/jstack" ] || die "found \$JAVA_HOME/bin/jstack($JAVA_HOME/bin/jstack) is NOT executable!${NL}Use -s option set jstack path manually."
+    [ -x "$JAVA_HOME/bin/jstack" ] || die -h "found \$JAVA_HOME/bin/jstack($JAVA_HOME/bin/jstack) is NOT executable!${NL}Use -s option set jstack path manually."
     jstack_path="$JAVA_HOME/bin/jstack"
   elif [ -f "$JAVA_HOME/../bin/jstack" ]; then
-    [ -x "$JAVA_HOME/../bin/jstack" ] || die "found \$JAVA_HOME/../bin/jstack($JAVA_HOME/../bin/jstack) is NOT executable!${NL}Use -s option set jstack path manually."
+    [ -x "$JAVA_HOME/../bin/jstack" ] || die -h "found \$JAVA_HOME/../bin/jstack($JAVA_HOME/../bin/jstack) is NOT executable!${NL}Use -s option set jstack path manually."
     jstack_path="$JAVA_HOME/../bin/jstack"
   fi
 elif command -v jstack &>/dev/null; then
   # 3. search jstack under PATH
   jstack_path=$(command -v jstack)
-  [ -x "$jstack_path" ] || die "found $jstack_path from PATH is NOT executable!${NL}Use -s option set jstack path manually."
+  [ -x "$jstack_path" ] || die -h "found $jstack_path from PATH is NOT executable!${NL}Use -s option set jstack path manually."
 else
-  die "jstack NOT found by JAVA_HOME(${JAVA_HOME:-not set}) setting and PATH!${NL}Use -s option set jstack path manually."
+  die -h "jstack NOT found by JAVA_HOME(${JAVA_HOME:-not set}) setting and PATH!${NL}Use -s option set jstack path manually."
 fi
 readonly jstack_path
 
@@ -470,13 +482,13 @@ __top_threadId_cpu() {
   local result_threads_top_info
   result_threads_top_info=$(
     printf '%s\n' "$top_out" | awk '{
-            # from text line to empty line, increase block index
-            if (previousLine && !$0) blockIndex++
-            # only print 4th text block(blockIndex == 3), aka. process info of second top update
-            if (blockIndex == 3 && $1 ~ /^[0-9]+$/)
-                print $1, $9  # $1 is thread id field, $9 is %cpu field
-            previousLine = $0
-        }'
+        # from text line to empty line, increase block index
+        if (previousLine && !$0) blockIndex++
+        # only print 4th text block(blockIndex == 3), aka. process info of second top update
+        if (blockIndex == 3 && $1 ~ /^[0-9]+$/)
+          print $1, $9  # $1 is thread id field, $9 is %cpu field
+        previousLine = $0
+      }'
   )
   [ -n "$result_threads_top_info" ] || __die_when_no_java_process_found
 
@@ -501,8 +513,8 @@ __complete_pid_user_by_ps() {
     # output field: pid, threadId, pcpu, user
     output_fields=$(printf '%s\n' "$ps_out" |
       awk -v "threadId=$threadId" -v "pcpu=$pcpu" '$2==threadId {
-                print $1, threadId, pcpu, $3; exit
-            }')
+          print $1, threadId, pcpu, $3; exit
+        }')
     if [ -n "$output_fields" ]; then
       ((idx++))
       printf '%s\n' "$output_fields"
@@ -548,18 +560,18 @@ printStackOfThreads() {
 
     if [ -n "$mix_native_frames" ]; then
       local sed_script="/--------------- $threadId ---------------/,/^---------------/ {
-                /--------------- $threadId ---------------/b # skip first separator line
-                /^---------------/d # delete second separator line
-                p
-            }"
+          /--------------- $threadId ---------------/b # skip first separator line
+          /^---------------/d # delete second separator line
+          p
+        }"
     elif [ -n "$force" ]; then
       local sed_script="/^Thread $threadId:/,/^$/ {
-                /^$/d; p # delete end separator line
-            }"
+          /^$/d; p # delete end separator line
+        }"
     else
       local sed_script="/ nid=($threadId0x|$threadId) /,/^$/ {
-                /^$/d; p # delete end separator line
-            }"
+          /^$/d; p # delete end separator line
+        }"
     fi
     sed "$sed_script" -n -r "$jstackFile" | tee ${append_file:+-a "$append_file"} ${store_dir:+-a "$store_file_prefix$PROG"}
   done

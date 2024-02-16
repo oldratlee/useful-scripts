@@ -31,11 +31,30 @@ redPrint() {
 }
 
 die() {
-  redPrint "Error: $*" >&2
-  exit 1
-}
+  local prompt_help=false exit_code=2
+  while (($# > 0)); do
+    case "$1" in
+    -h)
+      prompt_help=true
+      shift
+      ;;
+    -c)
+      exit_code=$2
+      shift 2
+      ;;
+    *)
+      break
+      ;;
+    esac
+  done
 
-# `realpath` command existed on Linux and macOS, return resolved physical path
+  (($# > 0)) && redPrint "$PROG: $*"
+  $prompt_help && echo "Try '$PROG --help' for more information."
+
+  exit "$exit_code"
+} >&2
+
+# `realpath` command exists on Linux and macOS, return resolved physical path
 #   - realpath command on macOS do NOT support option `-e`;
 #     combined `[ -e $file ]` to check file existence first.
 #   - How can I get the behavior of GNU's readlink -f on a Mac?
@@ -45,14 +64,7 @@ realpath() {
 }
 
 usage() {
-  local -r exit_code=${1:-0}
-  (($# > 0)) && shift
-  local -r out=$(((exit_code != 0) + 1))
-
-  # NOTE: $'foo' is the escape sequence syntax of bash
-  (($# > 0)) && redPrint "$*"$'\n' >&"$out"
-
-  cat >&"$out" <<EOF
+  cat <<EOF
 Usage: $PROG [OPTION]... [FILE]...
 convert to Absolute Path.
 
@@ -65,7 +77,7 @@ Options:
   -V, --version   display version information and exit
 EOF
 
-  exit "$exit_code"
+  exit
 }
 
 progVersion() {
@@ -92,7 +104,7 @@ while (($# > 0)); do
     break
     ;;
   -*)
-    usage 2 "$PROG: unrecognized option '$1'"
+    die -h "unrecognized option '$1'"
     ;;
   *)
     # if not option, treat all follow files as args
@@ -113,8 +125,8 @@ has_error=false
 
 for f in "${files[@]}"; do
   realpath "$f" || {
-    redPrint "error: $f does not exists!" >&2
     has_error=true
+    redPrint "$PROG: $f: No such file or directory!" >&2
   }
 done
 

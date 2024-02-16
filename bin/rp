@@ -31,9 +31,28 @@ redPrint() {
 }
 
 die() {
-  redPrint "Error: $*" >&2
-  exit 1
-}
+  local prompt_help=false exit_code=2
+  while (($# > 0)); do
+    case "$1" in
+    -h)
+      prompt_help=true
+      shift
+      ;;
+    -c)
+      exit_code=$2
+      shift 2
+      ;;
+    *)
+      break
+      ;;
+    esac
+  done
+
+  (($# > 0)) && redPrint "$PROG: $*"
+  $prompt_help && echo "Try '$PROG --help' for more information."
+
+  exit "$exit_code"
+} >&2
 
 portableRelPath() {
   local file=$1 relTo=$2 uname
@@ -56,20 +75,13 @@ portableRelPath() {
     fi
     ;;
   *)
-    die "NOT support uname($uname)!"
+    die "uname($uname) NOT support!"
     ;;
   esac
 }
 
 usage() {
-  local -r exit_code=${1:-0}
-  (($# > 0)) && shift
-  local -r out=$(((exit_code != 0) + 1))
-
-  # NOTE: $'foo' is the escape sequence syntax of bash
-  (($# > 0)) && redPrint "$*"$'\n' >&"$out"
-
-  cat >&"$out" <<EOF
+  cat <<EOF
 Usage: $PROG [OPTION]... [FILE]...
 convert to Relative Path.
 
@@ -83,7 +95,7 @@ Options:
   -V, --version   display version information and exit
 EOF
 
-  exit "$exit_code"
+  exit
 }
 
 progVersion() {
@@ -110,7 +122,7 @@ while (($# > 0)); do
     break
     ;;
   -*)
-    usage 2 "$PROG: unrecognized option '$1'"
+    die -h "unrecognized option '$1'"
     ;;
   *)
     # if not option, treat all follow files as args
@@ -120,7 +132,7 @@ while (($# > 0)); do
   esac
 done
 
-((${#files[@]} == 0)) && die "NO argument!"
+((${#files[@]} == 0)) && die -h "requires at least one argument!"
 
 if ((${#files[@]} == 1)); then
   relativeTo=.
@@ -133,7 +145,7 @@ else
 fi
 
 [ -f "$relativeTo" ] && relativeTo=$(dirname -- "$relativeTo")
-[ -e "$relativeTo" ] || die "relativeTo dir($relativeTo) does NOT exists!"
+[ -e "$relativeTo" ] || die "relativeTo dir($relativeTo): No such file or directory!"
 
 readonly files relativeTo
 
@@ -147,7 +159,7 @@ for f in "${files[@]}"; do
   if [ -e "$f" ]; then
     portableRelPath "$f" "$relativeTo"
   else
-    redPrint "error: $f does not exists!" >&2
+    redPrint "$PROG: $f: No such file or directory!" >&2
     has_error=true
   fi
 done

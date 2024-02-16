@@ -42,9 +42,28 @@ yellowPrint() {
 }
 
 die() {
-  redPrint "Error: $*" >&2
-  exit 1
-}
+  local prompt_help=false exit_code=2
+  while (($# > 0)); do
+    case "$1" in
+    -h)
+      prompt_help=true
+      shift
+      ;;
+    -c)
+      exit_code=$2
+      shift 2
+      ;;
+    *)
+      break
+      ;;
+    esac
+  done
+
+  (($# > 0)) && redPrint "$PROG: $*"
+  $prompt_help && echo "Try '$PROG --help' for more information."
+
+  exit "$exit_code"
+} >&2
 
 convertHumanReadableSizeToSize() {
   local human_readable_size=$1
@@ -68,13 +87,7 @@ convertHumanReadableSizeToSize() {
 }
 
 usage() {
-  local -r exit_code=${1:-0}
-  (($# > 0)) && shift
-  local -r out=$(((exit_code != 0) + 1))
-
-  (($# > 0)) && redPrint "$*$NL" >&"$out"
-
-  cat >&"$out" <<EOF
+  cat <<EOF
 Usage: $PROG [OPTION]... [INPUT [OUTPUT]]
 Filter lines from INPUT (or standard input), writing to OUTPUT (or standard output).
 Same as \`uniq\` command in core utils,
@@ -107,7 +120,7 @@ Options:
   -V, --version         display version information and exit
 EOF
 
-  exit "$exit_code"
+  exit
 }
 
 progVersion() {
@@ -148,7 +161,7 @@ while (($# > 0)); do
 
     uq_opt_repeated_method=${1#--all-repeated=}
     [[ $uq_opt_repeated_method = 'none' || $uq_opt_repeated_method = 'prepend' || $uq_opt_repeated_method = 'separate' ]] ||
-      usage 1 "$PROG: invalid argument ‘$uq_opt_repeated_method’ for ‘--all-repeated’${NL}Valid arguments are:$NL  - ‘none’$NL  - ‘prepend’$NL  - ‘separate’"
+      die -h "invalid argument ‘$uq_opt_repeated_method’ for ‘--all-repeated’${NL}Valid arguments are:$NL  - ‘none’$NL  - ‘prepend’$NL  - ‘separate’"
 
     shift
     ;;
@@ -184,7 +197,7 @@ while (($# > 0)); do
     shift
     ;;
   -*)
-    usage 2 "$PROG: unrecognized option '$1'"
+    die -h "unrecognized option '$1'"
     ;;
   *)
     argv=(${argv[@]:+"${argv[@]}"} "$1")
@@ -194,17 +207,17 @@ while (($# > 0)); do
 done
 
 [[ $uq_opt_only_repeated = 1 && $uq_opt_only_unique = 1 ]] &&
-  usage 2 "printing duplicated lines(-d, --repeated) and unique lines(-u, --unique) is meaningless"
+  die -h "printing duplicated lines(-d, --repeated) and unique lines(-u, --unique) is meaningless"
 [[ $uq_opt_all_repeated = 1 && $uq_opt_only_unique = 1 ]] &&
-  usage 2 "printing all duplicate lines(-D, --all-repeated) and unique lines(-u, --unique) is meaningless"
+  die -h "printing all duplicate lines(-D, --all-repeated) and unique lines(-u, --unique) is meaningless"
 
 [[ $uq_opt_all_repeated = 1 && $uq_opt_repeated_method = none && ($uq_opt_count = 0 && $uq_opt_only_repeated = 0) ]] &&
-  yellowPrint "[$PROG] WARN: -D/--all-repeated=none option without -c/-d option, just cat input simply!" >&2
+  yellowPrint "WARN: -D/--all-repeated=none option without -c/-d option, just cat input simply!" >&2
 
 # DO NOT declare and assign var uq_max_input_size(as readonly) in ONE line!
 #   more info see https://github.com/koalaman/shellcheck/wiki/SC2155
 uq_max_input_size=$(convertHumanReadableSizeToSize "$uq_max_input_human_readable_size") ||
-  usage 2 "[$PROG] ERROR: illegal value of option -XM/--max-input: $uq_max_input_human_readable_size"
+  die -h "illegal value of option -XM/--max-input: $uq_max_input_human_readable_size"
 
 readonly argc=${#argv[@]} argv uq_max_input_size
 
@@ -228,7 +241,7 @@ for f in ${input_files[@]:+"${input_files[@]}"}; do
   # - is stdin, ok
   [ "$f" = - ] && continue
 
-  [ -e "$f" ] || die "input file $f does not exist!"
+  [ -e "$f" ] || die "input file $f: No such file or directory!"
   [ ! -d "$f" ] || die "input file $f exists, but is a directory!"
   [ -f "$f" ] || die "input file $f exists, but is not a file!"
   [ -r "$f" ] || die "input file $f exists, but is not readable!"
@@ -285,7 +298,7 @@ BEGIN {
 {
     total_input_size += length + 1
     if (total_input_size > uq_max_input_size) {
-        printf "[%s] ERROR: input size exceed max input size %s!\nuse option -XM/--max-input specify a REASONABLE larger value.\n",
+        printf "%s: input size exceed max input size %s!\nuse option -XM/--max-input specify a REASONABLE larger value.\n",
             uq_PROG, uq_max_input_human_readable_size > "/dev/stderr"
         exit(1)
     }

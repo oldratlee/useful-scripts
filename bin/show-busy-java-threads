@@ -575,12 +575,12 @@ printStackOfThreads() {
                 /^$/d; p # delete end separator line
             }"
     else
-      local sed_script="/ nid=$threadId0x /,/^$/ {
+      local sed_script="/ nid=($threadId0x|$threadId) /,/^$/ {
                 /^$/d; p # delete end separator line
             }"
     fi
     {
-      sed "$sed_script" -n "$jstackFile"
+      sed "$sed_script" -n -r "$jstackFile"
       echo
     } | tee ${append_file:+-a "$append_file"} ${store_dir:+-a "$store_file_prefix$PROG"}
   done

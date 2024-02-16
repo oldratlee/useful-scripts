@@ -28,15 +28,34 @@ redPrint() {
 }
 
 die() {
-  redPrint "Error: $*" >&2
-  exit 1
-}
+  local prompt_help=false exit_staus=2
+  while (($# > 0)); do
+    case "$1" in
+    -h)
+      prompt_help=true
+      shift
+      ;;
+    -s)
+      exit_staus=$2
+      shift 2
+      ;;
+    *)
+      break
+      ;;
+    esac
+  done
+
+  (($# > 0)) && redPrint "$PROG: $*"
+  $prompt_help && echo "Try '$PROG --help' for more information."
+
+  exit "$exit_staus"
+} >&2
 
 isAbsolutePath() {
   [[ "$1" =~ ^/ ]]
 }
 
-# `realpath` command existed on Linux and macOS, return resolved physical path
+# `realpath` command exists on Linux and macOS, return resolved physical path
 #   - realpath command on macOS do NOT support option `-e`;
 #     combined `[ -e $file ]` to check file existence first.
 #   - How can I get the behavior of GNU's readlink -f on a Mac?
@@ -46,14 +65,7 @@ realpath() {
 }
 
 usage() {
-  local -r exit_code=${1:-0}
-  (($# > 0)) && shift
-  local -r out=$(((exit_code != 0) + 1))
-
-  # NOTE: $'foo' is the escape sequence syntax of bash
-  (($# > 0)) && redPrint "$*"$'\n' >&"$out"
-
-  cat >&"$out" <<EOF
+  cat <<EOF
 Usage: $PROG [OPTION]... command [command-args]...
 
 Copy the command into docker container
@@ -82,7 +94,7 @@ miscellaneous:
   -V, --version      display version information and exit
 EOF
 
-  exit "$exit_code"
+  exit
 }
 
 progVersion() {
@@ -140,7 +152,7 @@ while (($# > 0)); do
     break
     ;;
   -*)
-    usage 2 "$PROG: unrecognized option '$1'"
+    die -h "unrecognized option '$1'"
     ;;
   *)
     # if not option, treat all follow arguments as command
@@ -153,7 +165,7 @@ done
 readonly container_name docker_user docker_workdir docker_tmpdir docker_command_cp_path verbose args
 
 [ -n "$container_name" ] ||
-  usage 1 "No destination docker container name, specified by option -c/--container!"
+  die -h "requires destination docker container name, specified by option -c/--container!"
 
 if [ -n "$docker_workdir" ]; then
   isAbsolutePath "$docker_workdir" ||

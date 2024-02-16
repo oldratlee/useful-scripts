@@ -30,8 +30,8 @@ Options:
     -h, --help      display this help and exit
     -V, --version   display version information and exit
 EOF
-  # shellcheck disable=SC2086
-  exit $1
+
+  exit "$1"
 }
 
 progVersion() {

@@ -12,7 +12,12 @@ jobs:
     name: Lint
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
       - run: test-cases/lint.sh
+      # https://remarkablemark.org/blog/2017/10/12/check-git-dirty/
+      - name: Check git dirty
+        run: |
+          git status --short
+          [ -z "$(git status --short)" ]

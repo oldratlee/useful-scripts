@@ -17,7 +17,7 @@ jobs:
     name: Test on ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
       - run: brew install coreutils gnu-sed
@@ -25,3 +25,8 @@ jobs:
         # https://docs.github.com/en/actions/learn-github-actions/expressions
         if: runner.os == 'macOS'
       - run: test-cases/integration-test.sh
+      # https://remarkablemark.org/blog/2017/10/12/check-git-dirty/
+      - name: Check git dirty
+        run: |
+          git status --short
+          [ -z "$(git status --short)" ]

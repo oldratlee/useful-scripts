@@ -11,7 +11,7 @@ set -eEuo pipefail
 
 PROG=$(basename -- "$0")
 readonly PROG
-readonly PROG_VERSION='2.5.2'
+readonly PROG_VERSION='2.5.3'
 
 ################################################################################
 # util functions

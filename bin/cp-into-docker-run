@@ -87,7 +87,8 @@ docker options:
                      optional, default is under tmp dir and deleted when run finished
 
 run options:
-  -v, --verbose      show operation step infos
+  -v, --verbose
+  --no-verbose       show operation step infos, default is false
 
 miscellaneous:
   -h, --help         display this help and exit
@@ -137,6 +138,10 @@ while (($# > 0)); do
     shift 2
     ;;
   -v | --verbose)
+    verbose=true
+    shift
+    ;;
+  --no-verbose)
     verbose=true
     shift
     ;;

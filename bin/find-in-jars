@@ -119,17 +119,25 @@ Find control:
   -F, --fixed-strings    PATTERN is a set of newline-separated strings
   -G, --basic-regexp     PATTERN is a basic regular expression
   -P, --perl-regexp      PATTERN is a Perl regular expression
-  -i, --ignore-case      ignore case distinctions
+  -i, --ignore-case
+      --no-ignore-case   ignore case distinctions or not.
+                         default is false.
 
 Output control:
-  -a, --absolute-path    always print absolute path of jar file
+  -a, --absolute-path
+      --no-absolute-path always print absolute path of jar file.
+                         default is false.
   -s, --separator        specify the separator between jar file and zip entry.
                          default is \`!'.
-  -L, --files-not-contained-found
-                         print only names of JAR FILEs NOT contained found
   -l, --files-contained-found
-                         print only names of JAR FILEs contained found
-  -R, --no-find-progress do not display responsive find progress
+                         print only names of JAR FILEs contained found.
+  -L, --files-not-contained-found
+                         print only names of JAR FILEs NOT contained found.
+      --print-entries    print the entries contained found. this is
+                         default behavior, changed by above options -l/-L.
+  -R, --no-find-progress
+      --find-progress    display responsive find progress or not.
+                         default is true.
 
 Miscellaneous:
   -h, --help             display this help and exit
@@ -188,8 +196,16 @@ while (($# > 0)); do
     ignore_case_option=-i
     shift
     ;;
+  --no-ignore-case)
+    ignore_case_option=
+    shift
+    ;;
   -a | --absolute-path)
     use_absolute_path=true
+    shift
+    ;;
+  --no-absolute-path)
+    use_absolute_path=false
     shift
     ;;
   # support the legacy typo option name --seperator for compatibility
@@ -197,18 +213,26 @@ while (($# > 0)); do
     separator=$2
     shift 2
     ;;
-  -L | --files-not-contained-found)
-    only_print_file_name=true
-    print_matched_files=false
-    shift
-    ;;
   -l | --files-contained-found)
     only_print_file_name=true
     print_matched_files=true
     shift
     ;;
+  -L | --files-not-contained-found)
+    only_print_file_name=true
+    print_matched_files=false
+    shift
+    ;;
+  --print-entries)
+    only_print_file_name=false
+    shift
+    ;;
   -R | --no-find-progress)
     show_responsive=false
+    shift
+    ;;
+  --find-progress)
+    show_responsive=true
     shift
     ;;
   -h | --help)

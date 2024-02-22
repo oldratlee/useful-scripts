@@ -65,8 +65,12 @@ Example:
   $PROG -q < ~/.ssh/id_rsa.pub
 
 Options:
-  -k, --keep-eol  do not trim new line at end of file
-  -q, --quiet     suppress all normal output, default is false
+  -k, --keep-eol
+  -K, --no-keep-eol
+                  keep new line at end of file or not, default is false
+  -q, --quiet
+  -Q, --no-quiet
+                  suppress all normal output, default is false
   -h, --help      display this help and exit
   -V, --version   display version information and exit
 EOF
@@ -92,8 +96,16 @@ while (($# > 0)); do
     keep_eol=true
     shift
     ;;
+  -K | --no-keep-eol)
+    keep_eol=false
+    shift
+    ;;
   -q | --quiet)
     quiet=true
+    shift
+    ;;
+  -Q | --no-quiet)
+    quiet=false
     shift
     ;;
   -h | --help)

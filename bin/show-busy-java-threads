@@ -376,8 +376,9 @@ cleanupWhenExit() {
 trap cleanupWhenExit EXIT
 
 headInfo() {
+  local timestamp=$1
   colorPrint "0;34;42" ================================================================================
-  printf '%s\n' "$(date "+%Y-%m-%d %H:%M:%S.%N") [$((update_round_num + 1))/$update_count]: $(printCallingCommandLine)"
+  printf '%s\n' "$timestamp [$((update_round_num + 1))/$update_count]: $(printCallingCommandLine)"
   colorPrint "0;34;42" ================================================================================
   echo
 }
@@ -567,7 +568,7 @@ printStackOfThreads() {
 }
 
 main() {
-  local update_round_num
+  local update_round_num timestamp
   # if update_count <= 0, infinite loop till user interrupted (eg: CTRL+C)
   for ((update_round_num = 0; update_count <= 0 || update_round_num < update_count; ++update_round_num)); do
     ((update_round_num > 0)) && {
@@ -575,9 +576,10 @@ main() {
       normalOutput
     }
 
-    [[ -n "$append_file" || -n "$store_dir" ]] && headInfo |
+    timestamp=$(date "+%Y-%m-%d %H:%M:%S.%N")
+    [[ -n "$append_file" || -n "$store_dir" ]] && headInfo "$timestamp" |
       tee ${append_file:+-a "$append_file"} ${store_dir:+-a "$store_file_prefix$PROG"} >/dev/null
-    ((update_count != 1)) && headInfo
+    ((update_count != 1)) && headInfo "$timestamp"
 
     if [ "$cpu_sample_interval" = 0 ]; then
       findBusyJavaThreadsByPs

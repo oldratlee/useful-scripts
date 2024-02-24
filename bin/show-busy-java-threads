@@ -22,10 +22,11 @@ readonly -a COMMAND_LINE=("${BASH_SOURCE[0]}" "$@")
 #   $USER may be overwritten; if run command by `sudo -u`, may is not `root`.
 #   more info see https://www.baeldung.com/linux/get-current-user
 #
-# DO NOT declare and assign var WHOAMI(as readonly) in ONE line!
+# DO NOT declare and assign var(as readonly) in ONE line!
 #   more info see https://github.com/koalaman/shellcheck/wiki/SC2155
 WHOAMI=$(whoami)
-readonly WHOAMI
+UNAME=$(uname)
+readonly WHOAMI UNAME
 
 ################################################################################
 # util functions
@@ -196,10 +197,10 @@ progVersion() {
 }
 
 ################################################################################
-# Check os support
+# check os support
 ################################################################################
 
-uname | grep '^Linux' -q || die "$PROG only support Linux, not support $(uname) yet!"
+[[ $UNAME = Linux* ]] || die "$PROG only support Linux, not support $UNAME yet!"
 
 ################################################################################
 # parse options
@@ -564,10 +565,6 @@ printStackOfThreads() {
     sed "$sed_script" -n -r "$jstackFile" | tee ${append_file:+-a "$append_file"} ${store_dir:+-a "$store_file_prefix$PROG"}
   done
 }
-
-################################################################################
-# Main
-################################################################################
 
 main() {
   local update_round_num

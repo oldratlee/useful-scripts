@@ -50,7 +50,8 @@ unset args idx
 ################################################################################
 
 # On MacOS, netstat need to using -p tcp to get only tcp output.
-uname | grep Darwin -q && option_for_mac=-ptcp
+UNAME=$(uname)
+[[ $UNAME = Darwin* ]] && option_for_mac=-ptcp
 
 # shellcheck disable=SC2086
 netstat -tna ${option_for_mac:-} | awk 'NR > 2 {

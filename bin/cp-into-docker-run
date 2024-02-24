@@ -180,10 +180,10 @@ command -v docker &>/dev/null || die 'docker command not found!'
 readonly specified_run_command=${args[0]}
 run_command=$specified_run_command
 if [ ! -f "$specified_run_command" ]; then
-  which "$specified_run_command" &>/dev/null ||
+  type -p "$specified_run_command" ||
     die "specified command not exists and not found in PATH: $specified_run_command"
 
-  run_command=$(which "$specified_run_command")
+  run_command=$(type -P "$specified_run_command")
 fi
 
 run_command=$(realpath "$run_command")

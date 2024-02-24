@@ -102,7 +102,7 @@ done
 
 readonly keep_eol quiet target_command
 
-if ((${#target_command[@]} > 0)) && ! which "${target_command[0]}" &>/dev/null; then
+if ((${#target_command[@]} > 0)) && ! type -p "${target_command[0]}"; then
   die "command '${target_command[0]}' not found on PATH"
 fi
 

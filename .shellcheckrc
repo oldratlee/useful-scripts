@@ -1,0 +1,2 @@
+enable=check-extra-masked-returns
+enable=check-set-e-suppressed

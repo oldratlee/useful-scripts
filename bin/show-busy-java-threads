@@ -388,8 +388,12 @@ cleanupWhenExit() {
 trap cleanupWhenExit EXIT
 
 headInfo() {
+  local time command_line
+  time=$(date "+%Y-%m-%d %H:%M:%S.%N")
+  command_line=$(printCallingCommandLine)
+
   colorPrint "0;34;42" ================================================================================
-  printf '%s\n' "$(date "+%Y-%m-%d %H:%M:%S.%N") [$((update_round_num + 1))/$update_count]: $(printCallingCommandLine)"
+  printf '%s\n' "$time [$((update_round_num + 1))/$update_count]: $command_line"
   colorPrint "0;34;42" ================================================================================
   echo
 }
@@ -433,7 +437,9 @@ findBusyJavaThreadsByPs() {
   # DO NOT combine var ps_out declaration and assignment in ONE line!
   #   more info see https://github.com/koalaman/shellcheck/wiki/SC2155
   local ps_out
-  ps_out=$("${ps_cmd_line[@]}" | sort -k3,3nr)
+  ps_out=$(
+    "${ps_cmd_line[@]}" | sort -k3,3nr
+  )
   [ -n "$ps_out" ] || __die_when_no_java_process_found
 
   if [ -n "$store_dir" ]; then

@@ -8,6 +8,7 @@
 #
 # @online-doc https://github.com/oldratlee/useful-scripts/blob/dev-2.x/docs/vcs.md#-cp-svn-url
 # @author ivanzhangwb (ivanzhangwb at gmail dot com)
+set -eEuo pipefail
 
 readonly PROG=${0##*/}
 readonly PROG_VERSION='2.x-dev'

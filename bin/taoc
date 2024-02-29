@@ -28,7 +28,7 @@ Support options:
   --version  output version information and exit
 All other options and arguments are delegated to command tac,
 more info see the help/man of command tac(e.g. tac --help).
-tac executable: $(command -v tac)
+tac executable: $(command -v tac || true)
 EOF
 
   exit
@@ -36,6 +36,7 @@ EOF
 
 progVersion() {
   printf '%s version: %s\n' "$PROG" "$PROG_VERSION"
+  # shellcheck disable=SC2312
   printf 'tac executable: %s\n' "$(command -v tac)"
   exit
 }

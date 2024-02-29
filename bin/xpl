@@ -118,7 +118,7 @@ readonly files selected
 
 # open one file
 openOneFile() {
-  local file=$1 slt=$selected
+  local file=$1 slt=$selected p
 
   case "$(uname)" in
   Darwin*)
@@ -131,10 +131,11 @@ openOneFile() {
     ;;
   CYGWIN*)
     [ -f "$file" ] && slt=true
+    p="$(cygpath -w "$file")"
     if $slt; then
-      explorer /select, "$(cygpath -w "$file")"
+      explorer /select, "$p"
     else
-      explorer "$(cygpath -w "$file")"
+      explorer "$p"
     fi
     ;;
   *)

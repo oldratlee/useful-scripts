@@ -529,34 +529,63 @@ findBusyJavaThreadsByTop() {
   __top_threadId_cpu | __complete_pid_user_by_ps
 }
 
+# `safe_unmask_command_substitution var1 command1 arg1`
+#   is equivalant to
+# `var1=$(comman arg1)`,
+# but avoid masking its return value
+safe_unmask_command_substitution() {
+  local _sucs_output_var_name=$1 _sucs_output=
+  shift
+  _sucs_output=$("$@")
+  printf -v "$_sucs_output_var_name" %s "$_sucs_output"
+}
+
+__do_jstack() {
+  safe_unmask_command_substitution "$jstack_content_for_pid_var_name" "${jstack_cmd_line[@]}"
+  printf '%s\n' "${!jstack_content_for_pid_var_name}" | logAndCat "${jstack_cmd_line[@]}" >"$jstackFile"
+}
+
+# jstack and cache result
+# jstack one java process exactly once whether successful or not.
+__jstack_with_cache() {
+  local -r jstack_content_for_pid_var_name=jstack_content_for_pid_$pid
+  local jstack_content_for_pid_var_defined=false
+  if [ -n "${!jstack_content_for_pid_var_name+var definded}" ];then
+    jstack_content_for_pid_var_defined=true
+  else
+    # define the "jstack content for pid" var, so ensure jstack one java process exactly once
+    printf -v "$jstack_content_for_pid_var_name" ''
+  fi
+
+  local jstackFile="$store_file_prefix$((update_round_num + 1))_jstack_$pid"
+  # shellcheck disable=SC2206
+  local -a jstack_cmd_line=("$jstack_path" $force $mix_native_frames $lock_info $pid)
+  if [ "$user" = "$WHOAMI" ]; then
+    # run without sudo, when java process user is current user
+    $jstack_content_for_pid_var_defined || __do_jstack
+  elif ((UID == 0)); then
+    # if java process user is not current user, must run jstack with sudo
+    jstack_cmd_line=(sudo -u "$user" "${jstack_cmd_line[@]}")
+    $jstack_content_for_pid_var_defined || __do_jstack
+  else
+    # current user is not root user, so can not run with sudo; print error message and rerun suggestion
+    redOutput "[$idx] Fail to jstack busy($pcpu%) thread($threadId/$threadId0x) stack of java process($pid) under user($user)."
+    redOutput "User of java process($user) is not current user($WHOAMI), need sudo to rerun:"
+    yellowOutput "    sudo $(printCallingCommandLine)"
+    return 1
+  fi || {
+    redOutput "[$idx] Fail to jstack busy($pcpu%) thread($threadId/$threadId0x) stack of java process($pid) under user($user)."
+    return 1
+  }
+}
+
 printStackOfThreads() {
   local idx=0 pid threadId pcpu user threadId0x
   while read -r pid threadId pcpu user; do
     printf -v threadId0x '%#x' "$threadId"
 
     ((idx++ > 0)) && normalOutput
-    local jstackFile="$store_file_prefix$((update_round_num + 1))_jstack_$pid"
-    [ -f "$jstackFile" ] || {
-      # shellcheck disable=SC2206
-      local -a jstack_cmd_line=("$jstack_path" $force $mix_native_frames $lock_info $pid)
-      if [ "$user" = "$WHOAMI" ]; then
-        # run without sudo, when java process user is current user
-        logAndRun "${jstack_cmd_line[@]}" >"$jstackFile"
-      elif ((UID == 0)); then
-        # if java process user is not current user, must run jstack with sudo
-        logAndRun sudo -u "$user" "${jstack_cmd_line[@]}" >"$jstackFile"
-      else
-        # current user is not root user, so can not run with sudo; print error message and rerun suggestion
-        redOutput "[$idx] Fail to jstack busy($pcpu%) thread($threadId/$threadId0x) stack of java process($pid) under user($user)."
-        redOutput "User of java process($user) is not current user($WHOAMI), need sudo to rerun:"
-        yellowOutput "    sudo $(printCallingCommandLine)"
-        continue
-      fi || {
-        redOutput "[$idx] Fail to jstack busy($pcpu%) thread($threadId/$threadId0x) stack of java process($pid) under user($user)."
-        rm "$jstackFile" &>/dev/null
-        continue
-      }
-    }
+    __jstack_with_cache || continue
 
     blueOutput "[$idx] Busy($pcpu%) thread($threadId/$threadId0x) stack of java process($pid) under user($user):"
 

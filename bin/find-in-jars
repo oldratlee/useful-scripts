@@ -378,7 +378,7 @@ __outputResultOfJarFile() {
       # Prevent grep from exiting in case of no match
       # https://unix.stackexchange.com/questions/330660
       grep "${grep_opt_args[@]}" || true
-    } | while read -r file; do
+    } | while IFS= read -r file; do
       clearResponsiveMessage
       if [ -t 1 ]; then
         printf "$JAR_COLOR%s$SEP_COLOR%s$COLOR_RESET%s\n" "$jar_file" "$separator" "$file"
@@ -394,7 +394,7 @@ findInJarFiles() {
   local counter=1 total_jar_count jar_file
 
   read -r total_jar_count
-  while read -r jar_file; do
+  while IFS= read -r jar_file; do
     printResponsiveMessage "finding in jar($((counter++))/$total_jar_count): $jar_file"
     listZipEntries "$jar_file" | __outputResultOfJarFile "$jar_file"
   done

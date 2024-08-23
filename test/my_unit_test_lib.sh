@@ -50,7 +50,7 @@ die() {
 
 assertArrayEquals() {
   (($# == 2 || $# == 3)) || die "assertArrayEquals must 2 or 3 arguments!"
-  local failMsg=""
+  local failMsg=
   (($# == 3)) && {
     failMsg=$1
     shift

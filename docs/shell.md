@@ -474,6 +474,44 @@ xpf /path/to/dir1 /path/to/foo1.txt
 
 - [Linhua Tan](https://github.com/toolchainX) 修复Linux的选定Bug。
 
+
+🍺 [pb2json](../bin/pb2json) and [pb2json](../bin/pb2json)
+----------------------
+`pb2json`用于将剪贴板或直接输入的文本内容按指定数量分割为多个JSON格式文件，每个文件包含指定数量的数组元素。
+支持`Linux`、`Mac`、`Windows`。
+
+### 用法/示例
+pb2json <文件数量> <每文件条目数> [输入内容]
+参数说明
+参数	必选	说明
+文件数量	是	要生成的JSON文件数量
+每文件条目数	是	每个JSON文件包含的条目数
+输入内容	否	直接输入的文本内容（不提供则读取剪贴板）
+
+```bash
+示例1：直接输入文本
+pb2json 2 3 "1111\n2222\n3333\n4444\n5555"
+输出：
+Created: output_01.json (3 items)
+Created: output_02.json (2 items)
+Success: Split 5 items into 2 JSON files in /current/directory
+
+
+示例2：读取剪贴板内容
+
+# 先复制内容到剪贴板
+printf "apple\nbanana\ncherry\ndate" | pbcopy
+
+# 执行转换
+pb2json 1 4
+
+Created: output_01.json (4 items)
+Success: Split 4 items into 1 JSON files in /current/directory
+```
+### 贡献者
+
+- [xiongzhongwei](https://github.com/nuoyimanaituling) 添加功能支持
+
 `Shell`开发/测试加强
 ====================================
 

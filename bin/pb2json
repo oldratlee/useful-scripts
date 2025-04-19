@@ -1,0 +1,139 @@
+#!/usr/bin/env bash
+# @Function
+# Split input content into multiple JSON files with specified item counts.
+# Supports both clipboard input and direct string input with newlines.
+#
+# @Usage
+#   $ ./pb2json <file_count> <items_per_file> [input_content]
+#   $ ./pb2json 3 5 "1111\n1111\n1111"
+#   $ ./pb2json 2 3 "$(pbpaste)"
+#
+# @author xiongzhongwei
+set -eEuo pipefail
+
+readonly PROG=${0##*/}
+readonly PROG_VERSION='1.1.1'
+
+usage() {
+  cat <<EOF
+Usage: $PROG <file_count> <items_per_file> [input_content]
+
+Split input content into multiple JSON files with specified item counts.
+Files will be saved in the current directory.
+
+Arguments:
+  file_count        Number of output files to create
+  items_per_file    Number of items each output file should contain
+  input_content     (Optional) Direct input with newline-separated items.
+                   If not provided, will read from clipboard.
+
+Example:
+  $PROG 3 5 "1111\n1111\n1111"  # Direct string input
+  $PROG 2 3                      # Read from clipboard
+  $PROG 2 3 "$(pbpaste)"         # Explicit clipboard input
+
+Options:
+  -h, --help      display this help and exit
+  -V, --version   display version information and exit
+EOF
+  exit
+}
+
+progVersion() {
+  printf '%s\n' "$PROG $PROG_VERSION"
+  exit
+}
+
+# Main logic
+if [[ "$#" -eq 1 ]]; then
+  case "$1" in
+    -h|--help) usage ;;
+    -V|--version) progVersion ;;
+  esac
+fi
+
+if [[ "$#" -lt 2 || "$#" -gt 3 ]]; then
+  echo "Error: Requires 2-3 arguments (file_count, items_per_file, [input_content])" >&2
+  usage
+  exit 1
+fi
+
+file_count=$1
+items_per_file=$2
+input_content=${3:-}
+
+if ! [[ "$file_count" =~ ^[0-9]+$ ]] || ! [[ "$items_per_file" =~ ^[0-9]+$ ]]; then
+  echo "Error: Both arguments must be positive integers" >&2
+  exit 1
+fi
+
+if [[ "$file_count" -eq 0 ]] || [[ "$items_per_file" -eq 0 ]]; then
+  echo "Error: Arguments must be greater than 0" >&2
+  exit 1
+fi
+
+# Get and process input
+if [[ -z "$input_content" ]]; then
+  if command -v pbpaste &>/dev/null; then
+    input_content=$(pbpaste)
+  elif command -v xclip &>/dev/null; then
+    input_content=$(xclip -o -selection clipboard)
+  elif command -v powershell.exe &>/dev/null; then
+    input_content=$(powershell.exe -command "Get-Clipboard")
+  else
+    echo "Error: No clipboard tool found and no direct input provided" >&2
+    exit 1
+  fi
+fi
+
+if [[ -z "$input_content" ]]; then
+  echo "Error: Input is empty" >&2
+  exit 1
+fi
+
+# Convert all types of newlines to uniform format
+processed_content=$(printf "%b" "$input_content")
+
+# Read into array
+items=()
+while IFS= read -r line; do
+  [[ -n "$line" ]] && items+=("$line")
+done <<< "$processed_content"
+
+total_items=${#items[@]}
+if [[ "$total_items" -eq 0 ]]; then
+  echo "Error: No valid items found in input" >&2
+  exit 1
+fi
+
+# Calculate file count
+required_file_count=$(( (total_items + items_per_file - 1) / items_per_file ))
+if [[ "$file_count" -gt "$required_file_count" ]]; then
+  echo "Warning: Reducing file count from $file_count to $required_file_count"
+  file_count=$required_file_count
+fi
+
+# Generate files
+current_dir=$(pwd)
+for ((i=0; i<file_count; i++)); do
+  start=$((i * items_per_file))
+  json_file="output_$(printf "%02d" $((i+1))).json"
+  
+  # Generate JSON array using jq if available
+  if command -v jq &>/dev/null; then
+    printf '%s\n' "${items[@]:start:items_per_file}" | jq -R . | jq -s . > "$json_file"
+  else
+    # Fallback without jq
+    printf '[' > "$json_file"
+    for ((j=start; j<start+items_per_file && j<total_items; j++)); do
+      [[ $j -gt $start ]] && printf ',' >> "$json_file"
+      printf '"%s"' "$(sed 's/"/\\"/g' <<< "${items[j]}")" >> "$json_file"
+    done
+    printf ']\n' >> "$json_file"
+  fi
+  
+  actual_items=$(( (j-start) ))
+  echo "Created: $json_file ($actual_items items)"
+done
+
+echo "Success: Split $total_items items into $file_count JSON files in $current_dir"

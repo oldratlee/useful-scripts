@@ -88,6 +88,7 @@ source <(curl -fsSL https://raw.githubusercontent.com/oldratlee/useful-scripts/r
    统计各个`TCP`连接状态的个数。用于方便排查系统连接负荷问题。
 1. [xpl and xpf](docs/shell.md#-xpl-and-xpf)  
    在命令行中快速完成 在文件浏览器中 打开/选中 指定的文件或文件夹的操作，优化命令行与其它应用之间的操作流。
+1. [pb2json](docs/shell.md#-pb2json)
 
 `Shell`开发/测试加强：
 

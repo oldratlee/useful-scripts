@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set -e # Exit the script if an error happens
+#set -x
+ps auxw|head -1;ps auxw|sort -rn -k4|head -20

@@ -14,7 +14,7 @@ colorEcho() {
   if [ -t 1 ]; then
     printf '\e[%sm%s\e[0m\n' "$combination" "$*"
   else
-    print '%s\n' "$*"
+    printf '%s\n' "$*"
   fi
 }
 

@@ -19,7 +19,7 @@ jobs:
     name: Test on ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           submodules: recursive
       - run: brew install coreutils gnu-sed
